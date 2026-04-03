@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>西班牙语学习中心 · Axtrivc's Blog</title>
+<style>
+  :root {
+    --bg: #fdf8f2;
+    --card: #fff;
+    --accent: #e07b39;
+    --accent2: #c0392b;
+    --green: #27ae60;
+    --red: #e74c3c;
+    --text: #3d2b1f;
+    --sub: #7a6152;
+    --border: #e8d5c4;
+    --shadow: 0 2px 12px rgba(150,90,50,0.10);
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', 'PingFang SC', sans-serif; min-height: 100vh; }
+
+  /* ── Header ── */
+  .site-header {
+    background: linear-gradient(135deg, #c0392b 0%, #e07b39 100%);
+    color: #fff; padding: 28px 24px 20px; text-align: center;
+  }
+  .site-header h1 { font-size: 2rem; letter-spacing: 1px; }
+  .site-header p { opacity: .85; margin-top: 6px; font-size: .95rem; }
+  .back-link { display:inline-block; margin-bottom:10px; color:#fff; opacity:.8; text-decoration:none; font-size:.85rem; }
+  .back-link:hover { opacity:1; }
+
+  /* ── Progress Bar ── */
+  .progress-bar-wrap { background: rgba(255,255,255,0.25); border-radius: 99px; height: 8px; margin: 14px auto 0; max-width: 320px; }
+  .progress-bar-inner { height: 8px; border-radius: 99px; background: #fff; transition: width .5s; }
+
+  /* ── Level Tabs ── */
+  .level-tabs { display: flex; gap: 8px; padding: 18px 24px 0; overflow-x: auto; }
+  .level-tab {
+    flex-shrink: 0; padding: 8px 20px; border-radius: 99px; border: 2px solid var(--border);
+    background: var(--card); color: var(--sub); cursor: pointer; font-weight: 600; font-size: .9rem;
+    transition: all .2s;
+  }
+  .level-tab.active, .level-tab:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .level-tab .badge { font-size: .72rem; margin-left: 4px; opacity: .75; }
+
+  /* ── Main Layout ── */
+  .main-wrap { display: flex; gap: 20px; padding: 20px 24px 40px; max-width: 1100px; margin: 0 auto; }
+  .sidebar { width: 240px; flex-shrink: 0; }
+  .content-area { flex: 1; min-width: 0; }
+
+  /* ── Sidebar Unit List ── */
+  .unit-list { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .unit-item {
+    display: flex; align-items: center; gap: 12px; padding: 13px 16px;
+    cursor: pointer; border-bottom: 1px solid var(--border); transition: background .15s;
+  }
+  .unit-item:last-child { border-bottom: none; }
+  .unit-item:hover { background: #fef3ea; }
+  .unit-item.active { background: #fef3ea; border-left: 3px solid var(--accent); }
+  .unit-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .unit-locked .unit-icon { background: #eee; }
+  .unit-unlocked .unit-icon { background: #fde8d8; }
+  .unit-done .unit-icon { background: #d5f5e3; }
+  .unit-text { flex: 1; min-width: 0; }
+  .unit-name { font-weight: 600; font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .unit-desc { font-size: .75rem; color: var(--sub); margin-top: 2px; }
+  .unit-stars { color: #f39c12; font-size: .75rem; }
+
+  /* ── Lesson Cards ── */
+  .lesson-header { margin-bottom: 16px; }
+  .lesson-header h2 { font-size: 1.4rem; color: var(--text); }
+  .lesson-header p { color: var(--sub); margin-top: 4px; font-size: .9rem; }
+  .lesson-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .lesson-tab {
+    padding: 6px 16px; border-radius: 99px; border: 1.5px solid var(--border);
+    background: var(--card); color: var(--sub); cursor: pointer; font-size: .85rem; font-weight: 600; transition: all .2s;
+  }
+  .lesson-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ── Content Sections ── */
+  .section { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 16px; }
+  .section h3 { font-size: 1.05rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .section h3 .tag { font-size: .72rem; background: #fde8d8; color: var(--accent); border-radius: 5px; padding: 2px 7px; font-weight: 700; }
+
+  /* ── Phonetics ── */
+  .phoneme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+  .phoneme-card {
+    background: #fdf8f2; border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 12px 8px; text-align: center; cursor: pointer; transition: all .2s;
+  }
+  .phoneme-card:hover { border-color: var(--accent); background: #fef3ea; transform: translateY(-2px); }
+  .phoneme-letter { font-size: 1.6rem; font-weight: 700; color: var(--accent2); }
+  .phoneme-ipa { font-size: .8rem; color: var(--sub); margin-top: 2px; }
+  .phoneme-example { font-size: .75rem; color: #7a6152; margin-top: 4px; font-style: italic; }
+
+  /* ── Grammar ── */
+  .grammar-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  .grammar-table th { background: #fef3ea; color: var(--accent2); padding: 8px 12px; text-align: left; border-bottom: 2px solid var(--border); }
+  .grammar-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .grammar-table tr:last-child td { border-bottom: none; }
+  .highlight-word { color: var(--accent2); font-weight: 700; }
+
+  /* ── Vocab ── */
+  .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  .vocab-card {
+    background: #fdf8f2; border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 12px; cursor: pointer; transition: all .2s; position: relative; overflow: hidden;
+  }
+  .vocab-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(150,90,50,.12); }
+  .vocab-es { font-size: 1.1rem; font-weight: 700; color: var(--accent2); }
+  .vocab-zh { font-size: .85rem; color: var(--sub); margin-top: 4px; }
+  .vocab-example { font-size: .75rem; color: #aaa; margin-top: 6px; font-style: italic; display: none; }
+  .vocab-card.flipped .vocab-example { display: block; color: var(--text); }
+
+  /* ── Quiz ── */
+  .quiz-wrap { }
+  .quiz-progress { font-size: .82rem; color: var(--sub); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .quiz-progress-track { background: var(--border); border-radius: 99px; height: 6px; flex: 1; margin-left: 10px; }
+  .quiz-progress-fill { background: var(--accent); border-radius: 99px; height: 6px; transition: width .4s; }
+  .quiz-question { font-size: 1.1rem; font-weight: 600; margin-bottom: 18px; line-height: 1.5; }
+  .quiz-tip { font-size: .82rem; color: var(--sub); margin-bottom: 10px; }
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .option-btn {
+    padding: 12px 10px; border-radius: 10px; border: 2px solid var(--border);
+    background: var(--card); cursor: pointer; font-size: .9rem; text-align: left;
+    transition: all .2s; display: flex; align-items: center; gap: 8px;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--accent); background: #fef3ea; }
+  .option-btn.correct { border-color: var(--green); background: #eafaf1; color: var(--green); }
+  .option-btn.wrong { border-color: var(--red); background: #fdf0ee; color: var(--red); }
+  .option-letter { width: 24px; height: 24px; border-radius: 50%; background: var(--border); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: .8rem; flex-shrink: 0; }
+  .correct .option-letter { background: var(--green); color: #fff; }
+  .wrong .option-letter { background: var(--red); color: #fff; }
+
+  .fill-input {
+    width: 100%; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--border);
+    font-size: 1rem; outline: none; transition: border .2s; background: var(--bg);
+    color: var(--text); margin-bottom: 12px;
+  }
+  .fill-input:focus { border-color: var(--accent); }
+  .fill-input.correct { border-color: var(--green); background: #eafaf1; }
+  .fill-input.wrong { border-color: var(--red); background: #fdf0ee; }
+
+  .quiz-feedback { padding: 12px 16px; border-radius: 10px; margin-bottom: 14px; font-weight: 600; font-size: .9rem; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: #eafaf1; color: var(--green); border: 1.5px solid var(--green); }
+  .quiz-feedback.wrong { background: #fdf0ee; color: var(--red); border: 1.5px solid var(--red); }
+
+  .btn { padding: 10px 24px; border-radius: 99px; border: none; cursor: pointer; font-weight: 700; font-size: .95rem; transition: all .2s; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #c9672a; transform: translateY(-1px); }
+  .btn-secondary { background: var(--border); color: var(--sub); }
+  .btn-secondary:hover { background: #d9c3b0; }
+
+  .quiz-result { text-align: center; padding: 30px 20px; }
+  .result-score { font-size: 3rem; font-weight: 800; color: var(--accent); }
+  .result-msg { font-size: 1.1rem; margin-top: 8px; color: var(--text); }
+  .result-stars { font-size: 2rem; margin: 12px 0; }
+
+  /* ── Dialog ── */
+  .dialog-box { background: #f0f7ff; border: 1.5px solid #b3d4f5; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+  .dialog-line { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+  .dialog-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
+  .dialog-bubble { background: #fff; border-radius: 10px; padding: 8px 12px; font-size: .9rem; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .dialog-bubble .es { font-weight: 600; color: var(--accent2); }
+  .dialog-bubble .zh { font-size: .8rem; color: var(--sub); margin-top: 2px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .main-wrap { flex-direction: column; padding: 14px 12px 40px; }
+    .sidebar { width: 100%; }
+    .options-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <a href="/-Axtrivc-.github.io/" class="back-link">← 返回博客</a>
+  <h1>🇪🇸 西班牙语学习中心</h1>
+  <p>从零基础到 B2 | 发音 · 语法 · 词汇 · 习题</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-inner" id="globalProgress" style="width:5%"></div>
+  </div>
+  <p style="font-size:.78rem;margin-top:6px;opacity:.75" id="globalProgressText">总进度 5% · 继续加油！</p>
+</div>
+
+<!-- Level Tabs -->
+<div class="level-tabs">
+  <button class="level-tab active" onclick="switchLevel('A1',this)">A1 <span class="badge">入门</span></button>
+  <button class="level-tab" onclick="switchLevel('A2',this)">A2 <span class="badge">基础</span></button>
+  <button class="level-tab" onclick="switchLevel('B1',this)">B1 <span class="badge">进阶</span></button>
+  <button class="level-tab" onclick="switchLevel('B2',this)">B2 <span class="badge">中高</span></button>
+</div>
+
+<div class="main-wrap">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="unit-list" id="unitList"></div>
+  </div>
+  <!-- Content -->
+  <div class="content-area" id="contentArea">
+    <div class="lesson-header">
+      <h2 id="lessonTitle">加载中...</h2>
+      <p id="lessonDesc"></p>
+    </div>
+    <div class="lesson-tabs">
+      <button class="lesson-tab active" onclick="switchTab('learn',this)">📖 学习</button>
+      <button class="lesson-tab" onclick="switchTab('practice',this)">🎯 练习</button>
+      <button class="lesson-tab" onclick="switchTab('quiz',this)">✏️ 测验</button>
+    </div>
+    <div id="tabContent"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// 课程数据
+// ════════════════════════════════════════════════
+const COURSES = {
+  A1: {
+    title: 'A1 · 入门级',
+    units: [
+      {
+        id: 'a1-1', name: '字母与发音', icon: '🔤', desc: '26字母·特殊发音规则',
+        done: true,
+        learn: {
+          phonetics: [
+            {letter:'A a', ipa:'/a/', example:'agua 水'},
+            {letter:'E e', ipa:'/e/', example:'elefante 大象'},
+            {letter:'I i', ipa:'/i/', example:'isla 岛'},
+            {letter:'O o', ipa:'/o/', example:'oso 熊'},
+            {letter:'U u', ipa:'/u/', example:'uva 葡萄'},
+            {letter:'Ñ ñ', ipa:'/ɲ/', example:'niño 孩子'},
+            {letter:'LL ll', ipa:'/ʎ/', example:'lluvia 雨'},
+            {letter:'RR rr', ipa:'/r/', example:'perro 狗'},
+            {letter:'J j', ipa:'/x/', example:'jardín 花园'},
+            {letter:'H h', ipa:'(silent)', example:'hola 你好'},
+          ],
+          note: '西语发音规则极为规律，字母与发音一一对应，没有英语中的"不规则发音"。元音 a/e/i/o/u 永远发同一个音！',
+          vocab: [
+            {es:'hola', zh:'你好', ex:'¡Hola! ¿Cómo estás?'},
+            {es:'adiós', zh:'再见', ex:'¡Adiós! Hasta mañana.'},
+            {es:'gracias', zh:'谢谢', ex:'Muchas gracias.'},
+            {es:'por favor', zh:'请', ex:'Un café, por favor.'},
+            {es:'sí / no', zh:'是 / 否', ex:'Sí, claro.'},
+            {es:'buenos días', zh:'早上好', ex:'¡Buenos días!'},
+          ]
+        },
+        quiz: [
+          {type:'choice', q:'字母 H 在西班牙语中如何发音？', options:['像英语 h 一样', '不发音（哑音）', '像 j 一样发音', '像中文"喝"'], answer:1, explain:'"H" 在西语中永远不发音，是哑音。'},
+          {type:'choice', q:'"Ñ" 的发音最接近中文哪个音？', options:['n（呢）', 'ny（妮）', 'ng（昂）', 'm（嗯）'], answer:1, explain:'"Ñ" 发 /ɲ/ 音，类似于中文"妮"中的声母。'},
+          {type:'fill', q:'填写：西语中元音有几个？（填数字）', answer:'5', explain:'西语有 5 个元音：a, e, i, o, u'},
+          {type:'choice', q:'"gracias" 的中文意思是？', options:['你好','再见','谢谢','请'], answer:2, explain:'"Gracias" 意为"谢谢"，是最常用的礼貌用语之一。'},
+          {type:'fill', q:'翻译成西语：再见', answer:'adiós', explain:'"再见"的西语是 adiós，注意重音符号。'},
+        ]
+      },
+      {
+        id: 'a1-2', name: '问候与自我介绍', icon: '👋', desc: '我叫...·你好·年龄·国籍',
+        done: false,
+        learn: {
+          dialogue: [
+            {avatar:'👦', es:'¡Hola! Me llamo Carlos. ¿Y tú?', zh:'你好！我叫卡洛斯。你呢？'},
+            {avatar:'👧', es:'Hola, me llamo Ana. ¿Cómo estás?', zh:'你好，我叫安娜。你好吗？'},
+            {avatar:'👦', es:'Muy bien, gracias. ¿De dónde eres?', zh:'很好，谢谢。你来自哪里？'},
+            {avatar:'👧', es:'Soy de China. ¿Y tú?', zh:'我来自中国。你呢？'},
+            {avatar:'👦', es:'Soy de España. Encantado.', zh:'我来自西班牙。很高兴认识你。'},
+          ],
+          grammar: {
+            title: '动词 "ser"（是）现在时变位',
+            rows: [
+              ['人称', '变位', '例句'],
+              ['yo (我)', 'soy', 'Yo soy estudiante.'],
+              ['tú (你)', 'eres', 'Tú eres muy amable.'],
+              ['él/ella (他/她)', 'es', 'Ella es de España.'],
+              ['nosotros (我们)', 'somos', 'Somos amigos.'],
+              ['vosotros (你们)', 'sois', 'Vosotros sois simpáticos.'],
+              ['ellos (他们)', 'son', 'Ellos son estudiantes.'],
+            ]
+          },
+          vocab: [
+            {es:'me llamo', zh:'我叫...', ex:'Me llamo Ana.'},
+            {es:'¿cómo te llamas?', zh:'你叫什么名字？', ex:'¿Cómo te llamas?'},
+            {es:'soy de', zh:'我来自...', ex:'Soy de China.'},
+            {es:'encantado/a', zh:'很高兴认识你', ex:'Encantado de conocerte.'},
+            {es:'¿cuántos años tienes?', zh:'你多大了？', ex:'¿Cuántos años tienes?'},
+            {es:'tengo ... años', zh:'我...岁', ex:'Tengo 18 años.'},
+          ]
+        },
+        quiz: [
+          {type:'choice', q:'"Me llamo" 的意思是？', options:['我来自...','我叫...','我有...','我是...'], answer:1, explain:'"Me llamo" 字面意思是"我被称为..."，等于"我叫..."。'},
+          {type:'choice', q:'"ser" 动词中，"yo"（我）对应的变位是？', options:['eres','es','soy','somos'], answer:2, explain:'"Yo soy" 是固定搭配，意思是"我是"。'},
+          {type:'fill', q:'用西语说"我来自中国"：Soy __ China.', answer:'de', explain:'"来自"用介词 "de" 表达，句子是 Soy de China。'},
+          {type:'choice', q:'如何用西语问"你来自哪里"？', options:['¿Cómo estás?','¿De dónde eres?','¿Cuántos años tienes?','¿Cómo te llamas?'], answer:1, explain:'¿De dónde eres? 意为"你来自哪里？"'},
+          {type:'fill', q:'翻译："很高兴认识你"（男性说）', answer:'encantado', explain:'男性说 encantado，女性说 encantada。'},
+        ]
+      },
+      {
+        id: 'a1-3', name: '数字与时间', icon: '🔢', desc: '0-100·星期·月份·时刻',
+        done: false,
+        learn: {
+          note: '掌握数字是日常对话的基础，也是后续学习日期、价格的必要铺垫。',
+          vocab: [
+            {es:'cero, uno, dos, tres', zh:'0, 1, 2, 3', ex:'Tengo dos hermanos.'},
+            {es:'cuatro, cinco, seis', zh:'4, 5, 6', ex:'Son las cinco.'},
+            {es:'siete, ocho, nueve, diez', zh:'7, 8, 9, 10', ex:'Diez euros, por favor.'},
+            {es:'veinte, treinta, cien', zh:'20, 30, 100', ex:'Cien alumnos.'},
+            {es:'lunes, martes, miércoles', zh:'周一, 周二, 周三', ex:'El lunes tengo clase.'},
+            {es:'jueves, viernes, sábado, domingo', zh:'周四-周日', ex:'El fin de semana.'},
+            {es:'enero, febrero, marzo...', zh:'一月, 二月, 三月...', ex:'Mi cumpleaños es en marzo.'},
+          ],
+          grammar: {
+            title: '时间表达',
+            rows: [
+              ['表达式', '例句', '意思'],
+              ['¿Qué hora es?', '¿Qué hora es?', '现在几点？'],
+              ['Son las + 数字', 'Son las tres.', '三点钟'],
+              ['Es la una', 'Es la una y media.', '一点半'],
+              ['de la mañana', 'Son las 8 de la mañana.', '上午8点'],
+              ['de la tarde', 'Son las 3 de la tarde.', '下午3点'],
+            ]
+          }
+        },
+        quiz: [
+          {type:'choice', q:'"Son las cinco" 意思是？', options:['五月','五号','五点钟','五岁'], answer:2, explain:'"Son las + 数字" 表示时刻，意为"...点钟"。'},
+          {type:'fill', q:'"星期一"用西语怎么说？', answer:'lunes', explain:'西语星期一是 lunes，注意首字母不需要大写。'},
+          {type:'choice', q:'"¿Qué hora es?" 是什么意思？', options:['今天几号','现在几点','你几岁','你叫什么'], answer:1, explain:'¿Qué hora es? 字面"什么时间是？"即"现在几点？"'},
+          {type:'choice', q:'"cien" 是多少？', options:['10','20','100','1000'], answer:2, explain:'"Cien" 是100，"diez" 是10，注意区分。'},
+          {type:'fill', q:'一月份的西语是？', answer:'enero', explain:'西语月份：enero(1月) febrero(2月) marzo(3月)...'},
+        ]
+      },
+    ]
+  },
+  A2: {
+    title: 'A2 · 基础级',
+    units: [
+      {
+        id: 'a2-1', name: '日常活动', icon: '☀️', desc: '现在时·规则动词',
+        done: false,
+        learn: {
+          grammar: {
+            title: '-ar 动词现在时（以 hablar 说话 为例）',
+            rows: [
+              ['人称', '词尾变化', '例句'],
+              ['yo', '-o → hablo', 'Yo hablo español.'],
+              ['tú', '-as → hablas', '¿Hablas inglés?'],
+              ['él/ella', '-a → habla', 'Ella habla muy bien.'],
+              ['nosotros', '-amos → hablamos', 'Hablamos cada día.'],
+              ['vosotros', '-áis → habláis', '¿Habláis chino?'],
+              ['ellos', '-an → hablan', 'Ellos hablan rápido.'],
+            ]
+          },
+          vocab: [
+            {es:'hablar', zh:'说话', ex:'Hablo español todos los días.'},
+            {es:'comer', zh:'吃饭', ex:'¿A qué hora comes?'},
+            {es:'vivir', zh:'住', ex:'Vivo en Shanghái.'},
+            {es:'trabajar', zh:'工作', ex:'Trabajo en una empresa.'},
+            {es:'estudiar', zh:'学习', ex:'Estudio español.'},
+            {es:'escuchar música', zh:'听音乐', ex:'Me gusta escuchar música.'},
+          ],
+          note: '西语动词有三种：-ar、-er、-ir 结尾。A2阶段主要掌握规则变位。'
+        },
+        quiz: [
+          {type:'choice', q:'"Yo hablar" 变位后应该是？', options:['yo hablo','yo habla','yo hablas','yo hablamos'], answer:0, explain:'yo 对应的 -ar 动词词尾变化为 -o。'},
+          {type:'fill', q:'填写：Ella ___ (vivir) en Madrid.', answer:'vive', explain:'-ir 动词中 ella 的变位词尾是 -e，所以是 vive。'},
+          {type:'choice', q:'"Estudio" 是哪个动词的变位？', options:['estar','estudiar','escuchar','escribir'], answer:1, explain:'"Estudio" 是动词 estudiar（学习）的 yo 变位形式。'},
+          {type:'choice', q:'"trabajar" 的意思是？', options:['旅行','工作','学习','居住'], answer:1, explain:'"trabajar" 意为"工作"，"trabajo" 也可以作名词"工作"使用。'},
+          {type:'fill', q:'翻译："你们说中文吗？" Vosotros ___ chino?', answer:'habláis', explain:'vosotros 的 -ar 变位词尾是 -áis，注意重音符号。'},
+        ]
+      },
+      {
+        id: 'a2-2', name: '购物与价格', icon: '🛍️', desc: '购物对话·形容词·颜色',
+        done: false,
+        learn: {
+          dialogue: [
+            {avatar:'🧑', es:'Buenos días. ¿En qué puedo ayudarle?', zh:'早上好。我能帮您吗？'},
+            {avatar:'👩', es:'Hola. ¿Cuánto cuesta esta camisa?', zh:'你好。这件衬衫多少钱？'},
+            {avatar:'🧑', es:'Cuesta veinte euros. ¿Le gusta?', zh:'20欧元。您喜欢吗？'},
+            {avatar:'👩', es:'Sí, me gusta. ¿Tiene en azul?', zh:'是的，我喜欢。有蓝色的吗？'},
+            {avatar:'🧑', es:'Sí, aquí tiene. ¿Va a pagar en efectivo?', zh:'有，给您。您用现金支付吗？'},
+          ],
+          vocab: [
+            {es:'¿cuánto cuesta?', zh:'多少钱？', ex:'¿Cuánto cuesta este libro?'},
+            {es:'rojo/azul/verde', zh:'红/蓝/绿', ex:'Quiero la camiseta azul.'},
+            {es:'grande / pequeño', zh:'大/小', ex:'¿Tiene en talla grande?'},
+            {es:'caro / barato', zh:'贵/便宜', ex:'Es muy caro.'},
+            {es:'me lo llevo', zh:'我要买了', ex:'Me lo llevo.'},
+            {es:'¿acepta tarjeta?', zh:'接受刷卡吗？', ex:'¿Acepta tarjeta de crédito?'},
+          ],
+          grammar: {
+            title: '形容词性别数变化',
+            rows: [
+              ['', '阳性单数', '阴性单数', '复数'],
+              ['颜色', 'rojo', 'roja', 'rojos/rojas'],
+              ['大小', 'grande', 'grande', 'grandes'],
+              ['冷热', 'frío', 'fría', 'fríos/frías'],
+            ]
+          }
+        },
+        quiz: [
+          {type:'choice', q:'"¿Cuánto cuesta?" 意思是？', options:['你好吗','多少钱','在哪里','你叫什么'], answer:1, explain:'"¿Cuánto cuesta?" 是询问价格的固定句型，意为"多少钱？"'},
+          {type:'fill', q:'"蓝色"的西语（阴性）是？', answer:'azul', explain:'"azul" 是不变颜色形容词，阴阳性相同，复数加 -es 变为 azules。'},
+          {type:'choice', q:'形容词 "rojo" 的阴性单数是？', options:['rojoa','roja','rojas','roje'], answer:1, explain:'-o 结尾的形容词，阴性变为 -a。'},
+          {type:'choice', q:'"barato" 的反义词是？', options:['grande','nuevo','caro','bonito'], answer:2, explain:'"caro" 意为"贵"，是 "barato"（便宜）的反义词。'},
+          {type:'fill', q:'翻译："我要买了"', answer:'me lo llevo', explain:'"me lo llevo" 是购物时常用表达，字面意思是"我把它带走"。'},
+        ]
+      }
+    ]
+  },
+  B1: {
+    title: 'B1 · 进阶级',
+    units: [
+      {
+        id: 'b1-1', name: '过去时态', icon: '🕰️', desc: '不定过去时·规则与不规则',
+        done: false,
+        learn: {
+          grammar: {
+            title: '不定过去时（Pretérito Indefinido）变位 — hablar',
+            rows: [
+              ['人称', 'hablar (说话)', 'comer (吃)', 'vivir (住)'],
+              ['yo', 'hablé', 'comí', 'viví'],
+              ['tú', 'hablaste', 'comiste', 'viviste'],
+              ['él/ella', 'habló', 'comió', 'vivió'],
+              ['nosotros', 'hablamos', 'comimos', 'vivimos'],
+              ['ellos', 'hablaron', 'comieron', 'vivieron'],
+            ]
+          },
+          note: '不定过去时用于描述过去已经完成的动作，有明确的时间点或次数。常与 ayer(昨天)、la semana pasada(上周)、hace... años(...年前) 搭配。',
+          vocab: [
+            {es:'ayer', zh:'昨天', ex:'Ayer comí paella.'},
+            {es:'la semana pasada', zh:'上周', ex:'La semana pasada viajé a Madrid.'},
+            {es:'hace + tiempo', zh:'...前', ex:'Hace dos años empecé a estudiar español.'},
+            {es:'ir - fue', zh:'不规则：去', ex:'Fui al cine ayer.'},
+            {es:'ser - fue', zh:'不规则：是', ex:'Fue un día perfecto.'},
+            {es:'hacer - hizo', zh:'不规则：做', ex:'¿Qué hiciste el fin de semana?'},
+          ]
+        },
+        quiz: [
+          {type:'choice', q:'"Yo hablar" 的不定过去时（yo）是？', options:['hablé','hablaba','hablo','hablaré'], answer:0, explain:'"yo" 的不定过去时词尾是 -é，所以是 hablé。'},
+          {type:'fill', q:'"ir"（去）的不定过去时 yo 形式是？', answer:'fui', explain:'"ir" 是不规则动词，过去时是 fui/fuiste/fue/fuimos/fueron。'},
+          {type:'choice', q:'"Ayer" 是什么意思？', options:['今天','明天','昨天','上周'], answer:2, explain:'"Ayer" 意为"昨天"，常与不定过去时搭配。'},
+          {type:'choice', q:'哪个时间状语最适合搭配不定过去时？', options:['todos los días','siempre','ayer','normalmente'], answer:2, explain:'不定过去时表示过去某时刻完成的动作，与"ayer（昨天）"等具体时间搭配最合适。'},
+          {type:'fill', q:'填写：Ella ___ (comer) pizza ayer.', answer:'comió', explain:'ella 的不定过去时 -er 词尾是 -ió，所以是 comió。'},
+        ]
+      },
+      {
+        id: 'b1-2', name: '假设与条件', icon: '💭', desc: '虚拟式·条件句',
+        done: false,
+        learn: {
+          grammar: {
+            title: '条件式（Condicional）变位',
+            rows: [
+              ['人称', 'hablar', '意思'],
+              ['yo', 'hablaría', '我会说'],
+              ['tú', 'hablarías', '你会说'],
+              ['él/ella', 'hablaría', '他/她会说'],
+              ['nosotros', 'hablaríamos', '我们会说'],
+              ['ellos', 'hablarían', '他们会说'],
+            ]
+          },
+          note: '条件式相当于英语的"would + 动词"，表示假设情况下"会..."。常与 "Si + 过去时" 构成条件句。',
+          vocab: [
+            {es:'si tuviera dinero...', zh:'如果我有钱...', ex:'Si tuviera dinero, viajaría por el mundo.'},
+            {es:'me gustaría', zh:'我想要/我愿意', ex:'Me gustaría aprender chino.'},
+            {es:'quisiera', zh:'我想（礼貌）', ex:'Quisiera un café, por favor.'},
+            {es:'podría', zh:'能/可以（假设）', ex:'¿Podrías ayudarme?'},
+          ]
+        },
+        quiz: [
+          {type:'choice', q:'"hablaría" 是什么时态？', options:['过去时','将来时','条件式','虚拟式'], answer:2, explain:'"hablaría" 是条件式，相当于英语 "would speak"。'},
+          {type:'fill', q:'"me gustaría" 的意思是？（中文）', answer:'我想要', explain:'"me gustaría" 是 "me gusta" 的礼貌/假设形式，意为"我想要/我愿意"。'},
+          {type:'choice', q:'"Si tuviera dinero, ___" 下一句最合适的是？', options:['compro un coche','compraría un coche','compré un coche','voy a comprar'], answer:1, explain:'Si + 过去虚拟时，后半句用条件式：compraría。'},
+        ]
+      }
+    ]
+  },
+  B2: {
+    title: 'B2 · 中高级',
+    units: [
+      {
+        id: 'b2-1', name: '抽象表达与观点', icon: '🎭', desc: '虚拟式·主观判断·辩论表达',
+        done: false,
+        learn: {
+          grammar: {
+            title: '虚拟式（Subjuntivo）常见句型',
+            rows: [
+              ['句型结构', '例句', '说明'],
+              ['Espero que + subj.', 'Espero que vengas.', '希望你来（不确定）'],
+              ['Es importante que + subj.', 'Es importante que estudies.', '学习很重要'],
+              ['No creo que + subj.', 'No creo que sea verdad.', '我不认为那是真的'],
+              ['Aunque + subj.', 'Aunque llueva, iré.', '即使下雨，我也去'],
+              ['Para que + subj.', 'Te lo digo para que lo sepas.', '我告诉你是为了让你知道'],
+            ]
+          },
+          vocab: [
+            {es:'desde mi punto de vista', zh:'从我的角度来看', ex:'Desde mi punto de vista, es incorrecto.'},
+            {es:'sin embargo', zh:'然而/但是', ex:'Es difícil; sin embargo, posible.'},
+            {es:'a pesar de que', zh:'尽管', ex:'A pesar de que llueve, salgo.'},
+            {es:'cabe destacar', zh:'值得强调的是', ex:'Cabe destacar que el resultado fue positivo.'},
+            {es:'en definitiva', zh:'总而言之', ex:'En definitiva, fue un éxito.'},
+          ],
+          note: '虚拟式（Subjuntivo）是西语最难的语法点之一，在B2级别需要熟练运用。它主要用于表达主观看法、愿望、情感、怀疑和条件假设。'
+        },
+        quiz: [
+          {type:'choice', q:'"Espero que ___" 后面应用什么形式？', options:['不定式','虚拟式现在时','直陈式','将来时'], answer:1, explain:'"esperar que" 后面需要跟虚拟式，因为表达的是愿望/期望，有主观不确定性。'},
+          {type:'fill', q:'"总而言之"的西语表达是？', answer:'en definitiva', explain:'"en definitiva" 是书面/正式语体中常用的总结性连接词。'},
+          {type:'choice', q:'"sin embargo" 的意思是？', options:['因此','然而','所以','例如'], answer:1, explain:'"sin embargo" 意为"然而/但是"，是转折连词，类似英语 however。'},
+          {type:'choice', q:'下列哪句话使用了虚拟式？', options:['Ella habla bien.','Creo que es verdad.','No creo que sea verdad.','Ayer fui al cine.'], answer:2, explain:'"No creo que + sea"，否定 creer 后跟虚拟式动词 sea（ser 的虚拟式）。'},
+          {type:'fill', q:'"尽管"（让步）的西语连词是？', answer:'a pesar de que', explain:'"a pesar de que" 是让步连词，意为"尽管/虽然"，后接直陈式或虚拟式。'},
+        ]
+      }
+    ]
+  }
+};
+
+// ════════════════════════════════════════════════
+// 状态
+// ════════════════════════════════════════════════
+let currentLevel = 'A1';
+let currentUnitIdx = 0;
+let currentTab = 'learn';
+let quizState = {};
+
+function getUnit() {
+  return COURSES[currentLevel].units[currentUnitIdx];
+}
+
+// ════════════════════════════════════════════════
+// 界面更新
+// ════════════════════════════════════════════════
+function switchLevel(level, btn) {
+  currentLevel = level;
+  currentUnitIdx = 0;
+  currentTab = 'learn';
+  document.querySelectorAll('.level-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSidebar();
+  renderContent();
+}
+
+function switchUnit(idx) {
+  currentUnitIdx = idx;
+  currentTab = 'learn';
+  renderSidebar();
+  renderContent();
+}
+
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.lesson-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTabContent();
+}
+
+function renderSidebar() {
+  const units = COURSES[currentLevel].units;
+  document.getElementById('unitList').innerHTML = units.map((u, i) => `
+    <div class="unit-item ${i === currentUnitIdx ? 'active' : ''} ${u.done ? 'unit-done' : 'unit-unlocked'}" onclick="switchUnit(${i})">
+      <div class="unit-icon">${u.icon}</div>
+      <div class="unit-text">
+        <div class="unit-name">${u.name}</div>
+        <div class="unit-desc">${u.desc}</div>
+      </div>
+      ${u.done ? '<div class="unit-stars">⭐⭐⭐</div>' : ''}
+    </div>
+  `).join('');
+}
+
+function renderContent() {
+  const unit = getUnit();
+  document.getElementById('lessonTitle').textContent = unit.icon + ' ' + unit.name;
+  document.getElementById('lessonDesc').textContent = unit.desc;
+
+  // Reset lesson tabs
+  document.querySelectorAll('.lesson-tab').forEach((b, i) => {
+    b.classList.toggle('active', ['learn','practice','quiz'][i] === currentTab);
+  });
+  renderTabContent();
+}
+
+function renderTabContent() {
+  const unit = getUnit();
+  const area = document.getElementById('tabContent');
+  if (currentTab === 'learn') {
+    area.innerHTML = renderLearn(unit.learn);
+  } else if (currentTab === 'practice') {
+    area.innerHTML = renderPractice(unit);
+  } else {
+    renderQuiz(unit.quiz);
+  }
+}
+
+// ── Learn ──
+function renderLearn(learn) {
+  if (!learn) return '<div class="section"><p style="color:#aaa">课程内容即将上线</p></div>';
+  let html = '';
+
+  if (learn.phonetics) {
+    html += `<div class="section">
+      <h3>🔤 字母与发音 <span class="tag">点击听</span></h3>
+      <p style="font-size:.82rem;color:var(--sub);margin-bottom:12px">${learn.note || ''}</p>
+      <div class="phoneme-grid">
+        ${learn.phonetics.map(p => `
+          <div class="phoneme-card" onclick="speakText('${p.example.split(' ')[0]}')">
+            <div class="phoneme-letter">${p.letter}</div>
+            <div class="phoneme-ipa">${p.ipa}</div>
+            <div class="phoneme-example">${p.example}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  if (learn.dialogue) {
+    html += `<div class="section">
+      <h3>💬 情境对话</h3>
+      <div class="dialog-box">
+        ${learn.dialogue.map(d => `
+          <div class="dialog-line">
+            <div class="dialog-avatar">${d.avatar}</div>
+            <div class="dialog-bubble">
+              <div class="es">${d.es}</div>
+              <div class="zh">${d.zh}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  if (learn.grammar) {
+    const [header, ...rows] = learn.grammar.rows;
+    html += `<div class="section">
+      <h3>📐 语法要点 <span class="tag">${learn.grammar.title}</span></h3>
+      <table class="grammar-table">
+        <thead><tr>${header.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+        <tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td${i===1?` class="highlight-word"`:''}">${c}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>
+      ${learn.note ? `<p style="margin-top:12px;font-size:.82rem;color:var(--sub);line-height:1.6">${learn.note}</p>` : ''}
+    </div>`;
+  }
+
+  if (learn.vocab) {
+    html += `<div class="section">
+      <h3>📚 词汇 <span class="tag">点击查看例句</span></h3>
+      <div class="vocab-grid">
+        ${learn.vocab.map(v => `
+          <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+            <div class="vocab-es">${v.es}</div>
+            <div class="vocab-zh">${v.zh}</div>
+            <div class="vocab-example">${v.ex}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  return html || '<div class="section"><p>暂无内容</p></div>';
+}
+
+// ── Practice ──
+function renderPractice(unit) {
+  const dialogues = [
+    {q: '听发音，选择正确的字母', note: '练习模式：点击词汇卡片，反复记忆单词'},
+  ];
+  let html = `<div class="section">
+    <h3>🔁 闪卡复习 <span class="tag">点击翻转</span></h3>
+    <p style="font-size:.82rem;color:var(--sub);margin-bottom:14px">点击卡片查看例句，熟悉了就勾掉它</p>
+    <div class="vocab-grid">`;
+  if (unit.learn && unit.learn.vocab) {
+    html += unit.learn.vocab.map(v => `
+      <div class="vocab-card" onclick="this.classList.toggle('flipped');speakText('${v.es.split(' ')[0]}')">
+        <div class="vocab-es">${v.es}</div>
+        <div class="vocab-zh">${v.zh}</div>
+        <div class="vocab-example">📢 ${v.ex}</div>
+      </div>`).join('');
+  }
+  html += `</div></div>`;
+  if (unit.learn && unit.learn.dialogue) {
+    html += `<div class="section">
+      <h3>🎭 对话复习</h3>
+      <div class="dialog-box">
+        ${unit.learn.dialogue.map(d => `
+          <div class="dialog-line">
+            <div class="dialog-avatar" onclick="speakText('${d.es.replace(/'/g,'')}')" style="cursor:pointer" title="点击朗读">${d.avatar}🔊</div>
+            <div class="dialog-bubble">
+              <div class="es">${d.es}</div>
+              <div class="zh">${d.zh}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }
+  return html;
+}
+
+// ── Quiz ──
+function renderQuiz(questions) {
+  if (!questions || !questions.length) {
+    document.getElementById('tabContent').innerHTML = '<div class="section"><p>本课暂无测验</p></div>';
+    return;
+  }
+  quizState = { questions, current: 0, score: 0, answered: false };
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const { questions, current } = quizState;
+  if (current >= questions.length) {
+    renderQuizResult();
+    return;
+  }
+  const q = questions[current];
+  const pct = (current / questions.length * 100).toFixed(0);
+
+  let optionsHTML = '';
+  if (q.type === 'choice') {
+    const letters = ['A', 'B', 'C', 'D'];
+    optionsHTML = `<div class="options-grid">${q.options.map((o, i) => `
+      <button class="option-btn" id="opt-${i}" onclick="answerChoice(${i})">
+        <span class="option-letter">${letters[i]}</span> ${o}
+      </button>`).join('')}</div>`;
+  } else {
+    optionsHTML = `<input class="fill-input" id="fillInput" placeholder="在此输入答案..." onkeydown="if(event.key==='Enter') answerFill()">
+      <button class="btn btn-primary" onclick="answerFill()">确认</button>`;
+  }
+
+  document.getElementById('tabContent').innerHTML = `
+    <div class="section quiz-wrap">
+      <div class="quiz-progress">
+        <span>第 ${current + 1} / ${questions.length} 题</span>
+        <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="quiz-question">${q.q}</div>
+      ${q.type === 'fill' ? '<p class="quiz-tip">提示：直接输入正确答案</p>' : ''}
+      ${optionsHTML}
+      <div class="quiz-feedback" id="quizFeedback"></div>
+      <div id="nextBtnWrap"></div>
+    </div>`;
+}
+
+function answerChoice(idx) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const q = quizState.questions[quizState.current];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[q.answer].classList.add('correct');
+  const fb = document.getElementById('quizFeedback');
+  if (idx === q.answer) {
+    quizState.score++;
+    fb.textContent = '✅ 正确！' + q.explain;
+    fb.className = 'quiz-feedback show correct';
+  } else {
+    btns[idx].classList.add('wrong');
+    fb.textContent = '❌ 答错了。' + q.explain;
+    fb.className = 'quiz-feedback show wrong';
+  }
+  showNextBtn();
+}
+
+function answerFill() {
+  if (quizState.answered) return;
+  const input = document.getElementById('fillInput');
+  if (!input) return;
+  const val = input.value.trim().toLowerCase();
+  quizState.answered = true;
+  input.disabled = true;
+  const q = quizState.questions[quizState.current];
+  const correct = q.answer.toLowerCase();
+  const fb = document.getElementById('quizFeedback');
+  if (val === correct || val.replace(/[áéíóú]/g, c => ({á:'a',é:'e',í:'i',ó:'o',ú:'u'}[c])) === correct.replace(/[áéíóú]/g, c => ({á:'a',é:'e',í:'i',ó:'o',ú:'u'}[c]))) {
+    quizState.score++;
+    input.classList.add('correct');
+    fb.textContent = '✅ 正确！' + q.explain;
+    fb.className = 'quiz-feedback show correct';
+  } else {
+    input.classList.add('wrong');
+    fb.textContent = `❌ 答案是：${q.answer}。${q.explain}`;
+    fb.className = 'quiz-feedback show wrong';
+  }
+  showNextBtn();
+}
+
+function showNextBtn() {
+  const wrap = document.getElementById('nextBtnWrap');
+  const isLast = quizState.current >= quizState.questions.length - 1;
+  wrap.innerHTML = `<button class="btn btn-primary" style="margin-top:10px" onclick="nextQuestion()">${isLast ? '查看结果 🏆' : '下一题 →'}</button>`;
+}
+
+function nextQuestion() {
+  quizState.current++;
+  quizState.answered = false;
+  renderQuizQuestion();
+}
+
+function renderQuizResult() {
+  const { score, questions } = quizState;
+  const pct = Math.round(score / questions.length * 100);
+  const stars = pct >= 80 ? '⭐⭐⭐' : pct >= 60 ? '⭐⭐' : '⭐';
+  const msg = pct >= 80 ? '优秀！掌握得很好！' : pct >= 60 ? '不错！继续加油！' : '还需多练习，再来一次吧！';
+  if (pct >= 80) {
+    getUnit().done = true;
+    renderSidebar();
+  }
+  document.getElementById('tabContent').innerHTML = `
+    <div class="section">
+      <div class="quiz-result">
+        <div class="result-score">${score}/${questions.length}</div>
+        <div class="result-stars">${stars}</div>
+        <div class="result-msg">${msg}（正确率 ${pct}%）</div>
+        <div style="margin-top:20px;display:flex;gap:10px;justify-content:center">
+          <button class="btn btn-primary" onclick="renderQuiz(quizState.questions)">🔁 重新测验</button>
+          <button class="btn btn-secondary" onclick="switchTab('learn', document.querySelectorAll('.lesson-tab')[0])">📖 回顾学习</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── TTS ──
+function speakText(text) {
+  if ('speechSynthesis' in window) {
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'es-ES';
+    utt.rate = 0.9;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utt);
+  }
+}
+
+// ── Init ──
+renderSidebar();
+renderContent();
+</script>
+</body>
+</html>
