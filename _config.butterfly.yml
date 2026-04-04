@@ -1,0 +1,226 @@
+# --------------------------------------
+# Hexo Butterfly Theme Configuration
+# --------------------------------------
+
+# Navigation
+nav:
+  logo:
+  display_title: true
+  display_post_title: true
+  fixed: false
+
+menu:
+  Home: / || fas fa-home
+  Archives: /archives/ || fas fa-archive
+  Tags: /tags/ || fas fa-tags
+  Categories: /categories/ || fas fa-folder-open
+  西班牙语: /espanol/ || fas fa-language
+  足球日报: /football/ || fas fa-futbol
+
+# Code Blocks
+code_blocks:
+  theme: light
+  macStyle: false
+  height_limit: false
+  word_wrap: false
+  copy: true
+  language: true
+  shrink: false
+  fullpage: false
+
+# Social media links
+social:
+
+# Image Settings
+favicon:
+
+avatar:
+  img:
+  effect: false
+
+disable_top_img: false
+default_top_img:
+index_img:
+
+# Website Background - warm beige tone
+background: '#f5f0e8'
+
+cover:
+  index_enable: true
+  aside_enable: true
+  archives_enable: true
+  default_cover:
+
+error_img:
+  flink: /img/friend_404.gif
+  post_page: /img/404.jpg
+
+error_404:
+  enable: false
+  subtitle: 'Page Not Found'
+  background: /img/error-page.png
+
+post_meta:
+  page:
+    date_type: created
+    date_format: date
+    categories: true
+    tags: false
+    label: true
+  post:
+    position: left
+    date_type: both
+    date_format: date
+    categories: true
+    tags: true
+    label: true
+
+# Index page settings
+index_site_info_top:
+index_top_img_height:
+
+# Subtitle with typewriter effect
+subtitle:
+  enable: true
+  effect: true
+  source: 1
+  sub:
+    - '生活不止眼前的代码'
+    - '还有远方的诗和球场'
+    - '记录每一个灵光乍现的瞬间'
+
+# Article layout - masonry style (6)
+index_layout: 6
+
+index_post_content:
+  method: 3
+  length: 500
+
+# Post Settings
+toc:
+  post: true
+  page: false
+  number: true
+  expand: false
+  style_simple: false
+  scroll_percent: true
+
+post_copyright:
+  enable: true
+  decode: false
+  author_href:
+  license: CC BY-NC-SA 4.0
+  license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+reward:
+  enable: false
+
+post_edit:
+  enable: false
+
+related_post:
+  enable: true
+  limit: 6
+  date_type: created
+
+post_pagination: 1
+
+noticeOutdate:
+  enable: false
+
+# Footer Settings
+footer:
+  nav:
+  owner:
+    enable: true
+    since: 2026
+  copyright:
+    enable: true
+    version: true
+  custom_text:
+
+# Aside Settings
+aside:
+  enable: true
+  hide: false
+  button: true
+  mobile: true
+  position: right
+
+# -------------------------------------------------------
+# Butterfly theme color scheme - warm literary style
+# -------------------------------------------------------
+theme_color:
+  enable: true
+  main: '#8B6F47'
+  paginator: '#A0845C'
+  button_hover: '#C4A96A'
+  text_selection: '#E8D5B5'
+
+# -------------------------------------------------------
+# Local Search
+# -------------------------------------------------------
+local_search:
+  enable: true
+  preload: false
+  CDN:
+
+# -------------------------------------------------------
+# Footer special effects
+# -------------------------------------------------------
+footer_bg: false
+
+# -------------------------------------------------------
+# Tag & Category settings
+# -------------------------------------------------------
+tagcloud:
+  enable: true
+  max_result: 20
+
+# -------------------------------------------------------
+# Article meta display
+# -------------------------------------------------------
+auto_excerpt:
+  enable: false
+  length: 150
+
+# Read mode
+readmode: true
+
+# -------------------------------------------------------
+# CDN settings
+# -------------------------------------------------------
+CDN:
+  css:
+  js:
+  images:
+  image:
+  cdnjs:
+  combine: false
+
+# -------------------------------------------------------
+# Lazyload
+# -------------------------------------------------------
+lazyload:
+  enable: true
+  field: site
+  blur: false
+  opacity: false
+  placeholder:
+
+# -------------------------------------------------------
+# Pagination
+# -------------------------------------------------------
+pagination:
+  style: normal
+  show_info: true
+  subject: ''
+  separator: '|'
+
+# -------------------------------------------------------
+# Inject custom CSS/HTML for literary style
+# -------------------------------------------------------
+inject:
+  head:
+    - <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=LXGW+WenKai+Screen&display=swap" rel="stylesheet">
+  bottom:

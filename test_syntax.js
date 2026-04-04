@@ -1,0 +1,681 @@
+﻿
+// ════════════════════════════════════════════════
+// 课程数据
+// ════════════════════════════════════════════════
+const COURSES = {
+  A1: {
+    title: 'A1 · 入门级',
+    units: [
+      {
+        id: 'a1-1', name: '字母与发音', icon: '🔤', desc: '26字母·特殊发音规则',
+        done: true,
+        learn: {
+          phonetics: [
+            {letter:'A a', ipa:'/a/', example:'agua 水'},
+            {letter:'E e', ipa:'/e/', example:'elefante 大象'},
+            {letter:'I i', ipa:'/i/', example:'isla 岛'},
+            {letter:'O o', ipa:'/o/', example:'oso 熊'},
+            {letter:'U u', ipa:'/u/', example:'uva 葡萄'},
+            {letter:'Ñ ñ', ipa:'/ɲ/', example:'niño 孩子'},
+            {letter:'LL ll', ipa:'/ʎ/', example:'lluvia 雨'},
+            {letter:'RR rr', ipa:'/r/', example:'perro 狗'},
+            {letter:'J j', ipa:'/x/', example:'jardín 花园'},
+            {letter:'H h', ipa:'(silent)', example:'hola 你好'},
+          ],
+          note: '西语发音规则极为规律，字母与发音一一对应，没有英语中的"不规则发音"。元音 a/e/i/o/u 永远发同一个音！',
+          vocab: [
+            {es:'hola', zh:'你好', ex:'¡Hola! ¿Cómo estás?'},
+            {es:'adiós', zh:'再见', ex:'¡Adiós! Hasta mañana.'},
+            {es:'gracias', zh:'谢谢', ex:'Muchas gracias.'},
+            {es:'por favor', zh:'请', ex:'Un café, por favor.'},
+            {es:'sí / no', zh:'是 / 否', ex:'Sí, claro.'},
+            {es:'buenos días', zh:'早上好', ex:'¡Buenos días!'},
+          ]
+        },
+        quiz: [
+          {type:'choice', q:'字母 H 在西班牙语中如何发音？', options:['像英语 h 一样', '不发音（哑音）', '像 j 一样发音', '像中文"喝"'], answer:1, explain:'"H" 在西语中永远不发音，是哑音。'},
+          {type:'choice', q:'"Ñ" 的发音最接近中文哪个音？', options:['n（呢）', 'ny（妮）', 'ng（昂）', 'm（嗯）'], answer:1, explain:'"Ñ" 发 /ɲ/ 音，类似于中文"妮"中的声母。'},
+          {type:'fill', q:'填写：西语中元音有几个？（填数字）', answer:'5', explain:'西语有 5 个元音：a, e, i, o, u'},
+          {type:'choice', q:'"gracias" 的中文意思是？', options:['你好','再见','谢谢','请'], answer:2, explain:'"Gracias" 意为"谢谢"，是最常用的礼貌用语之一。'},
+          {type:'fill', q:'翻译成西语：再见', answer:'adiós', explain:'"再见"的西语是 adiós，注意重音符号。'},
+        ]
+      },
+      {
+        id: 'a1-2', name: '问候与自我介绍', icon: '👋', desc: '我叫...·你好·年龄·国籍',
+        done: false,
+        learn: {
+          dialogue: [
+            {avatar:'👦', es:'¡Hola! Me llamo Carlos. ¿Y tú?', zh:'你好！我叫卡洛斯。你呢？'},
+            {avatar:'👧', es:'Hola, me llamo Ana. ¿Cómo estás?', zh:'你好，我叫安娜。你好吗？'},
+            {avatar:'👦', es:'Muy bien, gracias. ¿De dónde eres?', zh:'很好，谢谢。你来自哪里？'},
+            {avatar:'👧', es:'Soy de China. ¿Y tú?', zh:'我来自中国。你呢？'},
+            {avatar:'👦', es:'Soy de España. Encantado.', zh:'我来自西班牙。很高兴认识你。'},
+          ],
+          grammar: {
+            title: '动词 "ser"（是）现在时变位',
+            rows: [
+              ['人称', '变位', '例句'],
+              ['yo (我)', 'soy', 'Yo soy estudiante.'],
+              ['tú (你)', 'eres', 'Tú eres muy amable.'],
+              ['él/ella (他/她)', 'es', 'Ella es de España.'],
+              ['nosotros (我们)', 'somos', 'Somos amigos.'],
+              ['vosotros (你们)', 'sois', 'Vosotros sois simpáticos.'],
+              ['ellos (他们)', 'son', 'Ellos son estudiantes.'],
+            ]
+          },
+          vocab: [
+            {es:'me llamo', zh:'我叫...', ex:'Me llamo Ana.'},
+            {es:'¿cómo te llamas?', zh:'你叫什么名字？', ex:'¿Cómo te llamas?'},
+            {es:'soy de', zh:'我来自...', ex:'Soy de China.'},
+            {es:'encantado/a', zh:'很高兴认识你', ex:'Encantado de conocerte.'},
+            {es:'¿cuántos años tienes?', zh:'你多大了？', ex:'¿Cuántos años tienes?'},
+            {es:'tengo ... años', zh:'我...岁', ex:'Tengo 18 años.'},
+          ]
+        },
+        quiz: [
+          {type:'choice', q:'"Me llamo" 的意思是？', options:['我来自...','我叫...','我有...','我是...'], answer:1, explain:'"Me llamo" 字面意思是"我被称为..."，等于"我叫..."。'},
+          {type:'choice', q:'"ser" 动词中，"yo"（我）对应的变位是？', options:['eres','es','soy','somos'], answer:2, explain:'"Yo soy" 是固定搭配，意思是"我是"。'},
+          {type:'fill', q:'用西语说"我来自中国"：Soy __ China.', answer:'de', explain:'"来自"用介词 "de" 表达，句子是 Soy de China。'},
+          {type:'choice', q:'如何用西语问"你来自哪里"？', options:['¿Cómo estás?','¿De dónde eres?','¿Cuántos años tienes?','¿Cómo te llamas?'], answer:1, explain:'¿De dónde eres? 意为"你来自哪里？"'},
+          {type:'fill', q:'翻译："很高兴认识你"（男性说）', answer:'encantado', explain:'男性说 encantado，女性说 encantada。'},
+        ]
+      },
+      {
+        id: 'a1-3', name: '数字与时间', icon: '🔢', desc: '0-100·星期·月份·时刻',
+        done: false,
+        learn: {
+          note: '掌握数字是日常对话的基础，也是后续学习日期、价格的必要铺垫。',
+          vocab: [
+            {es:'cero, uno, dos, tres', zh:'0, 1, 2, 3', ex:'Tengo dos hermanos.'},
+            {es:'cuatro, cinco, seis', zh:'4, 5, 6', ex:'Son las cinco.'},
+            {es:'siete, ocho, nueve, diez', zh:'7, 8, 9, 10', ex:'Diez euros, por favor.'},
+            {es:'veinte, treinta, cien', zh:'20, 30, 100', ex:'Cien alumnos.'},
+            {es:'lunes, martes, miércoles', zh:'周一, 周二, 周三', ex:'El lunes tengo clase.'},
+            {es:'jueves, viernes, sábado, domingo', zh:'周四-周日', ex:'El fin de semana.'},
+            {es:'enero, febrero, marzo...', zh:'一月, 二月, 三月...', ex:'Mi cumpleaños es en marzo.'},
+          ],
+          grammar: {
+            title: '时间表达',
+            rows: [
+              ['表达式', '例句', '意思'],
+              ['¿Qué hora es?', '¿Qué hora es?', '现在几点？'],
+              ['Son las + 数字', 'Son las tres.', '三点钟'],
+              ['Es la una', 'Es la una y media.', '一点半'],
+              ['de la mañana', 'Son las 8 de la mañana.', '上午8点'],
+              ['de la tarde', 'Son las 3 de la tarde.', '下午3点'],
+            ]
+          }
+        },
+        quiz: [
+          {type:'choice', q:'"Son las cinco" 意思是？', options:['五月','五号','五点钟','五岁'], answer:2, explain:'"Son las + 数字" 表示时刻，意为"...点钟"。'},
+          {type:'fill', q:'"星期一"用西语怎么说？', answer:'lunes', explain:'西语星期一是 lunes，注意首字母不需要大写。'},
+          {type:'choice', q:'"¿Qué hora es?" 是什么意思？', options:['今天几号','现在几点','你几岁','你叫什么'], answer:1, explain:'¿Qué hora es? 字面"什么时间是？"即"现在几点？"'},
+          {type:'choice', q:'"cien" 是多少？', options:['10','20','100','1000'], answer:2, explain:'"Cien" 是100，"diez" 是10，注意区分。'},
+          {type:'fill', q:'一月份的西语是？', answer:'enero', explain:'西语月份：enero(1月) febrero(2月) marzo(3月)...'},
+        ]
+      },
+    ]
+  },
+  A2: {
+    title: 'A2 · 基础级',
+    units: [
+      {
+        id: 'a2-1', name: '日常活动', icon: '☀️', desc: '现在时·规则动词',
+        done: false,
+        learn: {
+          grammar: {
+            title: '-ar 动词现在时（以 hablar 说话 为例）',
+            rows: [
+              ['人称', '词尾变化', '例句'],
+              ['yo', '-o → hablo', 'Yo hablo español.'],
+              ['tú', '-as → hablas', '¿Hablas inglés?'],
+              ['él/ella', '-a → habla', 'Ella habla muy bien.'],
+              ['nosotros', '-amos → hablamos', 'Hablamos cada día.'],
+              ['vosotros', '-áis → habláis', '¿Habláis chino?'],
+              ['ellos', '-an → hablan', 'Ellos hablan rápido.'],
+            ]
+          },
+          vocab: [
+            {es:'hablar', zh:'说话', ex:'Hablo español todos los días.'},
+            {es:'comer', zh:'吃饭', ex:'¿A qué hora comes?'},
+            {es:'vivir', zh:'住', ex:'Vivo en Shanghái.'},
+            {es:'trabajar', zh:'工作', ex:'Trabajo en una empresa.'},
+            {es:'estudiar', zh:'学习', ex:'Estudio español.'},
+            {es:'escuchar música', zh:'听音乐', ex:'Me gusta escuchar música.'},
+          ],
+          note: '西语动词有三种：-ar、-er、-ir 结尾。A2阶段主要掌握规则变位。'
+        },
+        quiz: [
+          {type:'choice', q:'"Yo hablar" 变位后应该是？', options:['yo hablo','yo habla','yo hablas','yo hablamos'], answer:0, explain:'yo 对应的 -ar 动词词尾变化为 -o。'},
+          {type:'fill', q:'填写：Ella ___ (vivir) en Madrid.', answer:'vive', explain:'-ir 动词中 ella 的变位词尾是 -e，所以是 vive。'},
+          {type:'choice', q:'"Estudio" 是哪个动词的变位？', options:['estar','estudiar','escuchar','escribir'], answer:1, explain:'"Estudio" 是动词 estudiar（学习）的 yo 变位形式。'},
+          {type:'choice', q:'"trabajar" 的意思是？', options:['旅行','工作','学习','居住'], answer:1, explain:'"trabajar" 意为"工作"，"trabajo" 也可以作名词"工作"使用。'},
+          {type:'fill', q:'翻译："你们说中文吗？" Vosotros ___ chino?', answer:'habláis', explain:'vosotros 的 -ar 变位词尾是 -áis，注意重音符号。'},
+        ]
+      },
+      {
+        id: 'a2-2', name: '购物与价格', icon: '🛍️', desc: '购物对话·形容词·颜色',
+        done: false,
+        learn: {
+          dialogue: [
+            {avatar:'🧑', es:'Buenos días. ¿En qué puedo ayudarle?', zh:'早上好。我能帮您吗？'},
+            {avatar:'👩', es:'Hola. ¿Cuánto cuesta esta camisa?', zh:'你好。这件衬衫多少钱？'},
+            {avatar:'🧑', es:'Cuesta veinte euros. ¿Le gusta?', zh:'20欧元。您喜欢吗？'},
+            {avatar:'👩', es:'Sí, me gusta. ¿Tiene en azul?', zh:'是的，我喜欢。有蓝色的吗？'},
+            {avatar:'🧑', es:'Sí, aquí tiene. ¿Va a pagar en efectivo?', zh:'有，给您。您用现金支付吗？'},
+          ],
+          vocab: [
+            {es:'¿cuánto cuesta?', zh:'多少钱？', ex:'¿Cuánto cuesta este libro?'},
+            {es:'rojo/azul/verde', zh:'红/蓝/绿', ex:'Quiero la camiseta azul.'},
+            {es:'grande / pequeño', zh:'大/小', ex:'¿Tiene en talla grande?'},
+            {es:'caro / barato', zh:'贵/便宜', ex:'Es muy caro.'},
+            {es:'me lo llevo', zh:'我要买了', ex:'Me lo llevo.'},
+            {es:'¿acepta tarjeta?', zh:'接受刷卡吗？', ex:'¿Acepta tarjeta de crédito?'},
+          ],
+          grammar: {
+            title: '形容词性别数变化',
+            rows: [
+              ['', '阳性单数', '阴性单数', '复数'],
+              ['颜色', 'rojo', 'roja', 'rojos/rojas'],
+              ['大小', 'grande', 'grande', 'grandes'],
+              ['冷热', 'frío', 'fría', 'fríos/frías'],
+            ]
+          }
+        },
+        quiz: [
+          {type:'choice', q:'"¿Cuánto cuesta?" 意思是？', options:['你好吗','多少钱','在哪里','你叫什么'], answer:1, explain:'"¿Cuánto cuesta?" 是询问价格的固定句型，意为"多少钱？"'},
+          {type:'fill', q:'"蓝色"的西语（阴性）是？', answer:'azul', explain:'"azul" 是不变颜色形容词，阴阳性相同，复数加 -es 变为 azules。'},
+          {type:'choice', q:'形容词 "rojo" 的阴性单数是？', options:['rojoa','roja','rojas','roje'], answer:1, explain:'-o 结尾的形容词，阴性变为 -a。'},
+          {type:'choice', q:'"barato" 的反义词是？', options:['grande','nuevo','caro','bonito'], answer:2, explain:'"caro" 意为"贵"，是 "barato"（便宜）的反义词。'},
+          {type:'fill', q:'翻译："我要买了"', answer:'me lo llevo', explain:'"me lo llevo" 是购物时常用表达，字面意思是"我把它带走"。'},
+        ]
+      }
+    ]
+  },
+  B1: {
+    title: 'B1 · 进阶级',
+    units: [
+      {
+        id: 'b1-1', name: '过去时态', icon: '🕰️', desc: '不定过去时·规则与不规则',
+        done: false,
+        learn: {
+          grammar: {
+            title: '不定过去时（Pretérito Indefinido）变位 — hablar',
+            rows: [
+              ['人称', 'hablar (说话)', 'comer (吃)', 'vivir (住)'],
+              ['yo', 'hablé', 'comí', 'viví'],
+              ['tú', 'hablaste', 'comiste', 'viviste'],
+              ['él/ella', 'habló', 'comió', 'vivió'],
+              ['nosotros', 'hablamos', 'comimos', 'vivimos'],
+              ['ellos', 'hablaron', 'comieron', 'vivieron'],
+            ]
+          },
+          note: '不定过去时用于描述过去已经完成的动作，有明确的时间点或次数。常与 ayer(昨天)、la semana pasada(上周)、hace... años(...年前) 搭配。',
+          vocab: [
+            {es:'ayer', zh:'昨天', ex:'Ayer comí paella.'},
+            {es:'la semana pasada', zh:'上周', ex:'La semana pasada viajé a Madrid.'},
+            {es:'hace + tiempo', zh:'...前', ex:'Hace dos años empecé a estudiar español.'},
+            {es:'ir - fue', zh:'不规则：去', ex:'Fui al cine ayer.'},
+            {es:'ser - fue', zh:'不规则：是', ex:'Fue un día perfecto.'},
+            {es:'hacer - hizo', zh:'不规则：做', ex:'¿Qué hiciste el fin de semana?'},
+          ]
+        },
+        quiz: [
+          {type:'choice', q:'"Yo hablar" 的不定过去时（yo）是？', options:['hablé','hablaba','hablo','hablaré'], answer:0, explain:'"yo" 的不定过去时词尾是 -é，所以是 hablé。'},
+          {type:'fill', q:'"ir"（去）的不定过去时 yo 形式是？', answer:'fui', explain:'"ir" 是不规则动词，过去时是 fui/fuiste/fue/fuimos/fueron。'},
+          {type:'choice', q:'"Ayer" 是什么意思？', options:['今天','明天','昨天','上周'], answer:2, explain:'"Ayer" 意为"昨天"，常与不定过去时搭配。'},
+          {type:'choice', q:'哪个时间状语最适合搭配不定过去时？', options:['todos los días','siempre','ayer','normalmente'], answer:2, explain:'不定过去时表示过去某时刻完成的动作，与"ayer（昨天）"等具体时间搭配最合适。'},
+          {type:'fill', q:'填写：Ella ___ (comer) pizza ayer.', answer:'comió', explain:'ella 的不定过去时 -er 词尾是 -ió，所以是 comió。'},
+        ]
+      },
+      {
+        id: 'b1-2', name: '假设与条件', icon: '💭', desc: '虚拟式·条件句',
+        done: false,
+        learn: {
+          grammar: {
+            title: '条件式（Condicional）变位',
+            rows: [
+              ['人称', 'hablar', '意思'],
+              ['yo', 'hablaría', '我会说'],
+              ['tú', 'hablarías', '你会说'],
+              ['él/ella', 'hablaría', '他/她会说'],
+              ['nosotros', 'hablaríamos', '我们会说'],
+              ['ellos', 'hablarían', '他们会说'],
+            ]
+          },
+          note: '条件式相当于英语的"would + 动词"，表示假设情况下"会..."。常与 "Si + 过去时" 构成条件句。',
+          vocab: [
+            {es:'si tuviera dinero...', zh:'如果我有钱...', ex:'Si tuviera dinero, viajaría por el mundo.'},
+            {es:'me gustaría', zh:'我想要/我愿意', ex:'Me gustaría aprender chino.'},
+            {es:'quisiera', zh:'我想（礼貌）', ex:'Quisiera un café, por favor.'},
+            {es:'podría', zh:'能/可以（假设）', ex:'¿Podrías ayudarme?'},
+          ]
+        },
+        quiz: [
+          {type:'choice', q:'"hablaría" 是什么时态？', options:['过去时','将来时','条件式','虚拟式'], answer:2, explain:'"hablaría" 是条件式，相当于英语 "would speak"。'},
+          {type:'fill', q:'"me gustaría" 的意思是？（中文）', answer:'我想要', explain:'"me gustaría" 是 "me gusta" 的礼貌/假设形式，意为"我想要/我愿意"。'},
+          {type:'choice', q:'"Si tuviera dinero, ___" 下一句最合适的是？', options:['compro un coche','compraría un coche','compré un coche','voy a comprar'], answer:1, explain:'Si + 过去虚拟时，后半句用条件式：compraría。'},
+        ]
+      }
+    ]
+  },
+  B2: {
+    title: 'B2 · 中高级',
+    units: [
+      {
+        id: 'b2-1', name: '抽象表达与观点', icon: '🎭', desc: '虚拟式·主观判断·辩论表达',
+        done: false,
+        learn: {
+          grammar: {
+            title: '虚拟式（Subjuntivo）常见句型',
+            rows: [
+              ['句型结构', '例句', '说明'],
+              ['Espero que + subj.', 'Espero que vengas.', '希望你来（不确定）'],
+              ['Es importante que + subj.', 'Es importante que estudies.', '学习很重要'],
+              ['No creo que + subj.', 'No creo que sea verdad.', '我不认为那是真的'],
+              ['Aunque + subj.', 'Aunque llueva, iré.', '即使下雨，我也去'],
+              ['Para que + subj.', 'Te lo digo para que lo sepas.', '我告诉你是为了让你知道'],
+            ]
+          },
+          vocab: [
+            {es:'desde mi punto de vista', zh:'从我的角度来看', ex:'Desde mi punto de vista, es incorrecto.'},
+            {es:'sin embargo', zh:'然而/但是', ex:'Es difícil; sin embargo, posible.'},
+            {es:'a pesar de que', zh:'尽管', ex:'A pesar de que llueve, salgo.'},
+            {es:'cabe destacar', zh:'值得强调的是', ex:'Cabe destacar que el resultado fue positivo.'},
+            {es:'en definitiva', zh:'总而言之', ex:'En definitiva, fue un éxito.'},
+          ],
+          note: '虚拟式（Subjuntivo）是西语最难的语法点之一，在B2级别需要熟练运用。它主要用于表达主观看法、愿望、情感、怀疑和条件假设。'
+        },
+        quiz: [
+          {type:'choice', q:'"Espero que ___" 后面应用什么形式？', options:['不定式','虚拟式现在时','直陈式','将来时'], answer:1, explain:'"esperar que" 后面需要跟虚拟式，因为表达的是愿望/期望，有主观不确定性。'},
+          {type:'fill', q:'"总而言之"的西语表达是？', answer:'en definitiva', explain:'"en definitiva" 是书面/正式语体中常用的总结性连接词。'},
+          {type:'choice', q:'"sin embargo" 的意思是？', options:['因此','然而','所以','例如'], answer:1, explain:'"sin embargo" 意为"然而/但是"，是转折连词，类似英语 however。'},
+          {type:'choice', q:'下列哪句话使用了虚拟式？', options:['Ella habla bien.','Creo que es verdad.','No creo que sea verdad.','Ayer fui al cine.'], answer:2, explain:'"No creo que + sea"，否定 creer 后跟虚拟式动词 sea（ser 的虚拟式）。'},
+          {type:'fill', q:'"尽管"（让步）的西语连词是？', answer:'a pesar de que', explain:'"a pesar de que" 是让步连词，意为"尽管/虽然"，后接直陈式或虚拟式。'},
+        ]
+      }
+    ]
+  }
+};
+
+// ════════════════════════════════════════════════
+// 状态
+// ════════════════════════════════════════════════
+let currentLevel = 'A1';
+let currentUnitIdx = 0;
+let currentTab = 'learn';
+let quizState = {};
+
+function getUnit() {
+  return COURSES[currentLevel].units[currentUnitIdx];
+}
+
+// ════════════════════════════════════════════════
+// 界面更新
+// ════════════════════════════════════════════════
+function switchLevel(level, btn) {
+  currentLevel = level;
+  currentUnitIdx = 0;
+  currentTab = 'learn';
+  document.querySelectorAll('.level-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSidebar();
+  renderContent();
+}
+
+function switchUnit(idx) {
+  currentUnitIdx = idx;
+  currentTab = 'learn';
+  renderSidebar();
+  renderContent();
+}
+
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.lesson-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTabContent();
+}
+
+function renderSidebar() {
+  const units = COURSES[currentLevel].units;
+  document.getElementById('unitList').innerHTML = units.map((u, i) => `
+    <div class="unit-item ${i === currentUnitIdx ? 'active' : ''} ${u.done ? 'unit-done' : 'unit-unlocked'}" onclick="switchUnit(${i})">
+      <div class="unit-icon">${u.icon}</div>
+      <div class="unit-text">
+        <div class="unit-name">${u.name}</div>
+        <div class="unit-desc">${u.desc}</div>
+      </div>
+      ${u.done ? '<div class="unit-stars">⭐⭐⭐</div>' : ''}
+    </div>
+  `).join('');
+}
+
+function renderContent() {
+  const unit = getUnit();
+  document.getElementById('lessonTitle').textContent = unit.icon + ' ' + unit.name;
+  document.getElementById('lessonDesc').textContent = unit.desc;
+
+  // Reset lesson tabs
+  document.querySelectorAll('.lesson-tab').forEach((b, i) => {
+    b.classList.toggle('active', ['learn','practice','quiz'][i] === currentTab);
+  });
+  renderTabContent();
+}
+
+function renderTabContent() {
+  const unit = getUnit();
+  const area = document.getElementById('tabContent');
+  if (currentTab === 'learn') {
+    area.innerHTML = renderLearn(unit.learn);
+  } else if (currentTab === 'practice') {
+    area.innerHTML = renderPractice(unit);
+  } else {
+    renderQuiz(unit.quiz);
+  }
+}
+
+// ── Learn ──
+function renderLearn(learn) {
+  if (!learn) return '<div class="section"><p style="color:#aaa">课程内容即将上线</p></div>';
+  let html = '';
+
+  if (learn.phonetics) {
+    html += `<div class="section">
+      <h3>🔤 字母与发音 <span class="tag">字母/例句可分别听</span></h3>
+      <p style="font-size:.82rem;color:var(--sub);margin-bottom:12px">${learn.note || ''}</p>
+      <div class="phoneme-grid">
+        ${learn.phonetics.map((p, idx) => {
+          const letter = p.letter.split(' ')[0];
+          const exWord = p.example.split(' ')[0];
+          const exEscL = letter.replace(/'/g,"\\'");
+          const exEscW = exWord.replace(/'/g,"\\'");
+          return `
+          <div class="phoneme-card">
+            <div class="phoneme-letter-row">
+              <span class="phoneme-letter">${p.letter}</span>
+              <button class="speak-btn speak-sm" onclick="speakText('${exEscL}',this)" title="听字母发音">🔊</button>
+            </div>
+            <div class="phoneme-ipa">${p.ipa}</div>
+            <div class="phoneme-example-row">
+              <span class="phoneme-example">${p.example}</span>
+              <button class="speak-btn speak-sm" onclick="speakText('${exEscW}',this)" title="听例词发音">🔊</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  if (learn.dialogue) {
+    html += `<div class="section">
+      <h3>💬 情境对话 <span class="tag">点🔊听整句</span></h3>
+      <div class="dialog-box">
+        ${learn.dialogue.map((d, di) => {
+          const esEsc = d.es.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+          return `
+          <div class="dialog-line">
+            <div class="dialog-avatar">${d.avatar}</div>
+            <div class="dialog-bubble">
+              <div class="es-row">
+                <span class="es">${d.es}</span>
+                <button class="speak-btn speak-inline" onclick="speakText('${esEsc}',this)" title="听发音">🔊</button>
+              </div>
+              <div class="zh">${d.zh}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  if (learn.grammar) {
+    const [header, ...rows] = learn.grammar.rows;
+    html += `<div class="section">
+      <h3>📐 语法要点 <span class="tag">${learn.grammar.title}</span></h3>
+      <table class="grammar-table">
+        <thead><tr>${header.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+        <tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td${i===1?` class="highlight-word"`:''}">${c}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>
+      ${learn.note ? `<p style="margin-top:12px;font-size:.82rem;color:var(--sub);line-height:1.6">${learn.note}</p>` : ''}
+    </div>`;
+  }
+
+  if (learn.vocab) {
+    html += `<div class="section">
+      <h3>📚 词汇 <span class="tag">点击查看例句 · 点🔊听发音</span></h3>
+      <div class="vocab-grid">
+        ${learn.vocab.map((v, vi) => `
+          <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+            <button class="speak-btn" id="vc-btn-${vi}" onclick="event.stopPropagation();speakText(this.dataset.text,this)" data-text="${v.es.replace(/"/g,'&quot;')}" title="听发音">🔊</button>
+            <div class="vocab-es">${v.es}</div>
+            <div class="vocab-zh">${v.zh}</div>
+            <div class="vocab-example">${v.ex}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  return html || '<div class="section"><p>暂无内容</p></div>';
+}
+
+// ── Practice ──
+function renderPractice(unit) {
+  const dialogues = [
+    {q: '听发音，选择正确的字母', note: '练习模式：点击词汇卡片，反复记忆单词'},
+  ];
+  let html = `<div class="section">
+    <h3>🔁 闪卡复习 <span class="tag">点击翻转</span></h3>
+    <p style="font-size:.82rem;color:var(--sub);margin-bottom:14px">点击卡片查看例句，熟悉了就勾掉它</p>
+    <div class="vocab-grid">`;
+  if (unit.learn && unit.learn.vocab) {
+    html += unit.learn.vocab.map((v, vi) => `
+      <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+        <button class="speak-btn" id="pr-btn-${vi}" onclick="event.stopPropagation();speakText(this.dataset.text,this)" data-text="${v.es.replace(/"/g,'&quot;')}" title="听发音">🔊</button>
+        <div class="vocab-es">${v.es}</div>
+        <div class="vocab-zh">${v.zh}</div>
+        <div class="vocab-example">📢 ${v.ex}</div>
+      </div>`).join('');
+  }
+  html += `</div></div>`;
+  if (unit.learn && unit.learn.dialogue) {
+    html += `<div class="section">
+      <h3>🎭 对话复习 <span class="tag">点🔊跟读练习</span></h3>
+      <div class="dialog-box">
+        ${unit.learn.dialogue.map((d, di) => {
+          const esEsc = d.es.replace(/'/g,"\\'");
+          return `
+          <div class="dialog-line">
+            <div class="dialog-avatar">${d.avatar}</div>
+            <div class="dialog-bubble">
+              <div class="es-row">
+                <span class="es">${d.es}</span>
+                <button class="speak-btn speak-inline" onclick="speakText('${esEsc}',this)" title="点击朗读">🔊</button>
+              </div>
+              <div class="zh">${d.zh}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+  return html;
+}
+
+// ── Quiz ──
+function renderQuiz(questions) {
+  if (!questions || !questions.length) {
+    document.getElementById('tabContent').innerHTML = '<div class="section"><p>本课暂无测验</p></div>';
+    return;
+  }
+  quizState = { questions, current: 0, score: 0, answered: false };
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const { questions, current } = quizState;
+  if (current >= questions.length) {
+    renderQuizResult();
+    return;
+  }
+  const q = questions[current];
+  const pct = (current / questions.length * 100).toFixed(0);
+
+  let optionsHTML = '';
+  if (q.type === 'choice') {
+    const letters = ['A', 'B', 'C', 'D'];
+    optionsHTML = `<div class="options-grid">${q.options.map((o, i) => `
+      <button class="option-btn" id="opt-${i}" onclick="answerChoice(${i})">
+        <span class="option-letter">${letters[i]}</span> ${o}
+      </button>`).join('')}</div>`;
+  } else {
+    optionsHTML = `<input class="fill-input" id="fillInput" placeholder="在此输入答案..." onkeydown="if(event.key==='Enter') answerFill()">
+      <button class="btn btn-primary" onclick="answerFill()">确认</button>`;
+  }
+
+  document.getElementById('tabContent').innerHTML = `
+    <div class="section quiz-wrap">
+      <div class="quiz-progress">
+        <span>第 ${current + 1} / ${questions.length} 题</span>
+        <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="quiz-question">${q.q}</div>
+      ${q.type === 'fill' ? '<p class="quiz-tip">提示：直接输入正确答案</p>' : ''}
+      ${optionsHTML}
+      <div class="quiz-feedback" id="quizFeedback"></div>
+      <div id="nextBtnWrap"></div>
+    </div>`;
+}
+
+function answerChoice(idx) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const q = quizState.questions[quizState.current];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[q.answer].classList.add('correct');
+  const fb = document.getElementById('quizFeedback');
+  if (idx === q.answer) {
+    quizState.score++;
+    fb.textContent = '✅ 正确！' + q.explain;
+    fb.className = 'quiz-feedback show correct';
+  } else {
+    btns[idx].classList.add('wrong');
+    fb.textContent = '❌ 答错了。' + q.explain;
+    fb.className = 'quiz-feedback show wrong';
+  }
+  showNextBtn();
+}
+
+function answerFill() {
+  if (quizState.answered) return;
+  const input = document.getElementById('fillInput');
+  if (!input) return;
+  const val = input.value.trim().toLowerCase();
+  quizState.answered = true;
+  input.disabled = true;
+  const q = quizState.questions[quizState.current];
+  const correct = q.answer.toLowerCase();
+  const fb = document.getElementById('quizFeedback');
+  if (val === correct || val.replace(/[áéíóú]/g, c => ({á:'a',é:'e',í:'i',ó:'o',ú:'u'}[c])) === correct.replace(/[áéíóú]/g, c => ({á:'a',é:'e',í:'i',ó:'o',ú:'u'}[c]))) {
+    quizState.score++;
+    input.classList.add('correct');
+    fb.textContent = '✅ 正确！' + q.explain;
+    fb.className = 'quiz-feedback show correct';
+  } else {
+    input.classList.add('wrong');
+    fb.textContent = `❌ 答案是：${q.answer}。${q.explain}`;
+    fb.className = 'quiz-feedback show wrong';
+  }
+  showNextBtn();
+}
+
+function showNextBtn() {
+  const wrap = document.getElementById('nextBtnWrap');
+  const isLast = quizState.current >= quizState.questions.length - 1;
+  wrap.innerHTML = `<button class="btn btn-primary" style="margin-top:10px" onclick="nextQuestion()">${isLast ? '查看结果 🏆' : '下一题 →'}</button>`;
+}
+
+function nextQuestion() {
+  quizState.current++;
+  quizState.answered = false;
+  renderQuizQuestion();
+}
+
+function renderQuizResult() {
+  const { score, questions } = quizState;
+  const pct = Math.round(score / questions.length * 100);
+  const stars = pct >= 80 ? '⭐⭐⭐' : pct >= 60 ? '⭐⭐' : '⭐';
+  const msg = pct >= 80 ? '优秀！掌握得很好！' : pct >= 60 ? '不错！继续加油！' : '还需多练习，再来一次吧！';
+  if (pct >= 80) {
+    getUnit().done = true;
+    renderSidebar();
+  }
+  document.getElementById('tabContent').innerHTML = `
+    <div class="section">
+      <div class="quiz-result">
+        <div class="result-score">${score}/${questions.length}</div>
+        <div class="result-stars">${stars}</div>
+        <div class="result-msg">${msg}（正确率 ${pct}%）</div>
+        <div style="margin-top:20px;display:flex;gap:10px;justify-content:center">
+          <button class="btn btn-primary" onclick="renderQuiz(quizState.questions)">🔁 重新测验</button>
+          <button class="btn btn-secondary" onclick="switchTab('learn', document.querySelectorAll('.lesson-tab')[0])">📖 回顾学习</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── TTS ──
+let ttsSpeed = 0.9;
+let currentSpeakBtn = null;
+
+function setSpeed(rate, btn) {
+  ttsSpeed = rate;
+  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function speakText(text, btnEl) {
+  if (!('speechSynthesis' in window)) {
+    alert('您的浏览器不支持语音合成，请使用 Chrome 或 Edge。');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  if (currentSpeakBtn) {
+    currentSpeakBtn.classList.remove('playing');
+    currentSpeakBtn.textContent = '🔊';
+  }
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'es-ES';
+  utt.rate = ttsSpeed;
+
+  // 找西语语音
+  const voices = window.speechSynthesis.getVoices();
+  const esVoice = voices.find(v => v.lang.startsWith('es'));
+  if (esVoice) utt.voice = esVoice;
+
+  if (btnEl) {
+    currentSpeakBtn = btnEl;
+    btnEl.classList.add('playing');
+    btnEl.textContent = '▶';
+  }
+  utt.onend = () => {
+    if (btnEl) { btnEl.classList.remove('playing'); btnEl.textContent = '🔊'; }
+    currentSpeakBtn = null;
+  };
+  utt.onerror = () => {
+    if (btnEl) { btnEl.classList.remove('playing'); btnEl.textContent = '🔊'; }
+    currentSpeakBtn = null;
+  };
+  window.speechSynthesis.speak(utt);
+}
+
+// 确保语音列表加载完毕
+if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined) {
+  window.speechSynthesis.onvoiceschanged = () => {};
+}
+
+
+// ── Init ──
+renderSidebar();
+renderContent();

@@ -1,0 +1,255 @@
+/* ============================
+   足球日报 - 共享样式
+   米色亮色主题 · 懂球帝热搜风格
+   ============================ */
+
+:root {
+  --bg: #f7f3eb;
+  --card-bg: #fff;
+  --border: #e8e2d6;
+  --border-light: #f0ece3;
+  --border-lighter: #f5f2ec;
+  --border-card: #f8f6f0;
+  --text-primary: #222;
+  --text-secondary: #333;
+  --text-body: #444;
+  --text-muted: #999;
+  --text-faint: #bbb;
+  --text-placeholder: #ccc;
+  --accent-red: #e8443a;
+  --accent-orange: #f08c3a;
+  --accent-amber: #f5b73a;
+  --accent-gold: #d4a843;
+  --blue: #2563eb;
+  --amber: #d97706;
+  --purple: #7c3aed;
+  --green: #16a34a;
+  --barca-red: #a50044;
+  --spain-red: #c4000a;
+  --miami-pink: #f0bfe9;
+  --miami-orange: #e8891d;
+  --ucl-blue: #1a1a8a;
+  --pl-purple: #3d195b;
+  --laliga-yellow: #fdd835;
+  --serie-green: #008c45;
+  --buli-red: #d20515;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  padding: 0;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* 顶部导航 */
+.top-nav {
+  background: #faf8f3;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.top-nav a { color: #888; text-decoration: none; font-size: 13px; transition: color 0.2s; }
+.top-nav a:hover { color: var(--text-primary); }
+.top-nav .nav-sep { color: #ddd; }
+.top-nav .nav-current { color: var(--text-primary); font-size: 14px; font-weight: 600; }
+
+.page-header { padding: 20px 20px 12px; }
+.page-header h1 { font-size: 20px; font-weight: 800; color: var(--text-primary); }
+.page-header .date-line { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+/* 通用卡片 */
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 4px 0;
+  margin: 0 16px 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.card-title {
+  padding: 14px 20px 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-title .badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+.badge-red { background: var(--accent-red); color: #fff; }
+.badge-blue { background: var(--blue); color: #fff; }
+.badge-amber { background: var(--amber); color: #fff; }
+.badge-purple { background: var(--purple); color: #fff; }
+.badge-green { background: var(--green); color: #fff; }
+
+/* 热搜榜 */
+.hot-item { display: flex; align-items: flex-start; padding: 12px 20px; gap: 12px; border-bottom: 1px solid var(--border-lighter); cursor: pointer; transition: background 0.15s; }
+.hot-item:last-child { border-bottom: none; }
+.hot-item:hover { background: #faf8f3; }
+.hot-rank { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--text-muted); background: #f0ece3; flex-shrink: 0; margin-top: 1px; }
+.hot-rank.r1 { background: var(--accent-red); color: #fff; }
+.hot-rank.r2 { background: var(--accent-orange); color: #fff; }
+.hot-rank.r3 { background: var(--accent-amber); color: #fff; }
+.hot-content { flex: 1; min-width: 0; }
+.hot-headline { font-size: 14px; font-weight: 600; color: var(--text-primary); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.hot-meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; font-size: 11px; color: var(--text-faint); flex-wrap: wrap; }
+.hot-tag { font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: 600; }
+.hot-expand-hint { font-size: 11px; color: var(--text-faint); flex-shrink: 0; margin-top: 2px; align-self: flex-start; }
+
+.tag-hot { background: #fff0e6; color: #e05a00; }
+.tag-barca { background: #e6f0ff; color: var(--barca-red); }
+.tag-spain { background: #fff0e6; color: var(--spain-red); }
+.tag-miami { background: #f0f7ff; color: var(--miami-orange); }
+.tag-ucl { background: #f0e6ff; color: var(--ucl-blue); }
+.tag-pl { background: var(--pl-purple); color: #fff; }
+.tag-laliga { background: var(--laliga-yellow); color: #333; }
+.tag-serie { background: var(--serie-green); color: #fff; }
+.tag-buli { background: var(--buli-red); color: #fff; }
+.tag-transfer { background: #e6f0ff; color: #1a6fcc; }
+.tag-match { background: #e8f8ee; color: #1a9a4a; }
+.tag-league { background: #f0f0f0; color: #666; }
+
+/* 新闻展开 */
+.news-expand { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: #faf8f3; }
+.news-expand.open { max-height: 2000px; }
+.news-expand-inner { padding: 12px 20px 14px; font-size: 13px; line-height: 1.8; color: var(--text-body); border-top: 1px solid var(--border-lighter); }
+.news-expand-inner p { margin-bottom: 8px; }
+.news-expand-inner p:last-child { margin-bottom: 0; }
+
+/* 比分卡 */
+.score-comp { font-size: 11px; color: var(--text-muted); padding: 10px 20px 4px; font-weight: 600; }
+.score-card { display: flex; align-items: center; padding: 8px 20px; gap: 0; border-bottom: 1px solid var(--border-card); }
+.score-card:last-child { border-bottom: none; }
+.score-team { flex: 1; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.score-team.home { text-align: right; padding-right: 12px; }
+.score-team.away { text-align: left; padding-left: 12px; }
+.score-box { display: flex; flex-direction: column; align-items: center; min-width: 80px; }
+.score-main { font-size: 18px; font-weight: 800; color: var(--text-primary); letter-spacing: 3px; text-align: center; }
+.score-penalty { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.score-note { font-size: 10px; color: var(--text-faint); margin-top: 1px; }
+
+/* 赛程区 */
+.sched-item { display: flex; align-items: center; padding: 11px 20px; gap: 10px; border-bottom: 1px solid var(--border-card); font-size: 13px; }
+.sched-item:last-child { border-bottom: none; }
+.sched-time { font-size: 12px; font-weight: 700; color: #fff; background: var(--accent-gold); padding: 3px 8px; border-radius: 5px; white-space: nowrap; }
+.sched-time.live { background: var(--accent-red); }
+.sched-comp { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+.sched-teams { flex: 1; font-weight: 600; color: var(--text-secondary); }
+.sched-icon { font-size: 13px; }
+
+/* 快讯条 */
+.flash-item { padding: 10px 20px; border-bottom: 1px solid var(--border-card); font-size: 13px; line-height: 1.7; color: var(--text-body); cursor: pointer; transition: background 0.15s; }
+.flash-item:last-child { border-bottom: none; }
+.flash-item:hover { background: #faf8f3; }
+.flash-item strong { color: var(--text-primary); }
+.flash-item .flash-time { font-size: 11px; color: var(--text-faint); margin-right: 6px; }
+
+/* 关注球队横条 */
+.follow-bar { display: flex; gap: 8px; padding: 8px 20px 14px; overflow-x: auto; }
+.follow-bar::-webkit-scrollbar { display: none; }
+.follow-chip { flex-shrink: 0; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; text-decoration: none; transition: transform 0.15s, box-shadow 0.15s; cursor: pointer; }
+.follow-chip:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+.chip-barca { background: var(--barca-red); color: #fff; }
+.chip-spain { background: var(--spain-red); color: #fff; }
+.chip-miami { background: var(--miami-pink); color: var(--barca-red); }
+.chip-ucl { background: var(--ucl-blue); color: #fff; }
+.chip-pl { background: var(--pl-purple); color: #fff; }
+.chip-laliga { background: var(--laliga-yellow); color: #333; }
+
+.footer { text-align: center; font-size: 11px; color: var(--text-placeholder); padding: 16px 0 20px; }
+
+/* ============================
+   球队详情页
+   ============================ */
+.team-hero { padding: 24px 20px 20px; text-align: center; }
+.team-hero .team-emoji { font-size: 48px; margin-bottom: 8px; }
+.team-hero .team-name { font-size: 22px; font-weight: 800; color: var(--text-primary); }
+.team-hero .team-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+.team-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; text-align: center; padding: 16px 20px; border-bottom: 1px solid var(--border-lighter); }
+.team-stat-num { font-size: 22px; font-weight: 800; color: var(--text-primary); }
+.team-stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+.team-section-title { padding: 14px 20px 10px; font-size: 14px; font-weight: 700; color: var(--text-primary); border-bottom: 1px solid var(--border-light); display: flex; align-items: center; gap: 6px; }
+
+/* 位置分组标题 */
+.pos-group-title { padding: 8px 20px 4px; font-size: 12px; font-weight: 700; color: var(--text-muted); background: #faf8f3; }
+
+/* 球员行 */
+.player-row { display: flex; align-items: center; padding: 10px 20px; gap: 10px; border-bottom: 1px solid var(--border-card); cursor: pointer; transition: background 0.15s; }
+.player-row:last-child { border-bottom: none; }
+.player-row:hover { background: #faf8f3; }
+.player-num-wrap { position: relative; flex-shrink: 0; }
+.player-num { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; }
+.player-injured-badge { position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; border-radius: 50%; background: var(--accent-red); color: #fff; font-size: 8px; display: flex; align-items: center; justify-content: center; border: 1.5px solid #fff; }
+.player-info { flex: 1; min-width: 0; }
+.player-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.player-pos { font-size: 11px; color: var(--text-muted); }
+.player-flag { font-size: 13px; flex-shrink: 0; }
+
+/* 球员弹窗 */
+.player-modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
+.player-modal-overlay.show { display: flex; }
+.player-modal { background: #fff; border-radius: 16px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; padding: 0 0 24px; animation: modalIn 0.2s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+@keyframes modalIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+.player-modal-header { padding: 20px 20px 14px; text-align: center; position: sticky; top: 0; background: #fff; z-index: 1; }
+.player-modal-header .pm-close { position: absolute; right: 16px; top: 16px; width: 28px; height: 28px; border-radius: 50%; background: #f0ece3; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-muted); cursor: pointer; border: none; }
+.player-modal-header .pm-emoji { font-size: 36px; margin-bottom: 6px; }
+.player-modal-header .pm-name { font-size: 18px; font-weight: 800; color: var(--text-primary); }
+.player-modal-header .pm-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.player-modal-header .pm-meta span { margin: 0 4px; }
+
+.pm-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; text-align: center; padding: 12px 24px; border-bottom: 1px solid var(--border-lighter); }
+.pm-stat-num { font-size: 18px; font-weight: 800; color: var(--text-primary); }
+.pm-stat-label { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+
+.pm-detail-section { padding: 14px 28px 6px; }
+.pm-detail-section-title { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+.pm-detail-row { display: flex; justify-content: space-between; padding: 6px 32px; font-size: 13px; border-bottom: 1px solid var(--border-card); }
+.pm-detail-row:last-child { border-bottom: none; }
+.pm-detail-key { color: var(--text-muted); }
+.pm-detail-val { font-weight: 600; color: var(--text-primary); }
+
+.pm-injured-tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 4px; background: #fde8e8; color: var(--accent-red); font-weight: 700; margin-top: 6px; }
+
+/* 积分榜容器 */
+.standings-wrap { overflow-x: auto; padding: 4px 16px 8px; }
+.standings-wrap .standings-table { min-width: 100%; }
+
+/* 积分榜表格 */
+.standings-table { width: 100%; border-collapse: collapse; }
+.standings-table th { padding: 8px 10px; font-size: 10px; font-weight: 700; color: var(--text-muted); text-align: center; border-bottom: 1px solid var(--border-light); }
+.standings-table th:nth-child(2) { text-align: left; padding-left: 14px; }
+.standings-table td { padding: 7px 10px; font-size: 12px; text-align: center; border-bottom: 1px solid var(--border-card); }
+.standings-table td:nth-child(2) { text-align: left; font-weight: 600; color: var(--text-secondary); padding-left: 14px; }
+.standings-table tr.highlight td { background: #faf8f3; }
+.standings-table .rank { font-weight: 800; color: var(--text-muted); }
+.standings-table .pts { font-weight: 800; color: var(--text-primary); }
+
+/* 欧冠对阵图 */
+.ucl-bracket { padding: 12px 20px; }
+.ucl-round-title { font-size: 12px; font-weight: 700; color: var(--text-muted); padding: 6px 0; border-bottom: 1px dashed var(--border-lighter); }
+.ucl-match { display: flex; align-items: center; padding: 8px 0; gap: 8px; }
+.ucl-team { flex: 1; font-size: 12px; font-weight: 600; color: var(--text-secondary); text-align: center; }
+.ucl-vs { font-size: 10px; color: var(--text-faint); font-weight: 700; }
+.ucl-score { font-size: 11px; font-weight: 800; color: var(--text-primary); }
+.ucl-agg { font-size: 10px; color: var(--text-muted); }
+.ucl-advance { font-size: 10px; color: var(--green); font-weight: 700; }
+.ucl-eliminated { font-size: 10px; color: var(--text-faint); }
+
+/* 奖杯条 */
+.trophy-row { display: flex; align-items: center; padding: 10px 20px; gap: 10px; border-bottom: 1px solid var(--border-card); }
+.trophy-row:last-child { border-bottom: none; }
+.trophy-icon { font-size: 18px; }
+.trophy-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.trophy-count { font-size: 13px; font-weight: 800; color: var(--accent-gold); }
