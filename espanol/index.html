@@ -167,6 +167,49 @@
   .dialog-bubble .es { font-weight: 600; color: var(--accent2); }
   .dialog-bubble .zh { font-size: .8rem; color: var(--sub); margin-top: 2px; }
 
+  /* ── TTS Bar ── */
+  .tts-bar {
+    display: flex; align-items: center; gap: 10px; padding: 8px 24px;
+    background: #fff8f3; border-bottom: 1px solid var(--border);
+    font-size: .82rem; color: var(--sub);
+  }
+  .tts-bar label { font-weight: 600; color: var(--text); }
+  .speed-btn {
+    padding: 4px 12px; border-radius: 99px; border: 1.5px solid var(--border);
+    background: var(--card); cursor: pointer; font-size: .8rem; font-weight: 600;
+    color: var(--sub); transition: all .2s;
+  }
+  .speed-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .tts-hint { margin-left: auto; opacity: .65; font-size: .78rem; }
+
+  /* ── Speak Button ── */
+  .speak-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%; border: none;
+    background: #fde8d8; color: var(--accent); cursor: pointer;
+    font-size: .95rem; transition: all .2s; flex-shrink: 0;
+    vertical-align: middle; margin-left: 4px;
+  }
+  .speak-btn:hover { background: var(--accent); color: #fff; transform: scale(1.1); }
+  .speak-btn.playing {
+    background: var(--accent); color: #fff;
+    animation: speakPulse .6s ease-in-out infinite alternate;
+  }
+  @keyframes speakPulse {
+    from { transform: scale(1); box-shadow: 0 0 0 0 rgba(224,123,57,.4); }
+    to   { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(224,123,57,0); }
+  }
+
+  /* ── Phoneme card 升级 ── */
+  .phoneme-card { position: relative; }
+  .phoneme-card .speak-btn { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; font-size: .8rem; }
+
+  /* ── Vocab card 升级 ── */
+  .vocab-card .speak-btn { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; font-size: .8rem; }
+
+  /* ── Dialog 升级 ── */
+  .dialog-bubble .speak-btn { margin-left: 6px; }
+
   /* ── Responsive ── */
   @media (max-width: 700px) {
     .main-wrap { flex-direction: column; padding: 14px 12px 40px; }
@@ -185,6 +228,15 @@
     <div class="progress-bar-inner" id="globalProgress" style="width:5%"></div>
   </div>
   <p style="font-size:.78rem;margin-top:6px;opacity:.75" id="globalProgressText">总进度 5% · 继续加油！</p>
+</div>
+
+<!-- TTS 控制栏 -->
+<div class="tts-bar">
+  <label>🔊 发音速度：</label>
+  <button class="speed-btn" id="spd-slow" onclick="setSpeed(0.6,this)">慢速</button>
+  <button class="speed-btn active" id="spd-normal" onclick="setSpeed(0.9,this)">正常</button>
+  <button class="speed-btn" id="spd-fast" onclick="setSpeed(1.2,this)">快速</button>
+  <span class="tts-hint">点击任意 🔊 按钮听发音</span>
 </div>
 
 <!-- Level Tabs -->
@@ -599,11 +651,12 @@ function renderLearn(learn) {
 
   if (learn.phonetics) {
     html += `<div class="section">
-      <h3>🔤 字母与发音 <span class="tag">点击听</span></h3>
+      <h3>🔤 字母与发音 <span class="tag">点🔊听发音</span></h3>
       <p style="font-size:.82rem;color:var(--sub);margin-bottom:12px">${learn.note || ''}</p>
       <div class="phoneme-grid">
-        ${learn.phonetics.map(p => `
-          <div class="phoneme-card" onclick="speakText('${p.example.split(' ')[0]}')">
+        ${learn.phonetics.map((p, idx) => `
+          <div class="phoneme-card">
+            <button class="speak-btn" id="ph-btn-${idx}" onclick="speakText('${p.example.split(' ')[0]}',this)" title="点击听发音">🔊</button>
             <div class="phoneme-letter">${p.letter}</div>
             <div class="phoneme-ipa">${p.ipa}</div>
             <div class="phoneme-example">${p.example}</div>
@@ -614,13 +667,13 @@ function renderLearn(learn) {
 
   if (learn.dialogue) {
     html += `<div class="section">
-      <h3>💬 情境对话</h3>
+      <h3>💬 情境对话 <span class="tag">点🔊听整句</span></h3>
       <div class="dialog-box">
-        ${learn.dialogue.map(d => `
+        ${learn.dialogue.map((d, di) => `
           <div class="dialog-line">
             <div class="dialog-avatar">${d.avatar}</div>
             <div class="dialog-bubble">
-              <div class="es">${d.es}</div>
+              <div class="es">${d.es}<button class="speak-btn" id="dlg-btn-${di}" onclick="speakText('${d.es.replace(/'/g,'\\'')}',this)" title="听发音">🔊</button></div>
               <div class="zh">${d.zh}</div>
             </div>
           </div>`).join('')}
@@ -642,10 +695,11 @@ function renderLearn(learn) {
 
   if (learn.vocab) {
     html += `<div class="section">
-      <h3>📚 词汇 <span class="tag">点击查看例句</span></h3>
+      <h3>📚 词汇 <span class="tag">点击查看例句 · 点🔊听发音</span></h3>
       <div class="vocab-grid">
-        ${learn.vocab.map(v => `
+        ${learn.vocab.map((v, vi) => `
           <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+            <button class="speak-btn" id="vc-btn-${vi}" onclick="event.stopPropagation();speakText('${v.es.replace(/'/g,'\\'')}',this)" title="听发音">🔊</button>
             <div class="vocab-es">${v.es}</div>
             <div class="vocab-zh">${v.zh}</div>
             <div class="vocab-example">${v.ex}</div>
@@ -667,8 +721,9 @@ function renderPractice(unit) {
     <p style="font-size:.82rem;color:var(--sub);margin-bottom:14px">点击卡片查看例句，熟悉了就勾掉它</p>
     <div class="vocab-grid">`;
   if (unit.learn && unit.learn.vocab) {
-    html += unit.learn.vocab.map(v => `
-      <div class="vocab-card" onclick="this.classList.toggle('flipped');speakText('${v.es.split(' ')[0]}')">
+    html += unit.learn.vocab.map((v, vi) => `
+      <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+        <button class="speak-btn" id="pr-btn-${vi}" onclick="event.stopPropagation();speakText('${v.es.replace(/'/g,'\\'')}',this)" title="听发音">🔊</button>
         <div class="vocab-es">${v.es}</div>
         <div class="vocab-zh">${v.zh}</div>
         <div class="vocab-example">📢 ${v.ex}</div>
@@ -677,13 +732,13 @@ function renderPractice(unit) {
   html += `</div></div>`;
   if (unit.learn && unit.learn.dialogue) {
     html += `<div class="section">
-      <h3>🎭 对话复习</h3>
+      <h3>🎭 对话复习 <span class="tag">点🔊跟读练习</span></h3>
       <div class="dialog-box">
-        ${unit.learn.dialogue.map(d => `
+        ${unit.learn.dialogue.map((d, di) => `
           <div class="dialog-line">
-            <div class="dialog-avatar" onclick="speakText('${d.es.replace(/'/g,'')}')" style="cursor:pointer" title="点击朗读">${d.avatar}🔊</div>
+            <div class="dialog-avatar">${d.avatar}</div>
             <div class="dialog-bubble">
-              <div class="es">${d.es}</div>
+              <div class="es">${d.es}<button class="speak-btn" id="pr-dlg-btn-${di}" onclick="speakText('${d.es.replace(/'/g,'\\'')}',this)" title="点击朗读">🔊</button></div>
               <div class="zh">${d.zh}</div>
             </div>
           </div>`).join('')}
@@ -817,15 +872,55 @@ function renderQuizResult() {
 }
 
 // ── TTS ──
-function speakText(text) {
-  if ('speechSynthesis' in window) {
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = 'es-ES';
-    utt.rate = 0.9;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utt);
-  }
+let ttsSpeed = 0.9;
+let currentSpeakBtn = null;
+
+function setSpeed(rate, btn) {
+  ttsSpeed = rate;
+  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
 }
+
+function speakText(text, btnEl) {
+  if (!('speechSynthesis' in window)) {
+    alert('您的浏览器不支持语音合成，请使用 Chrome 或 Edge。');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  if (currentSpeakBtn) {
+    currentSpeakBtn.classList.remove('playing');
+    currentSpeakBtn.textContent = '🔊';
+  }
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'es-ES';
+  utt.rate = ttsSpeed;
+
+  // 找西语语音
+  const voices = window.speechSynthesis.getVoices();
+  const esVoice = voices.find(v => v.lang.startsWith('es'));
+  if (esVoice) utt.voice = esVoice;
+
+  if (btnEl) {
+    currentSpeakBtn = btnEl;
+    btnEl.classList.add('playing');
+    btnEl.textContent = '▶';
+  }
+  utt.onend = () => {
+    if (btnEl) { btnEl.classList.remove('playing'); btnEl.textContent = '🔊'; }
+    currentSpeakBtn = null;
+  };
+  utt.onerror = () => {
+    if (btnEl) { btnEl.classList.remove('playing'); btnEl.textContent = '🔊'; }
+    currentSpeakBtn = null;
+  };
+  window.speechSynthesis.speak(utt);
+}
+
+// 确保语音列表加载完毕
+if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined) {
+  window.speechSynthesis.onvoiceschanged = () => {};
+}
+
 
 // ── Init ──
 renderSidebar();
