@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>迈阿密国际 · 足球日报</title>
+  <link rel="stylesheet" href="/-Axtrivc-.github.io/football/assets/common.css" />
+</head>
+<body>
+
+  <div class="top-nav">
+    <a href="/-Axtrivc-.github.io/football/">← 返回日报</a>
+    <span class="nav-sep">|</span>
+    <span class="nav-current">🩷 迈阿密国际</span>
+  </div>
+
+  <div class="team-hero" style="background: linear-gradient(180deg, #f0bfe930 0%, transparent 100%);">
+    <div class="team-emoji">🩷⚪</div>
+    <div class="team-name">Inter Miami CF</div>
+    <div class="team-sub">美职联 MLS · 东部联盟 · 2026赛季</div>
+  </div>
+
+  <div class="card">
+    <div class="team-stats">
+      <div><div class="team-stat-num">MLS</div><div class="team-stat-label">联赛</div></div>
+      <div><div class="team-stat-num">东部</div><div class="team-stat-label">联盟</div></div>
+      <div><div class="team-stat-num">DRV PNK</div><div class="team-stat-label">主场</div></div>
+    </div>
+    <div class="team-stats" style="border-bottom:none;padding-top:0;">
+      <div><div class="team-stat-num">2020</div><div class="team-stat-label">成立</div></div>
+      <div><div class="team-stat-num">贝克汉姆</div><div class="team-stat-label">联合owner</div></div>
+      <div><div class="team-stat-num">1x</div><div class="team-stat-label">联赛杯</div></div>
+    </div>
+  </div>
+
+  <!-- 完整大名单 -->
+  <div class="card">
+    <div class="team-section-title">👥 一线队大名单（点击查看数据）</div>
+
+    <div class="pos-group-title">🧤 守门员</div>
+    <div class="player-row" onclick="showPlayer('saintClair')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">97</div></div>
+      <div class="player-info"><div class="player-name">达尼·圣克莱尔</div><div class="player-pos">门将 · 出场360'</div></div>
+    </div>
+    <div class="player-row" onclick="showPlayer('novo')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">34</div></div>
+      <div class="player-info"><div class="player-name">诺沃</div><div class="player-pos">门将 · 🇦🇷 · 出场90'</div></div>
+    </div>
+    <div class="player-row" onclick="showPlayer('barraza')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">13</div></div>
+      <div class="player-info"><div class="player-name">路易斯·巴拉扎</div><div class="player-pos">门将</div></div>
+    </div>
+
+    <div class="pos-group-title">🛡️ 后卫</div>
+    <div class="player-row" onclick="showPlayer('silva')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">16</div></div>
+      <div class="player-info"><div class="player-name">席尔瓦</div><div class="player-pos">后卫 · 🇧🇷 · 1球 · 出场360'</div></div>
+      <span class="player-flag">🇧🇷</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('lujan')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">2</div></div>
+      <div class="player-info"><div class="player-name">卢扬</div><div class="player-pos">后卫 · 🇦🇷 · 1球 · 出场183'</div></div>
+      <span class="player-flag">🇦🇷</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('allen')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">32</div></div>
+      <div class="player-info"><div class="player-name">艾伦</div><div class="player-pos">后卫 · 🇺🇸 · 1助攻 · 出场405'</div></div>
+      <span class="player-flag">🇺🇸</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('falcon')">
+      <div class="player-num-wrap">
+        <div class="player-num" style="background:#e8891d;">37</div>
+        <div class="player-injured-badge">🩹</div>
+      </div>
+      <div class="player-info"><div class="player-name">法尔肯</div><div class="player-pos">后卫 · 🇺🇾 · 出场270'</div></div>
+      <span class="player-flag">🇺🇾</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('mura')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">4</div></div>
+      <div class="player-info"><div class="player-name">穆拉</div><div class="player-pos">后卫 · 出场238'</div></div>
+    </div>
+    <div class="player-row" onclick="showPlayer('frei')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">17</div></div>
+      <div class="player-info"><div class="player-name">弗雷</div><div class="player-pos">后卫 · 🇯🇲 · 出场212'</div></div>
+      <span class="player-flag">🇯🇲</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('reguilon')">
+      <div class="player-num-wrap">
+        <div class="player-num" style="background:#e8891d;">3</div>
+        <div class="player-injured-badge">🩹</div>
+      </div>
+      <div class="player-info"><div class="player-name">雷吉隆</div><div class="player-pos">后卫 · 🇪🇸 · 出场68'</div></div>
+      <span class="player-flag">🇪🇸</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('hall')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">26</div></div>
+      <div class="player-info"><div class="player-name">哈尔</div><div class="player-pos">后卫 · 🇺🇸 · 20岁</div></div>
+      <span class="player-flag">🇺🇸</span>
+    </div>
+
+    <div class="pos-group-title">⚽ 中场</div>
+    <div class="player-row" onclick="showPlayer('segovia')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">8</div></div>
+      <div class="player-info"><div class="player-name">塞戈维亚</div><div class="player-pos">中场 · 🇻🇪 · 1球3助 · 出场375'</div></div>
+      <span class="player-flag">🇻🇪</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('dePaul')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">7</div></div>
+      <div class="player-info"><div class="player-name">德保罗</div><div class="player-pos">中场 · 🇦🇷 · 1球 · 出场270'</div></div>
+      <span class="player-flag">🇦🇷</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('bright')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">42</div></div>
+      <div class="player-info"><div class="player-name">布莱特</div><div class="player-pos">中场 · 🇮🇹 · 出场325'</div></div>
+      <span class="player-flag">🇮🇹</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('ayala')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">22</div></div>
+      <div class="player-info"><div class="player-name">大卫·阿亚拉</div><div class="player-pos">中场 · 出场163'</div></div>
+    </div>
+    <div class="player-row" onclick="showPlayer('ruiz')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">41</div></div>
+      <div class="player-info"><div class="player-name">鲁伊斯</div><div class="player-pos">中场 · 🇭🇳 · 出场81'</div></div>
+    </div>
+    <div class="player-row" onclick="showPlayer('morales')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">20</div></div>
+      <div class="player-info"><div class="player-name">莫拉莱斯</div><div class="player-pos">中场 · 19岁 · 出场73'</div></div>
+    </div>
+    <div class="player-row" onclick="showPlayer('shaw')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">88</div></div>
+      <div class="player-info"><div class="player-name">亚历山大·肖</div><div class="player-pos">中场 · 出场22'</div></div>
+    </div>
+
+    <div class="pos-group-title">🎯 前锋</div>
+    <div class="player-row" onclick="showPlayer('messi')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">10</div></div>
+      <div class="player-info"><div class="player-name">梅西</div><div class="player-pos">前锋 · 🇦🇷 · 4球 · 出场360' ⭐</div></div>
+      <span class="player-flag">🇦🇷</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('suarez')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">9</div></div>
+      <div class="player-info"><div class="player-name">苏亚雷斯</div><div class="player-pos">中锋 · 🇺🇾 · 出场99'</div></div>
+      <span class="player-flag">🇺🇾</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('silveti')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">24</div></div>
+      <div class="player-info"><div class="player-name">西尔维蒂</div><div class="player-pos">前锋 · 1球1助 · 出场364'</div></div>
+    </div>
+    <div class="player-row" onclick="showPlayer('botterame')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">19</div></div>
+      <div class="player-info"><div class="player-name">博特拉梅</div><div class="player-pos">前锋 · 🇲🇽 · 出场300'</div></div>
+      <span class="player-flag">🇲🇽</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('allende')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">21</div></div>
+      <div class="player-info"><div class="player-name">阿连德</div><div class="player-pos">前锋 · 🇦🇷 · 2助攻 · 出场203'</div></div>
+      <span class="player-flag">🇦🇷</span>
+    </div>
+    <div class="player-row" onclick="showPlayer('pinter')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">56</div></div>
+      <div class="player-info"><div class="player-name">丹尼尔·品特</div><div class="player-pos">前锋 · 出场107'</div></div>
+    </div>
+    <div class="player-row" onclick="showPlayer('abadia')">
+      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">-</div></div>
+      <div class="player-info"><div class="player-name">阿巴迪亚-雷达</div><div class="player-pos">前锋 · 出场22'</div></div>
+    </div>
+  </div>
+
+  <!-- 球队荣誉 -->
+  <div class="card">
+    <div class="team-section-title">🏆 球队荣誉</div>
+    <div class="trophy-row"><span class="trophy-icon">🏆</span><span class="trophy-name">联赛杯冠军 (Leagues Cup)</span><span class="trophy-count">× 1 (2023)</span></div>
+  </div>
+
+  <div class="footer">数据来源：球迷屋 · 更新于2026年4月4日 · 仅供参考</div>
+
+  <!-- 球员弹窗 -->
+  <div class="player-modal-overlay" id="playerModal" onclick="if(event.target===this)closePlayer()">
+    <div class="player-modal">
+      <div class="player-modal-header">
+        <button class="pm-close" onclick="closePlayer()">✕</button>
+        <div class="pm-emoji" id="pmEmoji">⚽</div>
+        <div class="pm-name" id="pmName">-</div>
+        <div class="pm-meta" id="pmMeta">-</div>
+        <div id="pmInjured"></div>
+      </div>
+      <div class="pm-stats-grid" id="pmStatsGrid"></div>
+      <div id="pmDetails"></div>
+    </div>
+  </div>
+
+  <script>
+const players = {
+  saintClair: { emoji:'🧤', name:'达尼·圣克莱尔', num:'#97', pos:'门将', meta:'出场360\'', stats:{出场:'4',扑救:'-',零封:'-',黄牌:'1'}, details:[{k:'出场时间',v:'360分钟'},{k:'失球',v:'-'},{k:'扑救',v:'-'}] },
+  novo: { emoji:'🧤', name:'诺沃', num:'#34', pos:'门将', meta:'🇦🇷 23岁 · 出场90\'', stats:{出场:'1',扑救:'-',零封:'-',黄牌:'0'}, details:[{k:'国籍',v:'阿根廷'},{k:'年龄',v:'23岁'},{k:'出场时间',v:'90分钟'}] },
+  barraza: { emoji:'🧤', name:'路易斯·巴拉扎', num:'#13', pos:'门将', meta:'替补门将', stats:{出场:'0',扑救:'-',零封:'-',黄牌:'0'}, details:[{k:'备注',v:'未出场'}] },
+  silva: { emoji:'🛡️', name:'席尔瓦', num:'#16', pos:'后卫', meta:'🇧🇷 25岁 · 1球 · 出场360\'', stats:{出场:'4',进球:'1',抢断:'8',解围:'16'}, details:[{k:'国籍',v:'巴西'},{k:'年龄',v:'25岁'},{k:'出场时间',v:'360分钟'},{k:'拦截',v:'7'},{k:'解围',v:'16'}] },
+  lujan: { emoji:'🛡️', name:'卢扬', num:'#2', pos:'后卫', meta:'🇦🇷 24岁 · 1球 · 出场183\'', stats:{出场:'3',进球:'1',抢断:'5',解围:'11'}, details:[{k:'国籍',v:'阿根廷'},{k:'年龄',v:'24岁'},{k:'出场时间',v:'183分钟'},{k:'拦截',v:'5'},{k:'解围',v:'11'}] },
+  allen: { emoji:'🛡️', name:'艾伦', num:'#32', pos:'后卫', meta:'🇺🇸 21岁 · 1助攻 · 出场405\'', stats:{出场:'5',助攻:'1',抢断:'9',拦截:'7'}, details:[{k:'国籍',v:'美国'},{k:'年龄',v:'21岁'},{k:'出场时间',v:'405分钟'},{k:'拦截',v:'7'},{k:'解围',v:'13'}] },
+  falcon: { emoji:'🛡️', name:'法尔肯', num:'#37', pos:'后卫', meta:'🇺🇾 28岁 · 出场270\'', injured:'伤停中', stats:{出场:'3',抢断:'2',拦截:'6',解围:'6'}, details:[{k:'国籍',v:'乌拉圭'},{k:'年龄',v:'28岁'},{k:'出场时间',v:'270分钟'},{k:'黄牌',v:'1'},{k:'伤病',v:'🩹 伤停中'}] },
+  mura: { emoji:'🛡️', name:'穆拉', num:'#4', pos:'后卫', meta:'出场238\'', stats:{出场:'3',抢断:'2',拦截:'2',解围:'8'}, details:[{k:'出场时间',v:'238分钟'},{k:'封堵',v:'2'},{k:'解围',v:'8'}] },
+  frei: { emoji:'🛡️', name:'弗雷', num:'#17', pos:'后卫', meta:'🇯🇲 23岁 · 出场212\'', stats:{出场:'3',抢断:'3',拦截:'1',解围:'2'}, details:[{k:'国籍',v:'牙买加'},{k:'年龄',v:'23岁'},{k:'出场时间',v:'212分钟'}] },
+  reguilon: { emoji:'🛡️', name:'雷吉隆', num:'#3', pos:'后卫', meta:'🇪🇸 29岁 · 出场68\'', injured:'伤停中', stats:{出场:'1',抢断:'0',拦截:'0',解围:'0'}, details:[{k:'国籍',v:'西班牙'},{k:'年龄',v:'29岁'},{k:'出场时间',v:'68分钟'},{k:'伤病',v:'🩹 伤停中'}] },
+  hall: { emoji:'🛡️', name:'哈尔', num:'#26', pos:'后卫', meta:'🇺🇸 20岁', stats:{出场:'0',进球:'0',助攻:'0'}, details:[{k:'国籍',v:'美国'},{k:'年龄',v:'20岁'},{k:'备注',v:'未出场'}] },
+  segovia: { emoji:'⚽', name:'塞戈维亚', num:'#8', pos:'中场', meta:'🇻🇪 23岁 · 1球3助 · 出场375\'', stats:{出场:'4',进球:'1',助攻:'3',抢断:'3'}, details:[{k:'国籍',v:'委内瑞拉'},{k:'年龄',v:'23岁'},{k:'出场时间',v:'375分钟'},{k:'射门',v:'6'},{k:'过人',v:'4/6'},{k:'犯规',v:'8'},{k:'黄牌',v:'3'}] },
+  dePaul: { emoji:'⚽', name:'德保罗', num:'#7', pos:'中场', meta:'🇦🇷 31岁 · 1球 · 出场270\'', stats:{出场:'3',进球:'1',助攻:'0',抢断:'4'}, details:[{k:'国籍',v:'阿根廷'},{k:'年龄',v:'31岁'},{k:'出场时间',v:'270分钟'},{k:'射门',v:'6'},{k:'拦截',v:'3'},{k:'黄牌',v:'1'}] },
+  bright: { emoji:'⚽', name:'布莱特', num:'#42', pos:'中场', meta:'🇮🇹 24岁 · 出场325\'', stats:{出场:'4',进球:'0',助攻:'0',抢断:'12'}, details:[{k:'国籍',v:'意大利'},{k:'年龄',v:'24岁'},{k:'出场时间',v:'325分钟'},{k:'拦截',v:'10'},{k:'过人',v:'1/6'},{k:'犯规',v:'9'}] },
+  ayala: { emoji:'⚽', name:'大卫·阿亚拉', num:'#22', pos:'中场', meta:'出场163\'', stats:{出场:'2',进球:'0',助攻:'0',抢断:'1'}, details:[{k:'出场时间',v:'163分钟'},{k:'拦截',v:'1'}] },
+  ruiz: { emoji:'⚽', name:'鲁伊斯', num:'#41', pos:'中场', meta:'🇭🇳 22岁 · 出场81\'', stats:{出场:'1',进球:'0',助攻:'0',抢断:'0'}, details:[{k:'国籍',v:'洪都拉斯'},{k:'年龄',v:'22岁'},{k:'出场时间',v:'81分钟'}] },
+  morales: { emoji:'⚽', name:'莫拉莱斯', num:'#20', pos:'中场', meta:'19岁 · 出场73\'', stats:{出场:'1',进球:'0',助攻:'0',抢断:'1'}, details:[{k:'年龄',v:'19岁'},{k:'出场时间',v:'73分钟'}] },
+  shaw: { emoji:'⚽', name:'亚历山大·肖', num:'#88', pos:'中场', meta:'出场22\'', stats:{出场:'1',进球:'0',助攻:'0',抢断:'1'}, details:[{k:'出场时间',v:'22分钟'},{k:'解围',v:'3'}] },
+  messi: { emoji:'⭐', name:'梅西', num:'#10', pos:'前锋', meta:'🇦🇷 38岁 · 4球 · 出场360\'', stats:{出场:'4',进球:'4',助攻:'0',射门:'23'}, details:[{k:'国籍',v:'阿根廷'},{k:'年龄',v:'38岁'},{k:'出场时间',v:'360分钟'},{k:'射正',v:'9/23'},{k:'过人',v:'5/14'},{k:'封堵',v:'7'},{k:'抢断',v:'2'},{k:'犯规',v:'2'},{k:'被犯规',v:'18'},{k:'传球成功率',v:'86.5%'}] },
+  suarez: { emoji:'🎯', name:'苏亚雷斯', num:'#9', pos:'中锋', meta:'🇺🇾 39岁 · 出场99\'', stats:{出场:'1',进球:'0',助攻:'0',射门:'2'}, details:[{k:'国籍',v:'乌拉圭'},{k:'年龄',v:'39岁'},{k:'出场时间',v:'99分钟'},{k:'射偏',v:'2'},{k:'传球成功率',v:'82.1%'}] },
+  silveti: { emoji:'🎯', name:'西尔维蒂', num:'#24', pos:'前锋', meta:'20岁 · 1球1助 · 出场364\'', stats:{出场:'4',进球:'1',助攻:'1',射门:'9'}, details:[{k:'年龄',v:'20岁'},{k:'出场时间',v:'364分钟'},{k:'射正',v:'5/9'},{k:'过人',v:'4/11'},{k:'抢断',v:'7'},{k:'解围',v:'6'},{k:'犯规',v:'6'},{k:'黄牌',v:'1'}] },
+  botterame: { emoji:'🎯', name:'博特拉梅', num:'#19', pos:'前锋', meta:'🇲🇽 27岁 · 出场300\'', stats:{出场:'3',进球:'0',助攻:'0',射门:'5'}, details:[{k:'国籍',v:'墨西哥'},{k:'年龄',v:'27岁'},{k:'出场时间',v:'300分钟'},{k:'射正',v:'3/5'},{k:'过人',v:'1/4'},{k:'抢断',v:'2'},{k:'犯规',v:'8'}] },
+  allende: { emoji:'🎯', name:'阿连德', num:'#21', pos:'前锋', meta:'🇦🇷 27岁 · 2助攻 · 出场203\'', stats:{出场:'3',进球:'0',助攻:'2',射门:'2'}, details:[{k:'国籍',v:'阿根廷'},{k:'年龄',v:'27岁'},{k:'出场时间',v:'203分钟'},{k:'射正',v:'2/2'},{k:'过人',v:'3/4'},{k:'抢断',v:'2'},{k:'犯规',v:'4'},{k:'黄牌',v:'2'}] },
+  pinter: { emoji:'🎯', name:'丹尼尔·品特', num:'#56', pos:'前锋', meta:'出场107\'', stats:{出场:'2',进球:'0',助攻:'0',射门:'1'}, details:[{k:'出场时间',v:'107分钟'},{k:'抢断',v:'1'},{k:'解围',v:'2'}] },
+  abadia: { emoji:'🎯', name:'阿巴迪亚-雷达', num:'-', pos:'前锋', meta:'出场22\'', stats:{出场:'1',进球:'0',助攻:'0',射门:'0'}, details:[{k:'出场时间',v:'22分钟'},{k:'解围',v:'2'},{k:'犯规',v:'1'}] }
+};
+
+function showPlayer(id) {
+  const p = players[id]; if (!p) return;
+  document.getElementById('pmEmoji').textContent = p.emoji;
+  document.getElementById('pmName').textContent = p.num + ' ' + p.name;
+  document.getElementById('pmMeta').textContent = p.pos + ' · ' + p.meta;
+  document.getElementById('pmInjured').innerHTML = p.injured ? '<div class="pm-injured-tag">🩹 ' + p.injured + '</div>' : '';
+  const sg = document.getElementById('pmStatsGrid');
+  sg.innerHTML = '';
+  Object.entries(p.stats).forEach(([k,v]) => { sg.innerHTML += '<div><div class="pm-stat-num">' + v + '</div><div class="pm-stat-label">' + k + '</div></div>'; });
+  const det = document.getElementById('pmDetails');
+  det.innerHTML = '<div class="pm-detail-section"><div class="pm-detail-section-title">详细数据</div>';
+  p.details.forEach(d => { det.innerHTML += '<div class="pm-detail-row"><span class="pm-detail-key">' + d.k + '</span><span class="pm-detail-val">' + d.v + '</span></div>'; });
+  det.innerHTML += '</div>';
+  document.getElementById('playerModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closePlayer() { document.getElementById('playerModal').classList.remove('show'); document.body.style.overflow = ''; }
+  </script>
+
+</body>
+</html>
