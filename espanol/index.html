@@ -730,7 +730,7 @@ function renderLearn(learn) {
       <div class="vocab-grid">
         ${learn.vocab.map((v, vi) => `
           <div class="vocab-card" onclick="this.classList.toggle('flipped')">
-            <button class="speak-btn" id="vc-btn-${vi}" onclick="event.stopPropagation();speakText('${v.es.replace(/'/g,'\\'')}',this)" title="听发音">🔊</button>
+            <button class="speak-btn" id="vc-btn-${vi}" onclick="event.stopPropagation();speakText(this.dataset.text,this)" data-text="${v.es.replace(/"/g,'&quot;')}" title="听发音">🔊</button>
             <div class="vocab-es">${v.es}</div>
             <div class="vocab-zh">${v.zh}</div>
             <div class="vocab-example">${v.ex}</div>
@@ -754,7 +754,7 @@ function renderPractice(unit) {
   if (unit.learn && unit.learn.vocab) {
     html += unit.learn.vocab.map((v, vi) => `
       <div class="vocab-card" onclick="this.classList.toggle('flipped')">
-        <button class="speak-btn" id="pr-btn-${vi}" onclick="event.stopPropagation();speakText('${v.es.replace(/'/g,'\\'')}',this)" title="听发音">🔊</button>
+        <button class="speak-btn" id="pr-btn-${vi}" onclick="event.stopPropagation();speakText(this.dataset.text,this)" data-text="${v.es.replace(/"/g,'&quot;')}" title="听发音">🔊</button>
         <div class="vocab-es">${v.es}</div>
         <div class="vocab-zh">${v.zh}</div>
         <div class="vocab-example">📢 ${v.ex}</div>
