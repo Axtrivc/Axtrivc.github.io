@@ -201,8 +201,22 @@
   }
 
   /* ── Phoneme card 升级 ── */
-  .phoneme-card { position: relative; }
-  .phoneme-card .speak-btn { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; font-size: .8rem; }
+  .phoneme-card { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 10px 10px 10px; }
+  .phoneme-letter-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 4px;
+  }
+  .phoneme-example-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 4px;
+    margin-top: 2px;
+  }
+  .speak-sm { width: 22px !important; height: 22px !important; font-size: .75rem !important; flex-shrink: 0; }
+
+  /* ── es-row（对话句子 + 按钮同行）── */
+  .es-row {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .es-row .es { flex: 1; min-width: 0; }
+  .speak-inline { flex-shrink: 0; }
 
   /* ── Vocab card 升级 ── */
   .vocab-card .speak-btn { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; font-size: .8rem; }
@@ -651,16 +665,27 @@ function renderLearn(learn) {
 
   if (learn.phonetics) {
     html += `<div class="section">
-      <h3>🔤 字母与发音 <span class="tag">点🔊听发音</span></h3>
+      <h3>🔤 字母与发音 <span class="tag">字母/例句可分别听</span></h3>
       <p style="font-size:.82rem;color:var(--sub);margin-bottom:12px">${learn.note || ''}</p>
       <div class="phoneme-grid">
-        ${learn.phonetics.map((p, idx) => `
+        ${learn.phonetics.map((p, idx) => {
+          const letter = p.letter.split(' ')[0];
+          const exWord = p.example.split(' ')[0];
+          const exEscL = letter.replace(/'/g,"\\'");
+          const exEscW = exWord.replace(/'/g,"\\'");
+          return `
           <div class="phoneme-card">
-            <button class="speak-btn" id="ph-btn-${idx}" onclick="speakText('${p.example.split(' ')[0]}',this)" title="点击听发音">🔊</button>
-            <div class="phoneme-letter">${p.letter}</div>
+            <div class="phoneme-letter-row">
+              <span class="phoneme-letter">${p.letter}</span>
+              <button class="speak-btn speak-sm" onclick="speakText('${exEscL}',this)" title="听字母发音">🔊</button>
+            </div>
             <div class="phoneme-ipa">${p.ipa}</div>
-            <div class="phoneme-example">${p.example}</div>
-          </div>`).join('')}
+            <div class="phoneme-example-row">
+              <span class="phoneme-example">${p.example}</span>
+              <button class="speak-btn speak-sm" onclick="speakText('${exEscW}',this)" title="听例词发音">🔊</button>
+            </div>
+          </div>`;
+        }).join('')}
       </div>
     </div>`;
   }
@@ -669,14 +694,20 @@ function renderLearn(learn) {
     html += `<div class="section">
       <h3>💬 情境对话 <span class="tag">点🔊听整句</span></h3>
       <div class="dialog-box">
-        ${learn.dialogue.map((d, di) => `
+        ${learn.dialogue.map((d, di) => {
+          const esEsc = d.es.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+          return `
           <div class="dialog-line">
             <div class="dialog-avatar">${d.avatar}</div>
             <div class="dialog-bubble">
-              <div class="es">${d.es}<button class="speak-btn" id="dlg-btn-${di}" onclick="speakText('${d.es.replace(/'/g,'\\'')}',this)" title="听发音">🔊</button></div>
+              <div class="es-row">
+                <span class="es">${d.es}</span>
+                <button class="speak-btn speak-inline" onclick="speakText('${esEsc}',this)" title="听发音">🔊</button>
+              </div>
               <div class="zh">${d.zh}</div>
             </div>
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
       </div>
     </div>`;
   }
@@ -734,14 +765,20 @@ function renderPractice(unit) {
     html += `<div class="section">
       <h3>🎭 对话复习 <span class="tag">点🔊跟读练习</span></h3>
       <div class="dialog-box">
-        ${unit.learn.dialogue.map((d, di) => `
+        ${unit.learn.dialogue.map((d, di) => {
+          const esEsc = d.es.replace(/'/g,"\\'");
+          return `
           <div class="dialog-line">
             <div class="dialog-avatar">${d.avatar}</div>
             <div class="dialog-bubble">
-              <div class="es">${d.es}<button class="speak-btn" id="pr-dlg-btn-${di}" onclick="speakText('${d.es.replace(/'/g,'\\'')}',this)" title="点击朗读">🔊</button></div>
+              <div class="es-row">
+                <span class="es">${d.es}</span>
+                <button class="speak-btn speak-inline" onclick="speakText('${esEsc}',this)" title="点击朗读">🔊</button>
+              </div>
               <div class="zh">${d.zh}</div>
             </div>
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
       </div>
     </div>`;
   }
