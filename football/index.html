@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>⚽ 足球日报 · 2026/04/03</title>
+  <style>
+    /* ── 导航栏 ── */
+    .top-nav {
+      background: #1a1a2e;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .top-nav a {
+      color: #a0b4d0;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .top-nav a:hover { color: #fff; }
+    .top-nav .nav-home { font-size: 16px; }
+    .top-nav .nav-sep { color: #444; }
+    .top-nav .nav-current { color: #fff; font-size: 14px; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #f5f0e8;
+      color: #2c2c2c;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      padding: 16px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left h1 { font-size: 22px; font-weight: 800; letter-spacing: 1px; }
+    .header-left .subtitle { font-size: 13px; color: #a0b4d0; margin-top: 4px; }
+    .header-right { text-align: right; font-size: 12px; color: #7fa8cc; line-height: 1.8; }
+    .header-right .date { font-size: 18px; font-weight: 700; color: #fff; }
+
+    /* Section */
+    .section {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #f0ebe0;
+    }
+    .section-icon { font-size: 20px; }
+    .section-title { font-size: 16px; font-weight: 700; color: #1a1a2e; }
+    .section-tag {
+      margin-left: auto;
+      font-size: 11px;
+      background: #f0ebe0;
+      color: #666;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    /* Card item */
+    .card-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #f5f0e8;
+      line-height: 1.65;
+    }
+    .card-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .item-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .item-emoji { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .item-title { font-size: 14px; font-weight: 700; color: #1a1a2e; flex: 1; }
+    .badge {
+      font-size: 10px;
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .badge-hot { background: #fff0e6; color: #e05a00; }
+    .badge-transfer { background: #e6f4ff; color: #0070cc; }
+    .badge-injury { background: #fff5e6; color: #cc7700; }
+    .badge-match { background: #e6fff0; color: #00882b; }
+    .badge-break { background: #f5e6ff; color: #8800cc; }
+    .badge-news { background: #f0f0f0; color: #555; }
+
+    .item-desc { font-size: 13px; color: #555; padding-left: 21px; }
+    .item-desc strong { color: #1a1a2e; }
+
+    /* Scoreboard style */
+    .scoreboard {
+      background: #f8f5ef;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 8px;
+    }
+    .score-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eae5d8;
+    }
+    .score-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .score-team { font-size: 13px; font-weight: 600; flex: 1; }
+    .score-team.home { text-align: right; padding-right: 10px; }
+    .score-team.away { text-align: left; padding-left: 10px; }
+    .score-num {
+      font-size: 18px;
+      font-weight: 800;
+      background: #1a1a2e;
+      color: #fff;
+      width: 52px;
+      text-align: center;
+      border-radius: 6px;
+      padding: 2px 0;
+      letter-spacing: 2px;
+    }
+    .score-info { font-size: 11px; color: #888; text-align: center; margin-top: 3px; }
+    .score-competition {
+      font-size: 11px;
+      color: #999;
+      text-align: center;
+      padding: 4px 0 6px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Schedule item */
+    .schedule-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid #f5f0e8;
+      font-size: 13px;
+    }
+    .schedule-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .schedule-time {
+      background: #1a1a2e;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .schedule-competition {
+      font-size: 11px;
+      color: #888;
+      white-space: nowrap;
+      background: #f0ebe0;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+    .schedule-teams { font-weight: 600; color: #1a1a2e; flex: 1; }
+    .schedule-hot { font-size: 14px; }
+
+    /* World cup */
+    .wc-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #f5f0e8;
+    }
+    .wc-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .wc-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .wc-flag { font-size: 18px; flex-shrink: 0; }
+    .wc-content { flex: 1; }
+    .wc-title { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 3px; }
+    .wc-desc { font-size: 13px; color: #555; line-height: 1.6; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      padding: 16px 0 8px;
+    }
+    .footer span { color: #c8b99a; }
+  </style>
+</head>
+<body>
+
+  <!-- 导航栏 -->
+  <div class="top-nav">
+    <a class="nav-home" href="/-Axtrivc-.github.io/">🏠 首页</a>
+    <span class="nav-sep">|</span>
+    <span class="nav-current">⚽ 足球日报</span>
+  </div>
+
+  <!-- 头部 -->
+  <div class="header">
+    <div class="header-left">
+      <h1>⚽ 足球日报</h1>
+      <div class="subtitle">FotMob风格 · 每日精选</div>
+    </div>
+    <div class="header-right">
+      <div class="date">04/03</div>
+      <div>2026 · Friday</div>
+      <div>🕐 20:00 更新</div>
+    </div>
+  </div>
+
+
+  <!-- ━━━ 今日焦点 ━━━ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📌</span>
+      <span class="section-title">今日焦点</span>
+      <span class="section-tag">TOP 5</span>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">🔥</span>
+        <span class="item-title">意大利连续三届无缘世界杯！创队史耻辱纪录</span>
+        <span class="badge badge-hot">🔥 重磅</span>
+      </div>
+      <div class="item-desc">
+        附加赛客场1-1战平波黑，<strong>点球大战1-4惨败</strong>，蓝衣军团再次出局。主帅加图索、传奇布冯双双辞职，孔蒂或阿莱格里或接任。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">🌍</span>
+        <span class="item-title">伊拉克时隔40年重返世界杯！</span>
+        <span class="badge badge-match">🎯 比赛</span>
+      </div>
+      <div class="item-desc">
+        洲际附加赛决赛<strong>2-1逆转玻利维亚</strong>，拿到美加墨世界杯最后一张门票，创造历史。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">💰</span>
+        <span class="item-title">哈兰德规划2027年加盟巴萨</span>
+        <span class="badge badge-transfer">💰 转会</span>
+      </div>
+      <div class="item-desc">
+        报道称哈兰德<strong>愿意等待至2027年</strong>实现加盟巴塞罗那的梦想，曼城同步已确定瓜帅接班人。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">⚡</span>
+        <span class="item-title">欧冠1/4决赛：拜仁 vs 皇马史诗对决临近</span>
+        <span class="badge badge-hot">🔥 重磅</span>
+      </div>
+      <div class="item-desc">
+        本赛季欧冠最受瞩目的巅峰对决：<strong>北京时间4月7日</strong>拜仁慕尼黑主场迎战皇家马德里，4月15日次回合，欧洲豪门的终极对决。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">💥</span>
+        <span class="item-title">曼城欧冠遭皇马淘汰，全力国内三冠</span>
+        <span class="badge badge-match">🎯 比赛</span>
+      </div>
+      <div class="item-desc">
+        1/8决赛次回合<strong>1-2不敌皇马</strong>，卫冕失败出局。已夺英联杯（决赛2-0胜阿森纳），剑指英超+足总杯双冠。
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ━━━ 巴萨专区 ━━━ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔵🔴</span>
+      <span class="section-title">巴萨专区</span>
+      <span class="section-tag">FC Barcelona</span>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">🏆</span>
+        <span class="item-title">巴萨欧冠1/4决赛首回合将战马竞</span>
+        <span class="badge badge-match">🎯 赛程</span>
+      </div>
+      <div class="item-desc">
+        <strong>北京时间4月8日 03:00</strong>，巴萨客场挑战马德里竞技，欧冠八强对决拉开序幕。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">💰</span>
+        <span class="item-title">巴萨谈判国米后卫巴斯托尼</span>
+        <span class="badge badge-transfer">💰 转会</span>
+      </div>
+      <div class="item-desc">
+        据意媒报道，巴萨与国米就中后卫<strong>巴斯托尼</strong>展开谈判，国米标价已从7000万欧降至<strong>4500万欧+浮动条款</strong>。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">❌</span>
+        <span class="item-title">拉什福德买断计划告吹</span>
+        <span class="badge badge-transfer">💰 转会</span>
+      </div>
+      <div class="item-desc">
+        巴萨错过3月31日截止日期，未能激活<strong>3000万欧买断条款</strong>，拉什福德今夏将返回曼联，双方需重启谈判。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">💪</span>
+        <span class="item-title">加维复出在即 | 伤缺203天终回归</span>
+        <span class="badge badge-injury">🏥 伤病</span>
+      </div>
+      <div class="item-desc">
+        中场核心<strong>加维</strong>伤缺长达203天后已回归赛场，将助力巴萨冲刺赛季荣誉及备战世界杯。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">🧤</span>
+        <span class="item-title">特尔施特根有望赛季末复出</span>
+        <span class="badge badge-injury">🏥 伤病</span>
+      </div>
+      <div class="item-desc">
+        巴萨希望门将<strong>特尔施特根</strong>能在本赛季结束前从伤病中恢复，或出战赛季末关键场次。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">👦</span>
+        <span class="item-title">克鲁伊维特之子续约至2028</span>
+        <span class="badge badge-news">📋 常规</span>
+      </div>
+      <div class="item-desc">
+        巴萨官方宣布与青训球员<strong>肖恩·克鲁伊维特</strong>（传奇球星之子）续约至2028年。
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ━━━ 豪门速递 ━━━ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚡</span>
+      <span class="section-title">豪门速递</span>
+      <span class="section-tag">Big Clubs</span>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">👑</span>
+        <span class="item-title">皇马 · 有意维蒂尼亚+施洛特贝克</span>
+        <span class="badge badge-transfer">💰 转会</span>
+      </div>
+      <div class="item-desc">
+        皇马将<strong>巴黎维蒂尼亚</strong>视为头号中场引援目标（身价约1.1亿欧）；另据阿斯报，多特后卫<strong>施洛特贝克</strong>梦想加盟皇马，合同到期身价约3000万欧。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">🔵</span>
+        <span class="item-title">曼城 · 法国新星切尔基官方加盟</span>
+        <span class="badge badge-transfer">💰 转会</span>
+      </div>
+      <div class="item-desc">
+        里昂法国新星<strong>马西斯·切尔基</strong>正式加盟曼城，身披<strong>10号球衣</strong>，转会费最高可达4200万欧元。足总杯1/4决赛4月4日主场战利物浦。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">🔵</span>
+        <span class="item-title">曼城 · 福登国家队22场无进球</span>
+        <span class="badge badge-injury">🏥 状态</span>
+      </div>
+      <div class="item-desc">
+        <strong>福登</strong>为英格兰国家队出战已连续<strong>22场未能进球</strong>，状态堪忧，参加世界杯资格存疑。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">🔴</span>
+        <span class="item-title">利物浦 · 弗林蓬再度受伤 缺阵2-3周</span>
+        <span class="badge badge-injury">🏥 伤病</span>
+      </div>
+      <div class="item-desc">
+        边后卫<strong>弗林蓬</strong>本赛季第四次肌肉伤病，荷兰队友谊赛受伤，预计缺阵<strong>2-3周</strong>或更长，欧冠1/4决赛前景存疑。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">🔴</span>
+        <span class="item-title">利物浦 · 8000万欧追求孔德</span>
+        <span class="badge badge-transfer">💰 转会</span>
+      </div>
+      <div class="item-desc">
+        据《世界体育报》，利物浦有意孔德，<strong>愿为他支付8000万欧</strong>，曼城、切尔西也同样对其表示关注。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">🔴</span>
+        <span class="item-title">阿森纳 · 看上多特中场布兰特</span>
+        <span class="badge badge-transfer">💰 转会</span>
+      </div>
+      <div class="item-desc">
+        枪手被曝有意<strong>多特蒙德布兰特</strong>，面临多方竞争，球员预计赛季末做出决定。欧冠1/4决赛4月7日对阵里斯本竞技。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">🔵</span>
+        <span class="item-title">切尔西 · 恩佐向往马德里 引发更衣室矛盾</span>
+        <span class="badge badge-hot">⚡ 突发</span>
+      </div>
+      <div class="item-desc">
+        副队长<strong>恩佐·费尔南德斯</strong>多次公开表达对马德里的向往，并批评队友行为，引发更衣室不满。皇马有意但设<strong>1亿欧上限</strong>。
+      </div>
+    </div>
+
+    <div class="card-item">
+      <div class="item-header">
+        <span class="item-emoji">🔴</span>
+        <span class="item-title">曼联 · 确认签下哥伦比亚17岁新星</span>
+        <span class="badge badge-transfer">💰 转会</span>
+      </div>
+      <div class="item-desc">
+        曼联已基本敲定今夏首签——<strong>17岁哥伦比亚新星克里斯蒂安·奥罗兹科</strong>，待年满18岁后正式加盟。老将<strong>卡塞米罗</strong>告别情绪激动，表示终生支持曼联。
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ━━━ 近期战报 ━━━ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏆</span>
+      <span class="section-title">近期战报</span>
+      <span class="section-tag">Results</span>
+    </div>
+
+    <div class="scoreboard">
+      <div class="score-competition">🏆 欧冠 · 1/8决赛</div>
+
+      <div class="score-row">
+        <div class="score-team home">巴塞罗那 🔵🔴</div>
+        <div>
+          <div class="score-num">7-2</div>
+          <div class="score-info">拉菲尼亚造5球 · 莱万双响</div>
+        </div>
+        <div class="score-team away">🔛 纽卡斯尔</div>
+      </div>
+
+      <div class="score-row">
+        <div class="score-team home">🟣 皇家马德里</div>
+        <div>
+          <div class="score-num">2-1</div>
+          <div class="score-info">次回合逆转 · 淘汰曼城</div>
+        </div>
+        <div class="score-team away">🔵 曼城</div>
+      </div>
+
+      <div class="score-competition" style="margin-top:12px;">🌍 世界杯附加赛</div>
+
+      <div class="score-row">
+        <div class="score-team home">🇮🇶 伊拉克</div>
+        <div>
+          <div class="score-num">2-1</div>
+          <div class="score-info">晋级美加墨世界杯</div>
+        </div>
+        <div class="score-team away">🇧🇴 玻利维亚</div>
+      </div>
+
+      <div class="score-row">
+        <div class="score-team home">🇮🇹 意大利</div>
+        <div>
+          <div class="score-num">点 1-4</div>
+          <div class="score-info">1-1后点球惨败 三届缺席</div>
+        </div>
+        <div class="score-team away">🇧🇦 波黑</div>
+      </div>
+
+      <div class="score-competition" style="margin-top:12px;">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英联杯 · 决赛</div>
+
+      <div class="score-row">
+        <div class="score-team home">🔵 曼城</div>
+        <div>
+          <div class="score-num">2-0</div>
+          <div class="score-info">英联杯冠军</div>
+        </div>
+        <div class="score-team away">🔴 阿森纳</div>
+      </div>
+
+      <div class="score-competition" style="margin-top:12px;">🟡 国际友谊赛</div>
+
+      <div class="score-row">
+        <div class="score-team home">🇪🇸 西班牙</div>
+        <div>
+          <div class="score-num">0-0</div>
+          <div class="score-info">25脚射门无果 · 领跑世界排名</div>
+        </div>
+        <div class="score-team away">🇪🇬 埃及</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ━━━ 今日/近日赛程 ━━━ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⏰</span>
+      <span class="section-title">近日赛程</span>
+      <span class="section-tag">Schedule</span>
+    </div>
+
+    <div class="schedule-item">
+      <span class="schedule-time">04/04 22:15</span>
+      <span class="schedule-competition">🇪🇸 西甲 第30轮</span>
+      <span class="schedule-teams">马略卡 vs 皇家马德里</span>
+      <span class="schedule-hot">👑</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-time">04/05 03:00</span>
+      <span class="schedule-competition">🇪🇸 西甲 第30轮</span>
+      <span class="schedule-teams">马德里竞技 vs 巴塞罗那</span>
+      <span class="schedule-hot">🔥</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-time">04/04 北京</span>
+      <span class="schedule-competition">🏴󠁧󠁢󠁥󠁮󠁧󠁿 足总杯1/4</span>
+      <span class="schedule-teams">曼城 vs 利物浦</span>
+      <span class="schedule-hot">⚡</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-time">04/07 03:00</span>
+      <span class="schedule-competition">🏆 欧冠1/4首回合</span>
+      <span class="schedule-teams">拜仁慕尼黑 vs 皇家马德里</span>
+      <span class="schedule-hot">🔥</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-time">04/07 03:00</span>
+      <span class="schedule-competition">🏆 欧冠1/4首回合</span>
+      <span class="schedule-teams">里斯本竞技 vs 阿森纳</span>
+      <span class="schedule-hot">⚡</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-time">04/08 03:00</span>
+      <span class="schedule-competition">🏆 欧冠1/4首回合</span>
+      <span class="schedule-teams">马德里竞技 vs 巴塞罗那</span>
+      <span class="schedule-hot">🔥</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-time">04/08 03:00</span>
+      <span class="schedule-competition">🏆 欧冠1/4首回合</span>
+      <span class="schedule-teams">巴黎圣日耳曼 vs 利物浦</span>
+      <span class="schedule-hot">⚡</span>
+    </div>
+  </div>
+
+
+  <!-- ━━━ 世界杯动态 ━━━ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🌍</span>
+      <span class="section-title">世界杯动态</span>
+      <span class="section-tag">2026 WC</span>
+    </div>
+
+    <div class="wc-item">
+      <div class="wc-row">
+        <span class="wc-flag">🇮🇶</span>
+        <div class="wc-content">
+          <div class="wc-title">伊拉克晋级 · 时隔40年重返世界杯</div>
+          <div class="wc-desc">附加赛<strong>2-1逆转玻利维亚</strong>，亚洲球队拿下重要一席，届时参加美加墨世界杯。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wc-item">
+      <div class="wc-row">
+        <span class="wc-flag">🇮🇹</span>
+        <div class="wc-content">
+          <div class="wc-title">意大利出局 · 三届缺席创耻辱纪录</div>
+          <div class="wc-desc">附加赛<strong>点球惨败波黑</strong>，连续缺席2018、2022、2026三届世界杯，主帅加图索、传奇布冯双双辞职。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wc-item">
+      <div class="wc-row">
+        <span class="wc-flag">🗾</span>
+        <div class="wc-content">
+          <div class="wc-title">日本队 · 友谊赛1-0爆冷胜英格兰</div>
+          <div class="wc-desc">已率先晋级世界杯的日本继续备战，友谊赛<strong>1-0击败英格兰</strong>，展示亚洲强队实力。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wc-item">
+      <div class="wc-row">
+        <span class="wc-flag">🇨🇳</span>
+        <div class="wc-content">
+          <div class="wc-title">国足 · U23历史首进亚青赛决赛</div>
+          <div class="wc-desc">U23国足半决赛<strong>3-0大胜越南</strong>，历史首次晋级U23亚洲杯决赛，将对阵日本。成年队备战仍面临压力。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wc-item">
+      <div class="wc-row">
+        <span class="wc-flag">🏆</span>
+        <div class="wc-content">
+          <div class="wc-title">2026世界杯 · 48支球队名单已基本确认</div>
+          <div class="wc-desc">赛事将于<strong>2026年6月11日</strong>在美国、加拿大、墨西哥三国开幕，各队保底奖金约<strong>6187万美元</strong>。意大利缺席后，欧洲区名额竞争更激烈。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 底部 -->
+  <div class="footer">
+    ⚽ 足球日报 · <span>2026年4月3日</span> · 资讯来源：新浪体育 / ESPN / 各官方渠道
+  </div>
+
+</body>
+</html>
