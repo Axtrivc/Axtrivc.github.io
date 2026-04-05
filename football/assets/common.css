@@ -253,3 +253,93 @@ body {
 .trophy-icon { font-size: 18px; }
 .trophy-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--text-primary); }
 .trophy-count { font-size: 13px; font-weight: 800; color: var(--accent-gold); }
+
+/* ============================
+   归档页
+   ============================ */
+.archive-header {
+  padding: 24px 20px 8px;
+  text-align: center;
+}
+.archive-header .archive-icon { font-size: 36px; margin-bottom: 6px; }
+.archive-header h1 { font-size: 22px; font-weight: 800; color: var(--text-primary); }
+.archive-header .archive-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.6;
+}
+
+.archive-month-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 16px 20px 8px;
+}
+
+.archive-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 16px 4px;
+}
+
+.archive-card {
+  display: block;
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: 1px solid var(--border-light);
+}
+.archive-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.ac-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.ac-type {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.ac-morning { background: #fef3c7; color: #92400e; }
+.ac-evening { background: #e0e7ff; color: #3730a3; }
+
+.ac-date {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ac-weekday {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.ac-desc {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+.archive-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-faint);
+}
+.archive-empty-icon { font-size: 36px; margin-bottom: 8px; }
+.archive-empty p { font-size: 13px; }
+
+@media (max-width: 360px) {
+  .archive-grid { grid-template-columns: 1fr; }
+}
