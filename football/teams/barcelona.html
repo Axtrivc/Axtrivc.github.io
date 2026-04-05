@@ -281,7 +281,7 @@
   </div>
 
   <div class="refresh-bar">
-    <span>积分榜数据来源：TheSportsDB</span>
+    <span>积分榜数据来源：ESPN</span>
     <button class="refresh-btn" onclick="loadStandings()">🔄 刷新</button>
   </div>
 
@@ -302,62 +302,121 @@
 
   <script>
 /* ===========================
-   TheSportsDB 配置
+   ESPN API 配置
    =========================== */
-const TSDK = {
-  key: '3',
-  laLigaId: '4335',
-  season: '2025-2026',
-  teamNameEn: 'Barcelona'
+const ESPN = {
+  standings: 'https://sports.core.api.espn.com/v2/sports/soccer/leagues/esp.1/seasons/2025/types/1/groups/15/standings/0',
+  barcaTeamId: '83'
 };
 
 /* ===========================
-   球队中文映射（积分榜用）
+   球队中文映射
    =========================== */
 const TEAM_ZH = {
   'Barcelona': '巴萨', 'Real Madrid': '皇家马德里',
   'Atletico Madrid': '马德里竞技', 'Villarreal': '比利亚雷亚尔',
   'Real Betis': '贝蒂斯', 'Celta Vigo': '塞尔塔',
   'Real Sociedad': '皇家社会', 'Getafe': '赫塔费',
-  'Athletic Bilbao': '毕尔巴鄂竞技', 'Osasuna': '奥萨苏纳',
+  'Athletic Club': '毕尔巴鄂竞技', 'Osasuna': '奥萨苏纳',
   'Espanyol': '西班牙人', 'Rayo Vallecano': '巴列卡诺',
   'Valencia': '巴伦西亚', 'Girona': '赫罗纳',
   'Sevilla': '塞维利亚', 'Deportivo Alaves': '阿拉维斯',
   'Elche': '埃尔切', 'RCD Mallorca': '马洛卡',
-  'Levante': '莱万特', 'Real Oviedo': '奥维耶多'
+  'Levante': '莱万特', 'Real Oviedo': '奥维耶多',
+  'Athletic Bilbao': '毕尔巴鄂竞技'
 };
 
 /* ===========================
    工具函数
    =========================== */
 function $(id) { return document.getElementById(id); }
+function suffix(n) { return n===1?'st':n===2?'nd':n===3?'rd':'th'; }
+function fixUrl(u) { return u.replace('http://', 'https://'); }
 
 /* ===========================
-   加载积分榜（TheSportsDB免费API，支持CORS）
+   加载积分榜（ESPN API，支持CORS，数据准确）
    =========================== */
 async function loadStandings() {
-  const sl = $('standingsLoading');
-  const sc = $('standingsContent');
-
   try {
-    const resp = await fetch(
-      `https://www.thesportsdb.com/api/v1/json/${TSDK.key}/lookuptable.php?l=${TSDK.laLigaId}&s=${TSDK.season}`
-    );
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const json = await resp.json();
+    // 第1步：获取积分榜球队列表（1次请求）
+    const stResp = await fetch(ESPN.standings + '?lang=zh');
+    if (!stResp.ok) throw new Error('HTTP ' + stResp.status);
+    const stData = await stResp.json();
 
-    if (!json.table || json.table.length === 0) throw new Error('空数据');
+    const teamRefs = stData.standings || [];
+    if (teamRefs.length === 0) throw new Error('空数据');
 
-    const barca = json.table.find(t => t.strTeam.includes(TSDK.teamNameEn));
-    renderStats(barca);
-    renderStandings(json.table, barca);
+    // 第2步：分批获取每支球队数据（避免并发过高，每批5队）
+    // 每队需要：team info + record detail = 2次请求，共40次
+    const results = [];
+    const BATCH = 5;
+    for (let i = 0; i < teamRefs.length; i += BATCH) {
+      const batch = teamRefs.slice(i, i + BATCH);
+      const batchResults = await Promise.all(
+        batch.map(async (entry, batchIdx) => {
+          const idx = i + batchIdx;
+          const teamRef = entry.team.$ref;
+          const recUrl = teamRef.replace('/teams/', '/types/1/teams/').replace(/\?lang=.*$/, '') + '/record?lang=zh';
+          try {
+            const [teamResp, recListResp] = await Promise.all([
+              fetch(fixUrl(teamRef)),
+              fetch(fixUrl(recUrl))
+            ]);
+            const teamData = await teamResp.json();
+            const recList = await recListResp.json();
 
-    if (barca && barca.dateUpdated) {
-      $('standingsDate').textContent = '（截至 ' + barca.dateUpdated.split(' ')[0] + '）';
+            const stats = {};
+            const recItem = recList.items && recList.items[0];
+            if (recItem && recItem.$ref) {
+              const recDetail = await (await fetch(fixUrl(recItem.$ref))).json();
+              if (recDetail.stats) {
+                recDetail.stats.forEach(function(s) {
+                  stats[s.name] = parseInt(s.value) || 0;
+                  stats[s.name + '_display'] = s.displayValue || s.value;
+                });
+              }
+            }
+
+            return {
+              rank: idx + 1,
+              name: teamData.displayName || teamData.shortDisplayName || '',
+              shortName: teamData.shortDisplayName || '',
+              abbr: teamData.abbreviation || '',
+              logo: teamData.logos && teamData.logos[0] ? teamData.logos[0].href : '',
+              form: teamData.form || [],
+              played: stats.gamesPlayed || 0,
+              win: stats.wins || 0,
+              draw: stats.ties || stats.draws || 0,
+              loss: stats.losses || 0,
+              goalsFor: stats.pointsFor || 0,
+              goalsAgainst: stats.pointsAgainst || 0,
+              goalDifference: stats.pointDifferential || 0,
+              points: stats.points || 0,
+              goalDiffDisplay: stats.pointDifferential_display || '0'
+            };
+          } catch (e) {
+            console.warn('球队数据获取失败:', idx, e);
+            return null;
+          }
+        })
+      );
+      results.push(...batchResults);
     }
+
+    const teams = results.filter(Boolean);
+    if (teams.length === 0) throw new Error('所有球队数据获取失败');
+
+    // 第3步：找到巴萨
+    const barca = teams.find(function(t) { return t.abbr === 'BAR' || t.name.includes('Barcelona'); });
+
+    renderStats(barca);
+    renderStandings(teams, barca);
+
+    $('standingsDate').textContent = '（截至 ' + new Date().toLocaleDateString('zh-CN') + '）';
+
   } catch (e) {
     console.error('积分榜加载失败:', e);
-    sl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">加载失败，点击刷新重试</div>';
+    $('standingsLoading').innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">加载失败，点击刷新重试</div>';
     $('statsLoading').innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">数据加载失败</div>';
   }
 }
@@ -365,18 +424,17 @@ async function loadStandings() {
 /* 渲染数据总览卡片 */
 function renderStats(barca) {
   if (!barca) return;
-  const gd = barca.intGoalDifference;
-  const gdStr = gd >= 0 ? '+' + gd : String(gd);
+  const gdStr = barca.goalDiffDisplay;
 
   $('statsContent').innerHTML =
     '<div class="team-stats">' +
-      '<div><div class="team-stat-num">' + barca.intPoints + '</div><div class="team-stat-label">积分</div></div>' +
-      '<div><div class="team-stat-num">' + barca.intRank + suffix(barca.intRank) + '</div><div class="team-stat-label">联赛排名</div></div>' +
+      '<div><div class="team-stat-num">' + barca.points + '</div><div class="team-stat-label">积分</div></div>' +
+      '<div><div class="team-stat-num">' + barca.rank + suffix(barca.rank) + '</div><div class="team-stat-label">联赛排名</div></div>' +
       '<div><div class="team-stat-num">八强</div><div class="team-stat-label">欧冠晋级</div></div>' +
     '</div>' +
     '<div class="team-stats" style="border-bottom:none;padding-top:0;">' +
-      '<div><div class="team-stat-num">' + barca.intGoalsFor + '</div><div class="team-stat-label">进球</div></div>' +
-      '<div><div class="team-stat-num">' + barca.intGoalsAgainst + '</div><div class="team-stat-label">失球</div></div>' +
+      '<div><div class="team-stat-num">' + barca.goalsFor + '</div><div class="team-stat-label">进球</div></div>' +
+      '<div><div class="team-stat-num">' + barca.goalsAgainst + '</div><div class="team-stat-label">失球</div></div>' +
       '<div><div class="team-stat-num">' + gdStr + '</div><div class="team-stat-label">净胜球</div></div>' +
     '</div>';
 
@@ -384,40 +442,36 @@ function renderStats(barca) {
   $('statsContent').style.display = '';
 }
 
-function suffix(n) { return n===1?'st':n===2?'nd':n===3?'rd':'th'; }
-
 /* 渲染积分榜表格 */
-function renderStandings(table, barca) {
-  const barcaId = barca ? barca.idTeam : null;
+function renderStandings(teams, barca) {
   let html = '';
-  table.forEach(function(t) {
-    var hl = t.idTeam === barcaId;
-    var rank = t.intRank;
-    var danger = rank >= 17;
-    var gd = t.intGoalDifference;
-    var gdStr = gd >= 0 ? '+' + gd : String(gd);
-    var zh = TEAM_ZH[t.strTeam] || t.strTeam;
-    var prefix = hl ? '🔴 ' : '';
+  teams.forEach(function(t) {
+    var hl = barca && t.abbr === barca.abbr;
+    var danger = t.rank >= 17;
     var rankStyle = danger ? ' style="color:var(--accent-red);"' : '';
+    var zh = TEAM_ZH[t.name] || TEAM_ZH[t.shortName] || t.shortName || t.name;
+    var prefix = hl ? '🔴 ' : '';
+
+    // 近期状态
     var formDots = '';
-    if (t.strForm) {
-      for (var i = 0; i < Math.min(t.strForm.length, 5); i++) {
-        var c = t.strForm[i];
-        var color = c==='W' ? '#16a34a' : c==='D' ? '#f59e0b' : c==='L' ? '#ef4444' : '#999';
+    if (t.form && t.form.length > 0) {
+      for (var i = 0; i < Math.min(t.form.length, 5); i++) {
+        var f = t.form[i];
+        var color = f==='W' ? '#16a34a' : f==='D' ? '#f59e0b' : f==='L' ? '#ef4444' : '#999';
         formDots += '<span class="form-dot" style="background:' + color + ';"></span>';
       }
     }
 
     html += '<tr class="' + (hl?'highlight':'') + '">' +
-      '<td class="rank"' + rankStyle + '>' + rank + '</td>' +
+      '<td class="rank"' + rankStyle + '>' + t.rank + '</td>' +
       '<td>' + prefix + zh + '<span class="form-dots">' + formDots + '</span></td>' +
-      '<td>' + t.intPlayed + '</td>' +
-      '<td>' + t.intWin + '</td>' +
-      '<td>' + t.intDraw + '</td>' +
-      '<td>' + t.intLoss + '</td>' +
-      '<td>' + t.intGoalsFor + ':' + t.intGoalsAgainst + '</td>' +
-      '<td>' + gdStr + '</td>' +
-      '<td class="pts">' + t.intPoints + '</td>' +
+      '<td>' + t.played + '</td>' +
+      '<td>' + t.win + '</td>' +
+      '<td>' + t.draw + '</td>' +
+      '<td>' + t.loss + '</td>' +
+      '<td>' + t.goalsFor + ':' + t.goalsAgainst + '</td>' +
+      '<td>' + t.goalDiffDisplay + '</td>' +
+      '<td class="pts">' + t.points + '</td>' +
     '</tr>';
   });
   $('standingsBody').innerHTML = html;
