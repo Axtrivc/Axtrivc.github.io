@@ -15,24 +15,24 @@ categories:
 ### 📰 足坛头条
 
 - [浙江0-1铜梁龙，杜月徵一条龙制胜，米特里策两度揪李镇全头发染红](https://www.dongqiudi.com/article/5758998)
+- [贝维斯：这是一场艰难的比赛，下场比赛尽一切所能去获得分数](https://www.dongqiudi.com/article/5759516)
+- [半场战报：福伦丹0-0费耶诺德](https://www.dongqiudi.com/article/5759532)
+- [这是何意？三镇补时落后2球，门将方镜淇角球冲到门前争顶](https://www.dongqiudi.com/article/5759529)
+- [世体：巴萨16岁小将阿杰伊在比赛中撞上球场外围墙，手腕骨折](https://www.dongqiudi.com/article/5759503) ⭐
 - [CBA战报：上海111-72狂胜吉林取CBA16连胜，闫鹏飞21+7+1](https://www.dongqiudi.com/article/5759522)
 - [瓦伦西亚vs塞尔塔：加亚、杜罗首发，马科斯-阿隆索、莫里巴出战](https://www.dongqiudi.com/article/5759511)
 - [CBA战报：辽宁106-64轻取四川，凯尔-维纳莱斯21分](https://www.dongqiudi.com/article/5759485)
 - [阿斯：安东尼近期表现不佳，照此状态他不可能参加世界杯](https://www.dongqiudi.com/article/5759437)
 - [记者：德泽尔比曾谋求曼联主帅一职，但被告知不在考量范围内](https://www.dongqiudi.com/article/5759441)
-- [新鹏城5-2三镇，韦斯利、本科维奇分别双响，卡迪斯传射](https://www.dongqiudi.com/article/5759466)
-- [泰山B队4-1北京理工，邓淳泽双响，马银灏、闫恒烨破门](https://www.dongqiudi.com/article/5759446)
-- [孙颖莎 ：跟曼昱打得非常焦灼，后两局自己稍微处理得不好](https://www.dongqiudi.com/article/5759439)
-- [中国国家队：恭喜孙颖莎成为女子世界杯历史首位三连冠选手！](https://www.dongqiudi.com/article/5759430)
 
 #### 西甲新闻
 
+- [世体：巴萨16岁小将阿杰伊在比赛中撞上球场外围墙，手腕骨折](https://www.dongqiudi.com/article/5759503)
 - [瓦伦西亚vs塞尔塔：加亚、杜罗首发，马科斯-阿隆索、莫里巴出战](https://www.dongqiudi.com/article/5759511)
 - [阿斯：安东尼近期表现不佳，照此状态他不可能参加世界杯](https://www.dongqiudi.com/article/5759437)
 - [半场战报：赫塔费1-0毕尔巴鄂竞技，路易斯-巴斯克斯破门](https://www.dongqiudi.com/article/5759436)
 - [阿斯：卡马文加对阵马略卡时发挥不佳，皇马考虑在今夏出售他](https://www.dongqiudi.com/article/5759393)
 - [巴萨官方：阿劳霍可以出战欧冠对马竞，贝尔纳尔左脚踝扭伤](https://www.dongqiudi.com/article/5759399)
-- [英超官方晒出图片：阿森纳U15全员抵达北京](https://www.dongqiudi.com/article/5759388)
 
 #### 英超新闻
 
@@ -72,6 +72,7 @@ categories:
 
 #### 我的主队动态
 
+- ⭐ [世体：巴萨16岁小将阿杰伊在比赛中撞上球场外围墙，手腕骨折](https://www.dongqiudi.com/article/5759503)
 - ⭐ [阿斯：卡马文加对阵马略卡时发挥不佳，皇马考虑在今夏出售他](https://www.dongqiudi.com/article/5759393)
 - ⭐ [巴萨官方：阿劳霍可以出战欧冠对马竞，贝尔纳尔左脚踝扭伤](https://www.dongqiudi.com/article/5759399)
 - ⭐ [每体：皇马高层给阿韦洛亚下了最后通牒，不进欧冠决赛就下课](https://www.dongqiudi.com/article/5758921)
@@ -101,6 +102,7 @@ categories:
 
 **相关新闻**
 
+- [世体：巴萨16岁小将阿杰伊在比赛中撞上球场外围墙，手腕骨折](https://www.dongqiudi.com/article/5759503)
 - [巴萨官方：阿劳霍可以出战欧冠对马竞，贝尔纳尔左脚踝扭伤](https://www.dongqiudi.com/article/5759399)
 
 
