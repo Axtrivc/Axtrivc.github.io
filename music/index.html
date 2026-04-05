@@ -427,12 +427,9 @@ document.addEventListener('DOMContentLoaded', function() {
     card.innerHTML = '<div class="bday-emoji">🎂</div><div class="bday-label">BIRTHDAY COUNTDOWN</div><div class="bday-name">Axtrivc 的生日</div><div class="bday-grid"><div class="bday-num"><span class="num" id="bday-d">00</span><span class="unit">天</span></div><div class="bday-num"><span class="num" id="bday-h">00</span><span class="unit">时</span></div><div class="bday-num"><span class="num" id="bday-m">00</span><span class="unit">分</span></div><div class="bday-num"><span class="num" id="bday-s">00</span><span class="unit">秒</span></div></div><div class="bday-date">5月12日</div>';
   }
 
-  var target = document.getElementById('recent-posts');
-  if (target && target.parentNode) {
-    target.parentNode.insertBefore(card, target);
-  } else {
-    var content = document.getElementById('content-inner') || document.querySelector('main') || document.getElementById('page');
-    if (content) content.prepend(card);
+  var posts = document.getElementById('recent-posts');
+  if (posts) {
+    posts.insertBefore(card, posts.firstChild);
   }
 
   if (!isToday) {
