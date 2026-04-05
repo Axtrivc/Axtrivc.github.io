@@ -2,15 +2,31 @@ name: Football Daily Update
 
 on:
   schedule:
-    # 每天 UTC 0:00（北京时间 8:00）运行
+    # 早报：UTC 0:00（北京时间 8:00）
     - cron: '0 0 * * *'
-  workflow_dispatch: # 允许手动触发
+    # 晚报：UTC 12:00（北京时间 20:00）
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+    inputs:
+      edition:
+        description: '早报(morning) 或 晚报(evening)'
+        required: false
+        default: 'morning'
+        type: choice
+        options:
+          - morning
+          - evening
 
 jobs:
-  update:
+  morning:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    # 定时早报只在 UTC 0:00 触发；手动触发根据选择
+    if: |
+      (github.event.schedule == '0 0 * * *') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.edition == 'morning') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.edition == '')
 
     steps:
       - name: Checkout
@@ -21,30 +37,57 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Run football daily generator
+      - name: Run morning generator
         env:
           FOOTBALL_API_KEY: ${{ secrets.FOOTBALL_API_KEY }}
           POSTS_DIR: ${{ github.workspace }}/source/_posts
+          EDITION: morning
         run: node scripts/football-daily.js
 
-      - name: Check for changes
-        id: changes
+      - name: Commit and push
         run: |
-          if git diff --quiet source/_posts/football-daily-*.md; then
-            echo "changed=false" >> $GITHUB_OUTPUT
+          if git diff --quiet source/_posts/football-morning-*.md; then
+            echo "No changes for morning edition"
           else
-            echo "changed=true" >> $GITHUB_OUTPUT
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git add source/_posts/football-morning-*.md
+            git commit -m "⚽ 足球早报自动更新 - $(date +%Y-%m-%d)"
+            git push
           fi
 
-      - name: Commit and push
-        if: steps.changes.outputs.changed == 'true'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add source/_posts/football-daily-*.md
-          git commit -m "⚽ 足球日报自动更新 - $(date +%Y-%m-%d)"
-          git push
+  evening:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: |
+      (github.event.schedule == '0 12 * * *') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.edition == 'evening')
 
-      - name: No changes
-        if: steps.changes.outputs.changed == 'false'
-        run: echo "No changes to push"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run evening generator
+        env:
+          FOOTBALL_API_KEY: ${{ secrets.FOOTBALL_API_KEY }}
+          POSTS_DIR: ${{ github.workspace }}/source/_posts
+          EDITION: evening
+        run: node scripts/football-daily.js
+
+      - name: Commit and push
+        run: |
+          if git diff --quiet source/_posts/football-evening-*.md; then
+            echo "No changes for evening edition"
+          else
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git add source/_posts/football-evening-*.md
+            git commit -m "🌙 足球晚报自动更新 - $(date +%Y-%m-%d)"
+            git push
+          fi

@@ -7,7 +7,14 @@
  * 2. 从懂球帝 API 抓取足坛新闻
  * 3. 生成 Hexo 博客文章（Markdown）
  * 
- * 输出：source/_posts/football-daily-YYYY-MM-DD.md
+ * 环境变量：
+ *   EDITION=morning|evening  早报（默认）或晚报
+ *   FOOTBALL_API_KEY         football-data.org API Key
+ *   POSTS_DIR                输出目录
+ * 
+ * 输出：
+ *   早报：source/_posts/football-morning-YYYY-MM-DD.md
+ *   晚报：source/_posts/football-evening-YYYY-MM-DD.md
  */
 
 const https = require('https');
@@ -333,9 +340,16 @@ function matchDateLabel(utcDate) {
 }
 
 // ==================== 生成 Markdown ====================
-function generateMarkdown(allMatches, teamData, allNews) {
+function generateMarkdown(allMatches, teamData, allNews, edition = 'morning') {
   const dateCN = getTodayCN();
   const today = getBjDate().str;
+  const isMorning = edition === 'morning';
+
+  // 版本标签
+  const editionLabel = isMorning ? '☀️ 早报' : '🌙 晚报';
+  const editionDesc = isMorning
+    ? '晨间战报 + 赛程速览'
+    : '晚间新闻 + 深度资讯';
 
   // 过滤出今天的比赛（北京时间）
   const todayMatches = allMatches.filter(m => isTodayMatch(m.utcDate));
@@ -345,10 +359,11 @@ function generateMarkdown(allMatches, teamData, allNews) {
   const live = todayMatches.filter(m => m.status === 'IN_PLAY' || m.status === 'PAUSED');
   const upcoming = todayMatches.filter(m => ['SCHEDULED', 'TIMED'].includes(m.status));
 
-  // 近期赛程：今天+明天未开始的比赛
-  const nearFutureMatches = allMatches.filter(m => 
-    isTodayOrTomorrowMatch(m.utcDate) && ['SCHEDULED', 'TIMED'].includes(m.status)
-  );
+  // 近期赛程范围：早报=今天+明天；晚报=今晚+明天的比赛
+  const nearFutureMatches = allMatches.filter(m => {
+    if (!['SCHEDULED', 'TIMED'].includes(m.status)) return false;
+    return isTodayOrTomorrowMatch(m.utcDate);
+  });
 
   // 按联赛分组（用于今日比赛）
   const byComp = {};
@@ -363,9 +378,10 @@ function generateMarkdown(allMatches, teamData, allNews) {
 
   // 1. 足坛头条
   const headlineNews = allNews['头条'] || [];
+  const headlineLimit = isMorning ? 5 : 10;
   if (headlineNews.length > 0) {
     newsSection += '\n### 📰 足坛头条\n\n';
-    headlineNews.slice(0, 8).forEach(a => {
+    headlineNews.slice(0, headlineLimit).forEach(a => {
       const teamTag = isTeamNews(a) ? ' ⭐' : '';
       newsSection += `- [${a.title}](${a.url})${teamTag}\n`;
     });
@@ -373,11 +389,12 @@ function generateMarkdown(allMatches, teamData, allNews) {
 
   // 2. 各联赛新闻
   const leagueNewsOrder = ['西甲', '英超', '意甲', '德甲', '法甲'];
+  const leagueNewsLimit = isMorning ? 3 : 6;
   leagueNewsOrder.forEach(league => {
     const news = allNews[league] || [];
     if (news.length > 0) {
       newsSection += `\n#### ${league}新闻\n\n`;
-      news.slice(0, 5).forEach(a => {
+      news.slice(0, leagueNewsLimit).forEach(a => {
         newsSection += `- [${a.title}](${a.url})\n`;
       });
     }
@@ -392,21 +409,22 @@ function generateMarkdown(allMatches, teamData, allNews) {
       }
     });
   });
+  const teamNewsLimit = isMorning ? 5 : 10;
   if (allTeamNews.length > 0) {
     newsSection += '\n#### 我的主队动态\n\n';
-    allTeamNews.slice(0, 8).forEach(a => {
+    allTeamNews.slice(0, teamNewsLimit).forEach(a => {
       newsSection += `- ⭐ [${a.title}](${a.url})\n`;
     });
   }
 
   if (!newsSection) {
-    newsSection = '\n> 今日暂无足坛新闻\n';
+    newsSection = '\n> 暂无足坛新闻\n';
   }
 
   // === 战报部分 ===
   let resultsSection = '';
   if (finished.length === 0 && live.length === 0) {
-    resultsSection = '\n> 今日暂无已结束比赛\n';
+    resultsSection = '\n> 暂无已结束比赛\n';
   } else {
     // 优先显示关注球队的比赛
     const priorityFinished = finished.filter(isPriority);
@@ -607,27 +625,31 @@ function generateMarkdown(allMatches, teamData, allNews) {
 
   const totalNewsCount = Object.values(allNews).reduce((sum, arr) => sum + arr.length, 0);
 
+  // === 拼接最终 Markdown（早报和晚报板块顺序不同） ===
+  let body = '';
+  if (isMorning) {
+    // 早报：战报 → 赛程 → 主队 → 新闻（比赛优先）
+    body = `## 今日战报\n${resultsSection}\n## 近期赛程\n${upcomingSection}${teamSection}\n## 足坛新闻\n${newsSection}`;
+  } else {
+    // 晚报：新闻 → 主队 → 战报 → 赛程（新闻优先）
+    body = `## 足坛新闻\n${newsSection}${teamSection}\n## 今日战报\n${resultsSection}\n## 近期赛程\n${upcomingSection}`;
+  }
+
+  const postDate = isMorning ? `${today} 08:00:00` : `${today} 20:00:00`;
+
   const markdown = `---
-title: 足球日报 · ${dateCN}
-date: ${today} 08:00:00
+title: 足球${isMorning ? '早报' : '晚报'} · ${dateCN}
+date: ${postDate}
 tags:
   - 足球
-  - 日报
+  - ${isMorning ? '早报' : '晚报'}
 categories:
   - 足球日报
 ---
 
-> ⚽ 每日足球资讯自动汇总 · 数据来源 football-data.org + 懂球帝
+> ⚽ ${editionLabel} · ${editionDesc} · 数据来源 football-data.org + 懂球帝
 
-## 足坛新闻
-${newsSection}
-
-## 今日战报
-${resultsSection}
-
-## 近期赛程
-${upcomingSection}
-${teamSection}
+${body}
 
 ---
 
@@ -645,8 +667,16 @@ async function main() {
     return;
   }
   
+  // 确定版本：morning（早报）或 evening（晚报）
+  const edition = process.env.EDITION || 'morning';
+  if (!['morning', 'evening'].includes(edition)) {
+    console.error(`无效的 EDITION: ${edition}，请使用 morning 或 evening`);
+    process.exit(1);
+  }
+  
   console.log('=== 足球日报生成器 ===');
   console.log(`北京时间: ${getTodayCN()}`);
+  console.log(`版本: ${edition === 'morning' ? '☀️ 早报' : '🌙 晚报'}`);
 
   // 确保目录存在
   if (!fs.existsSync(POSTS_DIR)) fs.mkdirSync(POSTS_DIR, { recursive: true });
@@ -704,8 +734,8 @@ async function main() {
 
   // ======== 4. 生成 Markdown ========
   const today = getBjDate().str;
-  const filename = `football-daily-${today}.md`;
-  const { markdown, stats } = generateMarkdown(allMatches, teamData, allNews);
+  const filename = `football-${edition}-${today}.md`;
+  const { markdown, stats } = generateMarkdown(allMatches, teamData, allNews, edition);
 
   // 写入文件
   const filepath = path.join(POSTS_DIR, filename);
