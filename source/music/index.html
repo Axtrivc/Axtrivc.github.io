@@ -11,6 +11,13 @@
     .music-hero h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: #4a3728; }
     .music-hero p { color: #8B6F47; font-size: 14px; }
 
+    /* My Spotify Section */
+    .spotify-section { margin-bottom: 36px; }
+    .spotify-section h3 { font-size: 18px; font-weight: 600; color: #4a3728; margin-bottom: 16px; padding-left: 12px; border-left: 3px solid #8B6F47; }
+    .spotify-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .spotify-grid { grid-template-columns: 1fr; } }
+    .spotify-card { border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+
     /* Tabs */
     .playlist-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
     .playlist-tab { padding: 10px 22px; border-radius: 20px; border: 1.5px solid #e0d5c5; background: transparent; color: #8B6F47; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; }
@@ -46,6 +53,19 @@
     <div class="music-hero">
       <h2>🎵 My Playlist</h2>
       <p>用音乐记录心情 · 点击播放，享受每一刻</p>
+    </div>
+
+    <!-- My Spotify -->
+    <div class="spotify-section">
+      <h3>🎧 我的歌单</h3>
+      <div class="spotify-grid">
+        <div class="spotify-card">
+          <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6T6g0jNwBR1YLNfCO5miEo?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+        <div class="spotify-card">
+          <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/70kdlALLmDuFcagVQznClA?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+      </div>
     </div>
 
     <!-- Category Tabs -->
