@@ -188,6 +188,7 @@ body { padding-bottom: 52px !important; }
 @keyframes vinyl-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 /* Birthday Countdown */
 .bday-countdown { max-width: 600px; margin: 20px auto 30px; padding: 28px 32px; background: linear-gradient(135deg, rgba(139,111,71,0.06) 0%, rgba(196,169,106,0.08) 100%); border-radius: 16px; border: 1px solid rgba(139,111,71,0.1); text-align: center; }
+#content-inner > .bday-countdown { margin-bottom: 20px; }
 .bday-countdown .bday-emoji { font-size: 32px; margin-bottom: 8px; }
 .bday-countdown .bday-label { font-size: 13px; color: #a09080; letter-spacing: 1px; margin-bottom: 4px; }
 .bday-countdown .bday-name { font-size: 20px; font-weight: 700; color: #4a3728; margin-bottom: 16px; }
@@ -757,8 +758,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   var posts = document.getElementById('recent-posts');
-  if (posts) {
-    posts.insertBefore(card, posts.firstChild);
+  var contentInner = document.getElementById('content-inner');
+  if (posts && posts.parentNode === contentInner) {
+    contentInner.insertBefore(card, posts);
+  } else if (contentInner) {
+    contentInner.insertBefore(card, contentInner.firstChild);
   }
 
   if (!isToday) {
