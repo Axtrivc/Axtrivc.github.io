@@ -489,9 +489,9 @@ renderMessages();
     card.innerHTML = '<div class="bday-emoji">🎂</div><div class="bday-label">BIRTHDAY COUNTDOWN</div><div class="bday-name">Axtrivc 的生日</div><div class="bday-grid"><div class="bday-num"><span class="num" id="bday-d">00</span><span class="unit">天</span></div><div class="bday-num"><span class="num" id="bday-h">00</span><span class="unit">时</span></div><div class="bday-num"><span class="num" id="bday-m">00</span><span class="unit">分</span></div><div class="bday-num"><span class="num" id="bday-s">00</span><span class="unit">秒</span></div></div><div class="bday-date">5月12日</div>';
   }
 
-  var main = document.getElementById('page') || document.querySelector('main') || document.querySelector('#content-inner');
-  if (main && main.firstChild) {
-    main.insertBefore(card, main.firstChild);
+  var target = document.getElementById('recent-posts');
+  if (target && target.parentNode) {
+    target.parentNode.insertBefore(card, target);
   }
 
   if (!isToday) {
