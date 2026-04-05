@@ -2,11 +2,16 @@
  * football-daily.js
  * 每日足球日报生成器 - GitHub Actions 用
  * 
- * 功能：从 football-data.org API 抓取赛程/赛果，生成 Hexo 博客文章（Markdown）
+ * 功能：
+ * 1. 从 football-data.org API 抓取赛程/赛果
+ * 2. 从懂球帝 API 抓取足坛新闻
+ * 3. 生成 Hexo 博客文章（Markdown）
+ * 
  * 输出：source/_posts/football-daily-YYYY-MM-DD.md
  */
 
 const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
@@ -17,7 +22,7 @@ const POSTS_DIR = process.env.POSTS_DIR || path.join(__dirname, '..', 'source', 
 // 关注的联赛代码
 const COMPETITIONS = ['PL', 'PD', 'BL1', 'SA', 'FL1', 'CL'];
 
-// 关注的球队（name + id）
+// 关注的球队（name + football-data id）
 const FOLLOWED_TEAMS = [
   { name: '巴萨', id: 83 },
   { name: '皇马', id: 541 },
@@ -26,25 +31,66 @@ const FOLLOWED_TEAMS = [
   { name: '西班牙', id: 788 },
 ];
 
+// 懂球帝新闻分类 tabId
+const NEWS_TABS = {
+  '头条': 1,
+  '西甲': 5,
+  '英超': 3,
+  '意甲': 4,
+  '德甲': 6,
+  '法甲': 12,
+};
+
+// 懂球帝球队页面关键词（用于筛选关注球队新闻）
+const TEAM_KEYWORDS = ['巴萨', '巴塞罗那', '皇马', '皇家马德里', '马竞', '马德里竞技', '迈阿密国际', '西班牙', '斗牛士'];
+
 // ==================== 工具函数 ====================
 function getDateStr(offset = 0) {
+  // 返回 UTC 日期字符串
   const d = new Date();
-  d.setDate(d.getDate() + offset);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
+  d.setUTCDate(d.getUTCDate() + offset);
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
   return `${y}-${m}-${day}`;
 }
 
 function getTodayCN() {
-  const d = new Date();
+  // 返回北京时间日期
+  const now = new Date();
+  const bj = new Date(now.getTime() + 8 * 3600000);
   const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 星期${weekdays[d.getDay()]}`;
+  return `${bj.getFullYear()}年${bj.getMonth() + 1}月${bj.getDate()}日 星期${weekdays[bj.getDay()]}`;
 }
 
-function fetchJSON(url) {
+function getBjDate(offset = 0) {
+  const now = new Date();
+  const bj = new Date(now.getTime() + 8 * 3600000);
+  bj.setDate(bj.getDate() + offset);
+  const y = bj.getFullYear();
+  const m = bj.getMonth() + 1;
+  const day = bj.getDate();
+  return { y, m, day, str: `${y}-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}` };
+}
+
+function todayBjTimestamp() {
+  // 返回今天北京时间 0 点的 Unix 时间戳
+  const now = new Date();
+  const bj = new Date(now.getTime() + 8 * 3600000);
+  const bjStart = new Date(bj.getFullYear(), bj.getMonth(), bj.getDate());
+  // 转为 UTC 时间戳（北京时间 0 点 = UTC 前一天 16 点）
+  return Math.floor(bjStart.getTime() / 1000) - 8 * 3600;
+}
+
+function fetchJSON(url, options = {}) {
   return new Promise((resolve, reject) => {
-    const req = https.get(url, { headers: { 'X-Auth-Token': FOOTBALL_API_KEY } }, (res) => {
+    const mod = url.startsWith('https') ? https : http;
+    const req = mod.get(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', ...options.headers } }, (res) => {
+      // 懂球帝可能 301 重定向
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        fetchJSON(res.headers.location, options).then(resolve).catch(reject);
+        return;
+      }
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
@@ -57,14 +103,18 @@ function fetchJSON(url) {
   });
 }
 
-// ==================== 抓取数据 ====================
+// ==================== 抓取比赛数据 ====================
 async function fetchMatchesByCompetition(comp) {
   if (!FOOTBALL_API_KEY) return [];
   try {
-    const today = getDateStr();
+    // 关键修复：日期范围用 UTC 前一天到 UTC 后一天
+    // 这样能覆盖北京时间凌晨（UTC 前一天晚上）到明天的比赛
+    const yesterday = getDateStr(-1);
     const tomorrow = getDateStr(1);
-    const url = `https://api.football-data.org/v4/competitions/${comp}/matches?dateFrom=${today}&dateTo=${tomorrow}`;
-    const data = await fetchJSON(url);
+    const url = `https://api.football-data.org/v4/competitions/${comp}/matches?dateFrom=${yesterday}&dateTo=${tomorrow}`;
+    const data = await fetchJSON(url, {
+      headers: { 'X-Auth-Token': FOOTBALL_API_KEY }
+    });
     return data.matches || [];
   } catch (e) {
     console.error(`Failed to fetch ${comp}:`, e.message);
@@ -76,7 +126,9 @@ async function fetchTeamRecentMatches(teamId) {
   if (!FOOTBALL_API_KEY) return [];
   try {
     const url = `https://api.football-data.org/v4/teams/${teamId}/matches?limit=5`;
-    const data = await fetchJSON(url);
+    const data = await fetchJSON(url, {
+      headers: { 'X-Auth-Token': FOOTBALL_API_KEY }
+    });
     return data.matches || [];
   } catch (e) {
     return [];
@@ -87,10 +139,39 @@ async function fetchTeamNextMatch(teamId) {
   if (!FOOTBALL_API_KEY) return null;
   try {
     const url = `https://api.football-data.org/v4/teams/${teamId}/matches?status=SCHEDULED&limit=1`;
-    const data = await fetchJSON(url);
+    const data = await fetchJSON(url, {
+      headers: { 'X-Auth-Token': FOOTBALL_API_KEY }
+    });
     return data.matches && data.matches[0] ? data.matches[0] : null;
   } catch (e) {
     return null;
+  }
+}
+
+// ==================== 抓取懂球帝新闻 ====================
+async function fetchDongqiudiNews(tabId, limit = 15) {
+  try {
+    const url = `https://www.dongqiudi.com/api/app/tabs/web/${tabId}.json?size=${limit}`;
+    const data = await fetchJSON(url);
+    const articles = data.articles || [];
+    
+    // 过滤：只要今天的新闻（基于北京时间）
+    const todayTs = todayBjTimestamp();
+    const todayArticles = articles.filter(a => {
+      return a.show_time && a.show_time >= todayTs;
+    });
+    
+    return todayArticles.map(a => ({
+      id: a.id,
+      title: a.title || '',
+      url: `https://www.dongqiudi.com/article/${a.id}`,
+      comments: a.comments_total || 0,
+      time: a.created_at || '',
+      category: a.secondary_category || [a.category || ''],
+    }));
+  } catch (e) {
+    console.error(`Failed to fetch news tab ${tabId}:`, e.message);
+    return [];
   }
 }
 
@@ -134,6 +215,50 @@ const TEAM_NAMES = {
   'LOSC Lille': '里尔', 'OGC Nice': '尼斯', 'RC Lens': '朗斯',
   'Botafogo': '博塔弗戈', 'Vasco da Gama': '瓦斯科达伽马',
   'PSG': '巴黎', 'Paris Saint-Germain': '巴黎',
+  // 德甲补充
+  'SC Freiburg': '弗赖堡', 'Freiburg': '弗赖堡',
+  'TSG Hoffenheim': '霍芬海姆', 'Hoffenheim': '霍芬海姆',
+  'SV Werder Bremen': '不来梅', 'Bremen': '不来梅',
+  'RB Leipzig': '莱比锡', 'Leipzig': '莱比锡',
+  'Bayer Leverkusen': '勒沃库森', 'Leverkusen': '勒沃库森',
+  'VfB Stuttgart': '斯图加特', 'Stuttgart': '斯图加特',
+  'Borussia Mönchengladbach': '门兴', "M'gladbach": '门兴',
+  'FC Heidenheim': '海登海姆', 'Heidenheim': '海登海姆',
+  'Hamburger SV': '汉堡', 'HSV': '汉堡',
+  'FC Augsburg': '奥格斯堡', 'Augsburg': '奥格斯堡',
+  '1. FSV Mainz 05': '美因茨', 'Mainz': '美因茨',
+  'VfL Wolfsburg': '沃尔夫斯堡', 'Wolfsburg': '沃尔夫斯堡',
+  'Hertha BSC': '柏林赫塔', 'Hertha': '柏林赫塔',
+  'VfL Bochum': '波鸿', 'Bochum': '波鸿',
+  '1. FC Union Berlin': '柏林联合',
+  'SV Darmstadt 98': '达姆施塔特',
+  '1. FC Heidenheim 1846': '海登海姆',
+  'SV Wehen Wiesbaden': '韦恩',
+  // 意甲补充
+  'US Sassuolo': '萨索洛', 'Sassuolo': '萨索洛',
+  'Hellas Verona': '维罗纳', 'Verona': '维罗纳',
+  'Cagliari Calcio': '卡利亚里', 'Cagliari': '卡利亚里',
+  'Parma Calcio 1913': '帕尔马', 'Parma': '帕尔马',
+  'US Salernitana 1919': '萨勒尼塔纳',
+  'US Lecce': '莱切', 'Lecce': '莱切',
+  'Genoa CFC': '热那亚', 'Genoa': '热那亚',
+  'Torino FC': '都灵', 'Torino': '都灵',
+  'US Cremonese': '克雷莫纳', 'Cremonese': '克雷莫纳',
+  'AC Monza': '蒙扎', 'Monza': '蒙扎',
+  'Empoli FC': '恩波利', 'Empoli': '恩波利',
+  'Cosenza Calcio': '科森扎',
+  // 法甲补充
+  'RC Strasbourg': '斯特拉斯堡', 'Strasbourg': '斯特拉斯堡',
+  'Stade Brestois 29': '布雷斯特', 'Brest': '布雷斯特',
+  'Stade Rennais FC': '雷恩', 'Stade Rennais': '雷恩', 'Rennes': '雷恩',
+  'LOSC Lille': '里尔', 'Lille': '里尔',
+  // 西甲补充
+  'Atleti': '马竞', 'RCD Espanyol': '西班牙人', 'Espanyol': '西班牙人',
+  'Levante UD': '莱万特', 'Levante': '莱万特',
+  'CD Leganés': '莱加内斯', 'Leganes': '莱加内斯',
+  // 其他
+  'LA Galaxy': '洛杉矶银河', 'LAFC': '洛杉矶FC',
+  'Inter Miami CF': '迈阿密国际', 'Inter Miami': '迈阿密国际',
 };
 
 function getCompName(comp) {
@@ -158,6 +283,14 @@ function formatDate(utcDate) {
   return `${bj.getMonth() + 1}月${bj.getDate()}日`;
 }
 
+// 判断是否是今天的比赛（北京时间）
+function isTodayMatch(utcDate) {
+  const d = new Date(utcDate);
+  const bj = new Date(d.getTime() + 8 * 3600000);
+  const today = getBjDate();
+  return bj.getFullYear() === today.y && bj.getMonth() === today.m - 1 && bj.getDate() === today.day;
+}
+
 // ==================== 关注球队判断 ====================
 const PRIORITY_TEAMS = ['巴萨', '皇马', '拜仁', '利物浦', '巴黎', '阿森纳', '马竞', '迈阿密国际', '曼城', '热刺', '西班牙', '国际米兰', '罗马', '尤文图斯', 'AC米兰', '那不勒斯'];
 const PRIORITY_COMPS = ['PL', 'PD', 'CL'];
@@ -173,25 +306,78 @@ function isFollowedTeam(teamId) {
   return FOLLOWED_TEAMS.some(t => t.id === teamId);
 }
 
+// 判断新闻是否与关注球队相关
+function isTeamNews(article) {
+  return TEAM_KEYWORDS.some(kw => article.title.includes(kw));
+}
+
 // ==================== 生成 Markdown ====================
-function generateMarkdown(allMatches, teamData) {
+function generateMarkdown(allMatches, teamData, allNews) {
   const dateCN = getTodayCN();
-  const today = getDateStr();
+  const today = getBjDate().str;
+
+  // 过滤出今天的比赛（北京时间）
+  const todayMatches = allMatches.filter(m => isTodayMatch(m.utcDate));
 
   // 分类比赛
-  const finished = allMatches.filter(m => m.status === 'FINISHED');
-  const live = allMatches.filter(m => m.status === 'IN_PLAY' || m.status === 'PAUSED');
-  const upcoming = allMatches.filter(m => ['SCHEDULED', 'TIMED'].includes(m.status));
+  const finished = todayMatches.filter(m => m.status === 'FINISHED');
+  const live = todayMatches.filter(m => m.status === 'IN_PLAY' || m.status === 'PAUSED');
+  const upcoming = todayMatches.filter(m => ['SCHEDULED', 'TIMED'].includes(m.status));
 
   // 按联赛分组
   const byComp = {};
-  allMatches.forEach(m => {
+  todayMatches.forEach(m => {
     const comp = getCompName(m.competition);
     if (!byComp[comp]) byComp[comp] = [];
     byComp[comp].push(m);
   });
 
-  // --- 战报部分 ---
+  // === 新闻部分 ===
+  let newsSection = '';
+
+  // 1. 足坛头条
+  const headlineNews = allNews['头条'] || [];
+  if (headlineNews.length > 0) {
+    newsSection += '\n### 📰 足坛头条\n\n';
+    headlineNews.slice(0, 8).forEach(a => {
+      const teamTag = isTeamNews(a) ? ' ⭐' : '';
+      newsSection += `- [${a.title}](${a.url})${teamTag}\n`;
+    });
+  }
+
+  // 2. 各联赛新闻
+  const leagueNewsOrder = ['西甲', '英超', '意甲', '德甲', '法甲'];
+  leagueNewsOrder.forEach(league => {
+    const news = allNews[league] || [];
+    if (news.length > 0) {
+      newsSection += `\n#### ${league}新闻\n\n`;
+      news.slice(0, 5).forEach(a => {
+        newsSection += `- [${a.title}](${a.url})\n`;
+      });
+    }
+  });
+
+  // 3. 我的主队新闻（从所有新闻中筛选）
+  const allTeamNews = [];
+  Object.values(allNews).forEach(news => {
+    news.forEach(a => {
+      if (isTeamNews(a) && !allTeamNews.some(n => n.id === a.id)) {
+        allTeamNews.push(a);
+      }
+    });
+  });
+  if (allTeamNews.length > 0) {
+    newsSection += '\n#### 我的主队动态\n\n';
+    allTeamNews.slice(0, 8).forEach(a => {
+      newsSection += `- ⭐ [${a.title}](${a.url})\n`;
+    });
+  }
+
+  if (!newsSection) {
+    newsSection = '\n> 今日暂无足坛新闻\n';
+  }
+
+  // === 战报部分 ===
   let resultsSection = '';
   if (finished.length === 0 && live.length === 0) {
     resultsSection = '\n> 今日暂无已结束比赛\n';
@@ -244,8 +430,6 @@ function generateMarkdown(allMatches, teamData) {
   if (upcoming.length === 0) {
     upcomingSection = '\n> 今日暂无即将开始的比赛\n';
   } else {
-    // 按联赛分组显示
-    upcomingSection = '';
     Object.keys(byComp).forEach(comp => {
       const compMatches = byComp[comp].filter(m => ['SCHEDULED', 'TIMED'].includes(m.status));
       if (compMatches.length > 0) {
@@ -306,6 +490,8 @@ function generateMarkdown(allMatches, teamData) {
     });
   }
 
+  const totalNewsCount = Object.values(allNews).reduce((sum, arr) => sum + arr.length, 0);
+
   const markdown = `---
 title: 足球日报 · ${dateCN}
 date: ${today} 08:00:00
@@ -316,7 +502,10 @@ categories:
   - 足球日报
 ---
 
-> ⚽ 每日足球资讯自动汇总 · 数据来源 football-data.org
+> ⚽ 每日足球资讯自动汇总 · 数据来源 football-data.org + 懂球帝
+
+## 足坛新闻
+${newsSection}
 
 ## 今日战报
 ${resultsSection}
@@ -327,10 +516,10 @@ ${teamSection}
 
 ---
 
-*本文由 GitHub Actions 自动生成，仅供阅读参考。*
+*本文由 GitHub Actions 自动生成，仅供阅读参考。新闻来源：[懂球帝](https://www.dongqiudi.com)*
 `;
 
-  return markdown;
+  return { markdown, stats: { matches: todayMatches.length, finished: finished.length, news: totalNewsCount } };
 }
 
 // ==================== 主流程 ====================
@@ -342,16 +531,12 @@ async function main() {
   }
   
   console.log('=== 足球日报生成器 ===');
-  console.log(`日期: ${getTodayCN()}`);
-
-  if (!FOOTBALL_API_KEY) {
-    console.log('警告: 未设置 FOOTBALL_API_KEY');
-  }
+  console.log(`北京时间: ${getTodayCN()}`);
 
   // 确保目录存在
   if (!fs.existsSync(POSTS_DIR)) fs.mkdirSync(POSTS_DIR, { recursive: true });
 
-  // 抓取各联赛比赛（每个请求间隔2秒避免限速）
+  // ======== 1. 抓取比赛数据 ========
   console.log('正在抓取各联赛比赛...');
   const allMatches = [];
   for (const comp of COMPETITIONS) {
@@ -362,9 +547,9 @@ async function main() {
       await new Promise(r => setTimeout(r, 2000));
     }
   }
-  console.log(`总计: ${allMatches.length} 场比赛`);
+  console.log(`总计: ${allMatches.length} 场比赛（含近3天范围）`);
 
-  // 抓取关注球队数据（每个请求间隔2秒）
+  // ======== 2. 抓取关注球队数据 ========
   console.log('正在抓取关注球队数据...');
   const teamData = [];
   for (const team of FOLLOWED_TEAMS) {
@@ -379,17 +564,40 @@ async function main() {
       recent,
       next
     });
+    await new Promise(r => setTimeout(r, 1000));
   }
 
-  // 生成 Markdown
-  const today = getDateStr();
+  // ======== 3. 抓取懂球帝新闻 ========
+  console.log('正在抓取懂球帝新闻...');
+  const allNews = {};
+  const tabEntries = Object.entries(NEWS_TABS);
+  for (const [tabName, tabId] of tabEntries) {
+    try {
+      const articles = await fetchDongqiudiNews(tabId, 15);
+      allNews[tabName] = articles;
+      console.log(`  ${tabName}: ${articles.length} 条今日新闻`);
+    } catch (e) {
+      console.error(`  ${tabName} 获取失败:`, e.message);
+      allNews[tabName] = [];
+    }
+    if (tabEntries.indexOf([tabName, tabId]) < tabEntries.length - 1) {
+      await new Promise(r => setTimeout(r, 1000));
+    }
+  }
+  const totalNews = Object.values(allNews).reduce((sum, arr) => sum + arr.length, 0);
+  console.log(`总计: ${totalNews} 条新闻`);
+
+  // ======== 4. 生成 Markdown ========
+  const today = getBjDate().str;
   const filename = `football-daily-${today}.md`;
-  const markdown = generateMarkdown(allMatches, teamData);
+  const { markdown, stats } = generateMarkdown(allMatches, teamData, allNews);
 
   // 写入文件
   const filepath = path.join(POSTS_DIR, filename);
   fs.writeFileSync(filepath, markdown, 'utf-8');
-  console.log(`✅ ${filename} 生成完成 (${allMatches.length} 场比赛)`);
+  console.log(`\n✅ ${filename} 生成完成`);
+  console.log(`   今日比赛: ${stats.matches} 场（已结束 ${stats.finished} 场）`);
+  console.log(`   新闻: ${stats.news} 条`);
 }
 
 main().catch(e => {
