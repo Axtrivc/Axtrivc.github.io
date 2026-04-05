@@ -104,5 +104,5 @@ theme: butterfly
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/li-yi-ge/-Axtrivc-.github.io.git
+  repo: https://github.com/Axtrivc/Axtrivc.github.io.git
   branch: main
