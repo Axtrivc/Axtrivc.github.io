@@ -3,70 +3,124 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>足球日报 · 2026年4月5日 星期日</title>
-  <link rel="stylesheet" href="/-Axtrivc-.github.io/football/assets/common.css" />
+  <title>足球日报 · 归档</title>
+  <link rel="stylesheet" href="/football/assets/common.css" />
 </head>
 <body>
 
   <div class="top-nav">
-    <a href="/-Axtrivc-.github.io/">首页</a>
+    <a href="/">首页</a>
     <span class="nav-sep">|</span>
-    <span class="nav-current">足球日报</span>
+    <span class="nav-current">⚽ 足球日报</span>
   </div>
 
-  <div class="page-header">
-    <h1>⚽ 今日热点</h1>
-    <div class="date-line">2026年4月5日 星期日 · 08:25 更新</div>
+  <div class="archive-header">
+    <div class="archive-icon">⚽</div>
+    <h1>足球日报</h1>
+    <p class="archive-sub">每日早报 · 晨间战报与赛程速览 &nbsp;|&nbsp; 每日晚报 · 晚间新闻与深度资讯</p>
   </div>
 
   <!-- 我的关注 -->
-  <div class="card">
+  <div class="card" style="margin-top: 4px;">
     <div class="card-title">我的关注</div>
     <div class="follow-bar">
-      <a class="follow-chip chip-barca" href="/-Axtrivc-.github.io/football/teams/barcelona.html">🔴 巴萨</a>
-      <a class="follow-chip chip-spain" href="/-Axtrivc-.github.io/football/teams/spain.html">🇪🇸 西班牙</a>
-      <a class="follow-chip chip-miami" href="/-Axtrivc-.github.io/football/teams/miami.html">🩷 迈阿密国际</a>
+      <a class="follow-chip chip-barca" href="/football/teams/barcelona.html">🔴 巴萨</a>
+      <a class="follow-chip chip-spain" href="/football/teams/spain.html">🇪🇸 西班牙</a>
+      <a class="follow-chip chip-miami" href="/football/teams/miami.html">🩷 迈阿密国际</a>
       <span class="follow-chip chip-laliga">🟡 西甲</span>
       <span class="follow-chip chip-ucl">🔵 欧冠</span>
       <span class="follow-chip chip-pl">🟣 英超</span>
     </div>
   </div>
 
-  <!-- 今日战报 -->
-  <div class="card">
-    <div class="card-title"><span class="badge badge-red">HOT</span> 今日战报</div>
-    <div style="padding:16px 20px;font-size:13px;color:#999;">今日暂无已结束比赛</div>
+  <!-- 归档列表 -->
+  <div class="archive-section">
+    <div class="archive-month-label">2026 年 4 月</div>
+    <div class="archive-grid">
+
+      <a class="archive-card" href="/2026/04/05/football-morning-2026-04-05/">
+        <div class="ac-top">
+          <span class="ac-type ac-morning">☀️ 早报</span>
+          <span class="ac-date">4月5日</span>
+        </div>
+        <div class="ac-weekday">星期日</div>
+        <div class="ac-desc">晨间战报 + 赛程速览</div>
+      </a>
+
+    </div>
   </div>
 
-  <!-- 即将开赛 -->
-  <div class="card">
-    <div class="card-title"><span class="badge badge-amber">LIVE</span> 即将开赛</div>
-    <div style="padding:16px 20px;font-size:13px;color:#999;">暂无即将开始的比赛</div>
+  <!-- 空状态占位，后续脚本会替换 -->
+  <div id="archive-empty" class="archive-empty" style="display:none;">
+    <div class="archive-empty-icon">📭</div>
+    <p>暂无日报，敬请期待</p>
   </div>
 
   <div class="footer">
-    数据来源：football-data.org · 自动更新 · 仅供阅读
+    数据来源：football-data.org · 懂球帝 · 自动更新
   </div>
 
   <script>
-function toggleArticle(el) {
-  const expand = el.nextElementSibling;
-  if (!expand || !expand.classList.contains('news-expand')) return;
-  const hint = el.querySelector('.hot-expand-hint');
-  if (expand.classList.contains('open')) {
-    expand.classList.remove('open');
-    if (hint) hint.textContent = '▾';
-  } else {
-    document.querySelectorAll('.news-expand.open').forEach(e => {
-      e.classList.remove('open');
-      const h = e.previousElementSibling.querySelector('.hot-expand-hint');
-      if (h) h.textContent = '▾';
+  // 自动扫描所有足球日报并渲染归档卡片
+  // Hexo 生成时会在 body 末尾注入 JSON 数据
+  (function() {
+    // 本地静态版本：手动维护的日报列表
+    // 当有新日报发布时，需要更新下方的 posts 数组
+    const posts = [
+      { type: 'morning', date: '2026-04-05', label: '4月5日', weekday: '星期日', href: '/2026/04/05/football-morning-2026-04-05/' }
+    ];
+
+    if (posts.length === 0) {
+      document.getElementById('archive-empty').style.display = 'block';
+      return;
+    }
+
+    // 按月分组
+    const months = {};
+    posts.forEach(p => {
+      const m = p.date.substring(0, 7); // "2026-04"
+      if (!months[m]) months[m] = [];
+      months[m].push(p);
     });
-    expand.classList.add('open');
-    if (hint) hint.textContent = '▴';
-  }
-}
-</script>
+
+    // 月份排序、日期排序（倒序）
+    const monthNames = { '01':'1','02':'2','03':'3','04':'4','05':'5','06':'6','07':'7','08':'8','09':'9','10':'10','11':'11','12':'12' };
+    const monthOrder = Object.keys(months).sort().reverse();
+
+    const section = document.querySelector('.archive-section');
+    section.innerHTML = '';
+
+    monthOrder.forEach(m => {
+      const [y, mo] = m.split('-');
+      const monthLabel = document.createElement('div');
+      monthLabel.className = 'archive-month-label';
+      monthLabel.textContent = `${y} 年 ${monthNames[mo]} 月`;
+      section.appendChild(monthLabel);
+
+      const grid = document.createElement('div');
+      grid.className = 'archive-grid';
+
+      months[m].sort((a, b) => b.date.localeCompare(a.date));
+
+      months[m].forEach(p => {
+        const card = document.createElement('a');
+        card.className = 'archive-card';
+        card.href = p.href;
+        card.innerHTML = `
+          <div class="ac-top">
+            <span class="ac-type ac-${p.type}">${p.type === 'morning' ? '☀️ 早报' : '🌙 晚报'}</span>
+            <span class="ac-date">${p.label}</span>
+          </div>
+          <div class="ac-weekday">${p.weekday}</div>
+          <div class="ac-desc">${p.type === 'morning' ? '晨间战报 + 赛程速览' : '晚间新闻 + 深度资讯'}</div>
+        `;
+        grid.appendChild(card);
+      });
+
+      section.appendChild(grid);
+    });
+  })();
+  </script>
 
 </body>
 </html>
