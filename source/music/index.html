@@ -20,6 +20,13 @@
     .now-playing-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
     .now-playing-artist { font-size: 13px; opacity: 0.8; }
 
+    /* My Spotify Section */
+    .spotify-section { margin-bottom: 36px; }
+    .spotify-section h3 { font-size: 18px; font-weight: 600; color: #4a3728; margin-bottom: 16px; padding-left: 12px; border-left: 3px solid #8B6F47; }
+    .spotify-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .spotify-grid { grid-template-columns: 1fr; } }
+    .spotify-card { border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+
     /* Tabs */
     .playlist-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
     .playlist-tab { padding: 10px 22px; border-radius: 20px; border: 1.5px solid #e0d5c5; background: transparent; color: #8B6F47; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; }
@@ -37,6 +44,16 @@
     .panel-icon.random { background: #e4e8f0; }
     .panel-title { font-size: 18px; font-weight: 700; color: #4a3728; }
     .panel-desc { font-size: 12px; color: #a09080; margin-top: 2px; }
+
+    /* Song List */
+    .song-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: #fff; border-radius: 10px; margin-bottom: 8px; transition: all 0.2s; cursor: default; }
+    .song-item:hover { transform: translateX(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .song-num { width: 28px; text-align: center; font-weight: 700; color: #c4b49a; font-size: 14px; }
+    .song-cover { width: 44px; height: 44px; border-radius: 8px; background: #e8dcc8; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .song-info { flex: 1; min-width: 0; }
+    .song-title { font-weight: 600; color: #4a3728; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .song-artist { color: #a09080; font-size: 12px; margin-top: 2px; }
+    .song-duration { color: #c4b49a; font-size: 12px; flex-shrink: 0; }
 
     /* Spotify Embed */
     .spotify-embed { border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 16px; }
@@ -61,9 +78,22 @@
     <div class="now-playing">
       <div class="now-playing-cover">🎧</div>
       <div class="now-playing-info">
-        <div class="now-playing-label">♪ 正在收听</div>
-        <div class="now-playing-title">选择一个歌单开始播放</div>
-        <div class="now-playing-artist">点击下方 Spotify 播放器即可收听</div>
+        <div class="now-playing-label">♪ Now Playing</div>
+        <div class="now-playing-title">Blinding Lights</div>
+        <div class="now-playing-artist">The Weeknd</div>
+      </div>
+    </div>
+
+    <!-- My Spotify -->
+    <div class="spotify-section">
+      <h3>🎧 我的 Spotify 歌单</h3>
+      <div class="spotify-grid">
+        <div class="spotify-card">
+          <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6T6g0jNwBR1YLNfCO5miEo?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+        <div class="spotify-card">
+          <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/70kdlALLmDuFcagVQznClA?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
       </div>
     </div>
 
@@ -80,15 +110,19 @@
       <div class="panel-header">
         <div class="panel-icon piano">🎹</div>
         <div>
-          <div class="panel-title">Peaceful Piano</div>
+          <div class="panel-title">纯音乐</div>
           <div class="panel-desc">安静钢琴曲，适合学习、阅读和发呆</div>
         </div>
       </div>
-      <div class="spotify-embed">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX4sWSpwq3LiO?utm_source=generator&theme=0" width="100%" height="480" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-      </div>
-      <div class="spotify-embed">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWZd79rJ6a7lp?utm_source=generator&theme=0" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      <!-- 原来自定义歌单 -->
+      <div class="song-item"><div class="song-num">1</div><div class="song-cover">🎹</div><div class="song-info"><div class="song-title">River Flows in You</div><div class="song-artist">Yiruma</div></div><div class="song-duration">3:11</div></div>
+      <div class="song-item"><div class="song-num">2</div><div class="song-cover">🎼</div><div class="song-info"><div class="song-title">Clair de Lune</div><div class="song-artist">Debussy</div></div><div class="song-duration">5:12</div></div>
+      <div class="song-item"><div class="song-num">3</div><div class="song-cover">🎻</div><div class="song-info"><div class="song-title">Experience</div><div class="song-artist">Ludovico Einaudi</div></div><div class="song-duration">5:15</div></div>
+      <div class="song-item"><div class="song-num">4</div><div class="song-cover">🎹</div><div class="song-info"><div class="song-title">Comptine d'un autre été</div><div class="song-artist">Yann Tiersen</div></div><div class="song-duration">2:20</div></div>
+      <div class="song-item"><div class="song-num">5</div><div class="song-cover">🎶</div><div class="song-info"><div class="song-title">Nuvole Bianche</div><div class="song-artist">Ludovico Einaudi</div></div><div class="song-duration">5:57</div></div>
+      <!-- Spotify 在线收听 -->
+      <div class="spotify-embed" style="margin-top:16px;">
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX4sWSpwq3LiO?utm_source=generator&theme=0" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
     </div>
 
@@ -97,10 +131,11 @@
       <div class="panel-header">
         <div class="panel-icon hits">🔥</div>
         <div>
-          <div class="panel-title">Today's Top Hits</div>
+          <div class="panel-title">热搜榜</div>
           <div class="panel-desc">全球最火的歌曲都在这里</div>
         </div>
       </div>
+      <!-- Spotify 在线收听 -->
       <div class="spotify-embed">
         <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" width="100%" height="480" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
@@ -114,15 +149,19 @@
       <div class="panel-header">
         <div class="panel-icon workout">🏃</div>
         <div>
-          <div class="panel-title">Workout Beats</div>
+          <div class="panel-title">运动</div>
           <div class="panel-desc">燃烧卡路里的最佳伴奏</div>
         </div>
       </div>
-      <div class="spotify-embed">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXBx6DKB6jL6R?utm_source=generator&theme=0" width="100%" height="480" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-      </div>
-      <div class="spotify-embed">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX0XUsuxKHRJZ?utm_source=generator&theme=0" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      <!-- 原来自定义歌单 -->
+      <div class="song-item"><div class="song-num">1</div><div class="song-cover">⚡</div><div class="song-info"><div class="song-title">Stronger</div><div class="song-artist">Kanye West</div></div><div class="song-duration">5:12</div></div>
+      <div class="song-item"><div class="song-num">2</div><div class="song-cover">🔥</div><div class="song-info"><div class="song-title">Lose Yourself</div><div class="song-artist">Eminem</div></div><div class="song-duration">5:26</div></div>
+      <div class="song-item"><div class="song-num">3</div><div class="song-cover">💪</div><div class="song-info"><div class="song-title">Eye of the Tiger</div><div class="song-artist">Survivor</div></div><div class="song-duration">4:05</div></div>
+      <div class="song-item"><div class="song-num">4</div><div class="song-cover">🏃</div><div class="song-info"><div class="song-title">Till I Collapse</div><div class="song-artist">Eminem ft. Nate Dogg</div></div><div class="song-duration">4:57</div></div>
+      <div class="song-item"><div class="song-num">5</div><div class="song-cover">🎵</div><div class="song-info"><div class="song-title">Remember the Name</div><div class="song-artist">Fort Minor</div></div><div class="song-duration">3:50</div></div>
+      <!-- Spotify 在线收听 -->
+      <div class="spotify-embed" style="margin-top:16px;">
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXBx6DKB6jL6R?utm_source=generator&theme=0" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
     </div>
 
@@ -131,21 +170,25 @@
       <div class="panel-header">
         <div class="panel-icon random">🎲</div>
         <div>
-          <div class="panel-title">Mega Hit Mix</div>
-          <div class="panel-desc">随机推荐，每次都有惊喜</div>
+          <div class="panel-title">随机</div>
+          <div class="panel-desc">随心推荐，每次都有惊喜</div>
         </div>
       </div>
-      <div class="spotify-embed">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX9XIFQuFvzM4?utm_source=generator&theme=0" width="100%" height="480" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-      </div>
-      <div class="spotify-embed">
+      <!-- 原来自定义歌单（随心听） -->
+      <div class="song-item"><div class="song-num">1</div><div class="song-cover">🌟</div><div class="song-info"><div class="song-title">Bohemian Rhapsody</div><div class="song-artist">Queen</div></div><div class="song-duration">5:55</div></div>
+      <div class="song-item"><div class="song-num">2</div><div class="song-cover">🎤</div><div class="song-info"><div class="song-title">Hotel California</div><div class="song-artist">Eagles</div></div><div class="song-duration">6:30</div></div>
+      <div class="song-item"><div class="song-num">3</div><div class="song-cover">🎸</div><div class="song-info"><div class="song-title">Stairway to Heaven</div><div class="song-artist">Led Zeppelin</div></div><div class="song-duration">8:02</div></div>
+      <div class="song-item"><div class="song-num">4</div><div class="song-cover">💫</div><div class="song-info"><div class="song-title">Imagine</div><div class="song-artist">John Lennon</div></div><div class="song-duration">3:07</div></div>
+      <div class="song-item"><div class="song-num">5</div><div class="song-cover">🎹</div><div class="song-info"><div class="song-title">Clocks</div><div class="song-artist">Coldplay</div></div><div class="song-duration">5:07</div></div>
+      <!-- Spotify 在线收听 -->
+      <div class="spotify-embed" style="margin-top:16px;">
         <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX4dyzvuaRJ0n?utm_source=generator&theme=0" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
     </div>
 
     <!-- Tip -->
     <div style="text-align:center;color:#a09080;font-size:12px;padding:20px 0;">
-      💡 需要登录 Spotify 才能播放完整歌曲 · 想换歌单？编辑 <code>source/music/index.html</code> 中的 playlist ID 即可
+      💡 登录 Spotify 可播放完整歌曲 · 想编辑歌单？修改 <code>source/music/index.html</code> 即可
     </div>
 
   </div>
