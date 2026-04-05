@@ -264,37 +264,46 @@ function zhName(name) { return TEAM_ZH[name] || TEAM_ZH[name.replace(/ FC$/,'')]
    =========================== */
 async function loadStandings() {
   try {
-    // 第1步：获取积分榜球队列表
+    // 第1步：获取积分榜球队列表（1次请求）
+    // standings entry 自带 records[0].stats（含完整战绩），无需逐队请求 record
     const stResp = await fetch(ESPN.standings + '?lang=en');
     if (!stResp.ok) throw new Error('HTTP ' + stResp.status);
     const stData = await stResp.json();
 
-    const teamRefs = stData.standings || [];
-    if (teamRefs.length === 0) throw new Error('空数据');
+    const entries = stData.standings || [];
+    if (entries.length === 0) throw new Error('空数据');
 
-    // 第2步：分批获取每支球队数据（每批5队）
+    // 第2步：分批获取每支球队的名称和 form（每批5队，每队1次请求）
     const results = [];
     const BATCH = 5;
-    for (let i = 0; i < teamRefs.length; i += BATCH) {
-      const batch = teamRefs.slice(i, i + BATCH);
+    for (let i = 0; i < entries.length; i += BATCH) {
+      const batch = entries.slice(i, i + BATCH);
       const batchResults = await Promise.all(
-        batch.map(async (entry, batchIdx) => {
-          const idx = i + batchIdx;
+        batch.map(async (entry) => {
           const teamRef = entry.team.$ref;
+          // 从 records[0].stats 直接提取完整战绩
+          const stats = (entry.records && entry.records[0] && entry.records[0].stats) || [];
+          const rankStat = stats.find(function(s) { return s.name === 'rank'; });
           try {
             const teamResp = await fetch(fixUrl(teamRef));
             const teamData = await teamResp.json();
 
+            // form 是字符串如 "WWLDW"，需拆成数组
+            var formArr = [];
+            if (teamData.form && typeof teamData.form === 'string') {
+              formArr = teamData.form.split('');
+            }
+
             return {
-              rank: idx + 1,
+              rank: rankStat ? (parseInt(rankStat.value) || i + 1) : i + 1,
               name: teamData.displayName || teamData.shortDisplayName || '',
               shortName: teamData.shortDisplayName || '',
               abbr: teamData.abbreviation || '',
-              form: teamData.form || [],
-              stats: entry.stats || []
+              form: formArr,
+              stats: stats
             };
           } catch (e) {
-            console.warn('球队数据获取失败:', idx, e);
+            console.warn('球队数据获取失败:', e);
             return null;
           }
         })
