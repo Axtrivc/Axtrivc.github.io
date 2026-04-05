@@ -7,14 +7,14 @@ title: Axtrivc's Blog
 subtitle: '记录生活，分享思考'
 description: '一个高中生的小角落'
 keywords: 博客, 随笔, 技术, 生活
-author: Axtrivc
+author: ɐ ℒℯℓ
 language: zh-CN
 timezone: Asia/Shanghai
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: https://li-yi-ge.github.io
-root: /-Axtrivc-.github.io/
+url: https://Axtrivc.github.io
+root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
