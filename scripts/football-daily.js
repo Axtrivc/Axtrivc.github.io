@@ -743,6 +743,130 @@ async function main() {
   console.log(`\n✅ ${filename} 生成完成`);
   console.log(`   今日比赛: ${stats.matches} 场（已结束 ${stats.finished} 场）`);
   console.log(`   新闻: ${stats.news} 条`);
+
+  // ======== 5. 更新归档页 ========
+  updateArchiveIndex(POSTS_DIR);
+}
+
+// ==================== 更新归档页 ====================
+function updateArchiveIndex(postsDir) {
+  const archivePath = path.join(postsDir, '..', 'football', 'index.html');
+  if (!fs.existsSync(path.dirname(archivePath))) {
+    fs.mkdirSync(path.dirname(archivePath), { recursive: true });
+  }
+
+  // 扫描所有足球日报文件
+  const files = fs.readdirSync(postsDir).filter(f => f.startsWith('football-') && f.endsWith('.md'));
+  
+  // 解析文件名 -> 日期和版本
+  const posts = [];
+  files.forEach(f => {
+    const match = f.match(/^football-(morning|evening)-(\d{4}-\d{2}-\d{2})\.md$/);
+    if (match) {
+      const type = match[1];
+      const dateStr = match[2];
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
+      const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+      posts.push({
+        type,
+        date: dateStr,
+        label: `${m}月${d}日`,
+        weekday: `星期${weekdays[date.getDay()]}`,
+        href: `/${y}/${String(m).padStart(2,'0')}/${String(d).padStart(2,'0')}/football-${type}-${dateStr}/`
+      });
+    }
+  });
+
+  // 按日期倒序，同日期晚报在前
+  posts.sort((a, b) => {
+    if (b.date !== a.date) return b.date.localeCompare(a.date);
+    return a.type === 'evening' ? -1 : 1;
+  });
+
+  // 生成 posts JSON
+  const postsJSON = JSON.stringify(posts, null, 2);
+
+  // 生成 HTML 卡片（静态版本，用于 SEO 和无 JS 环境）
+  let archiveCards = '';
+  if (posts.length === 0) {
+    archiveCards = '<div class="archive-empty"><div class="archive-empty-icon">📭</div><p>暂无日报，敬请期待</p></div>';
+  } else {
+    // 按月分组
+    const months = {};
+    posts.forEach(p => {
+      const m = p.date.substring(0, 7);
+      if (!months[m]) months[m] = [];
+      months[m].push(p);
+    });
+    const monthNames = { '01':'1','02':'2','03':'3','04':'4','05':'5','06':'6','07':'7','08':'8','09':'9','10':'10','11':'11','12':'12' };
+    const monthOrder = Object.keys(months).sort().reverse();
+    monthOrder.forEach(m => {
+      const [y, mo] = m.split('-');
+      archiveCards += `<div class="archive-month-label">${y} 年 ${monthNames[mo]} 月</div>\n`;
+      archiveCards += '<div class="archive-grid">\n';
+      months[m].forEach(p => {
+        archiveCards += `      <a class="archive-card" href="${p.href}">
+        <div class="ac-top">
+          <span class="ac-type ac-${p.type}">${p.type === 'morning' ? '☀️ 早报' : '🌙 晚报'}</span>
+          <span class="ac-date">${p.label}</span>
+        </div>
+        <div class="ac-weekday">${p.weekday}</div>
+        <div class="ac-desc">${p.type === 'morning' ? '晨间战报 + 赛程速览' : '晚间新闻 + 深度资讯'}</div>
+      </a>\n`;
+      });
+      archiveCards += '    </div>\n';
+    });
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>足球日报 · 归档</title>
+  <link rel="stylesheet" href="/football/assets/common.css" />
+</head>
+<body>
+
+  <div class="top-nav">
+    <a href="/">首页</a>
+    <span class="nav-sep">|</span>
+    <span class="nav-current">⚽ 足球日报</span>
+  </div>
+
+  <div class="archive-header">
+    <div class="archive-icon">⚽</div>
+    <h1>足球日报</h1>
+    <p class="archive-sub">每日早报 · 晨间战报与赛程速览 &nbsp;|&nbsp; 每日晚报 · 晚间新闻与深度资讯</p>
+  </div>
+
+  <!-- 我的关注 -->
+  <div class="card" style="margin-top: 4px;">
+    <div class="card-title">我的关注</div>
+    <div class="follow-bar">
+      <a class="follow-chip chip-barca" href="/football/teams/barcelona.html">🔴 巴萨</a>
+      <a class="follow-chip chip-spain" href="/football/teams/spain.html">🇪🇸 西班牙</a>
+      <a class="follow-chip chip-miami" href="/football/teams/miami.html">🩷 迈阿密国际</a>
+      <span class="follow-chip chip-laliga">🟡 西甲</span>
+      <span class="follow-chip chip-ucl">🔵 欧冠</span>
+      <span class="follow-chip chip-pl">🟣 英超</span>
+    </div>
+  </div>
+
+  <!-- 归档列表 -->
+  <div class="archive-section">
+${archiveCards}  </div>
+
+  <div class="footer">
+    数据来源：football-data.org · 懂球帝 · 自动更新
+  </div>
+
+</body>
+</html>`;
+
+  fs.writeFileSync(archivePath, html, 'utf-8');
+  console.log(`✅ 归档页已更新（${posts.length} 篇日报）`);
 }
 
 main().catch(e => {
