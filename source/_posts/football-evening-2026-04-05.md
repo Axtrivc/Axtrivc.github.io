@@ -15,24 +15,24 @@ categories:
 ### 📰 足坛头条
 
 - [浙江0-1铜梁龙，杜月徵一条龙制胜，米特里策两度揪李镇全头发染红](https://www.dongqiudi.com/article/5758998)
+- [奥利弗将执法皇马对阵拜仁，过往执法皇马3胜1负、拜仁6胜1平](https://www.dongqiudi.com/article/5759338) ⭐
+- [兰州陇原竞技0-0长春喜都，双方握手言和](https://www.dongqiudi.com/article/5759567)
+- [世体：库巴西已是巴萨领袖级别人物，他在场上展现出队长姿态](https://www.dongqiudi.com/article/5759538) ⭐
 - [贝维斯：这是一场艰难的比赛，下场比赛尽一切所能去获得分数](https://www.dongqiudi.com/article/5759516)
 - [半场战报：福伦丹0-0费耶诺德](https://www.dongqiudi.com/article/5759532)
-- [这是何意？三镇补时落后2球，门将方镜淇角球冲到门前争顶](https://www.dongqiudi.com/article/5759529)
+- [三镇补时落后2球，门将方镜淇两次角球冲到门前争顶](https://www.dongqiudi.com/article/5759529)
 - [世体：巴萨16岁小将阿杰伊在比赛中撞上球场外围墙，手腕骨折](https://www.dongqiudi.com/article/5759503) ⭐
 - [CBA战报：上海111-72狂胜吉林取CBA16连胜，闫鹏飞21+7+1](https://www.dongqiudi.com/article/5759522)
 - [瓦伦西亚vs塞尔塔：加亚、杜罗首发，马科斯-阿隆索、莫里巴出战](https://www.dongqiudi.com/article/5759511)
-- [CBA战报：辽宁106-64轻取四川，凯尔-维纳莱斯21分](https://www.dongqiudi.com/article/5759485)
-- [阿斯：安东尼近期表现不佳，照此状态他不可能参加世界杯](https://www.dongqiudi.com/article/5759437)
-- [记者：德泽尔比曾谋求曼联主帅一职，但被告知不在考量范围内](https://www.dongqiudi.com/article/5759441)
 
 #### 西甲新闻
 
+- [奥利弗将执法皇马对阵拜仁，过往执法皇马3胜1负、拜仁6胜1平](https://www.dongqiudi.com/article/5759338)
+- [世体：库巴西已是巴萨领袖级别人物，他在场上展现出队长姿态](https://www.dongqiudi.com/article/5759538)
 - [世体：巴萨16岁小将阿杰伊在比赛中撞上球场外围墙，手腕骨折](https://www.dongqiudi.com/article/5759503)
 - [瓦伦西亚vs塞尔塔：加亚、杜罗首发，马科斯-阿隆索、莫里巴出战](https://www.dongqiudi.com/article/5759511)
 - [阿斯：安东尼近期表现不佳，照此状态他不可能参加世界杯](https://www.dongqiudi.com/article/5759437)
 - [半场战报：赫塔费1-0毕尔巴鄂竞技，路易斯-巴斯克斯破门](https://www.dongqiudi.com/article/5759436)
-- [阿斯：卡马文加对阵马略卡时发挥不佳，皇马考虑在今夏出售他](https://www.dongqiudi.com/article/5759393)
-- [巴萨官方：阿劳霍可以出战欧冠对马竞，贝尔纳尔左脚踝扭伤](https://www.dongqiudi.com/article/5759399)
 
 #### 英超新闻
 
@@ -54,12 +54,12 @@ categories:
 
 #### 德甲新闻
 
+- [奥利弗将执法皇马对阵拜仁，过往执法皇马3胜1负、拜仁6胜1平](https://www.dongqiudi.com/article/5759338)
 - [柏林联合vs圣保利：郑优营、容诺夫首发，杰克逊-欧文、季维加瓦出战](https://www.dongqiudi.com/article/5759385)
 - [半场结束沙尔克 0-0 卡尔斯鲁厄卡拉曼越位位置...](https://www.dongqiudi.com/article/5759383)
 - [沙尔克对阵卡尔斯鲁厄大名单：艾汗首发，卡蒂奇恐赛季报销](https://www.dongqiudi.com/article/5759102)
 - [格雷茨卡：皇马现在的状态很难预测，但我们会为此做好准备](https://www.dongqiudi.com/article/5759019)
 - [欧冠1/4决赛皇马vs拜仁裁判：英格兰名哨奥利弗执法](https://www.dongqiudi.com/article/5758990)
-- [“黑野兽”定格五十年前第一场欧洲德比 亦作今日讨贼檄文！](https://www.dongqiudi.com/article/5758881)
 
 #### 法甲新闻
 
@@ -72,13 +72,14 @@ categories:
 
 #### 我的主队动态
 
+- ⭐ [奥利弗将执法皇马对阵拜仁，过往执法皇马3胜1负、拜仁6胜1平](https://www.dongqiudi.com/article/5759338)
+- ⭐ [世体：库巴西已是巴萨领袖级别人物，他在场上展现出队长姿态](https://www.dongqiudi.com/article/5759538)
 - ⭐ [世体：巴萨16岁小将阿杰伊在比赛中撞上球场外围墙，手腕骨折](https://www.dongqiudi.com/article/5759503)
-- ⭐ [阿斯：卡马文加对阵马略卡时发挥不佳，皇马考虑在今夏出售他](https://www.dongqiudi.com/article/5759393)
-- ⭐ [巴萨官方：阿劳霍可以出战欧冠对马竞，贝尔纳尔左脚踝扭伤](https://www.dongqiudi.com/article/5759399)
 - ⭐ [每体：皇马高层给阿韦洛亚下了最后通牒，不进欧冠决赛就下课](https://www.dongqiudi.com/article/5758921)
 - ⭐ [格雷茨卡：皇马现在的状态很难预测，但我们会为此做好准备](https://www.dongqiudi.com/article/5759019)
 - ⭐ [欧冠1/4决赛皇马vs拜仁裁判：英格兰名哨奥利弗执法](https://www.dongqiudi.com/article/5758990)
 - ⭐ [迈克尔-奥利弗将担任拜仁客战皇马的主裁判，此前拜...](https://www.dongqiudi.com/article/5758869)
+- ⭐ [阿斯：卡马文加对阵马略卡时发挥不佳，皇马考虑在今夏出售他](https://www.dongqiudi.com/article/5759393)
 
 ## 我的主队
 
@@ -102,8 +103,8 @@ categories:
 
 **相关新闻**
 
+- [世体：库巴西已是巴萨领袖级别人物，他在场上展现出队长姿态](https://www.dongqiudi.com/article/5759538)
 - [世体：巴萨16岁小将阿杰伊在比赛中撞上球场外围墙，手腕骨折](https://www.dongqiudi.com/article/5759503)
-- [巴萨官方：阿劳霍可以出战欧冠对马竞，贝尔纳尔左脚踝扭伤](https://www.dongqiudi.com/article/5759399)
 
 
 ### 皇马
@@ -122,7 +123,7 @@ categories:
 
 **相关新闻**
 
-- [阿斯：卡马文加对阵马略卡时发挥不佳，皇马考虑在今夏出售他](https://www.dongqiudi.com/article/5759393)
+- [奥利弗将执法皇马对阵拜仁，过往执法皇马3胜1负、拜仁6胜1平](https://www.dongqiudi.com/article/5759338)
 - [每体：皇马高层给阿韦洛亚下了最后通牒，不进欧冠决赛就下课](https://www.dongqiudi.com/article/5758921)
 - [格雷茨卡：皇马现在的状态很难预测，但我们会为此做好准备](https://www.dongqiudi.com/article/5759019)
 
@@ -142,10 +143,6 @@ categories:
 | 5月13日 | 西甲 | 客 vs 奥萨苏纳 | - | SCHEDULED |
 | 5月17日 | 西甲 | 主 vs 赫罗纳 | - | SCHEDULED |
 | 5月24日 | 西甲 | 客 vs 比利亚雷亚尔 | - | SCHEDULED |
-
-**相关新闻**
-
-- [巴萨官方：阿劳霍可以出战欧冠对马竞，贝尔纳尔左脚踝扭伤](https://www.dongqiudi.com/article/5759399)
 
 
 ### 迈阿密国际
@@ -182,7 +179,7 @@ categories:
 | 赛事 | 主队 | 实时比分 | 客队 | 时间 |
 |:---:|:---:|:---:|:---:|:---:|
 | 西甲 | 赫塔菲 | **1 - 0** | 毕尔巴鄂 | 进行中 |
-| 意甲 | 克雷莫纳 | **0 - 1** | 博洛尼亚 | 进行中 |
+| 意甲 | 克雷莫纳 | **0 - 2** | 博洛尼亚 | 进行中 |
 | 法甲 | 昂热 | **0 - 0** | 里昂 | 进行中 |
 
 ## 近期赛程
