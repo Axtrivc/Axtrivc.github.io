@@ -171,15 +171,15 @@ body { padding-bottom: 52px !important; }
 .vinyl-spin.playing { animation-play-state: running; }
 @keyframes vinyl-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 /* Birthday Countdown */
-.bday-countdown { max-width: 420px; margin: 0 auto 16px; padding: 16px 24px; background: linear-gradient(135deg, rgba(139,111,71,0.05) 0%, rgba(196,169,106,0.07) 100%); border-radius: 12px; border: 1px solid rgba(139,111,71,0.08); text-align: center; }
-.bday-countdown .bday-emoji { font-size: 22px; margin-bottom: 4px; }
-.bday-countdown .bday-label { font-size: 11px; color: #b0a090; letter-spacing: 1.5px; margin-bottom: 2px; }
-.bday-countdown .bday-name { font-size: 15px; font-weight: 600; color: #4a3728; margin-bottom: 10px; }
-.bday-countdown .bday-grid { display: flex; justify-content: center; gap: 10px; margin-bottom: 8px; }
-.bday-countdown .bday-num { display: flex; flex-direction: column; align-items: center; min-width: 48px; }
-.bday-countdown .bday-num .num { font-size: 22px; font-weight: 700; color: #8B6F47; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.bday-countdown { max-width: 100%; margin: 0 auto 16px; padding: 14px 20px; background: linear-gradient(135deg, rgba(139,111,71,0.05) 0%, rgba(196,169,106,0.07) 100%); border-radius: 12px; border: 1px solid rgba(139,111,71,0.08); text-align: center; break-inside: avoid; }
+.bday-countdown .bday-emoji { font-size: 20px; margin-bottom: 2px; }
+.bday-countdown .bday-label { font-size: 10px; color: #b0a090; letter-spacing: 1.5px; margin-bottom: 2px; }
+.bday-countdown .bday-name { font-size: 14px; font-weight: 600; color: #4a3728; margin-bottom: 8px; }
+.bday-countdown .bday-grid { display: flex; justify-content: center; gap: 8px; margin-bottom: 6px; }
+.bday-countdown .bday-num { display: flex; flex-direction: column; align-items: center; min-width: 44px; }
+.bday-countdown .bday-num .num { font-size: 20px; font-weight: 700; color: #8B6F47; font-variant-numeric: tabular-nums; line-height: 1.1; }
 .bday-countdown .bday-num .unit { font-size: 10px; color: #b0a090; margin-top: 2px; }
-.bday-countdown .bday-date { font-size: 11px; color: #c4b49a; }
+.bday-countdown .bday-date { font-size: 10px; color: #c4b49a; }
 .bday-countdown.today .bday-name { color: #C4A96A; }
 .bday-countdown.today .bday-label { display: none; }
 .bday-countdown.today .bday-grid { display: none; }
@@ -481,12 +481,9 @@ document.addEventListener('DOMContentLoaded', function() {
     card.innerHTML = '<div class="bday-emoji">🎂</div><div class="bday-label">BIRTHDAY COUNTDOWN</div><div class="bday-name">Axtrivc 的生日</div><div class="bday-grid"><div class="bday-num"><span class="num" id="bday-d">00</span><span class="unit">天</span></div><div class="bday-num"><span class="num" id="bday-h">00</span><span class="unit">时</span></div><div class="bday-num"><span class="num" id="bday-m">00</span><span class="unit">分</span></div><div class="bday-num"><span class="num" id="bday-s">00</span><span class="unit">秒</span></div></div><div class="bday-date">5月12日</div>';
   }
 
-  var postItems = document.querySelector('.recent-post-items');
-  if (postItems) {
-    postItems.insertBefore(card, postItems.firstChild);
-  } else {
-    var ci = document.getElementById('content-inner');
-    if (ci) ci.prepend(card);
+  var posts = document.getElementById('recent-posts');
+  if (posts) {
+    posts.insertBefore(card, posts.firstChild);
   }
 
   if (!isToday) {
