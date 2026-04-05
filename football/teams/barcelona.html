@@ -720,73 +720,92 @@ function loadRecentMatches() {
 /* Fallback：通过 sports.core.api.espn.com 获取赛程 */
 function loadRecentMatchesFallback() {
   var teamEventsUrl = 'https://sports.core.api.espn.com/v2/sports/soccer/leagues/esp.1/seasons/2025/teams/83/events';
+  // 从 page 1 开始顺序获取，找到足够已完赛就停
   fetch(teamEventsUrl + '?lang=en')
     .then(function(r) { return r.json(); })
     .then(function(list) {
-      var total = list.pageCount || 1;
-      var lastPageUrl = teamEventsUrl + '?lang=en&page=' + total;
-      return fetch(lastPageUrl).then(function(r) { return r.json(); });
-    })
-    .then(function(list) {
-      var items = list.items || [];
-      // 并行请求所有事件的详细信息
-      return Promise.all(items.map(function(ref) {
-        var url = ref.$ref;
-        if (url.indexOf('http://') === 0) url = 'https://' + url.substring(7);
-        return fetch(url).then(function(r) { return r.json(); });
-      }));
-    })
-    .then(function(events) {
-      // 并行请求每个 event 的 status、competitors.team、competitors.score
-      return Promise.all(events.map(function(ev) {
-        var comp = ev.competitions && ev.competitions[0];
-        if (!comp) return Promise.resolve(null);
-        var competitors = comp.competitors || [];
-        var statusRef = ev.status && ev.status.$ref;
-        var promises = [];
-        // 获取 status
-        if (statusRef) {
-          var sUrl = statusRef;
-          if (sUrl.indexOf('http://') === 0) sUrl = 'https://' + sUrl.substring(7);
-          promises.push(fetch(sUrl).then(function(r) { return r.json(); }));
-        } else {
-          promises.push(Promise.resolve(ev.status || {}));
-        }
-        // 获取每个 competitor 的 team 和 score
-        var compData = [];
-        competitors.forEach(function(c) {
-          var tUrl = c.team && c.team.$ref;
-          var sUrl2 = c.score && c.score.$ref;
-          if (tUrl) { if (tUrl.indexOf('http://') === 0) tUrl = 'https://' + tUrl.substring(7); }
-          if (sUrl2) { if (sUrl2.indexOf('http://') === 0) sUrl2 = 'https://' + sUrl2.substring(7); }
-          var tPromise = tUrl ? fetch(tUrl).then(function(r) { return r.json(); }) : Promise.resolve({displayName: 'Unknown'});
-          var sPromise = sUrl2 ? fetch(sUrl2).then(function(r) { return r.json(); }) : Promise.resolve({value: '0'});
-          promises.push(tPromise, sPromise);
-          compData.push({ homeAway: c.homeAway });
-        });
-        return Promise.all(promises).then(function(results) {
-          var statusData = results[0];
-          var completed = statusData && statusData.type && statusData.type.completed;
-          var matchComps = [];
-          for (var i = 0; i < compData.length; i++) {
-            matchComps.push({
-              homeAway: compData[i].homeAway,
-              team: results[1 + i * 2],
-              score: results[2 + i * 2]
-            });
-          }
-          return { date: ev.date, completed: completed, competitors: matchComps };
-        });
-      }));
+      return collectFinishedMatches(teamEventsUrl, list.pageCount || 1);
     })
     .then(function(matches) {
-      var valid = matches.filter(Boolean);
-      renderRecentMatchesCore(valid);
+      renderRecentMatchesCore(matches);
     })
     .catch(function(e) {
       console.error('最近比赛(core)加载失败:', e);
       $('recentLoading').innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">加载失败: ' + (e.message || '未知错误') + '</div>';
     });
+}
+
+/* 逐页获取已完赛比赛，凑够5场就停 */
+function collectFinishedMatches(baseUrl, totalPages) {
+  var finished = [];
+  var currentPage = 1;
+
+  function fetchPage() {
+    if (currentPage > totalPages || finished.length >= 5) {
+      return Promise.resolve(finished);
+    }
+    var pageUrl = baseUrl + '?lang=en&page=' + currentPage;
+    return fetch(pageUrl)
+      .then(function(r) { return r.json(); })
+      .then(function(list) {
+        var items = list.items || [];
+        return Promise.all(items.map(function(ref) {
+          var url = ref.$ref;
+          if (url.indexOf('http://') === 0) url = 'https://' + url.substring(7);
+          return fetch(url).then(function(r) { return r.json(); });
+        })).then(function(events) {
+          return Promise.all(events.map(function(ev) {
+            var comp = ev.competitions && ev.competitions[0];
+            if (!comp) return Promise.resolve(null);
+            var competitors = comp.competitors || [];
+            // status 在 competitions[0].status，不在 event.status
+            var statusRef = comp.status && comp.status.$ref;
+            var promises = [];
+            if (statusRef) {
+              var sUrl = statusRef;
+              if (sUrl.indexOf('http://') === 0) sUrl = 'https://' + sUrl.substring(7);
+              promises.push(fetch(sUrl).then(function(r) { return r.json(); }));
+            } else if (comp.status && comp.status.type) {
+              promises.push(Promise.resolve(comp.status));
+            } else {
+              promises.push(Promise.resolve({}));
+            }
+            var compData = [];
+            competitors.forEach(function(c) {
+              var tUrl = c.team && c.team.$ref;
+              var sUrl2 = c.score && c.score.$ref;
+              if (tUrl) { if (tUrl.indexOf('http://') === 0) tUrl = 'https://' + tUrl.substring(7); }
+              if (sUrl2) { if (sUrl2.indexOf('http://') === 0) sUrl2 = 'https://' + sUrl2.substring(7); }
+              var tPromise = tUrl ? fetch(tUrl).then(function(r) { return r.json(); }) : Promise.resolve({displayName: 'Unknown'});
+              var sPromise = sUrl2 ? fetch(sUrl2).then(function(r) { return r.json(); }) : Promise.resolve({value: '0'});
+              promises.push(tPromise, sPromise);
+              compData.push({ homeAway: c.homeAway });
+            });
+            return Promise.all(promises).then(function(results) {
+              var statusData = results[0];
+              var completed = statusData && statusData.type && statusData.type.completed;
+              var matchComps = [];
+              for (var i = 0; i < compData.length; i++) {
+                matchComps.push({
+                  homeAway: compData[i].homeAway,
+                  team: results[1 + i * 2],
+                  score: results[2 + i * 2]
+                });
+              }
+              return { date: ev.date, completed: completed, competitors: matchComps };
+            });
+          })).then(function(matches) {
+            matches.forEach(function(m) {
+              if (m && m.completed) finished.push(m);
+            });
+            currentPage++;
+            return fetchPage();
+          });
+        });
+      });
+  }
+
+  return fetchPage();
 }
 
 /* 渲染最近比赛（统一渲染函数） */
