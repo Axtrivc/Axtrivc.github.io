@@ -186,6 +186,25 @@ body { padding-bottom: 52px !important; }
 .vinyl-spin { animation: vinyl-rotate 4s linear infinite paused; }
 .vinyl-spin.playing { animation-play-state: running; }
 @keyframes vinyl-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+/* Birthday Countdown */
+.bday-countdown { max-width: 600px; margin: 20px auto 30px; padding: 28px 32px; background: linear-gradient(135deg, rgba(139,111,71,0.06) 0%, rgba(196,169,106,0.08) 100%); border-radius: 16px; border: 1px solid rgba(139,111,71,0.1); text-align: center; }
+.bday-countdown .bday-emoji { font-size: 32px; margin-bottom: 8px; }
+.bday-countdown .bday-label { font-size: 13px; color: #a09080; letter-spacing: 1px; margin-bottom: 4px; }
+.bday-countdown .bday-name { font-size: 20px; font-weight: 700; color: #4a3728; margin-bottom: 16px; }
+.bday-countdown .bday-grid { display: flex; justify-content: center; gap: 12px; margin-bottom: 16px; }
+.bday-countdown .bday-num { display: flex; flex-direction: column; align-items: center; min-width: 60px; }
+.bday-countdown .bday-num .num { font-size: 28px; font-weight: 700; color: #8B6F47; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.bday-countdown .bday-num .unit { font-size: 11px; color: #a09080; margin-top: 4px; }
+.bday-countdown .bday-date { font-size: 12px; color: #c4b49a; }
+.bday-countdown.today .bday-name { color: #C4A96A; }
+.bday-countdown.today .bday-label { display: none; }
+.bday-countdown.today .bday-grid { display: none; }
+@media (max-width: 480px) {
+  .bday-countdown { padding: 20px 16px; }
+  .bday-countdown .bday-num .num { font-size: 22px; }
+  .bday-countdown .bday-grid { gap: 8px; }
+  .bday-countdown .bday-num { min-width: 50px; }
+}
 </style>
 <meta name="generator" content="Hexo 7.3.0"></head><body><div class="bg-animation" id="web_bg" style="background-color: #f5f0e8;"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/null" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/espanol/"><i class="fa-fw fas fa-language"></i><span> 西班牙语</span></a></div><div class="menus_item"><a class="site-page" href="/football/"><i class="fa-fw fas fa-futbol"></i><span> 足球日报</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/guestbook/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 工具箱</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Axtrivc's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">足球早报 · 2026年4月5日 星期日</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/espanol/"><i class="fa-fw fas fa-language"></i><span> 西班牙语</span></a></div><div class="menus_item"><a class="site-page" href="/football/"><i class="fa-fw fas fa-futbol"></i><span> 足球日报</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/guestbook/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 工具箱</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">足球早报 · 2026年4月5日 星期日</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-04-05T00:00:00.000Z" title="发表于 2026-04-05 08:00:00">2026-04-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-04-05T01:58:28.573Z" title="更新于 2026-04-05 09:58:28">2026-04-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
 <p>⚽ ☀️ 早报 · 晨间战报 + 赛程速览 · 数据来源 football-data.org + 懂球帝</p>
@@ -719,6 +738,37 @@ body { padding-bottom: 52px !important; }
       iconUp.innerHTML = '<path d="M18 15l-6-6-6 6"/>';
     }
   });
+})();
+</script>
+<script>
+(function() {
+  // Birthday countdown - only on homepage
+  if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') return;
+  var now = new Date();
+  var bdayMonth = 5, bdayDay = 12;
+  var next = new Date(now.getFullYear(), bdayMonth - 1, bdayDay);
+  if (next <= now) next = new Date(now.getFullYear() + 1, bdayMonth - 1, bdayDay);
+  var diff = next - now;
+  var isToday = (diff < 86400000 && next.getDate() === now.getDate() && next.getMonth() === now.getMonth());
+
+  var card = document.createElement('div');
+  card.className = 'bday-countdown' + (isToday ? ' today' : '');
+
+  if (isToday) {
+    card.innerHTML = '<div class="bday-emoji">🎂🎉</div><div class="bday-name">今天是 Axtrivc 的生日！</div><div class="bday-date">5月12日 · Happy Birthday!</div>';
+  } else {
+    var days = Math.floor(diff / 86400000);
+    var hrs = Math.floor((diff % 86400000) / 3600000);
+    var mins = Math.floor((diff % 3600000) / 60000);
+    var secs = Math.floor((diff % 60000) / 1000);
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    card.innerHTML = '<div class="bday-emoji">🎂</div><div class="bday-label">BIRTHDAY COUNTDOWN</div><div class="bday-name">Axtrivc 的生日</div><div class="bday-grid"><div class="bday-num"><span class="num" id="bday-d">' + pad(days) + '</span><span class="unit">天</span></div><div class="bday-num"><span class="num" id="bday-h">' + pad(hrs) + '</span><span class="unit">时</span></div><div class="bday-num"><span class="num" id="bday-m">' + pad(mins) + '</span><span class="unit">分</span></div><div class="bday-num"><span class="num" id="bday-s">' + pad(secs) + '</span><span class="unit">秒</span></div></div><div class="bday-date">5月12日</div>';
+  }
+
+  var main = document.getElementById('page') || document.querySelector('main') || document.querySelector('#content-inner');
+  if (main && main.firstChild) {
+    main.insertBefore(card, main.firstChild);
+  }
 })();
 </script>
 <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
