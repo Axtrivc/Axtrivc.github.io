@@ -18,6 +18,17 @@
     .form-dots { display: inline-flex; gap: 2px; margin-left: 4px; vertical-align: middle; }
     .form-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
     .playoff-line td { border-top: 2px solid #16a34a; }
+    .recent-match { display: flex; align-items: center; padding: 8px 16px; gap: 10px; border-bottom: 1px solid var(--border-light); font-size: 13px; }
+    .recent-match:last-child { border-bottom: none; }
+    .recent-match .rm-date { color: var(--text-faint); font-size: 11px; min-width: 40px; }
+    .recent-match .rm-venue { font-size: 10px; color: var(--text-faint); min-width: 20px; }
+    .recent-match .rm-vs { flex: 1; display: flex; align-items: center; gap: 6px; }
+    .recent-match .rm-vs .rm-opp { font-weight: 500; }
+    .recent-match .rm-score { font-weight: 700; font-size: 14px; min-width: 50px; text-align: center; }
+    .recent-match .rm-result { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; min-width: 30px; text-align: center; }
+    .rm-win { background: #dcfce7; color: #16a34a; }
+    .rm-draw { background: #fef3c7; color: #d97706; }
+    .rm-loss { background: #fee2e2; color: #ef4444; }
   </style>
 </head>
 <body>
@@ -41,6 +52,16 @@
       <div class="skel-row" style="margin-top:8px;"></div>
     </div>
     <div id="statsContent" style="display:none;"></div>
+  </div>
+
+  <!-- 最近5场比赛（API动态加载） -->
+  <div class="card">
+    <div class="team-section-title">📅 最近5场比赛<span class="last-update" id="recentDate"></span></div>
+    <div id="recentLoading">
+      <div class="skel-row"></div>
+      <div class="skel-row" style="height:24px;margin-top:8px;"></div>
+    </div>
+    <div id="recentContent" style="display:none;"></div>
   </div>
 
   <!-- MLS东部联盟积分榜（API动态加载） -->
@@ -228,6 +249,7 @@
    =========================== */
 const ESPN = {
   standings: 'https://sports.core.api.espn.com/v2/sports/soccer/leagues/usa.1/seasons/2026/types/1/groups/1/standings/0',
+  schedule: 'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/teams/20232/schedule',
   miamiAbbr: 'MIA'
 };
 
@@ -373,6 +395,9 @@ function suffix(n) { return n===1?'st':n===2?'nd':n===3?'rd':'th'; }
 
 /* 渲染积分榜表格 */
 function renderStandings(teams, miami) {
+  // 按 rank 排序（修复异步请求导致顺序错乱的问题）
+  teams.sort(function(a, b) { return a.rank - b.rank; });
+
   let html = '';
   teams.forEach(function(t) {
     var hl = miami && t.abbr === miami.abbr;
@@ -419,7 +444,83 @@ function renderStandings(teams, miami) {
 }
 
 /* 页面加载后自动获取数据 */
-loadStandings();
+document.addEventListener('DOMContentLoaded', function() { loadStandings(); loadRecentMatches(); });
+
+/* ===========================
+   加载最近5场比赛（ESPN Schedule API）
+   =========================== */
+async function loadRecentMatches() {
+  try {
+    const resp = await fetch(ESPN.schedule + '?lang=en');
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+
+    // 筛选已完成的比赛，按日期倒序取最近5场
+    const finished = (data.events || []).filter(function(e) {
+      return e.status && e.status.type && e.status.type.completed;
+    }).sort(function(a, b) {
+      return new Date(b.date) - new Date(a.date);
+    }).slice(0, 5);
+
+    if (finished.length === 0) throw new Error('无已完赛场次');
+
+    const miamiName = 'Inter Miami';
+    let html = '';
+
+    finished.forEach(function(ev) {
+      const comp = ev.competitions && ev.competitions[0];
+      if (!comp) return;
+
+      const homeTeam = comp.competitors && comp.competitors.find(function(c) { return c.homeAway === 'home'; });
+      const awayTeam = comp.competitors && comp.competitors.find(function(c) { return c.homeAway === 'away'; });
+      if (!homeTeam || !awayTeam) return;
+
+      const isMiamiHome = homeTeam.team.displayName.includes(miamiName);
+      const oppTeam = isMiamiHome ? awayTeam : homeTeam;
+      const venue = isMiamiHome ? '主' : '客';
+      const miamiComp = isMiamiHome ? homeTeam : awayTeam;
+
+      const miamiScore = parseInt(miamiComp.score) || 0;
+      const oppScore = parseInt(oppTeam.score) || 0;
+
+      let resultText, resultClass;
+      if (miamiScore > oppScore) { resultText = '胜'; resultClass = 'rm-win'; }
+      else if (miamiScore === oppScore) { resultText = '平'; resultClass = 'rm-draw'; }
+      else { resultText = '负'; resultClass = 'rm-loss'; }
+
+      // 日期格式化
+      const d = new Date(ev.date);
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+
+      const oppZh = zhName(oppTeam.team.displayName);
+
+      html += '<div class="recent-match">' +
+        '<span class="rm-date">' + mm + '/' + dd + '</span>' +
+        '<span class="rm-venue">' + venue + '</span>' +
+        '<span class="rm-vs">' +
+          (isMiamiHome ? '<span>迈阿密</span>' : '<span class="rm-opp">' + oppZh + '</span>') +
+        '</span>' +
+        '<span class="rm-score">' +
+          (isMiamiHome ? miamiScore + ' - ' + oppScore : oppScore + ' - ' + miamiScore) +
+        '</span>' +
+        '<span class="rm-vs">' +
+          (isMiamiHome ? '<span class="rm-opp">' + oppZh + '</span>' : '<span>迈阿密</span>') +
+        '</span>' +
+        '<span class="rm-result ' + resultClass + '">' + resultText + '</span>' +
+      '</div>';
+    });
+
+    $('recentContent').innerHTML = html;
+    $('recentLoading').style.display = 'none';
+    $('recentContent').style.display = '';
+    $('recentDate').textContent = '（截至 ' + new Date().toLocaleDateString('zh-CN') + '）';
+
+  } catch (e) {
+    console.error('最近比赛加载失败:', e);
+    $('recentLoading').innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">加载失败</div>';
+  }
+}
 
 /* ===========================
    球员弹窗逻辑
