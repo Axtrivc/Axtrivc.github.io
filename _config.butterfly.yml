@@ -16,6 +16,7 @@ menu:
   Categories: /categories/ || fas fa-folder-open
   西班牙语: /espanol/ || fas fa-language
   足球日报: /football/ || fas fa-futbol
+  MelodAI: /melodai/ || fas fa-music
 
 # Code Blocks
 code_blocks:

@@ -811,7 +811,9 @@ function collectFinishedMatches(baseUrl, totalPages) {
 /* 渲染最近比赛（统一渲染函数） */
 function renderRecentMatches(events) {
   var finished = events.filter(function(e) {
-    return e.status && e.status.type && e.status.type.completed;
+    // status 可能在 ev.status 或 ev.competitions[0].status
+    var st = e.status || (e.competitions && e.competitions[0] && e.competitions[0].status);
+    return st && st.type && st.type.completed;
   }).sort(function(a, b) {
     return new Date(b.date) - new Date(a.date);
   }).slice(0, 5);
@@ -835,8 +837,13 @@ function renderRecentMatches(events) {
     var venue = isBarcaHome ? '主' : '客';
     var barcaComp = isBarcaHome ? homeTeam : awayTeam;
 
-    var barcaScore = parseInt(barcaComp.score) || 0;
-    var oppScore = parseInt(oppTeam.score) || 0;
+    // score 可能是数字字符串或对象 { value, displayValue }
+    var barcaScoreVal = barcaComp.score;
+    var oppScoreVal = oppTeam.score;
+    if (typeof barcaScoreVal === 'object') barcaScoreVal = barcaScoreVal.value;
+    if (typeof oppScoreVal === 'object') oppScoreVal = oppScoreVal.value;
+    var barcaScore = parseInt(barcaScoreVal) || 0;
+    var oppScore = parseInt(oppScoreVal) || 0;
 
     var resultText, resultClass;
     if (barcaScore > oppScore) { resultText = '胜'; resultClass = 'rm-win'; }
