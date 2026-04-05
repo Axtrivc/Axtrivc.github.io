@@ -741,12 +741,10 @@ body { padding-bottom: 52px !important; }
 })();
 </script>
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
   if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') return;
   var bdayMonth = 5, bdayDay = 12;
   var now = new Date();
-  var next = new Date(now.getFullYear(), bdayMonth - 1, bdayDay);
-  if (next <= now) next = new Date(now.getFullYear() + 1, bdayMonth - 1, bdayDay);
   var isToday = (now.getMonth() === bdayMonth - 1 && now.getDate() === bdayDay);
 
   var card = document.createElement('div');
@@ -761,6 +759,9 @@ body { padding-bottom: 52px !important; }
   var target = document.getElementById('recent-posts');
   if (target && target.parentNode) {
     target.parentNode.insertBefore(card, target);
+  } else {
+    var content = document.getElementById('content-inner') || document.querySelector('main') || document.getElementById('page');
+    if (content) content.prepend(card);
   }
 
   if (!isToday) {
@@ -786,6 +787,6 @@ body { padding-bottom: 52px !important; }
     tick();
     setInterval(tick, 1000);
   }
-})();
+});
 </script>
 <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
