@@ -742,14 +742,12 @@ body { padding-bottom: 52px !important; }
 </script>
 <script>
 (function() {
-  // Birthday countdown - only on homepage
   if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') return;
-  var now = new Date();
   var bdayMonth = 5, bdayDay = 12;
+  var now = new Date();
   var next = new Date(now.getFullYear(), bdayMonth - 1, bdayDay);
   if (next <= now) next = new Date(now.getFullYear() + 1, bdayMonth - 1, bdayDay);
-  var diff = next - now;
-  var isToday = (diff < 86400000 && next.getDate() === now.getDate() && next.getMonth() === now.getMonth());
+  var isToday = (now.getMonth() === bdayMonth - 1 && now.getDate() === bdayDay);
 
   var card = document.createElement('div');
   card.className = 'bday-countdown' + (isToday ? ' today' : '');
@@ -757,17 +755,36 @@ body { padding-bottom: 52px !important; }
   if (isToday) {
     card.innerHTML = '<div class="bday-emoji">🎂🎉</div><div class="bday-name">今天是 Axtrivc 的生日！</div><div class="bday-date">5月12日 · Happy Birthday!</div>';
   } else {
-    var days = Math.floor(diff / 86400000);
-    var hrs = Math.floor((diff % 86400000) / 3600000);
-    var mins = Math.floor((diff % 3600000) / 60000);
-    var secs = Math.floor((diff % 60000) / 1000);
-    function pad(n) { return n < 10 ? '0' + n : '' + n; }
-    card.innerHTML = '<div class="bday-emoji">🎂</div><div class="bday-label">BIRTHDAY COUNTDOWN</div><div class="bday-name">Axtrivc 的生日</div><div class="bday-grid"><div class="bday-num"><span class="num" id="bday-d">' + pad(days) + '</span><span class="unit">天</span></div><div class="bday-num"><span class="num" id="bday-h">' + pad(hrs) + '</span><span class="unit">时</span></div><div class="bday-num"><span class="num" id="bday-m">' + pad(mins) + '</span><span class="unit">分</span></div><div class="bday-num"><span class="num" id="bday-s">' + pad(secs) + '</span><span class="unit">秒</span></div></div><div class="bday-date">5月12日</div>';
+    card.innerHTML = '<div class="bday-emoji">🎂</div><div class="bday-label">BIRTHDAY COUNTDOWN</div><div class="bday-name">Axtrivc 的生日</div><div class="bday-grid"><div class="bday-num"><span class="num" id="bday-d">00</span><span class="unit">天</span></div><div class="bday-num"><span class="num" id="bday-h">00</span><span class="unit">时</span></div><div class="bday-num"><span class="num" id="bday-m">00</span><span class="unit">分</span></div><div class="bday-num"><span class="num" id="bday-s">00</span><span class="unit">秒</span></div></div><div class="bday-date">5月12日</div>';
   }
 
   var main = document.getElementById('page') || document.querySelector('main') || document.querySelector('#content-inner');
   if (main && main.firstChild) {
     main.insertBefore(card, main.firstChild);
+  }
+
+  if (!isToday) {
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    function tick() {
+      var n = new Date();
+      var nx = new Date(n.getFullYear(), bdayMonth - 1, bdayDay);
+      if (nx <= n) nx = new Date(n.getFullYear() + 1, bdayMonth - 1, bdayDay);
+      var d = nx - n;
+      var dd = Math.floor(d / 86400000);
+      var hh = Math.floor((d % 86400000) / 3600000);
+      var mm = Math.floor((d % 3600000) / 60000);
+      var ss = Math.floor((d % 60000) / 1000);
+      var ed = document.getElementById('bday-d');
+      var eh = document.getElementById('bday-h');
+      var em = document.getElementById('bday-m');
+      var es = document.getElementById('bday-s');
+      if (ed) ed.textContent = pad(dd);
+      if (eh) eh.textContent = pad(hh);
+      if (em) em.textContent = pad(mm);
+      if (es) es.textContent = pad(ss);
+    }
+    tick();
+    setInterval(tick, 1000);
   }
 })();
 </script>
