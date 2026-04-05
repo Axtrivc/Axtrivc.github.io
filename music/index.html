@@ -1,0 +1,288 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>歌单分享 | Axtrivc's Blog</title><meta name="author" content="ɐ ℒℯℯ"><meta name="copyright" content="ɐ ℒℯℯ"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content=".music-page { max-width: 800px; margin: 0 auto; padding: 20px; } .music-hero { text-align: center; padding: 40px 0 30px; } .music-hero h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; colo">
+<meta property="og:type" content="website">
+<meta property="og:title" content="歌单分享">
+<meta property="og:url" content="https://axtrivc.github.io/music/index.html">
+<meta property="og:site_name" content="Axtrivc&#39;s Blog">
+<meta property="og:description" content=".music-page { max-width: 800px; margin: 0 auto; padding: 20px; } .music-hero { text-align: center; padding: 40px 0 30px; } .music-hero h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; colo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-04T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-05T07:47:55.534Z">
+<meta property="article:author" content="ɐ ℒℯℯ">
+<meta property="article:tag" content="博客, 随笔, 技术, 生活">
+<meta name="twitter:card" content="summary"><script type="application/ld+json"></script><link rel="shortcut icon" href="/"><link rel="canonical" href="https://axtrivc.github.io/music/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '歌单分享',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'page'
+}</script><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=LXGW+WenKai+Screen&display=swap" rel="stylesheet"><meta name="generator" content="Hexo 7.3.0"></head><body><div class="bg-animation" id="web_bg" style="background-color: #f5f0e8;"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/null" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/espanol/"><i class="fa-fw fas fa-language"></i><span> 西班牙语</span></a></div><div class="menus_item"><a class="site-page" href="/football/"><i class="fa-fw fas fa-futbol"></i><span> 足球日报</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/guestbook/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 工具箱</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Axtrivc's Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/espanol/"><i class="fa-fw fas fa-language"></i><span> 西班牙语</span></a></div><div class="menus_item"><a class="site-page" href="/football/"><i class="fa-fw fas fa-futbol"></i><span> 足球日报</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/guestbook/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 工具箱</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><h1 class="title-seo">歌单分享</h1></header><main class="layout hide-aside" id="content-inner"><div id="page"><div class="page-title">歌单分享</div><div class="container" id="article-container"><style>
+.music-page { max-width: 800px; margin: 0 auto; padding: 20px; }
+.music-hero { text-align: center; padding: 40px 0 30px; }
+.music-hero h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: #4a3728; }
+.music-hero p { color: #8B6F47; font-size: 14px; }
+
+/* Spotify Embed */
+.spotify-section { margin-bottom: 40px; }
+.spotify-section h3 { font-size: 18px; font-weight: 600; color: #4a3728; margin-bottom: 16px; padding-left: 12px; border-left: 3px solid #8B6F47; }
+.spotify-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .spotify-grid { grid-template-columns: 1fr; } }
+.spotify-card { border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+
+/* Custom Playlist */
+.playlist-section { margin-bottom: 40px; }
+.playlist-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.playlist-tab { padding: 8px 20px; border-radius: 20px; border: 1.5px solid #e0d5c5; background: transparent; color: #8B6F47; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+.playlist-tab:hover, .playlist-tab.active { background: #8B6F47; color: #fff; border-color: #8B6F47; }
+
+.playlist-list { display: none; }
+.playlist-list.active { display: block; }
+
+.song-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: #fff; border-radius: 10px; margin-bottom: 8px; transition: all 0.2s; cursor: default; }
+.song-item:hover { transform: translateX(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.song-num { width: 28px; text-align: center; font-weight: 700; color: #c4b49a; font-size: 14px; }
+.song-cover { width: 44px; height: 44px; border-radius: 8px; background: #e8dcc8; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.song-info { flex: 1; min-width: 0; }
+.song-title { font-weight: 600; color: #4a3728; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.song-artist { color: #a09080; font-size: 12px; margin-top: 2px; }
+.song-duration { color: #c4b49a; font-size: 12px; flex-shrink: 0; }
+
+/* Now Playing */
+.now-playing { background: linear-gradient(135deg, #8B6F47 0%, #A0845C 100%); border-radius: 16px; padding: 24px; color: #fff; margin-bottom: 30px; display: flex; align-items: center; gap: 20px; }
+.now-playing-cover { width: 80px; height: 80px; border-radius: 12px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.now-playing-info { flex: 1; }
+.now-playing-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; margin-bottom: 6px; }
+.now-playing-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.now-playing-artist { font-size: 13px; opacity: 0.8; }
+
+/* Add Song Form */
+.add-song { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 30px; }
+.add-song h3 { font-size: 16px; color: #4a3728; margin-bottom: 14px; }
+.form-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.form-row input { flex: 1; min-width: 120px; padding: 10px 14px; border: 1.5px solid #e0d5c5; border-radius: 8px; font-size: 13px; outline: none; transition: border-color 0.2s; background: #faf8f4; }
+.form-row input:focus { border-color: #8B6F47; }
+.btn-add { padding: 10px 24px; background: #8B6F47; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; transition: background 0.2s; }
+.btn-add:hover { background: #A0845C; }
+</style>
+
+<div class="music-page">
+
+  <div class="music-hero">
+    <h2>🎵 My Playlist</h2>
+    <p>用音乐记录心情 · 每首歌都是一个故事</p>
+  </div>
+
+  <!-- Now Playing -->
+  <div class="now-playing">
+    <div class="now-playing-cover">🎧</div>
+    <div class="now-playing-info">
+      <div class="now-playing-label">♪ Now Playing</div>
+      <div class="now-playing-title">Blinding Lights</div>
+      <div class="now-playing-artist">The Weeknd</div>
+    </div>
+  </div>
+
+  <!-- Spotify Playlists -->
+  <div class="spotify-section">
+    <h3>🎧 Spotify 歌单</h3>
+    <div class="spotify-grid">
+      <div class="spotify-card">
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+      <div class="spotify-card">
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX4SBhb3fqCJd?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Playlists -->
+  <div class="playlist-section">
+    <h3>📝 我的歌单</h3>
+    <div class="playlist-tabs">
+      <button class="playlist-tab active" onclick="switchTab('study')">📚 学习 BGM</button>
+      <button class="playlist-tab" onclick="switchTab('chill')">🌙 睡前放松</button>
+      <button class="playlist-tab" onclick="switchTab('workout')">🔥 运动</button>
+      <button class="playlist-tab" onclick="switchTab('mood')">💫 随心听</button>
+    </div>
+
+<pre><code>&lt;!-- Study Playlist --&gt;
+&lt;div class=&quot;playlist-list active&quot; id=&quot;playlist-study&quot;&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🎹&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;River Flows in You&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Yiruma&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;3:11&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🎼&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Clair de Lune&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Debussy&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;5:12&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🎻&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Experience&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Ludovico Einaudi&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;5:15&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🎹&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Comptine d&#39;un autre été&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Yann Tiersen&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;2:20&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🎶&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Nuvole Bianche&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Ludovico Einaudi&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;5:57&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Chill Playlist --&gt;
+&lt;div class=&quot;playlist-list&quot; id=&quot;playlist-chill&quot;&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🌙&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Weightless&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Marconi Union&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;8:09&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🌊&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Electric Feel&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;MGMT&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;3:49&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;✨&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Sunset Lover&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Petit Biscuit&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;3:40&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🎸&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Put Your Records On&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Corinne Bailey Rae&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;3:35&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;💫&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;The Night We Met&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Lord Huron&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;3:28&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Workout Playlist --&gt;
+&lt;div class=&quot;playlist-list&quot; id=&quot;playlist-workout&quot;&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;⚡&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Stronger&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Kanye West&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;5:12&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🔥&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Lose Yourself&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Eminem&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;5:26&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;💪&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Eye of the Tiger&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Survivor&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;4:05&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🏃&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Till I Collapse&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Eminem ft. Nate Dogg&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;4:57&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🎵&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Remember the Name&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Fort Minor&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;3:50&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Mood Playlist --&gt;
+&lt;div class=&quot;playlist-list&quot; id=&quot;playlist-mood&quot;&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🌟&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Bohemian Rhapsody&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Queen&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;5:55&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🎤&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Hotel California&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Eagles&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;6:30&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🎸&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Stairway to Heaven&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Led Zeppelin&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;8:02&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;💫&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Imagine&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;John Lennon&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;3:07&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;song-item&quot;&gt;&lt;div class=&quot;song-num&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;song-cover&quot;&gt;🎹&lt;/div&gt;&lt;div class=&quot;song-info&quot;&gt;&lt;div class=&quot;song-title&quot;&gt;Clocks&lt;/div&gt;&lt;div class=&quot;song-artist&quot;&gt;Coldplay&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;song-duration&quot;&gt;5:07&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+  </div>
+
+  <!-- Tip -->
+  <div style="text-align:center;color:#a09080;font-size:12px;padding:20px 0;">
+    💡 想换歌单里的歌？直接编辑 <code>source/music/index.md</code> 就好～Spotify 嵌入可以替换为自己的播放列表链接
+  </div>
+
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.playlist-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.playlist-list').forEach(l => l.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('playlist-' + id).classList.add('active');
+}
+</script>
+</div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By ɐ ℒℯℯ</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
