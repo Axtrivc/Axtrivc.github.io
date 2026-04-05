@@ -335,6 +335,12 @@ ${teamSection}
 
 // ==================== 主流程 ====================
 async function main() {
+  // 只在有 API Key 时才执行（避免 hexo generate/deploy 时被触发覆盖数据）
+  if (!FOOTBALL_API_KEY) {
+    console.log('无 FOOTBALL_API_KEY，跳过日报生成');
+    return;
+  }
+  
   console.log('=== 足球日报生成器 ===');
   console.log(`日期: ${getTodayCN()}`);
 
@@ -345,22 +351,28 @@ async function main() {
   // 确保目录存在
   if (!fs.existsSync(POSTS_DIR)) fs.mkdirSync(POSTS_DIR, { recursive: true });
 
-  // 抓取各联赛比赛
+  // 抓取各联赛比赛（每个请求间隔2秒避免限速）
   console.log('正在抓取各联赛比赛...');
   const allMatches = [];
   for (const comp of COMPETITIONS) {
     const matches = await fetchMatchesByCompetition(comp);
     console.log(`  ${comp}: ${matches.length} 场`);
     allMatches.push(...matches);
+    if (COMPETITIONS.indexOf(comp) < COMPETITIONS.length - 1) {
+      await new Promise(r => setTimeout(r, 2000));
+    }
   }
   console.log(`总计: ${allMatches.length} 场比赛`);
 
-  // 抓取关注球队数据
+  // 抓取关注球队数据（每个请求间隔2秒）
   console.log('正在抓取关注球队数据...');
   const teamData = [];
   for (const team of FOLLOWED_TEAMS) {
     console.log(`  查询 ${team.name}...`);
     const recent = await fetchTeamRecentMatches(team.id);
+    if (FOLLOWED_TEAMS.indexOf(team) < FOLLOWED_TEAMS.length - 1) {
+      await new Promise(r => setTimeout(r, 2000));
+    }
     const next = await fetchTeamNextMatch(team.id);
     teamData.push({
       team: { id: team.id, name: team.name },
