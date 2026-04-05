@@ -22,13 +22,13 @@ const POSTS_DIR = process.env.POSTS_DIR || path.join(__dirname, '..', 'source', 
 // 关注的联赛代码
 const COMPETITIONS = ['PL', 'PD', 'BL1', 'SA', 'FL1', 'CL'];
 
-// 关注的球队（name + football-data id）
+// 关注的球队（name + football-data id + 队名关键词，用于从比赛列表中识别）
 const FOLLOWED_TEAMS = [
-  { name: '巴萨', id: 83 },
-  { name: '皇马', id: 541 },
-  { name: '马竞', id: 530 },
-  { name: '迈阿密国际', id: 1593 },
-  { name: '西班牙', id: 788 },
+  { name: '巴萨', id: 81, keywords: ['巴塞罗那', 'Barcelona', 'FC Barcelona'] },
+  { name: '皇马', id: 86, keywords: ['皇家马德里', 'Real Madrid', 'Real Madrid CF'] },
+  { name: '马竞', id: 78, keywords: ['马德里竞技', 'Atlético', 'Club Atlético'] },
+  { name: '迈阿密国际', id: 1593, keywords: ['迈阿密国际', 'Inter Miami'] },
+  { name: '西班牙', id: 788, keywords: ['西班牙', 'Spain'] },
 ];
 
 // 懂球帝新闻分类 tabId
@@ -311,6 +311,27 @@ function isTeamNews(article) {
   return TEAM_KEYWORDS.some(kw => article.title.includes(kw));
 }
 
+// 判断是否是今天或明天的比赛（北京时间）
+function isTodayOrTomorrowMatch(utcDate) {
+  const d = new Date(utcDate);
+  const bj = new Date(d.getTime() + 8 * 3600000);
+  const today = getBjDate();
+  const tomorrow = getBjDate(1);
+  const bjStr = `${bj.getFullYear()}-${String(bj.getMonth() + 1).padStart(2, '0')}-${String(bj.getDate()).padStart(2, '0')}`;
+  return bjStr === today.str || bjStr === tomorrow.str;
+}
+
+function matchDateLabel(utcDate) {
+  const d = new Date(utcDate);
+  const bj = new Date(d.getTime() + 8 * 3600000);
+  const today = getBjDate();
+  const tomorrow = getBjDate(1);
+  const bjStr = `${bj.getFullYear()}-${String(bj.getMonth() + 1).padStart(2, '0')}-${String(bj.getDate()).padStart(2, '0')}`;
+  if (bjStr === today.str) return '今天';
+  if (bjStr === tomorrow.str) return '明天';
+  return `${bj.getMonth() + 1}月${bj.getDate()}日`;
+}
+
 // ==================== 生成 Markdown ====================
 function generateMarkdown(allMatches, teamData, allNews) {
   const dateCN = getTodayCN();
@@ -324,7 +345,12 @@ function generateMarkdown(allMatches, teamData, allNews) {
   const live = todayMatches.filter(m => m.status === 'IN_PLAY' || m.status === 'PAUSED');
   const upcoming = todayMatches.filter(m => ['SCHEDULED', 'TIMED'].includes(m.status));
 
-  // 按联赛分组
+  // 近期赛程：今天+明天未开始的比赛
+  const nearFutureMatches = allMatches.filter(m => 
+    isTodayOrTomorrowMatch(m.utcDate) && ['SCHEDULED', 'TIMED'].includes(m.status)
+  );
+
+  // 按联赛分组（用于今日比赛）
   const byComp = {};
   todayMatches.forEach(m => {
     const comp = getCompName(m.competition);
@@ -425,23 +451,33 @@ function generateMarkdown(allMatches, teamData, allNews) {
     });
   }
 
-  // --- 即将开赛 ---
+  // --- 近期赛程（今天+明天未开始的比赛） ---
   let upcomingSection = '';
-  if (upcoming.length === 0) {
-    upcomingSection = '\n> 今日暂无即将开始的比赛\n';
+  if (nearFutureMatches.length === 0) {
+    upcomingSection = '\n> 近两日暂无赛程\n';
   } else {
-    Object.keys(byComp).forEach(comp => {
-      const compMatches = byComp[comp].filter(m => ['SCHEDULED', 'TIMED'].includes(m.status));
-      if (compMatches.length > 0) {
-        upcomingSection += `\n#### ${comp}\n\n| 开球时间 | 主队 | 客队 |\n|:---:|:---:|:---:|\n`;
-        compMatches.forEach(m => {
+    // 按日期+联赛分组
+    const byDateComp = {};
+    nearFutureMatches.sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate)).forEach(m => {
+      const label = matchDateLabel(m.utcDate);
+      if (!byDateComp[label]) byDateComp[label] = {};
+      const comp = getCompName(m.competition);
+      if (!byDateComp[label][comp]) byDateComp[label][comp] = [];
+      byDateComp[label][comp].push(m);
+    });
+    
+    Object.entries(byDateComp).forEach(([dateLabel, comps]) => {
+      upcomingSection += `\n### 📅 ${dateLabel}\n\n`;
+      Object.entries(comps).forEach(([comp, matches]) => {
+        upcomingSection += `#### ${comp}\n\n| 开球时间 | 主队 | 客队 |\n|:---:|:---:|:---:|\n`;
+        matches.forEach(m => {
           const time = formatMatchTime(m.utcDate);
           const home = getTeamCn(m.homeTeam);
           const away = getTeamCn(m.awayTeam);
           const isFocus = isPriority(m);
           upcomingSection += `| ${time} | ${isFocus ? '**' + home + '**' : home} | ${isFocus ? '**' + away + '**' : away} |\n`;
         });
-      }
+      });
     });
   }
 
@@ -451,31 +487,81 @@ function generateMarkdown(allMatches, teamData, allNews) {
     teamSection = '\n## 我的主队\n';
     teamData.forEach(td => {
       const teamName = td.team.name;
+      const teamConfig = FOLLOWED_TEAMS.find(t => t.name === teamName);
+      const teamKeywords = teamConfig ? teamConfig.keywords : [teamName];
+      
+      // 判断比赛是否属于该主队
+      // 优先用 team id 匹配，同时用关键词匹配（兼容不同赛季的 team id 变化）
+      // 关键词匹配时排除误匹配（如 Barcelona 不应匹配 Espanyol de Barcelona）
+      const EXCLUDE_PATTERNS = {
+        '巴萨': ['Espanyol'],
+        '巴塞罗那': ['Espanyol'],
+      };
+      const excludeKws = EXCLUDE_PATTERNS[teamName] || [];
+      
+      function isTeamMatch(m) {
+        // 方式1：直接用 id 匹配
+        if (m.homeTeam.id === td.team.id || m.awayTeam.id === td.team.id) return true;
+        // 方式2：关键词匹配
+        const homeStr = (m.homeTeam.name || '') + ' ' + (m.homeTeam.shortName || '') + ' ' + (m.homeTeam.tla || '');
+        const awayStr = (m.awayTeam.name || '') + ' ' + (m.awayTeam.shortName || '') + ' ' + (m.awayTeam.tla || '');
+        for (const kw of teamKeywords) {
+          const homeMatch = homeStr.includes(kw);
+          const awayMatch = awayStr.includes(kw);
+          const homeExclude = excludeKws.some(ex => homeStr.includes(ex));
+          const awayExclude = excludeKws.some(ex => awayStr.includes(ex));
+          if ((homeMatch && !homeExclude) || (awayMatch && !awayExclude)) return true;
+        }
+        return false;
+      }
+      
       teamSection += `\n### ${teamName}\n\n`;
       
-      // 近期战绩
-      if (td.recent && td.recent.length > 0) {
-        teamSection += '**近期战绩**\n\n| 日期 | 赛事 | 对阵 | 比分 | 结果 |\n|:---:|:---:|:---:|:---:|:---:|\n';
-        td.recent.slice(0, 3).forEach(m => {
-          const date = formatDate(m.utcDate);
+      // 今日比赛结果
+      const todayTeamMatches = todayMatches.filter(m => m.status === 'FINISHED' && isTeamMatch(m));
+      if (todayTeamMatches.length > 0) {
+        teamSection += '**今日战报**\n\n';
+        todayTeamMatches.forEach(m => {
           const comp = getCompName(m.competition);
           const home = getTeamCn(m.homeTeam);
           const away = getTeamCn(m.awayTeam);
-          const isHome = m.homeTeam.id === td.team.id;
-          const opponent = isHome ? away : home;
-          let result = '';
-          if (m.status === 'FINISHED') {
-            const f = m.score.fullTime;
-            const myScore = isHome ? f.home : f.away;
-            const oppScore = isHome ? f.away : f.home;
-            if (myScore > oppScore) result = '✅ 胜';
-            else if (myScore < oppScore) result = '❌ 负';
-            else result = '➖ 平';
-            teamSection += `| ${date} | ${comp} | ${isHome ? '主' : '客'} vs ${opponent} | ${myScore}-${oppScore} | ${result} |\n`;
-          } else {
-            teamSection += `| ${date} | ${comp} | ${isHome ? '主' : '客'} vs ${opponent} | - | ${m.status} |\n`;
-          }
+          const f = m.score.fullTime;
+          const isHome = m.homeTeam.id === td.team.id || teamKeywords.some(kw => m.homeTeam.name === kw || (m.homeTeam.shortName && m.homeTeam.shortName === kw));
+          const myScore = isHome ? f.home : f.away;
+          const oppScore = isHome ? f.away : f.home;
+          const result = myScore > oppScore ? '✅ 胜' : myScore < oppScore ? '❌ 负' : '➖ 平';
+          teamSection += `- ${comp}：${home} ${f.home}-${f.away} ${away}（${result}）\n`;
         });
+        teamSection += '\n';
+      }
+      
+      // 近期战绩（最近5场，排除今日已显示的）
+      if (td.recent && td.recent.length > 0) {
+        const recentOther = td.recent.filter(m => !(m.status === 'FINISHED' && isTodayMatch(m.utcDate) && isTeamMatch(m)));
+        if (recentOther.length > 0) {
+          teamSection += '**近期战绩**\n\n| 日期 | 赛事 | 对阵 | 比分 | 结果 |\n|:---:|:---:|:---:|:---:|:---:|\n';
+          recentOther.slice(0, 5).forEach(m => {
+            const date = formatDate(m.utcDate);
+            const comp = getCompName(m.competition);
+            const home = getTeamCn(m.homeTeam);
+            const away = getTeamCn(m.awayTeam);
+            const isHome = m.homeTeam.id === td.team.id;
+            const opponent = isHome ? away : home;
+            let result = '';
+            if (m.status === 'FINISHED') {
+              const f = m.score.fullTime;
+              const myScore = isHome ? f.home : f.away;
+              const oppScore = isHome ? f.away : f.home;
+              if (myScore > oppScore) result = '✅ 胜';
+              else if (myScore < oppScore) result = '❌ 负';
+              else result = '➖ 平';
+              teamSection += `| ${date} | ${comp} | ${isHome ? '主' : '客'} vs ${opponent} | ${myScore}-${oppScore} | ${result} |\n`;
+            } else {
+              teamSection += `| ${date} | ${comp} | ${isHome ? '主' : '客'} vs ${opponent} | - | ${m.status} |\n`;
+            }
+          });
+          teamSection += '\n';
+        }
       }
       
       // 下一场比赛
@@ -485,7 +571,36 @@ function generateMarkdown(allMatches, teamData, allNews) {
         const away = getTeamCn(td.next.awayTeam);
         const time = formatMatchTime(td.next.utcDate);
         const date = formatDate(td.next.utcDate);
-        teamSection += `\n**下一场**：${date} ${time} ${comp} - ${home} vs ${away}\n`;
+        teamSection += `**下一场**：${date} ${time} ${comp} - ${home} vs ${away}\n\n`;
+      }
+      
+      // 相关新闻（从主队新闻中筛选）
+      const teamNews = allTeamNews.filter(a => {
+        const teamKws = {
+          '巴萨': ['巴萨', '巴塞罗那'],
+          '皇马': ['皇马', '皇家马德里'],
+          '马竞': ['马竞', '马德里竞技'],
+          '迈阿密国际': ['迈阿密国际'],
+          '西班牙': ['西班牙', '斗牛士'],
+        };
+        const kws = teamKws[teamName] || [];
+        return kws.some(kw => a.title.includes(kw));
+      });
+      if (teamNews.length > 0) {
+        teamSection += '**相关新闻**\n\n';
+        teamNews.slice(0, 3).forEach(a => {
+          teamSection += `- [${a.title}](${a.url})\n`;
+        });
+        teamSection += '\n';
+      }
+      
+      // 如果以上内容都为空，显示提示
+      const hasContent = todayTeamMatches.length > 0 || 
+        (td.recent && td.recent.length > 0) || 
+        td.next || 
+        teamNews.length > 0;
+      if (!hasContent) {
+        teamSection += '> 暂无近期动态\n\n';
       }
     });
   }
@@ -510,7 +625,7 @@ ${newsSection}
 ## 今日战报
 ${resultsSection}
 
-## 即将开赛
+## 近期赛程
 ${upcomingSection}
 ${teamSection}
 
