@@ -170,8 +170,9 @@ body { padding-bottom: 52px !important; }
 .vinyl-spin { animation: vinyl-rotate 4s linear infinite paused; }
 .vinyl-spin.playing { animation-play-state: running; }
 @keyframes vinyl-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-/* Birthday Countdown */
-.bday-countdown { max-width: 100%; margin: 0 auto 16px; padding: 14px 20px; background: linear-gradient(135deg, rgba(139,111,71,0.05) 0%, rgba(196,169,106,0.07) 100%); border-radius: 12px; border: 1px solid rgba(139,111,71,0.08); text-align: center; break-inside: avoid; }
+/* Birthday Countdown - placed outside .recent-post-items to avoid masonry */
+#recent-posts { display: flex; flex-direction: column; }
+.bday-countdown { max-width: 100%; margin: 0 auto 16px; padding: 14px 20px; background: linear-gradient(135deg, rgba(139,111,71,0.05) 0%, rgba(196,169,106,0.07) 100%); border-radius: 12px; border: 1px solid rgba(139,111,71,0.08); text-align: center; flex-shrink: 0; }
 .bday-countdown .bday-emoji { font-size: 20px; margin-bottom: 2px; }
 .bday-countdown .bday-label { font-size: 10px; color: #b0a090; letter-spacing: 1.5px; margin-bottom: 2px; }
 .bday-countdown .bday-name { font-size: 14px; font-weight: 600; color: #4a3728; margin-bottom: 8px; }
@@ -422,7 +423,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   var posts = document.getElementById('recent-posts');
-  if (posts) {
+  var postItems = document.querySelector('.recent-post-items');
+  if (posts && postItems) {
+    posts.insertBefore(card, postItems);
+  } else if (posts) {
     posts.insertBefore(card, posts.firstChild);
   }
 
