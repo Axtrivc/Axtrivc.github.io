@@ -70,9 +70,9 @@ categories:
 
 **相关新闻**
 
-- [每体：巴萨小将哈姆扎肌肉受轻伤，将伤缺10天左右](https://www.dongqiudi.com/article/5760636)
-- [10天3战巴萨，西蒙尼遭遇执教十字路口？](https://www.dongqiudi.com/article/5760640)
-- [每体：巴萨决心欧冠首回合锁定胜局，因到了马竞主场变数太大](https://www.dongqiudi.com/article/5760581)
+- [六台：因伤休养的拉菲尼亚已经从巴西返回巴塞罗那](https://www.dongqiudi.com/article/5761047)
+- [欧冠1/4决赛巴萨vs马竞裁判选派：罗马尼亚裁判科瓦奇主哨](https://www.dongqiudi.com/article/5761030)
+- [世体：拉菲尼亚还需一个月复出，巴萨希望他赶上下月国家德比](https://www.dongqiudi.com/article/5761006)
 
 
 ### 皇马
@@ -91,8 +91,9 @@ categories:
 
 **相关新闻**
 
+- [六台主持人：总算理解恩里克为啥训姆巴佩，他在皇马根本不跑](https://www.dongqiudi.com/article/5760994)
+- [皇马名嘴怒喷卡马文加“态度敷衍”，球员未来何去何从？](https://www.dongqiudi.com/article/5761016)
 - [格纳布里：皇马vs拜仁可以算欧洲德比；维尼修斯人很好](https://www.dongqiudi.com/article/5760723)
-- [每体：皇马想在今夏引进中场，斯图加特的切马和施蒂勒是目标](https://www.dongqiudi.com/article/5760519)
 
 
 ### 马竞
@@ -109,8 +110,8 @@ categories:
 
 **相关新闻**
 
+- [欧冠1/4决赛巴萨vs马竞裁判选派：罗马尼亚裁判科瓦奇主哨](https://www.dongqiudi.com/article/5761030)
 - [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
-- [每体：巴萨决心欧冠首回合锁定胜局，因到了马竞主场变数太大](https://www.dongqiudi.com/article/5760581)
 
 
 ### 迈阿密国际
@@ -120,56 +121,58 @@ categories:
 
 ### 西班牙
 
-> 暂无近期动态
+**相关新闻**
+
+- [欧冠1/4决赛巴黎vs利物浦裁判选派：西班牙裁判桑切斯主哨](https://www.dongqiudi.com/article/5761040)
 
 
 ## 足坛新闻
 
 ### 📰 足坛头条
 
-- [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902) ⭐
-- [西媒：洛塞尔索参加世界杯成疑，他因伤已两个半月未出场](https://www.dongqiudi.com/article/5760847)
-- [老帅卢塞斯库之子昨日带完联赛后直飞回国，全场球迷及裁判对其致意](https://www.dongqiudi.com/article/5760846)
-- [医学专家：东契奇回欧洲说明湖人医疗团队不行；欧洲医疗水平不如美国](https://www.dongqiudi.com/article/5760838)
-- [邱彪：陶汉林天赋很高为人低调，但我希望他能变得更有野心](https://www.dongqiudi.com/article/5760832)
+- [六台：因伤休养的拉菲尼亚已经从巴西返回巴塞罗那](https://www.dongqiudi.com/article/5761047) ⭐
+- [安东内拉晒蒂亚戈和西罗近照，西罗身穿10号连过数人送出直塞](https://www.dongqiudi.com/article/5761013)
+- [阿斯：贝林不确定是否首发出战拜仁，阿韦洛亚需做决定](https://www.dongqiudi.com/article/5760996)
+- [莱因克尔：有信心阿森纳能拿英超冠军，欧冠冠军会是重磅惊喜](https://www.dongqiudi.com/article/5761041)
+- [德转传闻：阿森纳盯上勒沃库森前锋，英超豪门围观维尼修斯](https://www.dongqiudi.com/article/5761046)
 
 #### 西甲新闻
 
-- [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
-- [西媒：洛塞尔索参加世界杯成疑，他因伤已两个半月未出场](https://www.dongqiudi.com/article/5760847)
-- [国王杯四冠球队皇家联合重返西协甲，埃梅里及其家人是股东](https://www.dongqiudi.com/article/5760823)
+- [六台：因伤休养的拉菲尼亚已经从巴西返回巴塞罗那](https://www.dongqiudi.com/article/5761047)
+- [阿斯：贝林不确定是否首发出战拜仁，阿韦洛亚需做决定](https://www.dongqiudi.com/article/5760996)
+- [德转传闻：阿森纳盯上勒沃库森前锋，英超豪门围观维尼修斯](https://www.dongqiudi.com/article/5761046)
 
 #### 英超新闻
 
-- [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
-- [国王杯四冠球队皇家联合重返西协甲，埃梅里及其家人是股东](https://www.dongqiudi.com/article/5760823)
-- [维尔茨 国家队vs俱乐部 菜的其实是___](https://www.dongqiudi.com/article/5760824)
+- [莱因克尔：有信心阿森纳能拿英超冠军，欧冠冠军会是重磅惊喜](https://www.dongqiudi.com/article/5761041)
+- [德转传闻：阿森纳盯上勒沃库森前锋，英超豪门围观维尼修斯](https://www.dongqiudi.com/article/5761046)
+- [欧冠1/4决赛巴黎vs利物浦裁判选派：西班牙裁判桑切斯主哨](https://www.dongqiudi.com/article/5761040)
 
 #### 意甲新闻
 
-- [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
+- [联赛已输11场，米体：罗马投资1.115亿欧，球队仍未见起色](https://www.dongqiudi.com/article/5760995)
+- [恭喜邓弗里斯解锁蓝黑2️⃣0️⃣0️⃣场里程碑 👏](https://www.dongqiudi.com/article/5760962)
 - [斯基拉：尤文计划激活480万欧的买断条款永久签下博加](https://www.dongqiudi.com/article/5760798)
-- [科斯塔库塔：我很庆幸当年我交手的是老图拉姆而不是马库斯](https://www.dongqiudi.com/article/5760719)
 
 #### 德甲新闻
 
-- [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
+- [德转传闻：阿森纳盯上勒沃库森前锋，英超豪门围观维尼修斯](https://www.dongqiudi.com/article/5761046)
+- [沙尔克 1-0 卡尔斯鲁厄全场集锦 卡拉曼一剑封...](https://www.dongqiudi.com/article/5760887)
 - [维尔茨 国家队vs俱乐部 菜的其实是___](https://www.dongqiudi.com/article/5760824)
-- [格纳布里：皇马vs拜仁可以算欧洲德比；维尼修斯人很好](https://www.dongqiudi.com/article/5760723)
 
 #### 法甲新闻
 
-- [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
-- [里昂已连续9场比赛不胜，为队史1992年以来首次](https://www.dongqiudi.com/article/5760831)
-- [斯基拉：尤文计划激活480万欧的买断条款永久签下博加](https://www.dongqiudi.com/article/5760798)
+- [欧冠1/4决赛巴黎vs利物浦裁判选派：西班牙裁判桑切斯主哨](https://www.dongqiudi.com/article/5761040)
+- [六台主持人：总算理解恩里克为啥训姆巴佩，他在皇马根本不跑](https://www.dongqiudi.com/article/5760994)
+- [皇马名嘴怒喷卡马文加“态度敷衍”，球员未来何去何从？](https://www.dongqiudi.com/article/5761016)
 
 #### 我的主队动态
 
-- ⭐ [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
-- ⭐ [格纳布里：皇马vs拜仁可以算欧洲德比；维尼修斯人很好](https://www.dongqiudi.com/article/5760723)
-- ⭐ [每体：巴萨小将哈姆扎肌肉受轻伤，将伤缺10天左右](https://www.dongqiudi.com/article/5760636)
-- ⭐ [10天3战巴萨，西蒙尼遭遇执教十字路口？](https://www.dongqiudi.com/article/5760640)
-- ⭐ [每体：巴萨决心欧冠首回合锁定胜局，因到了马竞主场变数太大](https://www.dongqiudi.com/article/5760581)
+- ⭐ [六台：因伤休养的拉菲尼亚已经从巴西返回巴塞罗那](https://www.dongqiudi.com/article/5761047)
+- ⭐ [欧冠1/4决赛巴黎vs利物浦裁判选派：西班牙裁判桑切斯主哨](https://www.dongqiudi.com/article/5761040)
+- ⭐ [欧冠1/4决赛巴萨vs马竞裁判选派：罗马尼亚裁判科瓦奇主哨](https://www.dongqiudi.com/article/5761030)
+- ⭐ [六台主持人：总算理解恩里克为啥训姆巴佩，他在皇马根本不跑](https://www.dongqiudi.com/article/5760994)
+- ⭐ [皇马名嘴怒喷卡马文加“态度敷衍”，球员未来何去何从？](https://www.dongqiudi.com/article/5761016)
 
 
 ---
