@@ -70,9 +70,9 @@ categories:
 
 **相关新闻**
 
-- [马竞8人身背2黄，若在巴萨主场拿黄牌将缺席次回合比赛](https://www.dongqiudi.com/article/5760507)
-- [每体：明格萨将以自由身离开塞尔塔，巴萨无法获得转会分成](https://www.dongqiudi.com/article/5760491)
-- [每体：巴萨本已接近签下马里新星马伊加，但巴黎突然加入争夺](https://www.dongqiudi.com/article/5760481)
+- [每体：巴萨小将哈姆扎肌肉受轻伤，将伤缺10天左右](https://www.dongqiudi.com/article/5760636)
+- [10天3战巴萨，西蒙尼遭遇执教十字路口？](https://www.dongqiudi.com/article/5760640)
+- [每体：巴萨决心欧冠首回合锁定胜局，因到了马竞主场变数太大](https://www.dongqiudi.com/article/5760581)
 
 
 ### 皇马
@@ -91,9 +91,8 @@ categories:
 
 **相关新闻**
 
+- [格纳布里：皇马vs拜仁可以算欧洲德比；维尼修斯人很好](https://www.dongqiudi.com/article/5760723)
 - [每体：皇马想在今夏引进中场，斯图加特的切马和施蒂勒是目标](https://www.dongqiudi.com/article/5760519)
-- [Score90评欧冠改制后全明星阵容：C罗、梅西领衔，皇马8人入选](https://www.dongqiudi.com/article/5759989)
-- [马卡：巴黎无意引进卡马文加，若离开皇马他最可能转投英超](https://www.dongqiudi.com/article/5760381)
 
 
 ### 马竞
@@ -111,7 +110,7 @@ categories:
 **相关新闻**
 
 - [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
-- [马竞8人身背2黄，若在巴萨主场拿黄牌将缺席次回合比赛](https://www.dongqiudi.com/article/5760507)
+- [每体：巴萨决心欧冠首回合锁定胜局，因到了马竞主场变数太大](https://www.dongqiudi.com/article/5760581)
 
 
 ### 迈阿密国际
@@ -128,49 +127,49 @@ categories:
 
 ### 📰 足坛头条
 
-- [剑南春｜国米5-2罗马，劳塔罗双响，恰20世界波，图拉姆造3球](https://www.dongqiudi.com/article/5760285)
-- [林德斯确认B席即将离队：希望他好好享受最后这六个星期](https://www.dongqiudi.com/article/5760340)
-- [官方：勇士签下前凯尔特人中锋查尔斯-巴锡](https://www.dongqiudi.com/article/5760603)
-- [铁杆球迷，意大利总统以个人身份观战巴勒莫队的意乙比赛](https://www.dongqiudi.com/article/5760574)
-- [法尔克：不能在本队球迷面前进行点球大战？我们不搞这种操作](https://www.dongqiudi.com/article/5760568)
+- [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902) ⭐
+- [西媒：洛塞尔索参加世界杯成疑，他因伤已两个半月未出场](https://www.dongqiudi.com/article/5760847)
+- [老帅卢塞斯库之子昨日带完联赛后直飞回国，全场球迷及裁判对其致意](https://www.dongqiudi.com/article/5760846)
+- [医学专家：东契奇回欧洲说明湖人医疗团队不行；欧洲医疗水平不如美国](https://www.dongqiudi.com/article/5760838)
+- [邱彪：陶汉林天赋很高为人低调，但我希望他能变得更有野心](https://www.dongqiudi.com/article/5760832)
 
 #### 西甲新闻
 
-- [美职联总裁：国际足联在世界杯采用动态定价很明智](https://www.dongqiudi.com/article/5760554)
 - [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
-- [每体：皇马想在今夏引进中场，斯图加特的切马和施蒂勒是目标](https://www.dongqiudi.com/article/5760519)
+- [西媒：洛塞尔索参加世界杯成疑，他因伤已两个半月未出场](https://www.dongqiudi.com/article/5760847)
+- [国王杯四冠球队皇家联合重返西协甲，埃梅里及其家人是股东](https://www.dongqiudi.com/article/5760823)
 
 #### 英超新闻
 
-- [林德斯确认B席即将离队：希望他好好享受最后这六个星期](https://www.dongqiudi.com/article/5760340)
-- [法尔克：不能在本队球迷面前进行点球大战？我们不搞这种操作](https://www.dongqiudi.com/article/5760568)
-- [摩根在枪手输球后被邀请上节目，调侃回应“我宁愿自杀”](https://www.dongqiudi.com/article/5760572)
+- [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
+- [国王杯四冠球队皇家联合重返西协甲，埃梅里及其家人是股东](https://www.dongqiudi.com/article/5760823)
+- [维尔茨 国家队vs俱乐部 菜的其实是___](https://www.dongqiudi.com/article/5760824)
 
 #### 意甲新闻
 
-- [剑南春｜国米5-2罗马，劳塔罗双响，恰20世界波，图拉姆造3球](https://www.dongqiudi.com/article/5760285)
-- [铁杆球迷，意大利总统以个人身份观战巴勒莫队的意乙比赛](https://www.dongqiudi.com/article/5760574)
-- [米体：友谊赛米兰德比8月5日在珀斯进行，8月8日尤文战国米](https://www.dongqiudi.com/article/5760584)
+- [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
+- [斯基拉：尤文计划激活480万欧的买断条款永久签下博加](https://www.dongqiudi.com/article/5760798)
+- [科斯塔库塔：我很庆幸当年我交手的是老图拉姆而不是马库斯](https://www.dongqiudi.com/article/5760719)
 
 #### 德甲新闻
 
-- [美职联总裁：国际足联在世界杯采用动态定价很明智](https://www.dongqiudi.com/article/5760554)
 - [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
-- [每体：皇马想在今夏引进中场，斯图加特的切马和施蒂勒是目标](https://www.dongqiudi.com/article/5760519)
+- [维尔茨 国家队vs俱乐部 菜的其实是___](https://www.dongqiudi.com/article/5760824)
+- [格纳布里：皇马vs拜仁可以算欧洲德比；维尼修斯人很好](https://www.dongqiudi.com/article/5760723)
 
 #### 法甲新闻
 
-- [法媒：预计将有2376名利物浦球迷前往大巴黎主场支持球队](https://www.dongqiudi.com/article/5760570)
-- [甜美中透着火辣，若昂-内维斯女友晒日光浴自拍](https://www.dongqiudi.com/article/5760514)
-- [美职联总裁：国际足联在世界杯采用动态定价很明智](https://www.dongqiudi.com/article/5760554)
+- [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
+- [里昂已连续9场比赛不胜，为队史1992年以来首次](https://www.dongqiudi.com/article/5760831)
+- [斯基拉：尤文计划激活480万欧的买断条款永久签下博加](https://www.dongqiudi.com/article/5760798)
 
 #### 我的主队动态
 
 - ⭐ [📢豪门吐槽大会 | 我是马竞球迷，请吐槽我最薄弱的点](https://www.dongqiudi.com/article/5753902)
-- ⭐ [每体：皇马想在今夏引进中场，斯图加特的切马和施蒂勒是目标](https://www.dongqiudi.com/article/5760519)
-- ⭐ [马竞8人身背2黄，若在巴萨主场拿黄牌将缺席次回合比赛](https://www.dongqiudi.com/article/5760507)
-- ⭐ [每体：明格萨将以自由身离开塞尔塔，巴萨无法获得转会分成](https://www.dongqiudi.com/article/5760491)
-- ⭐ [每体：巴萨本已接近签下马里新星马伊加，但巴黎突然加入争夺](https://www.dongqiudi.com/article/5760481)
+- ⭐ [格纳布里：皇马vs拜仁可以算欧洲德比；维尼修斯人很好](https://www.dongqiudi.com/article/5760723)
+- ⭐ [每体：巴萨小将哈姆扎肌肉受轻伤，将伤缺10天左右](https://www.dongqiudi.com/article/5760636)
+- ⭐ [10天3战巴萨，西蒙尼遭遇执教十字路口？](https://www.dongqiudi.com/article/5760640)
+- ⭐ [每体：巴萨决心欧冠首回合锁定胜局，因到了马竞主场变数太大](https://www.dongqiudi.com/article/5760581)
 
 
 ---
