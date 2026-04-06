@@ -19,10 +19,19 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: football-pages
+  cancel-in-progress: false
 
 jobs:
   morning:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
     # 定时早报只在 UTC 0:00 触发；手动触发根据选择
     if: |
       (github.event.schedule == '0 0 * * *') ||
@@ -65,8 +74,23 @@ jobs:
             git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
           fi
 
+      - name: Build Hexo
+        run: npx hexo clean && npx hexo generate
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
   evening:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
     if: |
       (github.event.schedule == '0 12 * * *') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.edition == 'evening')
@@ -106,3 +130,15 @@ jobs:
             git commit -m "🌙 足球晚报自动更新 - $(date +%Y-%m-%d)"
             git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
           fi
+
+      - name: Build Hexo
+        run: npx hexo clean && npx hexo generate
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
