@@ -14,50 +14,70 @@ categories:
 
 ### 📰 足坛头条
 
-- [罗马诺：苏亚雷斯与费内巴切谈妥个人条款](https://www.dongqiudi.com/article/5896331)
-- [曼城球员身价变动：谢尔基上涨2500万欧，奥赖利上涨2000万欧](https://www.dongqiudi.com/article/5896315)
-- [利物浦身价变化：仅恩古莫哈、尼奥尼身价上涨，伊萨克跌幅最大](https://www.dongqiudi.com/article/5896284)
-- [电讯报：FIFA被指借第三方低价售世界杯票，避免退款](https://www.dongqiudi.com/article/5896324)
-- [切尔西球员身价变动：加纳乔1200万欧跌幅最大，佩德罗涨500万](https://www.dongqiudi.com/article/5896306)
-- [TA：孔帕尼欣赏罗杰斯但没有实质进展，巴黎也在关注球员](https://www.dongqiudi.com/article/5896290)
-- [亨德森：无论是否出场，我都会做好准备并帮助队友](https://www.dongqiudi.com/article/5896288)
-- [索尔巴肯：哈兰德能帮助挪威竞争世界杯；我们还谈不上是超级黑马](https://www.dongqiudi.com/article/5896283)
-- [曼联球员身价涨跌：梅努上涨2000万欧为最大涨幅，德利赫特身价跌幅最多](https://www.dongqiudi.com/article/5896247)
-- [官方：霍芬海姆签下狼堡前锋维默尔；据悉转会费1000万欧](https://www.dongqiudi.com/article/5896258)
+- [中国男篮81-82惨遭逆转绝杀，庞峥麟17+3+3，廖三宁17分丢关键罚球](https://www.dongqiudi.com/article/5898833)
+- [世界杯48强巡礼之瑞典：大北方的蓝黄军团](https://www.dongqiudi.com/article/5887324)
+- [专家：世界杯新赛制4分99.8%晋级，多数3分且净胜球为-2球队也能晋级](https://www.dongqiudi.com/article/5899083)
+- [毛罗：DV9离开尤文会有新人接上，我第一时间想到了努涅斯](https://www.dongqiudi.com/article/5899052)
+- [全市场：国米对续约德弗赖有信心，年薪将减半](https://www.dongqiudi.com/article/5899067)
+- [马卡：里克尔梅并不紧张，不受曼城否认哈兰德离队影响](https://www.dongqiudi.com/article/5899065)
+- [姚均晟：从未辱骂过海牛球员，发文回应是因为我的家人被辱骂](https://www.dongqiudi.com/article/5899062)
+- [莱因克尔：希望凯恩打破我的英格兰队世界杯进球纪录](https://www.dongqiudi.com/article/5899014)
+- [官方：阿贾克斯与16岁后卫伊希克签下首份职业合同](https://www.dongqiudi.com/article/5899044)
+- [荷兰队晒海报：目标世界杯](https://www.dongqiudi.com/article/5899030)
 
 #### 西甲新闻
 
-- [电讯报：FIFA被指借第三方低价售世界杯票，避免退款](https://www.dongqiudi.com/article/5896324)
-- [索尔巴肯：哈兰德能帮助挪威竞争世界杯；我们还谈不上是超级黑马](https://www.dongqiudi.com/article/5896283)
-- [斯基拉：皇马已询问卡拉菲奥里的信息，目前尚未与阿森纳谈判](https://www.dongqiudi.com/article/5896194)
+- [马卡：里克尔梅并不紧张，不受曼城否认哈兰德离队影响](https://www.dongqiudi.com/article/5899065)
+- [荷兰队晒海报：目标世界杯](https://www.dongqiudi.com/article/5899030)
+- [里克尔梅：弗洛伦蒂诺治下的皇马选举，就像马杜罗的委内瑞拉](https://www.dongqiudi.com/article/5898987)
+- [里克尔梅：不会拿职业声誉冒险，我当选后哈兰德一定会加盟](https://www.dongqiudi.com/article/5898965)
+- [世体：埃托奥耗时21年，在与西班牙税务总局的官司中胜诉](https://www.dongqiudi.com/article/5898941)
+- [马卡：马竞将李刚仁列为重点目标，巴黎愿意展开谈判](https://www.dongqiudi.com/article/5898938)
 
 #### 英超新闻
 
-- [曼城球员身价变动：谢尔基上涨2500万欧，奥赖利上涨2000万欧](https://www.dongqiudi.com/article/5896315)
-- [利物浦身价变化：仅恩古莫哈、尼奥尼身价上涨，伊萨克跌幅最大](https://www.dongqiudi.com/article/5896284)
-- [电讯报：FIFA被指借第三方低价售世界杯票，避免退款](https://www.dongqiudi.com/article/5896324)
-- [切尔西球员身价变动：加纳乔1200万欧跌幅最大，佩德罗涨500万](https://www.dongqiudi.com/article/5896306)
-- [TA：孔帕尼欣赏罗杰斯但没有实质进展，巴黎也在关注球员](https://www.dongqiudi.com/article/5896290)
-- [亨德森：无论是否出场，我都会做好准备并帮助队友](https://www.dongqiudi.com/article/5896288)
+- [世界杯48强巡礼之瑞典：大北方的蓝黄军团](https://www.dongqiudi.com/article/5887324)
+- [毛罗：DV9离开尤文会有新人接上，我第一时间想到了努涅斯](https://www.dongqiudi.com/article/5899052)
+- [马卡：里克尔梅并不紧张，不受曼城否认哈兰德离队影响](https://www.dongqiudi.com/article/5899065)
+- [莱因克尔：希望凯恩打破我的英格兰队世界杯进球纪录](https://www.dongqiudi.com/article/5899014)
+- [荷兰队晒海报：目标世界杯](https://www.dongqiudi.com/article/5899030)
+- [GFFN：克鲁皮并非巴黎目标，但仍想补强锋线](https://www.dongqiudi.com/article/5899021)
 
 #### 意甲新闻
 
-- [电讯报：FIFA被指借第三方低价售世界杯票，避免退款](https://www.dongqiudi.com/article/5896324)
-- [阿斯：尼科-帕斯出战世界杯存疑，若伤缺布恩迪亚将替换他](https://www.dongqiudi.com/article/5896266)
+- [毛罗：DV9离开尤文会有新人接上，我第一时间想到了努涅斯](https://www.dongqiudi.com/article/5899052)
+- [全市场：国米对续约德弗赖有信心，年薪将减半](https://www.dongqiudi.com/article/5899067)
+- [荷兰队晒海报：目标世界杯](https://www.dongqiudi.com/article/5899030)
+- [全市场：国米在关注詹卢卡-曼奇尼，弗拉泰西可作为交易筹码](https://www.dongqiudi.com/article/5899001)
+- [德劳伦蒂斯：卢卡库和德布劳内若必须离开，那就离开](https://www.dongqiudi.com/article/5898988)
+- [全市场：齐沃抵达国米总部，或续约至2028年](https://www.dongqiudi.com/article/5898971)
 
 #### 德甲新闻
 
-- [电讯报：FIFA被指借第三方低价售世界杯票，避免退款](https://www.dongqiudi.com/article/5896324)
-- [TA：孔帕尼欣赏罗杰斯但没有实质进展，巴黎也在关注球员](https://www.dongqiudi.com/article/5896290)
-- [官方：霍芬海姆签下狼堡前锋维默尔；据悉转会费1000万欧](https://www.dongqiudi.com/article/5896258)
+- [莱因克尔：希望凯恩打破我的英格兰队世界杯进球纪录](https://www.dongqiudi.com/article/5899014)
+- [荷兰队晒海报：目标世界杯](https://www.dongqiudi.com/article/5899030)
+- [GFFN：克鲁皮并非巴黎目标，但仍想补强锋线](https://www.dongqiudi.com/article/5899021)
+- [记者：拜仁推进萨伊瓦里、布朗两笔交易](https://www.dongqiudi.com/article/5899005)
+- [图片报：孔帕尼执教伯恩利时就想签布朗，与法鹰谈判预计很难](https://www.dongqiudi.com/article/5899019)
+- [德天空：拜仁与萨伊瓦里和布朗达成全面协议，孔帕尼同意引援](https://www.dongqiudi.com/article/5898973)
 
 #### 法甲新闻
 
-- [TA：孔帕尼欣赏罗杰斯但没有实质进展，巴黎也在关注球员](https://www.dongqiudi.com/article/5896290)
+- [有其他车队来挖你吗？勒克莱尔：有过，但他们想说会自己说](https://www.dongqiudi.com/article/5898913)
+- [世体：巴萨有意桑坦德新星萨利纳斯，巴黎马竞等多队加入争夺](https://www.dongqiudi.com/article/5898865)
+- [法媒：巴黎不打算推进俄罗斯中场巴特拉科夫的交易](https://www.dongqiudi.com/article/5898730)
+- [世体：巴萨不想失去对法蒂的控制，他们认为他是宝贵财富](https://www.dongqiudi.com/article/5898595)
+- [孙兴慜：李刚仁你这头发什么情况啊哈哈](https://www.dongqiudi.com/article/5898684)
+- [德尚：姆巴佩现在状态极佳，他拥有其他球员没有的大赛经验](https://www.dongqiudi.com/article/5898668)
 
 #### 我的主队动态
 
-- ⭐ [斯基拉：皇马已询问卡拉菲奥里的信息，目前尚未与阿森纳谈判](https://www.dongqiudi.com/article/5896194)
+- ⭐ [里克尔梅：弗洛伦蒂诺治下的皇马选举，就像马杜罗的委内瑞拉](https://www.dongqiudi.com/article/5898987)
+- ⭐ [世体：埃托奥耗时21年，在与西班牙税务总局的官司中胜诉](https://www.dongqiudi.com/article/5898941)
+- ⭐ [马卡：马竞将李刚仁列为重点目标，巴黎愿意展开谈判](https://www.dongqiudi.com/article/5898938)
+- ⭐ [世体：巴萨有意桑坦德新星萨利纳斯，巴黎马竞等多队加入争夺](https://www.dongqiudi.com/article/5898865)
+- ⭐ [老佛爷：我接手时皇马发不起工资，如今全球最富](https://www.dongqiudi.com/article/5898881)
+- ⭐ [世体：巴萨不想失去对法蒂的控制，他们认为他是宝贵财富](https://www.dongqiudi.com/article/5898595)
 
 ## 我的主队
 
@@ -72,6 +92,11 @@ categories:
 | 5月14日 | 西甲 | 客 vs 阿拉维斯 | 0-1 | ❌ 负 |
 | 5月18日 | 西甲 | 主 vs 贝蒂斯 | 3-1 | ✅ 胜 |
 | 5月24日 | 西甲 | 客 vs 瓦伦西亚 | 1-3 | ❌ 负 |
+
+**相关新闻**
+
+- [世体：巴萨有意桑坦德新星萨利纳斯，巴黎马竞等多队加入争夺](https://www.dongqiudi.com/article/5898865)
+- [世体：巴萨不想失去对法蒂的控制，他们认为他是宝贵财富](https://www.dongqiudi.com/article/5898595)
 
 
 ### 皇马
@@ -88,7 +113,8 @@ categories:
 
 **相关新闻**
 
-- [斯基拉：皇马已询问卡拉菲奥里的信息，目前尚未与阿森纳谈判](https://www.dongqiudi.com/article/5896194)
+- [里克尔梅：弗洛伦蒂诺治下的皇马选举，就像马杜罗的委内瑞拉](https://www.dongqiudi.com/article/5898987)
+- [老佛爷：我接手时皇马发不起工资，如今全球最富](https://www.dongqiudi.com/article/5898881)
 
 
 ### 马竞
@@ -103,6 +129,11 @@ categories:
 | 5月18日 | 西甲 | 主 vs 赫罗纳 | 1-0 | ✅ 胜 |
 | 5月25日 | 西甲 | 客 vs 比利亚雷亚尔 | 1-5 | ❌ 负 |
 
+**相关新闻**
+
+- [马卡：马竞将李刚仁列为重点目标，巴黎愿意展开谈判](https://www.dongqiudi.com/article/5898938)
+- [世体：巴萨有意桑坦德新星萨利纳斯，巴黎马竞等多队加入争夺](https://www.dongqiudi.com/article/5898865)
+
 
 ### 迈阿密国际
 
@@ -111,7 +142,9 @@ categories:
 
 ### 西班牙
 
-> 暂无近期动态
+**相关新闻**
+
+- [世体：埃托奥耗时21年，在与西班牙税务总局的官司中胜诉](https://www.dongqiudi.com/article/5898941)
 
 
 ## 今日战报
