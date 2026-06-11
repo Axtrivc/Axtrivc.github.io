@@ -34,7 +34,7 @@ categories:
 
 **相关新闻**
 
-- [传闻：盖拉-杜埃被与拜仁、巴萨、利物浦和阿森纳联系在一起](https://www.dongqiudi.com/article/5920931)
+- [每体：戈登表现出色；图赫尔对戈登加盟巴萨十分满意](https://www.dongqiudi.com/article/5922273)
 
 
 ### 皇马
@@ -48,10 +48,6 @@ categories:
 | 3月18日 | 欧冠 | 客 vs 曼城 | 2-1 | ✅ 胜 |
 | 4月8日 | 欧冠 | 主 vs 拜仁 | 1-2 | ❌ 负 |
 | 4月16日 | 欧冠 | 客 vs 拜仁 | 3-4 | ❌ 负 |
-
-**相关新闻**
-
-- [马卡：皇马很难签下巨星，穆里尼奥首要任务并非引进攻击手](https://www.dongqiudi.com/article/5921139)
 
 
 ### 马竞
@@ -68,8 +64,7 @@ categories:
 
 **相关新闻**
 
-- [莫拉塔：离开马竞是我唯一后悔的事；愿拿所有荣誉换在马竞夺冠](https://www.dongqiudi.com/article/5921077)
-- [经纪人：马竞非常满意鲁杰里；尤文等队对球员感兴趣](https://www.dongqiudi.com/article/5921046)
+- [传闻：阿森纳就科内转会接触罗马，马竞和维拉也有意](https://www.dongqiudi.com/article/5922166)
 
 
 ### 迈阿密国际
@@ -87,47 +82,45 @@ categories:
 ### 📰 足坛头条
 
 - [💥我懂24小时直播间启动！美女主播40天全天候陪你聊球⚽](https://www.dongqiudi.com/article/5921173)
-- [尼克斯107-106马刺逆转29分3-1夺赛点，阿奴诺比33分准绝杀，文班亚马24+13](https://www.dongqiudi.com/article/5921195)
-- [父亲：张志雄骨子里喜欢足球，在家里把电视机都踢烂了好几台](https://www.dongqiudi.com/article/5921211)
-- [抹平29分绝境！尼克斯创造NBA总决赛历史最大逆转纪录](https://www.dongqiudi.com/article/5921196)
-- [法国队启程出征世界杯，奥利赛骑摩托车到机场报到](https://www.dongqiudi.com/article/5921167)
+- [1986年，墨西哥阿兹特克体育场，“上帝之手”定格成经...](https://www.dongqiudi.com/article/5921224)
+- [米体：C罗准备冲击生涯唯一缺失的奖杯](https://www.dongqiudi.com/article/5922408)
+- [意媒：洛蒂托率财团收购雷吉纳，球迷和名宿呼吁他出售拉齐奥](https://www.dongqiudi.com/article/5922353)
+- [记者：比苏马今夏可能以自由身身份重返布莱顿](https://www.dongqiudi.com/article/5922343)
 
 #### 西甲新闻
 
-- [卫报：贝林厄姆已经用表现力压罗杰斯获得英格兰首发10号位](https://www.dongqiudi.com/article/5921091)
-- [本届世界杯共有7对兄弟球员参赛，其中4对效力于不同国家队](https://www.dongqiudi.com/article/5921146)
-- [马卡：皇马很难签下巨星，穆里尼奥首要任务并非引进攻击手](https://www.dongqiudi.com/article/5921139)
+- [西媒：保-洛佩斯仍在贝蒂斯的计划当中，球员并没考虑离队](https://www.dongqiudi.com/article/5922217)
+- [【足球资讯】穆里尼奥凭借缜密战术、统帅气场以及对...](https://www.dongqiudi.com/article/5922303)
+- [每体：戈登表现出色；图赫尔对戈登加盟巴萨十分满意](https://www.dongqiudi.com/article/5922273)
 
 #### 英超新闻
 
-- [卫报：贝林厄姆已经用表现力压罗杰斯获得英格兰首发10号位](https://www.dongqiudi.com/article/5921091)
-- [本届世界杯共有7对兄弟球员参赛，其中4对效力于不同国家队](https://www.dongqiudi.com/article/5921146)
-- [卡明斯基：我想去英超检验自己；格拉巴拉是德甲前三门将](https://www.dongqiudi.com/article/5921159)
+- [记者：比苏马今夏可能以自由身身份重返布莱顿](https://www.dongqiudi.com/article/5922343)
+- [记者：曼联和利物浦都在关注尤文中场凯夫伦-图拉姆](https://www.dongqiudi.com/article/5922345)
+- [个人集锦：曼联引援目标，法甲“夺回球权王”桑加雷](https://www.dongqiudi.com/article/5922322)
 
 #### 意甲新闻
 
-- [斯基拉：纽卡将向乌迪内斯中场阿蒂尔-阿塔开出首份报价](https://www.dongqiudi.com/article/5921130)
-- [韩国公布世界杯号码：孙兴慜7号、李刚仁19号、金玟哉4号](https://www.dongqiudi.com/article/5921086)
-- [记者：富勒姆等队有意特罗伊洛，帕尔马标价2300万美元](https://www.dongqiudi.com/article/5921109)
+- [意媒：洛蒂托率财团收购雷吉纳，球迷和名宿呼吁他出售拉齐奥](https://www.dongqiudi.com/article/5922353)
+- [记者：曼联和利物浦都在关注尤文中场凯夫伦-图拉姆](https://www.dongqiudi.com/article/5922345)
+- [2026世界杯的老兵们：踢到不惑之年，不止C罗和莫德里奇](https://www.dongqiudi.com/article/5922333)
 
 #### 德甲新闻
 
-- [法国队启程出征世界杯，奥利赛骑摩托车到机场报到](https://www.dongqiudi.com/article/5921167)
-- [卫报：贝林厄姆已经用表现力压罗杰斯获得英格兰首发10号位](https://www.dongqiudi.com/article/5921091)
-- [卡明斯基：我想去英超检验自己；格拉巴拉是德甲前三门将](https://www.dongqiudi.com/article/5921159)
+- [意媒：洛蒂托率财团收购雷吉纳，球迷和名宿呼吁他出售拉齐奥](https://www.dongqiudi.com/article/5922353)
+- [2026世界杯的老兵们：踢到不惑之年，不止C罗和莫德里奇](https://www.dongqiudi.com/article/5922333)
+- [🔥德式四驾马车，从多特蒙德出发！🏆目标是大力神杯...](https://www.dongqiudi.com/article/5922314)
 
 #### 法甲新闻
 
-- [法国队启程出征世界杯，奥利赛骑摩托车到机场报到](https://www.dongqiudi.com/article/5921167)
-- [本届世界杯共有7对兄弟球员参赛，其中4对效力于不同国家队](https://www.dongqiudi.com/article/5921146)
-- [韩国公布世界杯号码：孙兴慜7号、李刚仁19号、金玟哉4号](https://www.dongqiudi.com/article/5921086)
+- [记者：曼联和利物浦都在关注尤文中场凯夫伦-图拉姆](https://www.dongqiudi.com/article/5922345)
+- [个人集锦：曼联引援目标，法甲“夺回球权王”桑加雷](https://www.dongqiudi.com/article/5922322)
+- [【足球资讯】阿森纳传奇球星蒂埃里·亨利在2026...](https://www.dongqiudi.com/article/5922279)
 
 #### 我的主队动态
 
-- ⭐ [马卡：皇马很难签下巨星，穆里尼奥首要任务并非引进攻击手](https://www.dongqiudi.com/article/5921139)
-- ⭐ [莫拉塔：离开马竞是我唯一后悔的事；愿拿所有荣誉换在马竞夺冠](https://www.dongqiudi.com/article/5921077)
-- ⭐ [经纪人：马竞非常满意鲁杰里；尤文等队对球员感兴趣](https://www.dongqiudi.com/article/5921046)
-- ⭐ [传闻：盖拉-杜埃被与拜仁、巴萨、利物浦和阿森纳联系在一起](https://www.dongqiudi.com/article/5920931)
+- ⭐ [每体：戈登表现出色；图赫尔对戈登加盟巴萨十分满意](https://www.dongqiudi.com/article/5922273)
+- ⭐ [传闻：阿森纳就科内转会接触罗马，马竞和维拉也有意](https://www.dongqiudi.com/article/5922166)
 
 
 ---
