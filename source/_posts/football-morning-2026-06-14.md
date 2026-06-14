@@ -63,20 +63,20 @@ categories:
 - [巴西1-1战平摩洛哥，萨伊瓦里破僵，维尼修斯个人能力扳平](https://www.dongqiudi.com/article/5931426)
 - [苏格兰1-0海地迎开门红，麦金一剑封喉，麦克托米奈中柱](https://www.dongqiudi.com/article/5931876)
 - [澳大利亚vs土耳其：居莱尔、伊兰昆达出战，伊尔迪兹替补](https://www.dongqiudi.com/article/5929913)
-- [海地射门15-9领先苏格兰，射正2-2，控球率海地占优](https://www.dongqiudi.com/article/5931936)
-- [吉马良斯：巴西全队世界杯首战都很紧张；安胖给我们传递信心](https://www.dongqiudi.com/article/5931927)
+- [尼克斯94-90再逆转马刺4-1夺总冠军，布伦森45分荣获FMVP，文班19+14+5帽](https://www.dongqiudi.com/article/5931964)
+- [德容：来自荷兰国内的批评并不会动摇我们的信心](https://www.dongqiudi.com/article/5931970)
 
 #### 西甲新闻
 
-- [欧足联暂不处罚巴萨，皇马施压遇冷？](https://www.dongqiudi.com/article/5931896)
-- [安切洛蒂：上半场球队踢得不好，因为我觉得球队有些过于紧张](https://www.dongqiudi.com/article/5931805)
-- [斯科拉里：维尼修斯和我承诺在世界杯上进6球](https://www.dongqiudi.com/article/5931854)
+- [德容：来自荷兰国内的批评并不会动摇我们的信心](https://www.dongqiudi.com/article/5931970)
+- [罗马诺：多家豪门会追逐18岁的布阿迪，包括阿森纳和利物浦](https://www.dongqiudi.com/article/5931977)
+- [右后卫引援，瓦伦西亚与默尼耶达成年薪一致，合同长度还未定](https://www.dongqiudi.com/article/5931901)
 
 #### 英超新闻
 
-- [吉马良斯：巴西全队世界杯首战都很紧张；安胖给我们传递信心](https://www.dongqiudi.com/article/5931927)
-- [欧足联暂不处罚巴萨，皇马施压遇冷？](https://www.dongqiudi.com/article/5931896)
-- [斯基拉：阿韦洛亚接近执教富勒姆，合同至2028年](https://www.dongqiudi.com/article/5931859)
+- [埃及门将：萨拉赫还未决定去向，斯洛特本该最大程度用好他](https://www.dongqiudi.com/article/5931986)
+- [罗马诺：多家豪门会追逐18岁的布阿迪，包括阿森纳和利物浦](https://www.dongqiudi.com/article/5931977)
+- [香川真司谈远藤航伤退：难以想象，大家想为他振作起来](https://www.dongqiudi.com/article/5932004)
 
 #### 意甲新闻
 
@@ -86,15 +86,15 @@ categories:
 
 #### 德甲新闻
 
+- [罗马诺：多家豪门会追逐18岁的布阿迪，包括阿森纳和利物浦](https://www.dongqiudi.com/article/5931977)
 - [阿斯：登贝莱在法国队表现远不及巴黎，他和姆巴佩很难共存](https://www.dongqiudi.com/article/5931836)
 - [奥利塞的小腿上纹身了中文词语“改善”，他表示这是...](https://www.dongqiudi.com/article/5931861)
-- [大巴黎想引进奥利赛组成豪华的进攻线四人组！他们应...](https://www.dongqiudi.com/article/5931855)
 
 #### 法甲新闻
 
-- [安切洛蒂：上半场球队踢得不好，因为我觉得球队有些过于紧张](https://www.dongqiudi.com/article/5931805)
-- [阿斯：登贝莱在法国队表现远不及巴黎，他和姆巴佩很难共存](https://www.dongqiudi.com/article/5931836)
-- [布阿迪晒图：这只是开始](https://www.dongqiudi.com/article/5931782)
+- [罗马诺：多家豪门会追逐18岁的布阿迪，包括阿森纳和利物浦](https://www.dongqiudi.com/article/5931977)
+- [队报：布阿迪小学曾跳级，如今边踢球边学数学](https://www.dongqiudi.com/article/5931994)
+- [右后卫引援，瓦伦西亚与默尼耶达成年薪一致，合同长度还未定](https://www.dongqiudi.com/article/5931901)
 
 #### 我的主队动态
 
