@@ -27,12 +27,16 @@ categories:
 
 ### 皇马
 
-> 暂无近期动态
+**相关新闻**
+
+- [库库妻子发文告别切尔西，并晒出自己儿时穿皇马球衣照片](https://www.dongqiudi.com/article/5936395)
 
 
 ### 马竞
 
-> 暂无近期动态
+**相关新闻**
+
+- [世体：错过库库雷利亚，格里马尔多成马竞左后卫B计划](https://www.dongqiudi.com/article/5936270)
 
 
 ### 迈阿密国际
@@ -54,57 +58,58 @@ categories:
 
 **相关新闻**
 
-- [一颗西班牙，三只“乌角沙”，欧洲冠军西班牙将在今夜亮相](https://www.dongqiudi.com/article/5935069)
-- [马卡：西班牙之家在亚特兰大揭幕，回顾西班牙在南非的冠军](https://www.dongqiudi.com/article/5935573)
-- [11-11足球原创//比赛前瞻系列西班牙vs佛得角](https://www.dongqiudi.com/article/5935585)
+- [世界杯第五比赛日前瞻：西班牙首秀登场，“欧洲红魔”迎战埃及](https://www.dongqiudi.com/article/5935812)
+- [奥亚萨瓦尔连续11场西班牙队比赛参与进球，斩12球6助攻](https://www.dongqiudi.com/article/5936633)
+- [25胜6平，西班牙队正式比赛连续31场不败](https://www.dongqiudi.com/article/5936624)
 
 
 ## 足坛新闻
 
 ### 📰 足坛头条
 
-- [瑞典5-1突尼斯迎开门红，伊萨克2传1射，阿亚里双响](https://www.dongqiudi.com/article/5935572)
-- [科特迪瓦1-0厄瓜多尔，阿马德绝杀，双方共四次中框](https://www.dongqiudi.com/article/5935230)
-- [17秒！斯万贝里创造世界杯历史上替补球员第二快的进球纪录](https://www.dongqiudi.com/article/5935599)
-- [媒体：哲凯赖什以6球居2026欧洲国家队射手榜之首](https://www.dongqiudi.com/article/5935603)
-- [世界杯F组首轮积分榜：瑞典榜首，突尼斯暂居小组垫底](https://www.dongqiudi.com/article/5935610)
+- [世界杯第五比赛日前瞻：西班牙首秀登场，“欧洲红魔”迎战埃及](https://www.dongqiudi.com/article/5935812) ⭐
+- [日本队战术复盘：攻守之间，森保一用“耐心”弥补身体劣势](https://www.dongqiudi.com/article/5935296)
+- [奥亚萨瓦尔连续11场西班牙队比赛参与进球，斩12球6助攻](https://www.dongqiudi.com/article/5936633) ⭐
+- [没戴护腿板？日本国脚中村敬斗佩戴超小号护腿板引发热议](https://www.dongqiudi.com/article/5936622)
+- [25胜6平，西班牙队正式比赛连续31场不败](https://www.dongqiudi.com/article/5936624) ⭐
 
 #### 西甲新闻
 
-- [一颗西班牙，三只“乌角沙”，欧洲冠军西班牙将在今夜亮相](https://www.dongqiudi.com/article/5935069)
-- [德克伊珀：能和德布劳内、卢卡库这样的传奇一起参赛，本身就是一种荣誉](https://www.dongqiudi.com/article/5935580)
-- [转会窗今夏开启，切尔西五年烧掉18.2亿欧元领跑烧钱榜](https://www.dongqiudi.com/article/5935594)
+- [世界杯第五比赛日前瞻：西班牙首秀登场，“欧洲红魔”迎战埃及](https://www.dongqiudi.com/article/5935812)
+- [日本队战术复盘：攻守之间，森保一用“耐心”弥补身体劣势](https://www.dongqiudi.com/article/5935296)
+- [奥亚萨瓦尔连续11场西班牙队比赛参与进球，斩12球6助攻](https://www.dongqiudi.com/article/5936633)
 
 #### 英超新闻
 
-- [媒体：哲凯赖什以6球居2026欧洲国家队射手榜之首](https://www.dongqiudi.com/article/5935603)
-- [德克伊珀：能和德布劳内、卢卡库这样的传奇一起参赛，本身就是一种荣誉](https://www.dongqiudi.com/article/5935580)
-- [转会窗今夏开启，切尔西五年烧掉18.2亿欧元领跑烧钱榜](https://www.dongqiudi.com/article/5935594)
+- [日本队战术复盘：攻守之间，森保一用“耐心”弥补身体劣势](https://www.dongqiudi.com/article/5935296)
+- [DO：朗斯主帅皮埃尔-萨热同意执教水晶宫，将与俱乐部签约3年](https://www.dongqiudi.com/article/5936583)
+- [罗马诺确认阿莫林执教米兰，此前绯闻新帅含格拉斯纳等人](https://www.dongqiudi.com/article/5936496)
 
 #### 意甲新闻
 
-- [德克伊珀：能和德布劳内、卢卡库这样的传奇一起参赛，本身就是一种荣誉](https://www.dongqiudi.com/article/5935580)
-- [意媒：科莫利离开尤文的总成本超800万欧](https://www.dongqiudi.com/article/5935571)
-- [费兰·托雷斯回避续约话题：此刻只关心世界杯首战](https://www.dongqiudi.com/article/5935555)
+- [都体：曼奇尼接近回归执教意大利，4年合同税后年薪250万欧](https://www.dongqiudi.com/article/5936616)
+- [官方：亚特兰大签下拜仁二队中卫普尔吉奇，他将加入U23梯队](https://www.dongqiudi.com/article/5936598)
+- [罗马诺确认阿莫林执教米兰，此前绯闻新帅含格拉斯纳等人](https://www.dongqiudi.com/article/5936496)
 
 #### 德甲新闻
 
-- [17秒！斯万贝里创造世界杯历史上替补球员第二快的进球纪录](https://www.dongqiudi.com/article/5935599)
-- [德国vs库拉索VAR官员做疑似白人至上手势，FIFA或将介入调查](https://www.dongqiudi.com/article/5935465)
-- [凯恩晒为小球迷签名：非常温暖的欢迎，很高兴见到这么多球迷](https://www.dongqiudi.com/article/5935461)
+- [官方：亚特兰大签下拜仁二队中卫普尔吉奇，他将加入U23梯队](https://www.dongqiudi.com/article/5936598)
+- [罗马诺确认阿莫林执教米兰，此前绯闻新帅含格拉斯纳等人](https://www.dongqiudi.com/article/5936496)
+- [莫雷托：克勒舍和米兰达成口头协议，将出任俱乐部足球总监](https://www.dongqiudi.com/article/5936574)
 
 #### 法甲新闻
 
-- [两次顽强追平！日本2比2逼平荷兰，亚足联还是不败！](https://www.dongqiudi.com/article/5935592)
-- [中村敬斗：对比赛结果满意，很高兴收获世界杯首球](https://www.dongqiudi.com/article/5935542)
-- [阿马德：这次世界杯科特迪瓦是来创造历史的，所有人动力十足](https://www.dongqiudi.com/article/5935388)
+- [日本队战术复盘：攻守之间，森保一用“耐心”弥补身体劣势](https://www.dongqiudi.com/article/5935296)
+- [没戴护腿板？日本国脚中村敬斗佩戴超小号护腿板引发热议](https://www.dongqiudi.com/article/5936622)
+- [DO：朗斯主帅皮埃尔-萨热同意执教水晶宫，将与俱乐部签约3年](https://www.dongqiudi.com/article/5936583)
 
 #### 我的主队动态
 
-- ⭐ [一颗西班牙，三只“乌角沙”，欧洲冠军西班牙将在今夜亮相](https://www.dongqiudi.com/article/5935069)
-- ⭐ [马卡：西班牙之家在亚特兰大揭幕，回顾西班牙在南非的冠军](https://www.dongqiudi.com/article/5935573)
-- ⭐ [11-11足球原创//比赛前瞻系列西班牙vs佛得角](https://www.dongqiudi.com/article/5935585)
-- ⭐ [赖特：进入状态后的德国队很可怕；冠军？西班牙和法国二选一](https://www.dongqiudi.com/article/5934992)
+- ⭐ [世界杯第五比赛日前瞻：西班牙首秀登场，“欧洲红魔”迎战埃及](https://www.dongqiudi.com/article/5935812)
+- ⭐ [奥亚萨瓦尔连续11场西班牙队比赛参与进球，斩12球6助攻](https://www.dongqiudi.com/article/5936633)
+- ⭐ [25胜6平，西班牙队正式比赛连续31场不败](https://www.dongqiudi.com/article/5936624)
+- ⭐ [库库妻子发文告别切尔西，并晒出自己儿时穿皇马球衣照片](https://www.dongqiudi.com/article/5936395)
+- ⭐ [世体：错过库库雷利亚，格里马尔多成马竞左后卫B计划](https://www.dongqiudi.com/article/5936270)
 
 
 ---
