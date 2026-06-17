@@ -24,13 +24,16 @@ categories:
 
 **相关新闻**
 
-- [每体：奥维耶多将任命费尔南德斯为体育总监，其曾在巴萨任职](https://www.dongqiudi.com/article/5942386)
-- [巴萨加冕第50座欧冠：跨越世纪的荣耀，不止于足球](https://www.dongqiudi.com/article/5942276)
+- [世体：尽管坎比亚索首选加盟巴萨，但后者的首要目标是买中锋](https://www.dongqiudi.com/article/5943175)
+- [巴萨球员国家队战报：孔德打满全场，法国迎开门红](https://www.dongqiudi.com/article/5943156)
 
 
 ### 皇马
 
-> 暂无近期动态
+**相关新闻**
+
+- [官方：B席加盟皇马，双方签约至2028年](https://www.dongqiudi.com/article/5943248)
+- [苏克：亚马尔是世界最佳之一；莫德里奇未来肯定会回到皇马](https://www.dongqiudi.com/article/5942890)
 
 
 ### 马竞
@@ -57,7 +60,7 @@ categories:
 
 **相关新闻**
 
-- [​莫德里奇：西班牙首战翻船不足虑，克罗地亚已拉响警钟](https://www.dongqiudi.com/article/5942240)
+- [邦马蒂：西班牙需纯边锋创造机会，若依赖传中他们需要射手](https://www.dongqiudi.com/article/5943254)
 
 
 ## 足坛新闻
@@ -65,46 +68,48 @@ categories:
 ### 📰 足坛头条
 
 - [阿根廷3-0阿尔及利亚，梅西戴帽+加冕世界杯历史射手王](https://www.dongqiudi.com/article/5942269)
-- [最长的河，最高的山，最强的王，最神的仙！](https://www.dongqiudi.com/article/5942279)
-- [球王！梅西戴帽追平克洛泽，16球登顶世界杯历史射手王](https://www.dongqiudi.com/article/5942248)
-- [斯卡洛尼：只要梅西自己愿意，他就永远是最好的](https://www.dongqiudi.com/article/5942393)
-- [梅西：进第一球后落泪了但与足球无关，对整个团队充满感激](https://www.dongqiudi.com/article/5942410)
+- [奥地利3-1约旦，施密德远射破门，阿瑙造乌龙+造点](https://www.dongqiudi.com/article/5942733)
+- [官方：B席加盟皇马，双方签约至2028年](https://www.dongqiudi.com/article/5943248) ⭐
+- [意媒：科莫不与罗贝托续约，球员可能去其他联赛或退役](https://www.dongqiudi.com/article/5943183)
+- [邦马蒂：西班牙需纯边锋创造机会，若依赖传中他们需要射手](https://www.dongqiudi.com/article/5943254) ⭐
 
 #### 西甲新闻
 
-- [巨星狂欢日！姆巴佩、哈兰德双响，梅西戴帽统治比赛](https://www.dongqiudi.com/article/5942416)
-- [每体：奥维耶多将任命费尔南德斯为体育总监，其曾在巴萨任职](https://www.dongqiudi.com/article/5942386)
-- [小齐达内世界杯首秀阻止预期进球-1.02粒，两粒丢球需负责任](https://www.dongqiudi.com/article/5942306)
+- [官方：B席加盟皇马，双方签约至2028年](https://www.dongqiudi.com/article/5943248)
+- [意媒：科莫不与罗贝托续约，球员可能去其他联赛或退役](https://www.dongqiudi.com/article/5943183)
+- [邦马蒂：西班牙需纯边锋创造机会，若依赖传中他们需要射手](https://www.dongqiudi.com/article/5943254)
 
 #### 英超新闻
 
-- [巨星狂欢日！姆巴佩、哈兰德双响，梅西戴帽统治比赛](https://www.dongqiudi.com/article/5942416)
-- [厄德高：哈兰德的表现依然非常出色，有他在队里真是太棒了](https://www.dongqiudi.com/article/5942376)
-- [可爱捏，哈兰德社媒晒自拍：梅西简直是怪物啊👑](https://www.dongqiudi.com/article/5942375)
+- [官方：B席加盟皇马，双方签约至2028年](https://www.dongqiudi.com/article/5943248)
+- [伊布：我得提高对哈兰德的评价了，他正在逼近我的地位](https://www.dongqiudi.com/article/5943224)
+- [特别的缘分，瑟洛特父亲和哈兰德父亲曾在1994世界杯并肩作战](https://www.dongqiudi.com/article/5943178)
 
 #### 意甲新闻
 
-- [全市场：诺阿-朗将回归那不勒斯，世界杯或定其去向](https://www.dongqiudi.com/article/5942337)
-- [记者：罗马与格林伍德达成协议，球员本人也同意加盟罗马](https://www.dongqiudi.com/article/5942274)
-- [TA：普利希奇小腿伤情成谜，也有可能是美国队的烟雾弹](https://www.dongqiudi.com/article/5942241)
+- [意媒：科莫不与罗贝托续约，球员可能去其他联赛或退役](https://www.dongqiudi.com/article/5943183)
+- [特别的缘分，瑟洛特父亲和哈兰德父亲曾在1994世界杯并肩作战](https://www.dongqiudi.com/article/5943178)
+- [世体：尽管坎比亚索首选加盟巴萨，但后者的首要目标是买中锋](https://www.dongqiudi.com/article/5943175)
 
 #### 德甲新闻
 
-- [球王！梅西戴帽追平克洛泽，16球登顶世界杯历史射手王](https://www.dongqiudi.com/article/5942248)
-- [预言成真？克洛泽几天前曾说梅西会打破他的进球纪录](https://www.dongqiudi.com/article/5942374)
-- [达利奇：武什科维奇会接班格瓦，需要去能稳定出场的俱乐部](https://www.dongqiudi.com/article/5942287)
+- [记者：布莱顿不会立即再次报价小武什，他们继续关注事态发展](https://www.dongqiudi.com/article/5943216)
+- [上个赛季全世界顶级联赛各项赛事进球加助攻排行榜](https://www.dongqiudi.com/article/5943213)
+- [多特蒙德为费利克斯·恩梅查标价1.2亿欧元](https://www.dongqiudi.com/article/5943209)
 
 #### 法甲新闻
 
-- [巨星狂欢日！姆巴佩、哈兰德双响，梅西戴帽统治比赛](https://www.dongqiudi.com/article/5942416)
-- [梅迪纳：梅西让一切变得如此简单，现在要一步一步地继续](https://www.dongqiudi.com/article/5942346)
-- [TA：世界杯赛场是姆巴佩的福地，他将成为世界杯史上最佳球员](https://www.dongqiudi.com/article/5942250)
+- [利物浦球员国家队战报：麦卡远射造进球，阿根廷三球大胜](https://www.dongqiudi.com/article/5943165)
+- [巴萨球员国家队战报：孔德打满全场，法国迎开门红](https://www.dongqiudi.com/article/5943156)
+- [这是外媒排列的目前为止，后卫球员战力排行榜！说说...](https://www.dongqiudi.com/article/5943121)
 
 #### 我的主队动态
 
-- ⭐ [每体：奥维耶多将任命费尔南德斯为体育总监，其曾在巴萨任职](https://www.dongqiudi.com/article/5942386)
-- ⭐ [巴萨加冕第50座欧冠：跨越世纪的荣耀，不止于足球](https://www.dongqiudi.com/article/5942276)
-- ⭐ [​莫德里奇：西班牙首战翻船不足虑，克罗地亚已拉响警钟](https://www.dongqiudi.com/article/5942240)
+- ⭐ [官方：B席加盟皇马，双方签约至2028年](https://www.dongqiudi.com/article/5943248)
+- ⭐ [邦马蒂：西班牙需纯边锋创造机会，若依赖传中他们需要射手](https://www.dongqiudi.com/article/5943254)
+- ⭐ [世体：尽管坎比亚索首选加盟巴萨，但后者的首要目标是买中锋](https://www.dongqiudi.com/article/5943175)
+- ⭐ [巴萨球员国家队战报：孔德打满全场，法国迎开门红](https://www.dongqiudi.com/article/5943156)
+- ⭐ [苏克：亚马尔是世界最佳之一；莫德里奇未来肯定会回到皇马](https://www.dongqiudi.com/article/5942890)
 
 
 ---
