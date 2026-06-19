@@ -1,0 +1,838 @@
+/* ============================================================
+   Axtrivc's Blog — Theme System
+   ============================================================ */
+
+/* =========================================
+   1. CSS Custom Properties (Defaults: warm beige)
+   ========================================= */
+:root {
+  --bg-primary: #F5F0E8;
+  --bg-surface: #FFFFFF;
+  --bg-nav: rgba(245,240,232,0.92);
+  --text-primary: #4A3728;
+  --text-secondary: #A09080;
+  --text-heading: #3A2718;
+  --accent: #8B6F47;
+  --accent-hover: #A0845C;
+  --accent-light: rgba(139,111,71,0.08);
+  --accent-medium: rgba(139,111,71,0.15);
+  --border: rgba(139,111,71,0.12);
+  --card-shadow: 0 2px 12px rgba(139,111,71,0.06);
+  --card-hover-shadow: 0 6px 24px rgba(139,111,71,0.10);
+  --nav-blur: blur(16px);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition-speed: 0.4s;
+  --font-heading: 'Noto Serif SC', serif;
+  --font-body: 'LXGW WenKai Screen', 'Noto Serif SC', serif;
+}
+
+/* =========================================
+   2. Theme Definitions
+   ========================================= */
+
+/* 微信清新 — WeChat Fresh */
+body[data-theme="wechat"] {
+  --bg-primary: #FFFFFF;
+  --bg-surface: #F7F8FA;
+  --bg-nav: rgba(255,255,255,0.90);
+  --text-primary: #191919;
+  --text-secondary: #8E8E93;
+  --text-heading: #0D0D0D;
+  --accent: #07C160;
+  --accent-hover: #06AE56;
+  --accent-light: rgba(7,193,96,0.06);
+  --accent-medium: rgba(7,193,96,0.12);
+  --border: #E5E5EA;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  --card-hover-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+/* 暖米原色 — Warm Beige (default) */
+body[data-theme="warm-beige"] {
+  --bg-primary: #F5F0E8;
+  --bg-surface: #FFFFFF;
+  --bg-nav: rgba(245,240,232,0.92);
+  --text-primary: #4A3728;
+  --text-secondary: #A09080;
+  --text-heading: #3A2718;
+  --accent: #8B6F47;
+  --accent-hover: #A0845C;
+  --accent-light: rgba(139,111,71,0.08);
+  --accent-medium: rgba(139,111,71,0.15);
+  --border: rgba(139,111,71,0.12);
+  --card-shadow: 0 2px 12px rgba(139,111,71,0.06);
+  --card-hover-shadow: 0 6px 24px rgba(139,111,71,0.10);
+}
+
+/* 天空浅蓝 — Sky Blue */
+body[data-theme="sky-blue"] {
+  --bg-primary: #F5F9FC;
+  --bg-surface: #FFFFFF;
+  --bg-nav: rgba(245,249,252,0.90);
+  --text-primary: #2C3E50;
+  --text-secondary: #7F8C8D;
+  --text-heading: #1A2C3E;
+  --accent: #5B9BD5;
+  --accent-hover: #4A8AC4;
+  --accent-light: rgba(91,155,213,0.06);
+  --accent-medium: rgba(91,155,213,0.12);
+  --border: rgba(91,155,213,0.10);
+  --card-shadow: 0 2px 10px rgba(91,155,213,0.05);
+  --card-hover-shadow: 0 4px 20px rgba(91,155,213,0.08);
+}
+
+/* 薄暮粉 — Dusk Pink */
+body[data-theme="dusk-pink"] {
+  --bg-primary: #FDF8F5;
+  --bg-surface: #FFFFFF;
+  --bg-nav: rgba(253,248,245,0.90);
+  --text-primary: #4A3535;
+  --text-secondary: #9A8A8A;
+  --text-heading: #3A2525;
+  --accent: #D4958B;
+  --accent-hover: #C4857B;
+  --accent-light: rgba(212,149,139,0.06);
+  --accent-medium: rgba(212,149,139,0.12);
+  --border: rgba(212,149,139,0.10);
+  --card-shadow: 0 2px 10px rgba(212,149,139,0.05);
+  --card-hover-shadow: 0 4px 20px rgba(212,149,139,0.08);
+}
+
+/* 薄荷清绿 — Mint */
+body[data-theme="mint"] {
+  --bg-primary: #F5FAF8;
+  --bg-surface: #FFFFFF;
+  --bg-nav: rgba(245,250,248,0.90);
+  --text-primary: #2D3E35;
+  --text-secondary: #7A8D83;
+  --text-heading: #1A2E22;
+  --accent: #5FAB8D;
+  --accent-hover: #4E9A7C;
+  --accent-light: rgba(95,171,141,0.06);
+  --accent-medium: rgba(95,171,141,0.12);
+  --border: rgba(95,171,141,0.10);
+  --card-shadow: 0 2px 10px rgba(95,171,141,0.05);
+  --card-hover-shadow: 0 4px 20px rgba(95,171,141,0.08);
+}
+
+/* 极简灰白 — Minimal */
+body[data-theme="minimal"] {
+  --bg-primary: #FAFAFA;
+  --bg-surface: #FFFFFF;
+  --bg-nav: rgba(250,250,250,0.90);
+  --text-primary: #1A1A1A;
+  --text-secondary: #8C8C8C;
+  --text-heading: #0D0D0D;
+  --accent: #3A3A3A;
+  --accent-hover: #1A1A1A;
+  --accent-light: rgba(0,0,0,0.04);
+  --accent-medium: rgba(0,0,0,0.08);
+  --border: #E8E8E8;
+  --card-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  --card-hover-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+/* =========================================
+   3. Butterfly Theme Overrides
+   ========================================= */
+
+/* Body & Layout */
+body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed) ease,
+              color var(--transition-speed) ease;
+}
+#body-wrap {
+  background-color: var(--bg-primary) !important;
+  transition: background-color var(--transition-speed) ease;
+}
+
+/* Navigation */
+#nav {
+  background: var(--bg-nav) !important;
+  backdrop-filter: var(--nav-blur);
+  -webkit-backdrop-filter: var(--nav-blur);
+  transition: background var(--transition-speed) ease;
+}
+#nav a,
+#nav .site-name,
+.nav-fixed #nav #site-name,
+#nav #site-name {
+  color: var(--text-heading) !important;
+}
+#nav .menus_items .menus_item .menus_item_child {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+}
+#nav .menus_items .menus_item .menus_item_child li a {
+  color: var(--text-primary) !important;
+}
+#nav .menus_items .menus_item .menus_item_child li:hover a {
+  background: var(--accent-light) !important;
+  color: var(--accent) !important;
+}
+#nav #search-button,
+#nav #toggle-menu {
+  color: var(--text-primary) !important;
+}
+
+/* Page Header */
+#page-header {
+  background-color: var(--bg-primary) !important;
+  transition: background-color var(--transition-speed) ease;
+}
+#page-header #post-info .post-title,
+#page-header #site-title,
+#page-header #site-subtitle {
+  color: var(--text-heading) !important;
+}
+#page-header #post-info .meta-value,
+#page-header #post-info .meta-label {
+  color: var(--text-secondary) !important;
+}
+
+/* Content Area */
+#content,
+.layout,
+#page {
+  background-color: transparent !important;
+}
+
+/* Article / Post Cards */
+.recent-post-item,
+.layout > .recent-posts > .recent-post-item,
+#recent-posts > .recent-post-item {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  border-radius: var(--radius);
+  transition: all var(--transition-speed) ease;
+}
+.recent-post-item:hover {
+  box-shadow: var(--card-hover-shadow);
+  transform: translateY(-2px);
+}
+.recent-post-info .article-title,
+.recent-post-info a.article-title {
+  color: var(--text-heading) !important;
+}
+.recent-post-info .article-meta-wrap,
+.recent-post-info .article-meta-wrap a,
+.recent-post-info .article-meta-wrap .article-meta-label {
+  color: var(--text-secondary) !important;
+}
+.recent-post-info .content,
+.article-content {
+  color: var(--text-secondary) !important;
+}
+.recent-post-info a.article-title:hover {
+  color: var(--accent) !important;
+}
+.article-meta a:hover,
+.article-meta-wrap a:hover {
+  color: var(--accent) !important;
+}
+
+/* Post Content */
+.post-content,
+#article-container,
+#post-comment {
+  background: var(--bg-surface) !important;
+  border-radius: var(--radius);
+  padding: 24px;
+}
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6,
+#article-container h1,
+#article-container h2,
+#article-container h3 {
+  color: var(--text-heading) !important;
+}
+.post-content p,
+#article-container p,
+.post-content li,
+#article-container li {
+  color: var(--text-primary) !important;
+}
+.post-content a,
+#article-container a {
+  color: var(--accent) !important;
+}
+.post-content a:hover,
+#article-container a:hover {
+  color: var(--accent-hover) !important;
+}
+.post-content blockquote,
+#article-container blockquote {
+  border-left-color: var(--accent) !important;
+  background: var(--accent-light) !important;
+  color: var(--text-secondary) !important;
+}
+.post-content code,
+#article-container code {
+  background: var(--accent-light) !important;
+  color: var(--accent) !important;
+}
+.post-content hr,
+#article-container hr {
+  border-color: var(--border) !important;
+}
+
+/* Sidebar */
+#aside-content .card-widget,
+.card-widget {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  border-radius: var(--radius);
+  transition: all var(--transition-speed) ease;
+}
+#aside-content .card-widget:hover,
+.card-widget:hover {
+  box-shadow: var(--card-hover-shadow);
+}
+#aside-content .card-info #card-info-btn,
+#aside-content .item-headline,
+.card-widget .item-headline {
+  color: var(--text-heading) !important;
+}
+#aside-content .card-info .author-info__name,
+#aside-content .card-info .author-info__description {
+  color: var(--text-primary) !important;
+}
+#aside-content .aside-list .aside-list-item .thumbnail {
+  border-radius: var(--radius-sm);
+}
+#aside-content .aside-list .aside-list-item .content .title,
+#aside-content .aside-list .aside-list-item .content .title a {
+  color: var(--text-heading) !important;
+}
+#aside-content .aside-list .aside-list-item .content .title a:hover {
+  color: var(--accent) !important;
+}
+#aside-content .aside-list .aside-list-item .content .comment,
+#aside-content .aside-list .aside-list-item .content time {
+  color: var(--text-secondary) !important;
+}
+#aside-content .card-archives ul.card-archive-list > .card-archive-list-item a,
+#aside-content .card-categories ul.card-category-list > .card-category-list-item a,
+#aside-content .card-tags .card-tag-cloud a,
+#aside-content .card-webinfo .webinfo .webinfo-item .webinfo-item-name,
+#aside-content .card-webinfo .webinfo .webinfo-item .webinfo-item-count {
+  color: var(--text-secondary) !important;
+}
+#aside-content .card-archives ul.card-archive-list > .card-archive-list-item a:hover,
+#aside-content .card-categories ul.card-category-list > .card-category-list-item a:hover {
+  color: var(--accent) !important;
+}
+#aside-content .card-archives ul.card-archive-list > .card-archive-list-item a span:first-child,
+#aside-content .card-categories ul.card-category-list > .card-category-list-item a span:first-child,
+#aside-content .card-webinfo .webinfo .webinfo-item .webinfo-item-name {
+  color: var(--text-secondary) !important;
+}
+#aside-content .card-webinfo .webinfo {
+  border-top: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+/* Tags */
+.card-tags .card-tag-cloud a,
+.tag-cloud-tags a {
+  background: var(--accent-light) !important;
+  color: var(--accent) !important;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+.card-tags .card-tag-cloud a:hover,
+.tag-cloud-tags a:hover {
+  background: var(--accent) !important;
+  color: #FFFFFF !important;
+}
+
+/* Pagination */
+#pagination .page-number,
+.pagination .page-number {
+  color: var(--text-secondary) !important;
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+#pagination .page-number.current,
+.pagination .page-number.current {
+  background: var(--accent) !important;
+  color: #FFFFFF !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 2px 8px var(--accent-medium);
+}
+#pagination .page-number:hover,
+.pagination .page-number:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+/* Footer */
+#footer {
+  color: var(--text-secondary) !important;
+}
+#footer a {
+  color: var(--accent) !important;
+}
+#footer-wrap,
+#footer-wrap a {
+  color: var(--text-secondary) !important;
+}
+
+/* Table of Contents */
+#aside-content .card-toc .toc-link,
+#aside-content .card-toc .toc-child {
+  color: var(--text-secondary) !important;
+}
+#aside-content .card-toc .toc-link.active,
+#aside-content .card-toc .toc-link:hover {
+  color: var(--accent) !important;
+}
+
+/* Code blocks */
+figure.highlight,
+#article-container figure.highlight {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+figure.highlight .gutter,
+#article-container figure.highlight .gutter {
+  background: var(--accent-light) !important;
+}
+
+/* Mobile menu */
+#sidebar #sidebar-menus .menus_items .site-page,
+#sidebar #sidebar-menus .menus_items .site-page a {
+  color: var(--text-primary) !important;
+}
+#sidebar #sidebar-menus {
+  background: var(--bg-surface) !important;
+}
+
+/* Search popup */
+#local-search .search-dialog,
+.search-dialog {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-hover-shadow);
+  border-radius: var(--radius);
+}
+#local-search .search-dialog .search-nav,
+.search-dialog .search-nav {
+  color: var(--text-primary) !important;
+}
+#local-search .search-dialog .search-result-list .search-result,
+.search-dialog .search-result-list .search-result {
+  border-bottom: 1px solid var(--border) !important;
+}
+#local-search .search-dialog .search-result-list .search-result .search-result-title,
+.search-dialog .search-result-list .search-result .search-result-title {
+  color: var(--text-heading) !important;
+}
+#local-search .search-dialog .search-result-list .search-result .search-result,
+.search-dialog .search-result-list .search-result .search-keyword {
+  color: var(--accent) !important;
+}
+
+/* Links / buttons */
+a {
+  color: var(--accent);
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: var(--accent-hover);
+}
+
+/* Theme color specific overrides for Butterfly */
+button,
+.btn {
+  transition: all 0.2s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar-thumb {
+  background: var(--accent-medium) !important;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent) !important;
+}
+
+/* Selection */
+::selection {
+  background: var(--accent-light) !important;
+  color: var(--accent) !important;
+}
+
+/* =========================================
+   4. Background Overlay (custom bg image)
+   ========================================= */
+body.custom-bg {
+  position: relative;
+}
+body.custom-bg::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image: var(--custom-bg-url);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  z-index: -1;
+  opacity: var(--custom-bg-opacity, 0.35);
+  filter: blur(var(--custom-bg-blur, 0px));
+}
+body.custom-bg #body-wrap {
+  background-color: transparent !important;
+}
+body.custom-bg .recent-post-item,
+body.custom-bg .card-widget,
+body.custom-bg #post-comment,
+body.custom-bg .post-content,
+body.custom-bg #article-container {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.85) !important;
+}
+body.custom-bg #nav {
+  backdrop-filter: var(--nav-blur);
+  -webkit-backdrop-filter: var(--nav-blur);
+}
+
+/* =========================================
+   5. Theme Panel UI
+   ========================================= */
+
+/* Floating trigger button */
+#theme-trigger {
+  position: fixed;
+  bottom: 64px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  cursor: pointer;
+  z-index: 9990;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--text-secondary);
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  user-select: none;
+}
+#theme-trigger:hover {
+  transform: scale(1.08);
+  box-shadow: var(--card-hover-shadow);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+#theme-trigger:active {
+  transform: scale(0.95);
+}
+
+/* Panel overlay */
+#theme-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.15);
+  z-index: 9995;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(2px);
+}
+#theme-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Main panel */
+#theme-panel {
+  position: fixed;
+  bottom: 116px;
+  right: 24px;
+  width: 300px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  z-index: 9996;
+  transform: translateY(16px) scale(0.95);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+#theme-panel.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Panel header */
+#theme-panel .panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--border);
+}
+#theme-panel .panel-header .panel-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-heading);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#theme-panel .panel-header .panel-title .icon {
+  font-size: 16px;
+}
+#theme-panel .panel-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent-light);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+#theme-panel .panel-close:hover {
+  background: var(--accent-medium);
+  color: var(--text-primary);
+}
+
+/* Section labels */
+#theme-panel .panel-section-label {
+  padding: 14px 18px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Theme grid */
+#theme-panel .theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 0 18px 8px;
+}
+#theme-panel .theme-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: var(--bg-primary);
+}
+#theme-panel .theme-option:hover {
+  border-color: var(--accent-medium);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+#theme-panel .theme-option.active {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+/* Color swatches */
+#theme-panel .theme-swatch {
+  display: flex;
+  gap: 3px;
+}
+#theme-panel .theme-swatch .swatch-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,0.06);
+}
+#theme-panel .theme-option .theme-name {
+  font-size: 11px;
+  color: var(--text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* =========================================
+   6. Background Custom Section
+   ========================================= */
+#theme-panel .bg-section {
+  padding: 0 18px 16px;
+}
+#theme-panel .bg-upload-area {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: var(--bg-primary);
+}
+#theme-panel .bg-upload-area:hover {
+  border-color: var(--accent-medium);
+  background: var(--accent-light);
+}
+#theme-panel .bg-upload-area .upload-icon {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+#theme-panel .bg-upload-area .upload-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+#theme-panel .bg-upload-area .upload-hint {
+  font-size: 10px;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+/* URL input */
+#theme-panel .bg-url-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+#theme-panel .bg-url-input {
+  flex: 1;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 12px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+#theme-panel .bg-url-input:focus {
+  border-color: var(--accent);
+}
+#theme-panel .bg-url-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+#theme-panel .bg-url-btn {
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+#theme-panel .bg-url-btn:hover {
+  background: var(--accent-hover);
+}
+
+/* Opacity & blur controls */
+#theme-panel .bg-controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+#theme-panel .bg-control {
+  flex: 1;
+}
+#theme-panel .bg-control label {
+  display: block;
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+#theme-panel .bg-control input[type="range"] {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 2px;
+  background: var(--border);
+  outline: none;
+}
+#theme-panel .bg-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+#theme-panel .bg-control input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Remove bg button */
+#theme-panel .bg-remove-btn {
+  width: 100%;
+  margin-top: 10px;
+  height: 32px;
+  border: 1px solid rgba(220,53,69,0.2);
+  border-radius: 8px;
+  background: transparent;
+  color: #DC3545;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#theme-panel .bg-remove-btn:hover {
+  background: rgba(220,53,69,0.06);
+}
+#theme-panel .bg-remove-btn.hidden {
+  display: none;
+}
+
+/* =========================================
+   7. Animations & Transitions
+   ========================================= */
+@keyframes swatch-pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  #theme-panel {
+    width: calc(100vw - 32px);
+    right: 16px;
+    bottom: 108px;
+  }
+  #theme-trigger {
+    right: 16px;
+    bottom: 60px;
+  }
+}

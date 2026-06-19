@@ -226,6 +226,7 @@ pagination:
 inject:
   head:
     - <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=LXGW+WenKai+Screen&display=swap" rel="stylesheet">
+    - <link rel="stylesheet" href="/css/theme-system.css">
     - |
       <style>
       #music-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 52px; background: rgba(245,240,232,0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(139,111,71,0.12); z-index: 9999; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 -2px 20px rgba(139,111,71,0.08); }
@@ -399,3 +400,4 @@ inject:
         }
       });
       </script>
+    - <script src="/js/theme-system.js"></script>
