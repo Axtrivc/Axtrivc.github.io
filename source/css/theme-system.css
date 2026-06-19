@@ -1,6 +1,6 @@
 /* ============================================================
-   Axtrivc's Blog — Theme System v5 (CSS-only: panel UI)
-   Color changes are now handled by JS direct DOM manipulation
+   Axtrivc's Blog — Theme System v7 (Panel UI + overrides)
+   Color changes: JS direct DOM manipulation (theme-system.js)
    ============================================================ */
 
 /* Hide Butterfly dark mode toggle */
@@ -88,7 +88,18 @@
   transform: translateY(-1px);
   box-shadow: 0 3px 10px rgba(0,0,0,0.05);
 }
-.theme-option.active { border-color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.theme-option.active {
+  border-color: var(--theme-accent-current, #07C160);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.015);
+}
+/* Check mark on active */
+.theme-option.active .theme-name::before {
+  content: '✓';
+  margin-right: 4px;
+  color: var(--theme-accent-current, #07C160);
+  font-weight: 700;
+}
 
 /* Swatches */
 .theme-swatch { display: flex; gap: 3px; }
