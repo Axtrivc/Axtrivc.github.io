@@ -9,12 +9,12 @@
   // Theme definitions
   // ============================================================
   var THEMES = [
-    { id: 'wechat', name: '微信清新', colors: ['#FFFFFF', '#07C160', '#576B95', '#F7F8FA'] },
-    { id: 'warm-beige', name: '暖米原色', colors: ['#F5F0E8', '#8B6F47', '#C4A96A', '#FFFFFF'] },
-    { id: 'sky-blue', name: '天空浅蓝', colors: ['#F5F9FC', '#5B9BD5', '#6BB5F0', '#FFFFFF'] },
-    { id: 'dusk-pink', name: '薄暮粉', colors: ['#FDF8F5', '#D4958B', '#F0A3B3', '#FFFFFF'] },
-    { id: 'mint', name: '薄荷清绿', colors: ['#F5FAF8', '#5FAB8D', '#7ECDAD', '#FFFFFF'] },
-    { id: 'minimal', name: '极简灰白', colors: ['#FAFAFA', '#3A3A3A', '#8C8C8C', '#FFFFFF'] }
+    { id: 'wechat', name: 'WeChat', colors: ['#FFFFFF', '#07C160', '#576B95', '#F7F8FA'] },
+    { id: 'warm-beige', name: 'Warm Beige', colors: ['#F5F0E8', '#8B6F47', '#C4A96A', '#FFFFFF'] },
+    { id: 'sky-blue', name: 'Sky Blue', colors: ['#E8F4FD', '#5B9BD5', '#6BB5F0', '#FFFFFF'] },
+    { id: 'dusk-pink', name: 'Dusk Pink', colors: ['#FDF0EC', '#D4958B', '#F0A3B3', '#FFFFFF'] },
+    { id: 'mint', name: 'Mint', colors: ['#E8F8F2', '#5FAB8D', '#7ECDAD', '#FFFFFF'] },
+    { id: 'minimal', name: 'Minimal', colors: ['#F0F0F0', '#3A3A3A', '#8C8C8C', '#FFFFFF'] }
   ];
 
   var STORAGE_KEY_THEME = 'axtrivc-theme';
@@ -54,7 +54,7 @@
   panel.id = 'theme-panel';
   panel.innerHTML =
     '<div class="panel-header">' +
-      '<span class="panel-title"><span class="icon">🎨</span>主题切换</span>' +
+      '<span class="panel-title"><span class="icon">🎨</span>Theme</span>' +
       '<button class="panel-close" title="关闭">&times;</button>' +
     '</div>' +
     '<div class="panel-section-label">配色方案</div>' +
@@ -100,7 +100,7 @@
     var navTrigger = document.createElement('a');
     navTrigger.id = 'nav-theme-trigger';
     navTrigger.className = 'site-page';
-    navTrigger.innerHTML = '<i class="fas fa-palette"></i><span>主题</span>';
+    navTrigger.innerHTML = '<i class="fas fa-palette"></i><span>Theme</span>';
     navTrigger.setAttribute('title', '切换主题与背景');
     navTrigger.addEventListener('click', function (e) {
       e.preventDefault();

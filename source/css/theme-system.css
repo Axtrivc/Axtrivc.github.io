@@ -1,6 +1,6 @@
 /* ============================================================
-   Axtrivc's Blog — Theme System v3
-   Nav-integrated + Aggressive overrides
+   Axtrivc's Blog — Theme System v4
+   Dramatic color differences + English UI + Wider music bar
    ============================================================ */
 
 /* =========================================
@@ -16,155 +16,153 @@
    1. CSS Custom Properties (Default: warm beige)
    ========================================= */
 :root {
-  --bg-primary: #F5F0E8;
-  --bg-surface: #FFFFFF;
-  --bg-nav: rgba(245,240,232,0.92);
-  --text-primary: #4A3728;
-  --text-secondary: #A09080;
-  --text-heading: #3A2718;
+  --bg-primary: #F0E4D0;
+  --bg-surface: #FFFBF5;
+  --bg-nav: rgba(240,228,208,0.92);
+  --text-primary: #3D2B1A;
+  --text-secondary: #8A7A66;
+  --text-heading: #2A1A0A;
   --accent: #8B6F47;
   --accent-hover: #A0845C;
-  --accent-light: rgba(139,111,71,0.08);
-  --accent-medium: rgba(139,111,71,0.15);
-  --border: rgba(139,111,71,0.12);
-  --card-shadow: 0 2px 12px rgba(139,111,71,0.06);
-  --card-hover-shadow: 0 6px 24px rgba(139,111,71,0.10);
+  --accent-light: rgba(139,111,71,0.10);
+  --accent-medium: rgba(139,111,71,0.18);
+  --border: rgba(139,111,71,0.15);
+  --card-shadow: 0 2px 14px rgba(139,111,71,0.08);
+  --card-hover-shadow: 0 8px 28px rgba(139,111,71,0.14);
   --nav-blur: blur(16px);
   --radius: 12px;
   --radius-sm: 8px;
-  --transition-speed: 0.4s;
+  --transition-speed: 0.45s;
 }
 
 /* =========================================
-   2. Theme Definitions
+   2. Theme Definitions — DRAMATIC DIFFERENCES
    ========================================= */
 
-/* 微信清新 */
+/* 微信清新 — Pure white base, vibrant green accents */
 body[data-theme="wechat"],
 html:has(body[data-theme="wechat"]) {
-  --bg-primary: #F7F8FA;
+  --bg-primary: #F2F3F5;
   --bg-surface: #FFFFFF;
-  --bg-nav: rgba(255,255,255,0.90);
-  --text-primary: #191919;
-  --text-secondary: #8E8E93;
-  --text-heading: #0D0D0D;
+  --bg-nav: rgba(255,255,255,0.92);
+  --text-primary: #1A1A1A;
+  --text-secondary: #576B95;
+  --text-heading: #000000;
   --accent: #07C160;
-  --accent-hover: #06AE56;
-  --accent-light: rgba(7,193,96,0.06);
-  --accent-medium: rgba(7,193,96,0.12);
-  --border: #E5E5EA;
-  --card-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  --card-hover-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  --accent-hover: #06AD56;
+  --accent-light: rgba(7,193,96,0.08);
+  --accent-medium: rgba(7,193,96,0.15);
+  --border: #E5E7EB;
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  --card-hover-shadow: 0 6px 24px rgba(0,0,0,0.10);
 }
 
-/* 暖米原色 (default) */
+/* 暖米原色 — Warm golden beige */
 body[data-theme="warm-beige"],
 html:has(body[data-theme="warm-beige"]) {
-  --bg-primary: #F5F0E8;
-  --bg-surface: #FFFFFF;
-  --bg-nav: rgba(245,240,232,0.92);
-  --text-primary: #4A3728;
-  --text-secondary: #A09080;
-  --text-heading: #3A2718;
-  --accent: #8B6F47;
-  --accent-hover: #A0845C;
-  --accent-light: rgba(139,111,71,0.08);
-  --accent-medium: rgba(139,111,71,0.15);
-  --border: rgba(139,111,71,0.12);
-  --card-shadow: 0 2px 12px rgba(139,111,71,0.06);
-  --card-hover-shadow: 0 6px 24px rgba(139,111,71,0.10);
+  --bg-primary: #F0E4D0;
+  --bg-surface: #FFF9EE;
+  --bg-nav: rgba(240,228,208,0.92);
+  --text-primary: #3D2B1A;
+  --text-secondary: #8A7A66;
+  --text-heading: #2A1A0A;
+  --accent: #B8860B;
+  --accent-hover: #997206;
+  --accent-light: rgba(184,134,11,0.09);
+  --accent-medium: rgba(184,134,11,0.16);
+  --border: rgba(184,134,11,0.16);
+  --card-shadow: 0 2px 14px rgba(184,134,11,0.08);
+  --card-hover-shadow: 0 8px 28px rgba(184,134,11,0.14);
 }
 
-/* 天空浅蓝 */
+/* 天空浅蓝 — Clearly blue-tinted */
 body[data-theme="sky-blue"],
 html:has(body[data-theme="sky-blue"]) {
-  --bg-primary: #F5F9FC;
-  --bg-surface: #FFFFFF;
-  --bg-nav: rgba(245,249,252,0.90);
-  --text-primary: #2C3E50;
-  --text-secondary: #7F8C8D;
-  --text-heading: #1A2C3E;
-  --accent: #5B9BD5;
-  --accent-hover: #4A8AC4;
-  --accent-light: rgba(91,155,213,0.06);
-  --accent-medium: rgba(91,155,213,0.12);
-  --border: rgba(91,155,213,0.10);
-  --card-shadow: 0 2px 10px rgba(91,155,213,0.05);
-  --card-hover-shadow: 0 4px 20px rgba(91,155,213,0.08);
+  --bg-primary: #DAECFA;
+  --bg-surface: #F0F8FF;
+  --bg-nav: rgba(218,236,250,0.92);
+  --text-primary: #1A3A5C;
+  --text-secondary: #4A7094;
+  --text-heading: #0D253F;
+  --accent: #2980B9;
+  --accent-hover: #1F6BA3;
+  --accent-light: rgba(41,128,185,0.08);
+  --accent-medium: rgba(41,128,185,0.16);
+  --border: rgba(41,128,185,0.16);
+  --card-shadow: 0 2px 14px rgba(41,128,185,0.08);
+  --card-hover-shadow: 0 8px 28px rgba(41,128,185,0.14);
 }
 
-/* 薄暮粉 */
+/* 薄暮粉 — Clearly pink-tinted */
 body[data-theme="dusk-pink"],
 html:has(body[data-theme="dusk-pink"]) {
-  --bg-primary: #FDF8F5;
-  --bg-surface: #FFFFFF;
-  --bg-nav: rgba(253,248,245,0.90);
-  --text-primary: #4A3535;
-  --text-secondary: #9A8A8A;
-  --text-heading: #3A2525;
-  --accent: #D4958B;
-  --accent-hover: #C4857B;
-  --accent-light: rgba(212,149,139,0.06);
-  --accent-medium: rgba(212,149,139,0.12);
-  --border: rgba(212,149,139,0.10);
-  --card-shadow: 0 2px 10px rgba(212,149,139,0.05);
-  --card-hover-shadow: 0 4px 20px rgba(212,149,139,0.08);
+  --bg-primary: #F8DDD4;
+  --bg-surface: #FFF5F0;
+  --bg-nav: rgba(248,221,212,0.92);
+  --text-primary: #5C2E24;
+  --text-secondary: #A06A5C;
+  --text-heading: #3D1A12;
+  --accent: #C06030;
+  --accent-hover: #A84E20;
+  --accent-light: rgba(192,96,48,0.08);
+  --accent-medium: rgba(192,96,48,0.16);
+  --border: rgba(192,96,48,0.16);
+  --card-shadow: 0 2px 14px rgba(192,96,48,0.08);
+  --card-hover-shadow: 0 8px 28px rgba(192,96,48,0.14);
 }
 
-/* 薄荷清绿 */
+/* 薄荷清绿 — Clearly green-tinted */
 body[data-theme="mint"],
 html:has(body[data-theme="mint"]) {
-  --bg-primary: #F5FAF8;
-  --bg-surface: #FFFFFF;
-  --bg-nav: rgba(245,250,248,0.90);
-  --text-primary: #2D3E35;
-  --text-secondary: #7A8D83;
-  --text-heading: #1A2E22;
-  --accent: #5FAB8D;
-  --accent-hover: #4E9A7C;
-  --accent-light: rgba(95,171,141,0.06);
-  --accent-medium: rgba(95,141,141,0.12);
-  --border: rgba(95,171,141,0.10);
-  --card-shadow: 0 2px 10px rgba(95,171,141,0.05);
-  --card-hover-shadow: 0 4px 20px rgba(95,171,141,0.08);
+  --bg-primary: #D4EEE4;
+  --bg-surface: #F0FFF8;
+  --bg-nav: rgba(212,238,228,0.92);
+  --text-primary: #1A3D2E;
+  --text-secondary: #4A8068;
+  --text-heading: #0D261A;
+  --accent: #27AE60;
+  --accent-hover: #1E944F;
+  --accent-light: rgba(39,174,96,0.08);
+  --accent-medium: rgba(39,174,96,0.16);
+  --border: rgba(39,174,96,0.16);
+  --card-shadow: 0 2px 14px rgba(39,174,96,0.08);
+  --card-hover-shadow: 0 8px 28px rgba(39,174,96,0.14);
 }
 
-/* 极简灰白 */
+/* 极简灰白 — Cool neutral gray */
 body[data-theme="minimal"],
 html:has(body[data-theme="minimal"]) {
-  --bg-primary: #FAFAFA;
+  --bg-primary: #EBEBEB;
   --bg-surface: #FFFFFF;
-  --bg-nav: rgba(250,250,250,0.90);
-  --text-primary: #1A1A1A;
-  --text-secondary: #8C8C8C;
-  --text-heading: #0D0D0D;
-  --accent: #3A3A3A;
-  --accent-hover: #1A1A1A;
-  --accent-light: rgba(0,0,0,0.04);
-  --accent-medium: rgba(0,0,0,0.08);
-  --border: #E8E8E8;
-  --card-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  --card-hover-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --bg-nav: rgba(235,235,235,0.92);
+  --text-primary: #222222;
+  --text-secondary: #777777;
+  --text-heading: #111111;
+  --accent: #444444;
+  --accent-hover: #222222;
+  --accent-light: rgba(68,68,68,0.06);
+  --accent-medium: rgba(68,68,68,0.12);
+  --border: #CCCCCC;
+  --card-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  --card-hover-shadow: 0 6px 22px rgba(0,0,0,0.10);
 }
 
 /* =========================================
    3. AGGRESSIVE GLOBAL OVERRIDES
-      Target every layer Butterfly uses for bg
    ========================================= */
 
-/* Layer 0: The raw html tag */
+/* Layer 0: html tag */
 html {
   background-color: var(--bg-primary) !important;
 }
 
-/* Layer 1: Butterfly's #web_bg — THE CRITICAL ONE with inline style */
+/* Layer 1: Butterfly's #web_bg — THE CRITICAL ONE */
 #web_bg,
 div[id="web_bg"] {
   background-color: var(--bg-primary) !important;
   background-image: none !important;
   transition: background-color var(--transition-speed) ease !important;
 }
-/* Also override any style attr via attribute selector */
 #web_bg[style*="background"],
 div[id="web_bg"][style] {
   background-color: var(--bg-primary) !important;
@@ -184,7 +182,7 @@ body {
   transition: background-color var(--transition-speed) ease;
 }
 
-/* Layer 4: Layout containers — transparent so bg shows through */
+/* Layer 4: Layout containers */
 .layout,
 #content,
 #page,
@@ -225,7 +223,7 @@ body {
   color: var(--text-primary) !important;
 }
 
-/* Theme nav item — special highlight */
+/* Theme nav item highlight */
 #nav-theme-trigger {
   color: var(--accent) !important;
   font-weight: 600 !important;
@@ -558,7 +556,7 @@ body.custom-bg #nav {
 }
 
 /* =========================================
-   10. Theme Panel UI — positioned below nav
+   10. Theme Panel UI
    ========================================= */
 
 /* Panel overlay */
@@ -578,7 +576,7 @@ body.custom-bg #nav {
   pointer-events: auto;
 }
 
-/* Main panel — drops down from nav bar */
+/* Main panel */
 #theme-panel {
   position: fixed;
   width: 320px;
@@ -594,7 +592,6 @@ body.custom-bg #nav {
   opacity: 0;
   pointer-events: none;
   transition: all 0.28s cubic-bezier(0.4,0,0.2,1);
-  /* Default position: top right below nav */
   top: 60px;
   right: 20px;
 }
