@@ -146,6 +146,12 @@ body[data-theme="minimal"] {
       Must override Butterfly's !important styles
    ========================================= */
 
+/* CRITICAL: #web_bg is Butterfly's background layer — must override inline style! */
+#web_bg {
+  background-color: var(--bg-primary) !important;
+  transition: background-color var(--transition-speed) ease !important;
+}
+
 /* Root HTML & Body — the foundation */
 html {
   background-color: var(--bg-primary) !important;
