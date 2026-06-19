@@ -15,16 +15,18 @@
     wechat: {
       name: 'WeChat',
       colors: ['#FFFFFF', '#07C160', '#576B95', '#F7F8FA', '#1A1A1A', '#576B95'],
-      bg: '#F0F2F5',           // #web_bg background - the main visible area
-      body: '#F0F2F5',         // body background
-      nav: 'rgba(255,255,255,0.92)',  // nav bar
-      card: '#FFFFFF',         // article cards
-      text: '#191919',          // primary text
-      heading: '#000000',       // headings
-      secondary: '#576B95',     // secondary text
-      accent: '#07C160',        // accent/links
+      bg: '#FFFFFF',            // Pure white — WeChat input method style
+      body: '#FFFFFF',
+      nav: 'rgba(255,255,255,0.95)',
+      card: '#FFFFFF',
+      text: '#191919',
+      heading: '#000000',
+      secondary: '#576B95',
+      accent: '#07C160',
       border: '#E5E7EB',
-      pageHeader: '#F0F2F5'
+      pageHeader: '#FFFFFF',
+      navText: '#191919',        // Nav menu text — dark on light
+      navTextHover: '#07C160'   // Hover = WeChat green
     },
     'warm-beige': {
       name: 'Warm Beige',
@@ -38,12 +40,14 @@
       secondary: '#8A7A66',
       accent: '#B8860B',
       border: 'rgba(184,134,11,0.16)',
-      pageHeader: '#E8DCC8'
+      pageHeader: '#E8DCC8',
+      navText: '#3D2B1A',
+      navTextHover: '#B8860B'
     },
     'sky-blue': {
       name: 'Sky Blue',
       colors: ['#DAECFA', '#2980B9', '#6BB5F0', '#F0F8FF', '#1A3A5C', '#4A7094'],
-      bg: '#DAECFA',            // CLEARLY blue-tinted
+      bg: '#DAECFA',
       body: '#DAECFA',
       nav: 'rgba(218,236,250,0.92)',
       card: '#F0F8FF',
@@ -52,12 +56,14 @@
       secondary: '#4A7094',
       accent: '#2980B9',
       border: 'rgba(41,128,185,0.18)',
-      pageHeader: '#C5DEF5'
+      pageHeader: '#C5DEF5',
+      navText: '#1A3A5C',
+      navTextHover: '#2980B9'
     },
     'dusk-pink': {
       name: 'Dusk Pink',
       colors: ['#F8DDD4', '#C06030', '#F0A3B3', '#FFF5F0', '#5C2E24', '#A06A5C'],
-      bg: '#F8DDD4',            // CLEARLY pink-tinted
+      bg: '#F8DDD4',
       body: '#F8DDD4',
       nav: 'rgba(248,221,212,0.92)',
       card: '#FFF5F0',
@@ -66,12 +72,14 @@
       secondary: '#A06A5C',
       accent: '#C06030',
       border: 'rgba(192,96,48,0.18)',
-      pageHeader: '#F0C8BA'
+      pageHeader: '#F0C8BA',
+      navText: '#5C2E24',
+      navTextHover: '#C06030'
     },
     mint: {
       name: 'Mint',
       colors: ['#D4EEE4', '#27AE60', '#7ECDAD', '#F0FFF8', '#1A3D2E', '#4A8068'],
-      bg: '#D4EEE4',            // CLEARLY green-tinted
+      bg: '#D4EEE4',
       body: '#D4EEE4',
       nav: 'rgba(212,238,228,0.92)',
       card: '#F0FFF8',
@@ -80,7 +88,9 @@
       secondary: '#4A8068',
       accent: '#27AE60',
       border: 'rgba(39,174,96,0.18)',
-      pageHeader: '#BFE0D4'
+      pageHeader: '#BFE0D4',
+      navText: '#1A3D2E',
+      navTextHover: '#27AE60'
     },
     minimal: {
       name: 'Minimal',
@@ -94,7 +104,9 @@
       secondary: '#777777',
       accent: '#444444',
       border: '#CCCCCC',
-      pageHeader: '#DDDDDD'
+      pageHeader: '#DDDDDD',
+      navText: '#222222',
+      navTextHover: '#444444'
     }
   };
 
@@ -125,6 +137,25 @@
     // 4. Navigation
     var nav = document.getElementById('nav');
     if (nav) { nav.style.background = t.nav; }
+
+    // 4b. Navigation menu items — text color (fixes white text on light themes)
+    var navLinks = document.querySelectorAll('#menus .menus_item a, #nav a.site-page, .menus_items a');
+    navLinks.forEach(function(link) {
+      link.style.color = t.navText || t.text;
+    });
+    // Hover effect for nav links via JS
+    var styleNavHover = document.getElementById('theme-nav-hover-style');
+    if (!styleNavHover) {
+      styleNavHover = document.createElement('style');
+      styleNavHover.id = 'theme-nav-hover-style';
+      document.head.appendChild(styleNavHover);
+    }
+    styleNavHover.textContent =
+      '#menus .menus_item a:hover, #nav a.site-page:hover, .menus_items a:hover { color: ' + (t.navTextHover || t.accent) + ' !important; }';
+
+    // 4c. Site title / blog name in nav
+    var siteTitle = document.querySelector('#site-title, #site-name, .site-name a');
+    if (siteTitle) { siteTitle.style.color = t.heading; }
 
     // 5. Page header / hero area
     var pageHeader = document.getElementById('page-header');
@@ -165,6 +196,25 @@
     // 12. Store current accent for CSS panel styling
     document.documentElement.style.setProperty('--theme-accent-current', t.accent);
     document.documentElement.style.setProperty('--theme-surface-current', t.card);
+
+    // 13. Music bar — adapt to theme colors
+    var musicBar = document.getElementById('music-bar');
+    if (musicBar) {
+      musicBar.style.background = t.nav;
+      musicBar.style.borderTopColor = t.border;
+      musicBar.style.color = t.text;
+    }
+    // Music bar buttons
+    var barBtns = musicBar ? musicBar.querySelectorAll('.bar-btn, .bar-btn-toggle') : [];
+    barBtns.forEach(function(btn) {
+      btn.style.color = t.accent;
+    });
+    if (musicBar) {
+      var toggleBtn = musicBar.querySelector('.bar-btn-toggle');
+      if (toggleBtn) { toggleBtn.style.background = t.accent; toggleBtn.style.color = '#FFFFFF'; }
+      var cover = musicBar.querySelector('.bar-cover');
+      if (cover) { cover.style.background = 'linear-gradient(135deg, ' + t.accent + ' 0%, ' + t.secondary + ' 100%)'; }
+    }
 
     // Set data attribute for any CSS fallback rules
     document.body.setAttribute('data-theme-custom', themeId);
