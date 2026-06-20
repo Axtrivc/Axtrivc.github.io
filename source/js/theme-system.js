@@ -122,8 +122,8 @@
       h.style.color = t.heading;
     });
 
-    // Secondary text
-    document.querySelectorAll('.article-meta-wrap, .article-meta-label, .post-meta-date, time, .aside-list-item .content time, #footer-wrap').forEach(function(s) {
+    // Secondary text (but NOT footer background — handled below)
+    document.querySelectorAll('.article-meta-wrap, .article-meta-label, .post-meta-date, time, .aside-list-item .content time').forEach(function(s) {
       s.style.color = t.secondary;
     });
 
@@ -132,13 +132,64 @@
       l.style.color = t.accent;
     });
 
+    // ---- Elements that were previously missed ----
+
+    // Footer: background + text color
+    var footerWrap = document.getElementById('footer-wrap');
+    if (footerWrap) {
+      footerWrap.style.backgroundColor = t.nav;
+      footerWrap.style.color = t.secondary;
+      footerWrap.style.borderTopColor = t.border;
+    }
+    // Also target footer itself
+    document.querySelectorAll('#footer, footer').forEach(function(f) {
+      f.style.backgroundColor = t.nav;
+      f.style.color = t.secondary;
+    });
+
+    // Pagination: current/active page number + all page links bg
+    document.querySelectorAll('#pagination .page-number, #pagination .current, .pagination .page-number, .pagination .current').forEach(function(p) {
+      if (p.classList.contains('current') || p.id === 'page-current') {
+        p.style.backgroundColor = t.accent;
+        p.style.borderColor = t.accent;
+        p.style.color = '#FFFFFF';
+      } else {
+        p.style.backgroundColor = t.card;
+        p.style.borderColor = t.border;
+        p.style.color = t.text;
+      }
+    });
+    // pagination arrow buttons
+    document.querySelectorAll('#pagination .extend, #pagination .next, #pagination .prev, .pagination .extend, .pagination a.extend').forEach(function(e) {
+      e.style.backgroundColor = t.card;
+      e.style.borderColor = t.border;
+      e.style.color = t.text;
+    });
+
+    // Right-side floating buttons (scroll-top, settings)
+    document.querySelectorAll('.rightside-button, #scroll-top, #settings-btn, .rightside-item-button').forEach(function(btn) {
+      btn.style.backgroundColor = t.accent;
+      btn.style.color = '#FFFFFF';
+    });
+
+    // Sidebar "Follow Me" button
+    document.querySelectorAll('.card-info-data-item a, .card-info-follow-btn, button[data-type="follow"]').forEach(function(btn) {
+      btn.style.backgroundColor = t.accent;
+      btn.style.color = '#FFFFFF';
+    });
+
     // Body wrap transparent (let web_bg show through)
     var bodyWrap = document.getElementById('body-wrap');
     if (bodyWrap) { bodyWrap.style.backgroundColor = 'transparent'; }
 
-    // CSS custom properties for panel styling
+    // CSS custom properties for panel styling + CSS fallbacks
     document.documentElement.style.setProperty('--theme-accent-current', t.accent);
     document.documentElement.style.setProperty('--theme-surface-current', t.card);
+    document.documentElement.style.setProperty('--theme-nav-current', t.nav);
+    document.documentElement.style.setProperty('--theme-secondary-current', t.secondary);
+    document.documentElement.style.setProperty('--theme-text-current', t.text);
+    document.documentElement.style.setProperty('--theme-border-current', t.border);
+    document.documentElement.style.setProperty('--theme-card-current', t.card);
 
     // Music bar theme adaptation
     var musicBar = document.getElementById('music-bar');

@@ -177,3 +177,64 @@ body.custom-bg::before {
 @media(max-width:768px){
   #theme-panel{ width:calc(100vw - 32px); right:16px; left:16px; top:56px; }
 }
+
+/* ============================================================
+   Global theme overrides — elements often missed by JS applyTheme
+   Uses CSS custom properties set by theme-system.js
+   ============================================================ */
+
+/* Footer — override Butterfly's default tan/brown */
+#footer-wrap, #footer, footer {
+  background-color: var(--theme-nav-current, rgba(255,255,255,0.95)) !important;
+  color: var(--theme-secondary-current, #576B95) !important;
+  border-top-color: var(--theme-border-current, #E5E7EB) !important;
+  transition: background-color 0.45s ease, color 0.45s ease;
+}
+
+/* Pagination buttons */
+#pagination .page-number,
+.pagination .page-number {
+  background-color: var(--theme-card-current, #FFFFFF) !important;
+  border-color: var(--theme-border-current, #E5E7EB) !important;
+  color: var(--theme-text-current, #222) !important;
+  transition: all 0.25s ease !important;
+}
+#pagination .page-number:hover,
+.pagination .page-number:hover {
+  border-color: var(--theme-accent-current, #07C160) !important;
+}
+#pagination .current,
+.pagination .current,
+#pagination .page-number.current,
+#page-current {
+  background-color: var(--theme-accent-current, #07C160) !important;
+  border-color: var(--theme-accent-current, #07C160) !important;
+  color: #FFFFFF !important;
+}
+#pagination .extend,
+#pagination .next,
+#pagination .prev,
+.pagination a.extend {
+  background-color: var(--theme-card-current, #FFFFFF) !important;
+  border-color: var(--theme-border-current, #E5E7EB) !important;
+  color: var(--theme-text-current, #222) !important;
+}
+
+/* Right-side floating buttons */
+.rightside-button,
+#scroll-top,
+#settings-btn,
+.rightside-item-button {
+  background-color: var(--theme-accent-current, #07C160) !important;
+  color: #FFFFFF !important;
+  transition: background-color 0.45s ease !important;
+}
+
+/* Sidebar Follow Me button */
+.card-info-data-item a,
+.card-info-follow-btn,
+button[data-type="follow"] {
+  background-color: var(--theme-accent-current, #07C160) !important;
+  color: #FFFFFF !important;
+  transition: background-color 0.45s ease !important;
+}
