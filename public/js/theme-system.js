@@ -166,17 +166,18 @@
       e.style.color = t.text;
     });
 
-    // Right-side floating buttons (scroll-top, settings)
-    document.querySelectorAll('.rightside-button, #scroll-top, #settings-btn, .rightside-item-button').forEach(function(btn) {
+    // Right-side floating buttons (actual DOM: #go-up, #rightside-config)
+    document.querySelectorAll('#rightside > button, #go-up, #rightside-config, #hide-aside-btn').forEach(function(btn) {
       btn.style.backgroundColor = t.accent;
       btn.style.color = '#FFFFFF';
     });
 
-    // Sidebar "Follow Me" button
-    document.querySelectorAll('.card-info-data-item a, .card-info-follow-btn, button[data-type="follow"]').forEach(function(btn) {
-      btn.style.backgroundColor = t.accent;
-      btn.style.color = '#FFFFFF';
-    });
+    // Sidebar Follow Me button (actual DOM id: #card-info-btn)
+    var followBtn = document.getElementById('card-info-btn');
+    if (followBtn) {
+      followBtn.style.backgroundColor = t.accent;
+      followBtn.style.color = '#FFFFFF';
+    }
 
     // Body wrap transparent (let web_bg show through)
     var bodyWrap = document.getElementById('body-wrap');

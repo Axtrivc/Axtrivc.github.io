@@ -183,57 +183,62 @@ body.custom-bg::before {
    Uses CSS custom properties set by theme-system.js
    ============================================================ */
 
-/* Footer — override Butterfly's default tan/brown */
-#footer-wrap, #footer, footer {
+/* Footer — override Butterfly's default $theme-color brown */
+#footer-wrap,
+#footer,
+footer {
   background-color: var(--theme-nav-current, rgba(255,255,255,0.95)) !important;
   color: var(--theme-secondary-current, #576B95) !important;
   border-top-color: var(--theme-border-current, #E5E7EB) !important;
   transition: background-color 0.45s ease, color 0.45s ease;
 }
+#footer a { color: inherit; }
 
 /* Pagination buttons */
 #pagination .page-number,
 .pagination .page-number {
   background-color: var(--theme-card-current, #FFFFFF) !important;
   border-color: var(--theme-border-current, #E5E7EB) !important;
-  color: var(--theme-text-current, #222) !important;
+  color: var(--theme-text-current, #222222) !important;
   transition: all 0.25s ease !important;
 }
 #pagination .page-number:hover,
 .pagination .page-number:hover {
   border-color: var(--theme-accent-current, #07C160) !important;
 }
-#pagination .current,
-.pagination .current,
+/* Current page number */
 #pagination .page-number.current,
+.pagination .page-number.current,
+#pagination .current,
 #page-current {
   background-color: var(--theme-accent-current, #07C160) !important;
   border-color: var(--theme-accent-current, #07C160) !important;
   color: #FFFFFF !important;
 }
+/* Pagination arrows (next/prev) */
 #pagination .extend,
-#pagination .next,
-#pagination .prev,
+#pagination .extend.next,
+#pagination .extend.prev,
 .pagination a.extend {
   background-color: var(--theme-card-current, #FFFFFF) !important;
   border-color: var(--theme-border-current, #E5E7EB) !important;
-  color: var(--theme-text-current, #222) !important;
+  color: var(--theme-text-current, #222222) !important;
 }
 
-/* Right-side floating buttons */
-.rightside-button,
-#scroll-top,
-#settings-btn,
-.rightside-item-button {
+/* Right-side floating buttons — actual DOM ids: #go-up, #rightside-config */
+#rightside > button,
+#go-up,
+#rightside-config,
+#hide-aside-btn,
+#darkmode {
   background-color: var(--theme-accent-current, #07C160) !important;
   color: #FFFFFF !important;
-  transition: background-color 0.45s ease !important;
+  transition: background-color 0.45s ease, color 0.45s ease !important;
 }
 
-/* Sidebar Follow Me button */
-.card-info-data-item a,
-.card-info-follow-btn,
-button[data-type="follow"] {
+/* Sidebar Follow Me button — actual DOM id: #card-info-btn */
+#card-info-btn,
+a[id="card-info-btn"] {
   background-color: var(--theme-accent-current, #07C160) !important;
   color: #FFFFFF !important;
   transition: background-color 0.45s ease !important;
