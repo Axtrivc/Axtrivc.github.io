@@ -13,10 +13,10 @@
   var THEME_STYLES = {
     wechat: {
       name: 'WeChat',
-      colors: ['#FFFFFF', '#07C160', '#576B95', '#F7F8FA', '#1A1A1A', '#576B95'],
-      bg: '#FFFFFF', body: '#FFFFFF', nav: 'rgba(255,255,255,0.95)', card: '#FFFFFF',
-      text: '#191919', heading: '#000000', secondary: '#576B95', accent: '#07C160',
-      border: '#E5E7EB', pageHeader: '#FFFFFF', navText: '#191919', navTextHover: '#07C160'
+      colors: ['#EDF6EF', '#07C160', '#576B95', '#FFFFFF', '#191919', '#8A9A99'],
+      bg: '#EDF6EF', body: '#EDF6EF', nav: 'rgba(237,246,239,0.96)', card: '#FFFFFF',
+      text: '#4A5550', heading: '#1A1A1A', secondary: '#6B7C77', accent: '#07C160',
+      border: 'rgba(7,193,96,0.15)', pageHeader: '#E2F2E4', navText: '#333333', navTextHover: '#07C160'
     },
     'warm-beige': {
       name: 'Warm Beige',
@@ -134,16 +134,16 @@
 
     // ---- Elements that were previously missed ----
 
-    // Footer: background + text color
+    // Footer: background + text color — use a slightly darker shade than nav
     var footerWrap = document.getElementById('footer-wrap');
     if (footerWrap) {
-      footerWrap.style.backgroundColor = t.nav;
+      footerWrap.style.backgroundColor = themeId === 'wechat' ? 'rgba(220,237,222,0.95)' : t.nav;
       footerWrap.style.color = t.secondary;
       footerWrap.style.borderTopColor = t.border;
     }
     // Also target footer itself
     document.querySelectorAll('#footer, footer').forEach(function(f) {
-      f.style.backgroundColor = t.nav;
+      f.style.backgroundColor = themeId === 'wechat' ? 'rgba(220,237,222,0.95)' : t.nav;
       f.style.color = t.secondary;
     });
 
@@ -263,7 +263,7 @@
     link.id = 'nav-theme-trigger';
     link.href = 'javascript:void(0)';
     // Set initial color immediately to prevent FOUC flash (white on light nav)
-    link.style.color = '#191919';
+    link.style.color = '#333333';
     link.innerHTML = '<i class="fas fa-palette"></i><span>Theme</span>';
     link.setAttribute('title', 'Switch Theme & Background');
     item.appendChild(link);

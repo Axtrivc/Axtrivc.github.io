@@ -12,7 +12,7 @@
 #nav-theme-trigger {
   position: relative;
   /* Prevent FOUC: visible dark color before JS theme applies */
-  color: #191919 !important;
+  color: #333333 !important;
 }
 #nav-theme-trigger::after {
   content: '';
@@ -183,16 +183,31 @@ body.custom-bg::before {
    Uses CSS custom properties set by theme-system.js
    ============================================================ */
 
-/* Footer — override Butterfly's default $theme-color brown */
+/* Footer — override Butterfly's default tan/brown, slightly darker than nav */
 #footer-wrap,
 #footer,
 footer {
-  background-color: var(--theme-nav-current, rgba(255,255,255,0.95)) !important;
+  background-color: rgba(220,237,222,0.95) !important;
   color: var(--theme-secondary-current, #576B95) !important;
-  border-top-color: var(--theme-border-current, #E5E7EB) !important;
+  border-top-color: var(--theme-border-current, rgba(7,193,96,0.2)) !important;
   transition: background-color 0.45s ease, color 0.45s ease;
 }
 #footer a { color: inherit; }
+
+/* Right-side floating buttons — move go-up above music bar */
+#rightside > button,
+#go-up,
+#rightside-config,
+#hide-aside-btn,
+#darkmode {
+  background-color: var(--theme-accent-current, #07C160) !important;
+  color: #FFFFFF !important;
+  transition: background-color 0.45s ease, color 0.45s ease !important;
+}
+/* Push rightside buttons higher to avoid music bar (music bar ~44px tall) */
+#rightside {
+  bottom: 60px !important;
+}
 
 /* Pagination buttons */
 #pagination .page-number,
@@ -223,17 +238,6 @@ footer {
   background-color: var(--theme-card-current, #FFFFFF) !important;
   border-color: var(--theme-border-current, #E5E7EB) !important;
   color: var(--theme-text-current, #222222) !important;
-}
-
-/* Right-side floating buttons — actual DOM ids: #go-up, #rightside-config */
-#rightside > button,
-#go-up,
-#rightside-config,
-#hide-aside-btn,
-#darkmode {
-  background-color: var(--theme-accent-current, #07C160) !important;
-  color: #FFFFFF !important;
-  transition: background-color 0.45s ease, color 0.45s ease !important;
 }
 
 /* Sidebar Follow Me button — actual DOM id: #card-info-btn */
