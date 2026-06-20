@@ -13,9 +13,9 @@
 
   var ADMIN_BASE = '/admin/#/collections/';
   var OPTIONS = [
-    { icon: 'fa-pen-fancy', label: '发文章', url: ADMIN_BASE + 'posts/new', color: '#07C160' },
-    { icon: 'fa-image', label: '发图片', url: ADMIN_BASE + 'posts/new', color: '#2A8FE0' },
-    { icon: 'fa-video', label: '发视频', url: ADMIN_BASE + 'posts/new', color: '#E0562A' }
+    { icon: 'fa-pen-fancy', label: '文章', url: ADMIN_BASE + 'posts/new', color: '#07C160' },
+    { icon: 'fa-image', label: '图片', url: ADMIN_BASE + 'posts/new', color: '#2A8FE0' },
+    { icon: 'fa-video', label: '视频', url: ADMIN_BASE + 'posts/new', color: '#E0562A' }
   ];
 
   // 等待 body 可用
