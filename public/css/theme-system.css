@@ -183,13 +183,13 @@ body.custom-bg::before {
    Uses CSS custom properties set by theme-system.js
    ============================================================ */
 
-/* Footer — override Butterfly's default tan/brown, slightly darker than nav */
+/* Footer — clean gray, clearly readable text */
 #footer-wrap,
 #footer,
 footer {
-  background-color: rgba(220,237,222,0.95) !important;
-  color: var(--theme-secondary-current, #576B95) !important;
-  border-top-color: var(--theme-border-current, rgba(7,193,96,0.2)) !important;
+  background-color: #EEEEEE !important;
+  color: #666666 !important;
+  border-top-color: #E8E8E8 !important;
   transition: background-color 0.45s ease, color 0.45s ease;
 }
 #footer a { color: inherit; }

@@ -13,10 +13,10 @@
   var THEME_STYLES = {
     wechat: {
       name: 'WeChat',
-      colors: ['#EDF6EF', '#07C160', '#576B95', '#FFFFFF', '#191919', '#8A9A99'],
-      bg: '#EDF6EF', body: '#EDF6EF', nav: 'rgba(237,246,239,0.96)', card: '#FFFFFF',
-      text: '#4A5550', heading: '#1A1A1A', secondary: '#6B7C77', accent: '#07C160',
-      border: 'rgba(7,193,96,0.15)', pageHeader: '#E2F2E4', navText: '#333333', navTextHover: '#07C160'
+      colors: ['#F7F7F7', '#07C160', '#576B95', '#FFFFFF', '#191919', '#666666'],
+      bg: '#F7F7F7', body: '#F7F7F7', nav: 'rgba(255,255,255,0.96)', card: '#FFFFFF',
+      text: '#191919', heading: '#111111', secondary: '#5D5D5D', accent: '#07C160',
+      border: '#E8E8E8', pageHeader: '#FFFFFF', navText: '#333333', navTextHover: '#07C160'
     },
     'warm-beige': {
       name: 'Warm Beige',
@@ -134,17 +134,17 @@
 
     // ---- Elements that were previously missed ----
 
-    // Footer: background + text color — use a slightly darker shade than nav
+    // Footer: background + text color — use a slightly darker shade than body bg
     var footerWrap = document.getElementById('footer-wrap');
     if (footerWrap) {
-      footerWrap.style.backgroundColor = themeId === 'wechat' ? 'rgba(220,237,222,0.95)' : t.nav;
-      footerWrap.style.color = t.secondary;
+      footerWrap.style.backgroundColor = themeId === 'wechat' ? '#EEEEEE' : t.nav;
+      footerWrap.style.color = themeId === 'wechat' ? '#666666' : t.secondary;
       footerWrap.style.borderTopColor = t.border;
     }
     // Also target footer itself
     document.querySelectorAll('#footer, footer').forEach(function(f) {
-      f.style.backgroundColor = themeId === 'wechat' ? 'rgba(220,237,222,0.95)' : t.nav;
-      f.style.color = t.secondary;
+      f.style.backgroundColor = themeId === 'wechat' ? '#EEEEEE' : t.nav;
+      f.style.color = themeId === 'wechat' ? '#666666' : t.secondary;
     });
 
     // Pagination: current/active page number + all page links bg
