@@ -45,8 +45,8 @@ disable_top_img: false
 default_top_img:
 index_img:
 
-# Website Background - warm beige tone
-background: '#f5f0e8'
+# Website Background - white (overridden by theme system)
+background: '#FFFFFF'
 
 cover:
   index_enable: true

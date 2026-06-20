@@ -3,6 +3,13 @@
    Color changes: JS direct DOM manipulation (theme-system.js)
    ============================================================ */
 
+/* CRITICAL: Override Butterfly's inline-style background on #web_bg */
+#web_bg,
+.bg-animation#web_bg {
+  background-color: #FFFFFF !important;
+  background-image: none !important;
+}
+
 /* Hide Butterfly dark mode toggle */
 #toggle-sidebar,
 #darkmode_button,
