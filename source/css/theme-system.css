@@ -29,10 +29,9 @@
 #darkmode_button,
 .darkmode_toggle { display: none !important; }
 
-/* Theme nav item highlight */
+/* Theme nav item highlight - 跟随主题主色 */
 #nav-theme-trigger {
   position: relative;
-  /* Prevent FOUC: visible dark color before JS theme applies */
   color: #333333 !important;
 }
 #nav-theme-trigger::after {
@@ -41,11 +40,29 @@
   bottom: -2px; left: 50%;
   transform: translateX(-50%);
   width: 0; height: 2px;
-  background: var(--theme-accent-current, #07C160);
+  background: var(--theme-accent, #07C160);
   border-radius: 1px;
-  transition: width 0.25s ease;
+  transition: width 0.25s ease, background 0.45s ease;
 }
 #nav-theme-trigger:hover::after { width: 80%; }
+
+/* ===== 全局导航菜单下划线 - 跟随主题主色 ===== */
+#menus .menus_item a,
+#nav a.site-page,
+.menus_items a {
+  position: relative;
+}
+#menus .menus_item a::after,
+#nav a.site-page::after,
+.menus_items a::after {
+  background: var(--theme-accent, #07C160) !important;
+  transition: background 0.45s ease;
+}
+/* Butterfly 原生下划线选择器兼容 */
+#menus .menus_item:hover > a::after,
+.menus_item:hover > a.site-page::after {
+  background: var(--theme-accent, #07C160) !important;
+}
 
 /* Panel overlay */
 #theme-overlay {

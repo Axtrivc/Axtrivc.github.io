@@ -226,7 +226,7 @@ pagination:
 inject:
   head:
     - <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=LXGW+WenKai+Screen&display=swap" rel="stylesheet">
-    - <link rel="stylesheet" href="/css/theme-system.css?v=20260620g">
+    - <link rel="stylesheet" href="/css/theme-system.css?v=20260620h">
     - <link rel="stylesheet" href="/css/publish-button.css?v=20260620a">
     - <link rel="stylesheet" href="/css/hide-rightside.css?v=20260620a">
     - |
@@ -407,6 +407,6 @@ inject:
         }
       });
       </script>
-    - <script src="/js/theme-system.js?v=20260620d"></script>
+    - <script src="/js/theme-system.js?v=20260620e"></script>
     - <script src="/js/publish-button.js?v=20260620c"></script>
     - <script src="/js/dynamic-avatar.js?v=20260620b"></script>

@@ -298,6 +298,7 @@
     if (topMenus) {
       var item = document.createElement('div');
       item.className = 'menus_item';
+      item.style.textAlign = 'center';  // 确保 Theme 按钮下划线居中
       var link = document.createElement('a');
       link.className = 'site-page';
       link.id = 'nav-theme-trigger';
