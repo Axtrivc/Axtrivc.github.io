@@ -290,10 +290,10 @@ a[id="card-info-btn"] {
    注：Footer 保持 Butterfly 默认黑色，不改动
    ============================================================ */
 
-/* 站点副标题：打字机变化的那行字 — 柔和的薄荷绿（非荧光）配深色阴影 */
+/* 站点副标题：打字机变化的那行字 — 微信主绿 #07C160 */
 #site-subtitle,
 #subtitle {
-  color: #9BCFB0 !important;
+  color: #07C160 !important;
   text-shadow: 0 1px 10px rgba(0, 60, 25, 0.75), 0 0 3px rgba(0, 0, 0, 0.55) !important;
   font-weight: 500 !important;
 }
