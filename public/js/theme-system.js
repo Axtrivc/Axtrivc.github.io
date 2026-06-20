@@ -13,8 +13,8 @@
   var THEME_STYLES = {
     wechat: {
       name: 'WeChat',
-      colors: ['#F7F7F7', '#07C160', '#576B95', '#FFFFFF', '#191919', '#666666'],
-      bg: '#F7F7F7', body: '#F7F7F7', nav: 'rgba(255,255,255,0.96)', card: '#FFFFFF',
+      colors: ['#FFFFFF', '#07C160', '#576B95', '#FFFFFF', '#191919', '#666666'],
+      bg: '#FFFFFF', body: '#FFFFFF', nav: 'rgba(255,255,255,0.96)', card: '#FFFFFF',
       text: '#191919', heading: '#111111', secondary: '#5D5D5D', accent: '#07C160',
       border: '#E8E8E8', pageHeader: '#FFFFFF', navText: '#333333', navTextHover: '#07C160'
     },
@@ -137,13 +137,13 @@
     // Footer: background + text color — use a slightly darker shade than body bg
     var footerWrap = document.getElementById('footer-wrap');
     if (footerWrap) {
-      footerWrap.style.backgroundColor = themeId === 'wechat' ? '#EEEEEE' : t.nav;
+      footerWrap.style.backgroundColor = themeId === 'wechat' ? '#FAFAFA' : t.nav;
       footerWrap.style.color = themeId === 'wechat' ? '#666666' : t.secondary;
       footerWrap.style.borderTopColor = t.border;
     }
     // Also target footer itself
     document.querySelectorAll('#footer, footer').forEach(function(f) {
-      f.style.backgroundColor = themeId === 'wechat' ? '#EEEEEE' : t.nav;
+      f.style.backgroundColor = themeId === 'wechat' ? '#FAFAFA' : t.nav;
       f.style.color = themeId === 'wechat' ? '#666666' : t.secondary;
     });
 

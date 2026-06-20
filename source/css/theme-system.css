@@ -187,7 +187,7 @@ body.custom-bg::before {
 #footer-wrap,
 #footer,
 footer {
-  background-color: #EEEEEE !important;
+  background-color: #FAFAFA !important;
   color: #666666 !important;
   border-top-color: #E8E8E8 !important;
   transition: background-color 0.45s ease, color 0.45s ease;
