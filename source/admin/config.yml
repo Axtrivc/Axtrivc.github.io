@@ -10,7 +10,7 @@ backend:
   auth_endpoint: /api/auth
 
 # 发布时自动提交到 master，会触发 GitHub Actions 构建 → main 部署
-publish_mode: editorial_workflow
+# 关闭 editorial_workflow，直接 Save 即发布，流程更简单
 site_url: https://axtrivc.github.io
 
 # 在内容列表中展示的字段
