@@ -111,6 +111,11 @@
     document.body.style.backgroundColor = t.body;
     document.body.style.color = t.text;
 
+    // 注入主题色到 CSS 变量，让副标题/FAB按钮等跟随主题
+    document.documentElement.style.setProperty('--theme-accent', t.accent);
+    document.documentElement.style.setProperty('--theme-text', t.text);
+    document.documentElement.style.setProperty('--theme-heading', t.heading);
+
     // Navigation bar
     var nav = document.getElementById('nav');
     if (nav) { nav.style.background = t.nav; }
