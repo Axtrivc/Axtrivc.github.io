@@ -52,11 +52,43 @@
       bg: '#EBEBEB', body: '#EBEBEB', nav: 'rgba(235,235,235,0.92)', card: '#FFFFFF',
       text: '#222222', heading: '#111111', secondary: '#777777', accent: '#444444',
       border: '#CCCCCC', pageHeader: '#DDDDDD', navText: '#222222', navTextHover: '#444444'
+    },
+    // === 新增方案 A：微信经典绿白（绿茵足球风） ===
+    'wechat-classic': {
+      name: 'WeChat Green',
+      colors: ['#FFFFFF', '#07C160', '#FA5151', '#F7F7F7', '#191919', '#7A7A7A'],
+      bg: '#FFFFFF', body: '#FFFFFF', nav: 'rgba(255,255,255,0.96)', card: '#FFFFFF',
+      text: '#191919', heading: '#07A548', secondary: '#7A7A7A', accent: '#07C160',
+      border: '#EDEDED', pageHeader: '#FFFFFF', navText: '#191919', navTextHover: '#07C160'
+    },
+    // === 新增方案 B：清晨湖蓝（年轻活力） ===
+    'lake-blue': {
+      name: 'Lake Blue',
+      colors: ['#F4FBFF', '#10AEFF', '#FF976A', '#FFFFFF', '#0C447C', '#5A9EC9'],
+      bg: '#F4FBFF', body: '#F4FBFF', nav: 'rgba(244,251,255,0.95)', card: '#FFFFFF',
+      text: '#191919', heading: '#0C447C', secondary: '#5A9EC9', accent: '#10AEFF',
+      border: 'rgba(16,174,255,0.18)', pageHeader: '#E6F5FF', navText: '#0C447C', navTextHover: '#10AEFF'
+    },
+    // === 新增方案 C：雾霾蓝灰（沉稳） ===
+    'haze-blue': {
+      name: 'Haze Blue',
+      colors: ['#FAFBFC', '#4A5568', '#B85C5C', '#FFFFFF', '#2D3748', '#718096'],
+      bg: '#FAFBFC', body: '#FAFBFC', nav: 'rgba(250,251,252,0.95)', card: '#FFFFFF',
+      text: '#2D3748', heading: '#1A202C', secondary: '#718096', accent: '#4A5568',
+      border: '#EAECEF', pageHeader: '#F0F2F5', navText: '#2D3748', navTextHover: '#4A5568'
+    },
+    // === 新增方案 D：米色升级版（扁平化米色） ===
+    'beige-lite': {
+      name: 'Beige Lite',
+      colors: ['#FFFCF5', '#8B6F47', '#C4A96A', '#FFFFFF', '#3A2A1A', '#9A8866'],
+      bg: '#FFFCF5', body: '#FFFCF5', nav: 'rgba(255,252,245,0.96)', card: '#FFFFFF',
+      text: '#3A2A1A', heading: '#3A2A1A', secondary: '#9A8866', accent: '#8B6F47',
+      border: '#EFE8DA', pageHeader: '#FFFCF5', navText: '#3A2A1A', navTextHover: '#8B6F47'
     }
   };
 
   // Current state — DEFAULT to WeChat (pure white, most noticeable change)
-  var currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'wechat';
+  var currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'wechat-classic';
   var customBg = null;
   try { customBg = JSON.parse(localStorage.getItem(STORAGE_KEY_BG)); } catch(e) { customBg = null; }
 
@@ -253,26 +285,57 @@
   // NAV BUTTON INJECTION
   // ================================================================
   function setupNavButton() {
-    var menusContainer = document.querySelector('#menus .menus_items');
-    if (!menusContainer || document.getElementById('nav-theme-trigger')) return false;
+    if (document.getElementById('nav-theme-trigger')) return true;
+    var added = false;
 
-    var item = document.createElement('div');
-    item.className = 'menus_item';
-    var link = document.createElement('a');
-    link.className = 'site-page';
-    link.id = 'nav-theme-trigger';
-    link.href = 'javascript:void(0)';
-    // Set initial color immediately to prevent FOUC flash (white on light nav)
-    link.style.color = '#333333';
-    link.innerHTML = '<i class="fas fa-palette"></i><span>Theme</span>';
-    link.setAttribute('title', 'Switch Theme & Background');
-    item.appendChild(link);
-    menusContainer.appendChild(item);
+    // 桌面端：顶部导航 #menus .menus_items
+    var topMenus = document.querySelector('#menus .menus_items');
+    if (topMenus) {
+      var item = document.createElement('div');
+      item.className = 'menus_item';
+      var link = document.createElement('a');
+      link.className = 'site-page';
+      link.id = 'nav-theme-trigger';
+      link.href = 'javascript:void(0)';
+      link.style.color = '#333333';
+      link.innerHTML = '<i class="fas fa-palette"></i><span>Theme</span>';
+      link.setAttribute('title', 'Switch Theme');
+      item.appendChild(link);
+      topMenus.appendChild(item);
+      link.addEventListener('click', function(e) {
+        e.preventDefault(); e.stopPropagation(); togglePanel(); return false;
+      });
+      added = true;
+    }
 
-    link.addEventListener('click', function(e) {
-      e.preventDefault(); e.stopPropagation(); togglePanel(); return false;
-    });
-    return true;
+    // 手机端：侧滑菜单 #sidebar-menus .menus_items
+    var sideMenus = document.querySelector('#sidebar-menus .menus_items');
+    if (sideMenus) {
+      var sItem = document.createElement('div');
+      sItem.className = 'menus_item';
+      var sLink = document.createElement('a');
+      sLink.className = 'site-page';
+      sLink.id = 'sidebar-theme-trigger';
+      sLink.href = 'javascript:void(0)';
+      sLink.innerHTML = '<i class="fas fa-palette"></i><span>Theme</span>';
+      sLink.setAttribute('title', 'Switch Theme');
+      sItem.appendChild(sLink);
+      sideMenus.appendChild(sItem);
+      sLink.addEventListener('click', function(e) {
+        e.preventDefault(); e.stopPropagation();
+        // 关闭侧滑菜单
+        var mask = document.getElementById('menu-mask');
+        var sidebar = document.getElementById('sidebar');
+        if (sidebar) sidebar.classList.remove('open');
+        if (mask) mask.classList.remove('open');
+        document.body.classList.remove('open-sidebar');
+        setTimeout(togglePanel, 250);
+        return false;
+      });
+      added = true;
+    }
+
+    return added;
   }
 
   // ================================================================
@@ -292,8 +355,11 @@
     html += '<button class="panel-close" title="Close">&times;</button></div>';
     html += '<div class="panel-section-label">Color Scheme</div>';
     html += '<div class="theme-grid">';
-    Object.keys(THEME_STYLES).forEach(function(id) {
-      var th = THEME_STYLES[id], activeClass = (currentTheme === id) ? ' active' : '';
+    // 仅保留 4 个简约清新风主题（删除原 6 个 classic 主题）
+    var newIds = ['wechat-classic', 'lake-blue', 'haze-blue', 'beige-lite'];
+    newIds.forEach(function(id) {
+      var th = THEME_STYLES[id]; if (!th) return;
+      var activeClass = (currentTheme === id) ? ' active' : '';
       var swatches = '';
       th.colors.slice(0, 4).forEach(function(c) { swatches += '<span class="swatch-dot" style="background:' + c + ';"></span>'; });
       html += '<div class="theme-option' + activeClass + '" data-theme="' + id + '" role="button" tabindex="0">';
