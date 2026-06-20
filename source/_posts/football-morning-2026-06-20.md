@@ -27,17 +27,15 @@ categories:
 
 ### 皇马
 
-**相关新闻**
-
-- [阿隆索vs阿韦洛亚？两位皇马前主帅或将在英超首轮迎来对决](https://www.dongqiudi.com/article/5950982)
+> 暂无近期动态
 
 
 ### 马竞
 
 **相关新闻**
 
+- [阿斯：阿莱士-加西亚和马竞相互有意，转会费约2500万欧](https://www.dongqiudi.com/article/5951086)
 - [迪马济奥：马竞有意科莫中场达库尼亚，但科莫不想放人](https://www.dongqiudi.com/article/5950927)
-- [科贝：格里马尔多接近加盟马竞，他已告知勒沃库森希望回西甲](https://www.dongqiudi.com/article/5950770)
 
 
 ### 迈阿密国际
@@ -57,52 +55,56 @@ categories:
 
 **下一场**：6月25日 03:00 世界杯 - Switzerland vs Canada
 
+**相关新闻**
+
+- [西媒：亚马尔逛沃尔玛后，该品牌在西班牙的相关搜索暴涨45%](https://www.dongqiudi.com/article/5951097)
+
 
 ## 足坛新闻
 
 ### 📰 足坛头条
 
-- [摩洛哥1-0苏格兰，赛巴里闪击破门一剑封喉](https://www.dongqiudi.com/article/5950938)
-- [早报：美国足球认真了？](https://www.dongqiudi.com/article/5950779)
-- [阿隆索vs阿韦洛亚？两位皇马前主帅或将在英超首轮迎来对决](https://www.dongqiudi.com/article/5950982) ⭐
-- [媒体人：崔康熙到青岛参加中韩青少年活动，精神状态不错](https://www.dongqiudi.com/article/5951000)
-- [6胜8平11负，摩洛哥成为世界杯史上胜场、积分最多的非洲队](https://www.dongqiudi.com/article/5950991)
+- [巴西3-0送海地出局，库尼亚双响，维尼修斯传射，拉菲尼亚伤退](https://www.dongqiudi.com/article/5951196)
+- [姜至鹏：因阿代米意外受伤而改打左边锋，新帅要求侵略性更强](https://www.dongqiudi.com/article/5951329)
+- [博主：武汉三镇积极寻找中后卫，在跟李昂接触](https://www.dongqiudi.com/article/5951331)
+- [64秒闪击，加拉尔萨打入本届世界杯最快进球+队史第二快进球](https://www.dongqiudi.com/article/5951305)
+- [官方：尼斯中场瓦努特加盟费耶诺德；据悉转会费550万欧](https://www.dongqiudi.com/article/5951316)
 
 #### 西甲新闻
 
-- [阿隆索vs阿韦洛亚？两位皇马前主帅或将在英超首轮迎来对决](https://www.dongqiudi.com/article/5950982)
-- [美国队后卫弗里曼：世界杯两连胜后，球队的信心已经非常强了](https://www.dongqiudi.com/article/5950946)
-- [奥贝德：韩国不仅有孙兴慜，李刚仁也是一位非常出色的球员](https://www.dongqiudi.com/article/5950944)
+- [塞尔：拉菲尼亚右腿腘绳肌不适，将在本周六接受医学检查](https://www.dongqiudi.com/article/5951320)
+- [神奇的菠萝！传射建功的维尼修斯被拍到赛前吃菠萝补充能量](https://www.dongqiudi.com/article/5951317)
+- [贝尔萨：巴尔韦德是一位全能型球员，足坛很少有他这样的球员](https://www.dongqiudi.com/article/5951285)
 
 #### 英超新闻
 
-- [阿隆索vs阿韦洛亚？两位皇马前主帅或将在英超首轮迎来对决](https://www.dongqiudi.com/article/5950982)
-- [晚旗报：卢卡-武什科维奇准备提交转会申请，推动热刺放他离开](https://www.dongqiudi.com/article/5950972)
-- [记者：亚特兰大中场埃德松已通过曼联安排在纽约的首轮体检](https://www.dongqiudi.com/article/5950954)
+- [库尼亚：代表巴西参加世界杯还能进球，梦想成真了](https://www.dongqiudi.com/article/5951266)
+- [名记：赫尔城主帅希望再次租借科利尔，曼联可能会出售他](https://www.dongqiudi.com/article/5951217)
+- [库尼亚此前24场国家队比赛仅进1球，今天半场梅开二度](https://www.dongqiudi.com/article/5951197)
 
 #### 意甲新闻
 
-- [记者：亚特兰大中场埃德松已通过曼联安排在纽约的首轮体检](https://www.dongqiudi.com/article/5950954)
-- [迪马济奥：马竞有意科莫中场达库尼亚，但科莫不想放人](https://www.dongqiudi.com/article/5950927)
-- [迪马济奥：尤文想要维卡里奥，无论迪格雷戈里奥是否离队](https://www.dongqiudi.com/article/5950909)
+- [TA：FIFA脑震荡流程遭批，在场内检查会增加球员风险](https://www.dongqiudi.com/article/5951109)
+- [记者：由于父亲生病，梅西抵达堪萨斯后很难过，全队陪伴安慰](https://www.dongqiudi.com/article/5951074)
+- [美国世界杯负责人：愿就伊朗的出行限制进行“讨论”](https://www.dongqiudi.com/article/5951036)
 
 #### 德甲新闻
 
-- [晚旗报：卢卡-武什科维奇准备提交转会申请，推动热刺放他离开](https://www.dongqiudi.com/article/5950972)
-- [德国队连续7场世界杯丢球，上次连场失球场次更多是在1954年](https://www.dongqiudi.com/article/5950958)
-- [TA：当前足坛市场“泡沫化”，利物浦签迪奥曼德需远超1个亿](https://www.dongqiudi.com/article/5950923)
+- [TA：FIFA脑震荡流程遭批，在场内检查会增加球员风险](https://www.dongqiudi.com/article/5951109)
+- [迪尼&佩蒂特：让皮克福德守门，英格兰队拿不了世界杯冠军](https://www.dongqiudi.com/article/5951059)
+- [两个队的游戏，巴西打进3球后世界杯总进球数又反超德国](https://www.dongqiudi.com/article/5951102)
 
 #### 法甲新闻
 
-- [奥贝德：韩国不仅有孙兴慜，李刚仁也是一位非常出色的球员](https://www.dongqiudi.com/article/5950944)
-- [12场，阿什拉夫是世界杯出场次数最多的非洲球员](https://www.dongqiudi.com/article/5950934)
-- [30岁190天，巴西派出自1962年以来球队世界杯最年长首发阵容](https://www.dongqiudi.com/article/5950925)
+- [官方：尼斯中场瓦努特加盟费耶诺德；据悉转会费550万欧](https://www.dongqiudi.com/article/5951316)
+- [天空：如果马丁内斯不撤C罗，葡萄牙黄金一代将留下诸多遗憾](https://www.dongqiudi.com/article/5950966)
+- [萨哈：巴尔科拉会是曼联的梦幻引援，他两次赢得欧冠具备经验](https://www.dongqiudi.com/article/5951019)
 
 #### 我的主队动态
 
-- ⭐ [阿隆索vs阿韦洛亚？两位皇马前主帅或将在英超首轮迎来对决](https://www.dongqiudi.com/article/5950982)
+- ⭐ [西媒：亚马尔逛沃尔玛后，该品牌在西班牙的相关搜索暴涨45%](https://www.dongqiudi.com/article/5951097)
+- ⭐ [阿斯：阿莱士-加西亚和马竞相互有意，转会费约2500万欧](https://www.dongqiudi.com/article/5951086)
 - ⭐ [迪马济奥：马竞有意科莫中场达库尼亚，但科莫不想放人](https://www.dongqiudi.com/article/5950927)
-- ⭐ [科贝：格里马尔多接近加盟马竞，他已告知勒沃库森希望回西甲](https://www.dongqiudi.com/article/5950770)
 
 
 ---
