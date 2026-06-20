@@ -1,0 +1,33 @@
+/* ============================================================
+   隐藏 Butterfly 自带的右下角按钮（回到顶部、设置、翻译等）
+   已被 Axtrivc 浮动发布按钮（FAB）替代
+   ============================================================ */
+
+/* 整个 rightside 工具栏容器 */
+#rightside,
+.rightside,
+#rightside-wrap {
+  display: none !important;
+}
+
+/* 备用：单独隐藏特定按钮 */
+#to_comment,
+#switch-disqus,
+#go-up,
+#go-down,
+#hide-aside-btn,
+#translate-link,
+#theme_mode,
+#readmode,
+.button--refresh,
+.nc-rightside {
+  display: none !important;
+}
+
+/* 隐藏 back-to-top 类的浮动按钮（兼容旧版本） */
+.back-to-top,
+.scroll-to-top,
+#back-to-top,
+#scrollToTop {
+  display: none !important;
+}
