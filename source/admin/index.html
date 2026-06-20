@@ -10,9 +10,10 @@
 <body>
   <!-- Include the Decap CMS script -->
   <script src="https://unpkg.com/decap-cms@^3.6.4/dist/decap-cms.js"></script>
-  <!-- Optional: Preview template customization -->
+  <!-- 中文化 + 头像圆形预览 -->
+  <script src="/admin/i18n.js?v=20260620a"></script>
   <script>
-    // 访问登录界面提示
+    // 全局样式微调
     window.addEventListener('load', function() {
       var style = document.createElement('style');
       style.textContent = `
