@@ -226,7 +226,7 @@ pagination:
 inject:
   head:
     - <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=LXGW+WenKai+Screen&display=swap" rel="stylesheet">
-    - <link rel="stylesheet" href="/css/theme-system.css?v=20260620e">
+    - <link rel="stylesheet" href="/css/theme-system.css?v=20260620f">
     - |
       <style>
       /* Music Bar — Bottom Horizontal Bar (Original style, theme-adaptive) */

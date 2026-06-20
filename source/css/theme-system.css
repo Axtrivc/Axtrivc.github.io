@@ -297,3 +297,9 @@ a[id="card-info-btn"] {
   text-shadow: 0 1px 10px rgba(0, 60, 25, 0.75), 0 0 3px rgba(0, 0, 0, 0.55) !important;
   font-weight: 500 !important;
 }
+
+/* 站点主标题 "Axtrivc's Blog" — 强制黑色 */
+#site-title {
+  color: #1a1a1a !important;
+  text-shadow: none !important;
+}
