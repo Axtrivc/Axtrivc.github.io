@@ -88,7 +88,7 @@
   };
 
   // Current state — DEFAULT to WeChat (pure white, most noticeable change)
-  var currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'wechat';
+  var currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'wechat-classic';
   var customBg = null;
   try { customBg = JSON.parse(localStorage.getItem(STORAGE_KEY_BG)); } catch(e) { customBg = null; }
 
@@ -354,25 +354,8 @@
     html += '<span class="panel-title"><span class="icon">🎨</span>Theme</span>';
     html += '<button class="panel-close" title="Close">&times;</button></div>';
     html += '<div class="panel-section-label">Color Scheme</div>';
-    html += '<div class="panel-section-sub">Classic themes</div>';
     html += '<div class="theme-grid">';
-    // 原有 6 个主题
-    var classicIds = ['wechat', 'warm-beige', 'sky-blue', 'dusk-pink', 'mint', 'minimal'];
-    classicIds.forEach(function(id) {
-      var th = THEME_STYLES[id]; if (!th) return;
-      var activeClass = (currentTheme === id) ? ' active' : '';
-      var swatches = '';
-      th.colors.slice(0, 4).forEach(function(c) { swatches += '<span class="swatch-dot" style="background:' + c + ';"></span>'; });
-      html += '<div class="theme-option' + activeClass + '" data-theme="' + id + '" role="button" tabindex="0">';
-      html += '<div class="theme-swatch">' + swatches + '</div>';
-      html += '<span class="theme-name">' + th.name + '</span></div>';
-    });
-    html += '</div>';
-
-    // 新增 4 个简约清新风方案
-    html += '<div class="panel-section-label">Color Scheme</div>';
-    html += '<div class="panel-section-sub">NEW &middot; 简约清新风</div>';
-    html += '<div class="theme-grid">';
+    // 仅保留 4 个简约清新风主题（删除原 6 个 classic 主题）
     var newIds = ['wechat-classic', 'lake-blue', 'haze-blue', 'beige-lite'];
     newIds.forEach(function(id) {
       var th = THEME_STYLES[id]; if (!th) return;
