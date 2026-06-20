@@ -215,7 +215,25 @@
       '.ax-size-demo.has-image { background-color: transparent; }' +
       '.ax-size-lg { width: 56px; height: 56px; }' +
       '.ax-size-md { width: 36px; height: 36px; }' +
-      '.ax-size-sm { width: 24px; height: 24px; }';
+      '.ax-size-sm { width: 24px; height: 24px; }' +
+      // ===== 限制 CMS 自带图片预览的尺寸 =====
+      '[class*="nc-imageControl-image"],' +
+      '.nc-imageControl-image,' +
+      '[class*="imageControl-image"] {' +
+      '  max-width: 200px !important;' +
+      '  max-height: 200px !important;' +
+      '  width: auto !important;' +
+      '  height: auto !important;' +
+      '  border-radius: 8px;' +
+      '  object-fit: contain;' +
+      '  box-shadow: 0 2px 8px rgba(0,0,0,0.1);' +
+      '}' +
+      '[class*="nc-imageControl-imageWrapper"],' +
+      '.nc-imageControl-imageWrapper,' +
+      '[class*="imageControl-imageWrapper"] {' +
+      '  max-width: 200px !important;' +
+      '  display: inline-block !important;' +
+      '}';
     document.head.appendChild(css);
   }
 
