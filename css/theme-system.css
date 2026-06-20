@@ -285,19 +285,19 @@ a[id="card-info-btn"] {
 }
 
 /* ============================================================
-   2026-06-20: 副标题（打字机效果）+ Footer 文字加深
-   原 Butterfly 默认 var(--light-grey) #EEEEEE，在亮色背景下太浅
+   2026-06-20: 副标题（打字机效果）+ Footer 改为绿色系
+   原 Butterfly 默认 var(--light-grey) #EEEEEE，在亮色背景下太浅且灰
    ============================================================ */
 
-/* 站点副标题：打字机变化的那行字 */
+/* 站点副标题：打字机变化的那行字 — 浅薄荷绿配深色阴影，在 banner 上显眼 */
 #site-subtitle,
 #subtitle {
-  color: rgba(255, 255, 255, 0.92) !important;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45), 0 0 2px rgba(0, 0, 0, 0.5) !important;
+  color: #B8F5D0 !important;
+  text-shadow: 0 1px 10px rgba(0, 80, 30, 0.65), 0 0 3px rgba(0, 0, 0, 0.55) !important;
   font-weight: 500 !important;
 }
 
-/* Footer 文字：本站访客数/总浏览量/最后更新时间/© 2026 By Lee 等 */
+/* Footer 文字：访客数/总浏览量/© 2026 By Lee/框架信息 — 微信主绿 */
 #footer,
 #footer-wrap,
 footer,
@@ -305,23 +305,23 @@ footer,
 #footer-wrap .copyright,
 .footer-content,
 #ftc {
-  color: #4A4A4A !important;
+  color: #07A548 !important;
 }
 
-/* Footer 内的链接也跟着加深 */
+/* Footer 内的链接 — 稍深一点的绿 */
 #footer a,
 footer a {
-  color: #5A5A5A !important;
+  color: #058938 !important;
 }
 #footer a:hover,
 footer a:hover {
-  color: var(--theme-accent-current, #07C160) !important;
+  color: #046B2C !important;
 }
 
-/* busuanzi 访客数字保持当前主题色（更显眼）*/
+/* busuanzi 访客数字 — 更深的墨绿，最显眼 */
 #busuanzi_value_site_uv,
 #busuanzi_value_site_pv,
 #busuanzi_value_page_pv {
-  color: var(--theme-accent-current, #07C160) !important;
+  color: #046B2C !important;
   font-weight: 600 !important;
 }
