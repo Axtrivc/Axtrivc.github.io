@@ -283,3 +283,45 @@ a[id="card-info-btn"] {
   color: #FFFFFF !important;
   transition: background-color 0.45s ease !important;
 }
+
+/* ============================================================
+   2026-06-20: 副标题（打字机效果）+ Footer 文字加深
+   原 Butterfly 默认 var(--light-grey) #EEEEEE，在亮色背景下太浅
+   ============================================================ */
+
+/* 站点副标题：打字机变化的那行字 */
+#site-subtitle,
+#subtitle {
+  color: rgba(255, 255, 255, 0.92) !important;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45), 0 0 2px rgba(0, 0, 0, 0.5) !important;
+  font-weight: 500 !important;
+}
+
+/* Footer 文字：本站访客数/总浏览量/最后更新时间/© 2026 By Lee 等 */
+#footer,
+#footer-wrap,
+footer,
+#footer-wrap .framework-info,
+#footer-wrap .copyright,
+.footer-content,
+#ftc {
+  color: #4A4A4A !important;
+}
+
+/* Footer 内的链接也跟着加深 */
+#footer a,
+footer a {
+  color: #5A5A5A !important;
+}
+#footer a:hover,
+footer a:hover {
+  color: var(--theme-accent-current, #07C160) !important;
+}
+
+/* busuanzi 访客数字保持当前主题色（更显眼）*/
+#busuanzi_value_site_uv,
+#busuanzi_value_site_pv,
+#busuanzi_value_page_pv {
+  color: var(--theme-accent-current, #07C160) !important;
+  font-weight: 600 !important;
+}
