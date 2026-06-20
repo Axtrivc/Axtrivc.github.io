@@ -19,6 +19,26 @@ public_folder: "/img"
 
 # 集合：你可以在管理界面创建/编辑的内容类型
 collections:
+  # ===== 站点设置（头像、简介等） =====
+  - name: "settings"
+    label: "站点设置"
+    label_singular: "设置"
+    folder: "source/_data"
+    create: false
+    delete: false
+    slug: "{{slug}}"
+    extension: "yml"
+    summary: "⚙️ {{title}}"
+    fields:
+      - { label: "标题（不要改）", name: "title", widget: "string", default: "站点设置" }
+      - {
+          label: "头像",
+          name: "avatar",
+          widget: "image",
+          required: false,
+          hint: "上传/更换头像后会自动应用到全站（侧边栏、评论区等）"
+        }
+
   # ===== 博客文章 =====
   - name: "posts"
     label: "博客文章"
