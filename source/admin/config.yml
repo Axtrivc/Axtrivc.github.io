@@ -1,0 +1,152 @@
+# Decap CMS 配置 - Axtrivc's Blog
+# 文档: https://decapcms.org/docs/configuration-options/
+
+# 后端: GitHub（提交到 master 分支，触发 GitHub Actions 自动部署）
+backend:
+  name: github
+  repo: Axtrivc/Axtrivc.github.io
+  branch: master
+  base_url: https://axtrivc-oauth.pages.dev   # ← OAuth 代理地址（Cloudflare Pages 部署后填入）
+  auth_endpoint: /api/auth
+
+# 发布时自动提交到 master，会触发 GitHub Actions 构建 → main 部署
+publish_mode: editorial_workflow
+site_url: https://axtrivc.github.io
+
+# 在内容列表中展示的字段
+media_folder: "source/img"
+public_folder: "/img"
+
+# 集合：你可以在管理界面创建/编辑的内容类型
+collections:
+  # ===== 博客文章 =====
+  - name: "posts"
+    label: "博客文章"
+    label_singular: "文章"
+    folder: "source/_posts"
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    frontmatter_delimiter: ["---", "---"]
+    summary: "{{title}} · {{date}}"
+    sortable_fields: ['date', 'title']
+    fields:
+      - { label: "标题", name: "title", widget: "string", required: true }
+      - { label: "发布时间", name: "date", widget: "datetime", required: true }
+      - {
+          label: "分类",
+          name: "categories",
+          widget: "list",
+          required: false,
+          default: ["随笔"]
+        }
+      - {
+          label: "标签",
+          name: "tags",
+          widget: "list",
+          required: false,
+          default: []
+        }
+      - {
+          label: "封面图",
+          name: "cover",
+          widget: "image",
+          required: false,
+          hint: "可选：文章封面图（会显示在文章页顶部）"
+        }
+      - {
+          label: "摘要",
+          name: "description",
+          widget: "text",
+          required: false,
+          hint: "可选：文章描述，用于 SEO 和列表预览"
+        }
+      - {
+          label: "正文",
+          name: "body",
+          widget: "markdown",
+          required: true,
+          modes: [rich_text, raw]
+        }
+
+  # ===== 足球晚报（快速模板） =====
+  - name: "football"
+    label: "足球晚报"
+    label_singular: "晚报"
+    folder: "source/_posts"
+    create: true
+    delete: true
+    slug: "football-evening-{{year}}-{{month}}-{{day}}"
+    extension: "md"
+    format: "frontmatter"
+    frontmatter_delimiter: ["---", "---"]
+    summary: "⚽ {{title}}"
+    fields:
+      - {
+          label: "标题",
+          name: "title",
+          widget: "string",
+          required: true,
+          default: "足球晚报 · "
+        }
+      - { label: "日期", name: "date", widget: "datetime", required: true }
+      - {
+          label: "分类",
+          name: "categories",
+          widget: "list",
+          required: false,
+          default: ["足球日报"]
+        }
+      - {
+          label: "标签",
+          name: "tags",
+          widget: "list",
+          required: false,
+          default: ["足球", "晚报"]
+        }
+      - {
+          label: "正文",
+          name: "body",
+          widget: "markdown",
+          required: true,
+          default: "> ⚽ 🌙 晚报 · 晚间新闻 + 深度资讯\n\n## 足坛新闻\n\n### 📰 足坛头条\n\n- \n\n### 🎯 赛事速递\n\n- \n",
+          modes: [rich_text, raw]
+        }
+
+  # ===== 西班牙语学习笔记 =====
+  - name: "espanol"
+    label: "西班牙语笔记"
+    label_singular: "笔记"
+    folder: "source/_posts"
+    create: true
+    slug: "espanol-{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    frontmatter_delimiter: ["---", "---"]
+    summary: "🇪🇸 {{title}}"
+    fields:
+      - { label: "标题", name: "title", widget: "string", required: true }
+      - { label: "日期", name: "date", widget: "datetime", required: true }
+      - {
+          label: "分类",
+          name: "categories",
+          widget: "list",
+          required: false,
+          default: ["西语学习"]
+        }
+      - {
+          label: "标签",
+          name: "tags",
+          widget: "list",
+          required: false,
+          default: ["西班牙语"]
+        }
+      - {
+          label: "正文",
+          name: "body",
+          widget: "markdown",
+          required: true,
+          modes: [rich_text, raw]
+        }

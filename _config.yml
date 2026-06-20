@@ -32,6 +32,8 @@ i18n_dir: :lang
 skip_render:
   - espanol/**
   - football/**
+  - admin/**
+  - admin/config.yml
 
 
 # Writing
