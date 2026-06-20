@@ -29,7 +29,7 @@
 #darkmode_button,
 .darkmode_toggle { display: none !important; }
 
-/* Theme nav item highlight - 跟随主题主色 */
+/* Theme nav item highlight - 跟随主题主色 + 强制居中下划线 */
 #nav-theme-trigger {
   position: relative;
   color: #333333 !important;
@@ -37,30 +37,30 @@
 #nav-theme-trigger::after {
   content: '';
   position: absolute;
-  bottom: -2px; left: 50%;
-  transform: translateX(-50%);
+  bottom: -2px; left: 50% !important;
+  transform: translateX(-50%) !important;
   width: 0; height: 2px;
   background: var(--theme-accent, #07C160);
   border-radius: 1px;
   transition: width 0.25s ease, background 0.45s ease;
 }
-#nav-theme-trigger:hover::after { width: 80%; }
+#nav-theme-trigger:hover::after { width: 80% !important; }
 
-/* ===== 全局导航菜单下划线 - 跟随主题主色 ===== */
-#menus .menus_item a,
-#nav a.site-page,
-.menus_items a {
+/* 全局导航菜单下划线 - 跟随主题主色，但排除 Theme 按钮（避免覆盖其居中定位） */
+#menus .menus_item a:not(#nav-theme-trigger),
+#nav a.site-page:not(#nav-theme-trigger),
+.menus_items a:not(#nav-theme-trigger) {
   position: relative;
 }
-#menus .menus_item a::after,
-#nav a.site-page::after,
-.menus_items a::after {
+#menus .menus_item a:not(#nav-theme-trigger)::after,
+#nav a.site-page:not(#nav-theme-trigger)::after,
+.menus_items a:not(#nav-theme-trigger)::after {
   background: var(--theme-accent, #07C160) !important;
   transition: background 0.45s ease;
 }
 /* Butterfly 原生下划线选择器兼容 */
-#menus .menus_item:hover > a::after,
-.menus_item:hover > a.site-page::after {
+#menus .menus_item:hover > a:not(#nav-theme-trigger)::after,
+.menus_item:hover > a.site-page:not(#nav-theme-trigger)::after {
   background: var(--theme-accent, #07C160) !important;
 }
 
