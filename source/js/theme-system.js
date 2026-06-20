@@ -285,26 +285,57 @@
   // NAV BUTTON INJECTION
   // ================================================================
   function setupNavButton() {
-    var menusContainer = document.querySelector('#menus .menus_items');
-    if (!menusContainer || document.getElementById('nav-theme-trigger')) return false;
+    if (document.getElementById('nav-theme-trigger')) return true;
+    var added = false;
 
-    var item = document.createElement('div');
-    item.className = 'menus_item';
-    var link = document.createElement('a');
-    link.className = 'site-page';
-    link.id = 'nav-theme-trigger';
-    link.href = 'javascript:void(0)';
-    // Set initial color immediately to prevent FOUC flash (white on light nav)
-    link.style.color = '#333333';
-    link.innerHTML = '<i class="fas fa-palette"></i><span>Theme</span>';
-    link.setAttribute('title', 'Switch Theme & Background');
-    item.appendChild(link);
-    menusContainer.appendChild(item);
+    // 桌面端：顶部导航 #menus .menus_items
+    var topMenus = document.querySelector('#menus .menus_items');
+    if (topMenus) {
+      var item = document.createElement('div');
+      item.className = 'menus_item';
+      var link = document.createElement('a');
+      link.className = 'site-page';
+      link.id = 'nav-theme-trigger';
+      link.href = 'javascript:void(0)';
+      link.style.color = '#333333';
+      link.innerHTML = '<i class="fas fa-palette"></i><span>Theme</span>';
+      link.setAttribute('title', 'Switch Theme');
+      item.appendChild(link);
+      topMenus.appendChild(item);
+      link.addEventListener('click', function(e) {
+        e.preventDefault(); e.stopPropagation(); togglePanel(); return false;
+      });
+      added = true;
+    }
 
-    link.addEventListener('click', function(e) {
-      e.preventDefault(); e.stopPropagation(); togglePanel(); return false;
-    });
-    return true;
+    // 手机端：侧滑菜单 #sidebar-menus .menus_items
+    var sideMenus = document.querySelector('#sidebar-menus .menus_items');
+    if (sideMenus) {
+      var sItem = document.createElement('div');
+      sItem.className = 'menus_item';
+      var sLink = document.createElement('a');
+      sLink.className = 'site-page';
+      sLink.id = 'sidebar-theme-trigger';
+      sLink.href = 'javascript:void(0)';
+      sLink.innerHTML = '<i class="fas fa-palette"></i><span>Theme</span>';
+      sLink.setAttribute('title', 'Switch Theme');
+      sItem.appendChild(sLink);
+      sideMenus.appendChild(sItem);
+      sLink.addEventListener('click', function(e) {
+        e.preventDefault(); e.stopPropagation();
+        // 关闭侧滑菜单
+        var mask = document.getElementById('menu-mask');
+        var sidebar = document.getElementById('sidebar');
+        if (sidebar) sidebar.classList.remove('open');
+        if (mask) mask.classList.remove('open');
+        document.body.classList.remove('open-sidebar');
+        setTimeout(togglePanel, 250);
+        return false;
+      });
+      added = true;
+    }
+
+    return added;
   }
 
   // ================================================================
@@ -354,19 +385,7 @@
     });
     html += '</div>';
 
-    // Background section
-    html += '<div class="panel-section-label">Background Image</div><div class="bg-section">';
-    html += '<div class="bg-upload-area" id="bg-upload" tabindex="0" role="button">';
-    html += '<div class="upload-icon">📷</div>';
-    html += '<div class="upload-text"><strong>Click or Drag</strong> to upload image<br>or paste URL below</div>';
-    html += '<div class="upload-hint">JPG / PNG / WebP &le; 10MB</div></div>';
-    html += '<div class="bg-url-row">';
-    html += '<input type="text" class="bg-url-input" id="bg-url-input" placeholder="Paste image URL here...">';
-    html += '<button class="bg-url-btn" id="bg-url-btn">Apply</button></div>';
-    html += '<div class="bg-controls">';
-    html += '<div class="bg-control"><label>Opacity <span id="opacity-val">35%</span></label><input type="range" id="bg-opacity" min="5" max="80" value="35"></div>';
-    html += '<div class="bg-control"><label>Blur <span id="blur-val">0px</span></label><input type="range" id="bg-blur" min="0" max="20" value="0"></div></div>';
-    html += '<button class="bg-remove-btn' + (customBg ? '' : ' hidden') + '" id="bg-remove">Remove Background Image</button></div>';
+    // Background section removed (v2) — 用户反馈没啥用
 
     panel.innerHTML = html; document.body.appendChild(panel); bindPanelEvents();
   }
