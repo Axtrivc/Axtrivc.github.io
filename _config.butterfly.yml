@@ -238,14 +238,9 @@ inject:
       #music-bar .bar-info { display: block; }
       #music-bar .bar-title { font-size: 13px; font-weight: 600; color: #4a3728; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
       #music-bar .bar-sub { font-size: 11px; color: #a09080; }
-      #music-bar .bar-controls { display: flex; align-items: center; gap: 10px; }
+      #music-bar .bar-controls { display: flex; align-items: center; gap: 12px; }
       .bar-btn { width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.22s; font-size: 16px; background: transparent; color: #8B6F47; }
       .bar-btn:hover { background: rgba(139,111,71,0.08); transform: scale(1.05); }
-      /* Source switch pill button (网易云 / Spotify) */
-      #btn-source-switch { height: 32px; padding: 0 12px; border-radius: 16px; border: 1.5px solid rgba(139,111,71,0.25); background: transparent; color: #8B6F47; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.22s; white-space: nowrap; }
-      #btn-source-switch:hover { background: rgba(139,111,71,0.08); border-color: #8B6F47; }
-      #btn-source-switch .src-dot { width: 6px; height: 6px; border-radius: 50%; background: #C20C0C; transition: background 0.3s; }
-      #btn-source-switch.spotify-src .src-dot { background: #1DB954; }
       #music-bar .bar-btn-toggle { width: 36px; height: 36px; border-radius: 50%; background: #8B6F47; color: #fff; font-size: 13px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.22s; }
       #music-bar .bar-btn-toggle:hover { background: #A0845C; transform: scale(1.05); }
       #music-panel { position: fixed; bottom: 60px; right: 24px; width: 360px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 48px rgba(139,111,71,0.20); z-index: 9985; opacity: 0; pointer-events: none; transition: all 0.35s cubic-bezier(0.4,0,0.2,1); background: var(--bg-surface, rgba(255,255,255,0.96)); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(139,111,71,0.12); transform: translateY(16px) scale(0.95); }
@@ -258,12 +253,10 @@ inject:
       #player-embed-container iframe { display: block; width: 100%; border: none; border-radius: 0 0 16px 16px; }
       body { padding-bottom: 62px !important; }
       @media (max-width: 768px) {
-        #music-bar { height: 50px; padding: 0 12px; }
+        #music-bar { height: 50px; padding: 0 16px; }
         #music-bar .bar-cover { width: 34px; height: 34px; font-size: 17px; }
-        #music-bar .bar-title { max-width: 110px; font-size: 12px; }
-        #music-bar .bar-sub { font-size: 10px; }
+        #music-bar .bar-title { max-width: 140px; font-size: 12px; }
         .bar-btn { width: 32px; height: 32px; font-size: 14px; }
-        #btn-source-switch { padding: 0 9px; font-size: 10px; height: 28px; }
         #music-bar .bar-btn-toggle { width: 30px; height: 30px; font-size: 11px; }
         #music-panel { right: 12px; bottom: 54px; width: calc(100vw - 24px); }
         body { padding-bottom: 56px !important; }
@@ -297,11 +290,8 @@ inject:
           </div>
         </div>
         <div class="bar-controls">
-          <button class="bar-btn" id="btn-link" onclick="openExternal()" title="在外部打开">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          </button>
-          <button id="btn-source-switch" onclick="switchSource()" title="切换音源">
-            <span class="src-dot"></span><span id="src-label">网易云</span>
+          <button class="bar-btn" id="btn-link" onclick="window.open('https://open.spotify.com/playlist/6T6g0jNwBR1YLNfCO5miEo','_blank')" title="在 Spotify 中打开">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
           </button>
           <button class="bar-btn-toggle" id="btn-toggle" onclick="togglePlayer()" title="展开/收起播放器">
             <svg id="icon-up" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
@@ -313,95 +303,33 @@ inject:
           <span>🎧 Now Playing</span>
           <button onclick="togglePlayer()">✕</button>
         </div>
-        <div id="player-embed-container"></div>
+        <div id="player-embed-container">
+          <iframe src="https://open.spotify.com/embed/playlist/6T6g0jNwBR1YLNfCO5miEo?utm_source=generator&theme=0" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="display:block;width:100%;border:none;border-radius:0 0 16px 16px;"></iframe>
+        </div>
       </div>
       <script>
       (function() {
-        // ============ 双源配置区 ============
-        // 网易云：填歌单 ID（从歌单 URL https://music.163.com/#/playlist?id=XXX 中拿 XXX）
-        var NETEASE_PLAYLIST_ID = 'YOUR_PLAYLIST_ID';
-        var NETEASE_TITLE = '我的网易云歌单';
-        var NETEASE_EXTERNAL_URL = 'https://music.163.com/#/playlist?id=' + NETEASE_PLAYLIST_ID;
-
-        // Spotify
-        var SPOTIFY_PLAYLIST_ID = '6T6g0jNwBR1YLNfCO5miEo';
-        var SPOTIFY_TITLE = 'My Playlist';
-        var SPOTIFY_EXTERNAL_URL = 'https://open.spotify.com/playlist/' + SPOTIFY_PLAYLIST_ID;
-        var SPOTIFY_EMBED_URL = 'https://open.spotify.com/embed/playlist/' + SPOTIFY_PLAYLIST_ID + '?utm_source=generator&theme=0';
-
-        // 默认音源：'netease' 或 'spotify'
-        var DEFAULT_SOURCE = 'netease';
-        // ==================================
-
-        var currentSource = localStorage.getItem('ax-music-source') || DEFAULT_SOURCE;
-        if (currentSource !== 'netease' && currentSource !== 'spotify') currentSource = DEFAULT_SOURCE;
-
-        var panelOpen = false;
-        var panel = document.getElementById('music-panel');
-        var embedContainer = document.getElementById('player-embed-container');
-        var btnToggle = document.getElementById('btn-toggle');
-        var iconUp = document.getElementById('icon-up');
-        var vinyl = document.getElementById('vinyl-icon');
-        var barSub = document.querySelector('.bar-sub');
-        var barTitle = document.getElementById('bar-title');
-        var srcSwitch = document.getElementById('btn-source-switch');
-        var srcLabel = document.getElementById('src-label');
-
-        function buildEmbed(source) {
-          if (source === 'netease') {
-            if (NETEASE_PLAYLIST_ID === 'YOUR_PLAYLIST_ID') {
-              return '<div style="padding:24px;text-align:center;color:#a09080;font-size:12px;">未配置网易云歌单 ID<br>请在 _config.butterfly.yml 中设置 NETEASE_PLAYLIST_ID</div>';
-            }
-            var url = 'https://music.163.com/outchain/player?type=2&id=' + NETEASE_PLAYLIST_ID + '&auto=1&height=86';
-            return '<iframe src="' + url + '" height="86" border="0" marginwidth="0" marginheight="0" allow="autoplay; encrypted-media"></iframe>';
-          } else {
-            return '<iframe src="' + SPOTIFY_EMBED_URL + '" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
-          }
-        }
-
-        function applySource(source) {
-          currentSource = source;
-          localStorage.setItem('ax-music-source', source);
-          embedContainer.innerHTML = buildEmbed(source);
-          if (source === 'netease') {
-            srcLabel.textContent = '网易云';
-            srcSwitch.classList.remove('spotify-src');
-            barTitle.textContent = NETEASE_TITLE;
-            vinyl.textContent = '🎵';
-            barSub.textContent = '网易云 · 点击播放 ♪';
-          } else {
-            srcLabel.textContent = 'Spotify';
-            srcSwitch.classList.add('spotify-src');
-            barTitle.textContent = SPOTIFY_TITLE;
-            vinyl.textContent = '🎵';
-            barSub.textContent = 'Spotify · 点击播放 ♪';
-          }
-        }
-
-        window.switchSource = function() {
-          applySource(currentSource === 'netease' ? 'spotify' : 'netease');
-        };
-
-        window.openExternal = function() {
-          window.open(currentSource === 'netease' ? NETEASE_EXTERNAL_URL : SPOTIFY_EXTERNAL_URL, '_blank');
-        };
+        let panelOpen = false;
+        const panel = document.getElementById('music-panel');
+        const btnToggle = document.getElementById('btn-toggle');
+        const iconUp = document.getElementById('icon-up');
+        const vinyl = document.getElementById('vinyl-icon');
+        const barSub = document.querySelector('.bar-sub');
 
         window.togglePlayer = function() {
           panelOpen = !panelOpen;
           if (panelOpen) {
             panel.classList.add('show');
             iconUp.innerHTML = '<path d="M6 9l6 6 6-6"/>';
-            if (currentSource === 'netease') barSub.textContent = '网易云 · 点击播放 ♪';
-            else barSub.textContent = 'Spotify · 点击播放 ♪';
+            barSub.textContent = '点击播放 ♪';
           } else {
             panel.classList.remove('show');
             iconUp.innerHTML = '<path d="M18 15l-6-6-6 6"/>';
           }
         };
 
-        // Listen for Spotify embed messages (play/pause state, Spotify-only)
+        // Listen for Spotify embed messages (play/pause state)
         window.addEventListener('message', function(e) {
-          if (currentSource !== 'spotify') return;
           if (e.data && e.data.type === 'SPOTIFY_FRAME_MESSAGE') {
             try {
               const payload = typeof e.data.payload === 'string' ? JSON.parse(e.data.payload) : e.data.payload;
@@ -422,15 +350,12 @@ inject:
 
         // Close panel when clicking outside
         document.addEventListener('click', function(e) {
-          if (panelOpen && !panel.contains(e.target) && !btnToggle.contains(e.target) && !srcSwitch.contains(e.target)) {
+          if (panelOpen && !panel.contains(e.target) && !btnToggle.contains(e.target)) {
             panelOpen = false;
             panel.classList.remove('show');
             iconUp.innerHTML = '<path d="M18 15l-6-6-6 6"/>';
           }
         });
-
-        // 初始化
-        applySource(currentSource);
       })();
       </script>
       <script>
