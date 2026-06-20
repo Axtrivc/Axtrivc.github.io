@@ -52,6 +52,38 @@
       bg: '#EBEBEB', body: '#EBEBEB', nav: 'rgba(235,235,235,0.92)', card: '#FFFFFF',
       text: '#222222', heading: '#111111', secondary: '#777777', accent: '#444444',
       border: '#CCCCCC', pageHeader: '#DDDDDD', navText: '#222222', navTextHover: '#444444'
+    },
+    // === 新增方案 A：微信经典绿白（绿茵足球风） ===
+    'wechat-classic': {
+      name: 'WeChat Green',
+      colors: ['#FFFFFF', '#07C160', '#FA5151', '#F7F7F7', '#191919', '#7A7A7A'],
+      bg: '#FFFFFF', body: '#FFFFFF', nav: 'rgba(255,255,255,0.96)', card: '#FFFFFF',
+      text: '#191919', heading: '#07A548', secondary: '#7A7A7A', accent: '#07C160',
+      border: '#EDEDED', pageHeader: '#FFFFFF', navText: '#191919', navTextHover: '#07C160'
+    },
+    // === 新增方案 B：清晨湖蓝（年轻活力） ===
+    'lake-blue': {
+      name: 'Lake Blue',
+      colors: ['#F4FBFF', '#10AEFF', '#FF976A', '#FFFFFF', '#0C447C', '#5A9EC9'],
+      bg: '#F4FBFF', body: '#F4FBFF', nav: 'rgba(244,251,255,0.95)', card: '#FFFFFF',
+      text: '#191919', heading: '#0C447C', secondary: '#5A9EC9', accent: '#10AEFF',
+      border: 'rgba(16,174,255,0.18)', pageHeader: '#E6F5FF', navText: '#0C447C', navTextHover: '#10AEFF'
+    },
+    // === 新增方案 C：雾霾蓝灰（沉稳） ===
+    'haze-blue': {
+      name: 'Haze Blue',
+      colors: ['#FAFBFC', '#4A5568', '#B85C5C', '#FFFFFF', '#2D3748', '#718096'],
+      bg: '#FAFBFC', body: '#FAFBFC', nav: 'rgba(250,251,252,0.95)', card: '#FFFFFF',
+      text: '#2D3748', heading: '#1A202C', secondary: '#718096', accent: '#4A5568',
+      border: '#EAECEF', pageHeader: '#F0F2F5', navText: '#2D3748', navTextHover: '#4A5568'
+    },
+    // === 新增方案 D：米色升级版（扁平化米色） ===
+    'beige-lite': {
+      name: 'Beige Lite',
+      colors: ['#FFFCF5', '#8B6F47', '#C4A96A', '#FFFFFF', '#3A2A1A', '#9A8866'],
+      bg: '#FFFCF5', body: '#FFFCF5', nav: 'rgba(255,252,245,0.96)', card: '#FFFFFF',
+      text: '#3A2A1A', heading: '#3A2A1A', secondary: '#9A8866', accent: '#8B6F47',
+      border: '#EFE8DA', pageHeader: '#FFFCF5', navText: '#3A2A1A', navTextHover: '#8B6F47'
     }
   };
 
@@ -291,9 +323,29 @@
     html += '<span class="panel-title"><span class="icon">🎨</span>Theme</span>';
     html += '<button class="panel-close" title="Close">&times;</button></div>';
     html += '<div class="panel-section-label">Color Scheme</div>';
+    html += '<div class="panel-section-sub">Classic themes</div>';
     html += '<div class="theme-grid">';
-    Object.keys(THEME_STYLES).forEach(function(id) {
-      var th = THEME_STYLES[id], activeClass = (currentTheme === id) ? ' active' : '';
+    // 原有 6 个主题
+    var classicIds = ['wechat', 'warm-beige', 'sky-blue', 'dusk-pink', 'mint', 'minimal'];
+    classicIds.forEach(function(id) {
+      var th = THEME_STYLES[id]; if (!th) return;
+      var activeClass = (currentTheme === id) ? ' active' : '';
+      var swatches = '';
+      th.colors.slice(0, 4).forEach(function(c) { swatches += '<span class="swatch-dot" style="background:' + c + ';"></span>'; });
+      html += '<div class="theme-option' + activeClass + '" data-theme="' + id + '" role="button" tabindex="0">';
+      html += '<div class="theme-swatch">' + swatches + '</div>';
+      html += '<span class="theme-name">' + th.name + '</span></div>';
+    });
+    html += '</div>';
+
+    // 新增 4 个简约清新风方案
+    html += '<div class="panel-section-label">Color Scheme</div>';
+    html += '<div class="panel-section-sub">NEW &middot; 简约清新风</div>';
+    html += '<div class="theme-grid">';
+    var newIds = ['wechat-classic', 'lake-blue', 'haze-blue', 'beige-lite'];
+    newIds.forEach(function(id) {
+      var th = THEME_STYLES[id]; if (!th) return;
+      var activeClass = (currentTheme === id) ? ' active' : '';
       var swatches = '';
       th.colors.slice(0, 4).forEach(function(c) { swatches += '<span class="swatch-dot" style="background:' + c + ';"></span>'; });
       html += '<div class="theme-option' + activeClass + '" data-theme="' + id + '" role="button" tabindex="0">';
