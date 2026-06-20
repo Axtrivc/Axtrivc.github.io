@@ -1,498 +1,469 @@
-/**
- * Axtrivc's Blog — Theme System
- * Theme switcher + background customization
- */
+/* ============================================================
+   Axtrivc's Blog — Theme System v7
+   Direct DOM manipulation — applies IMMEDIATELY on load
+   ============================================================ */
 (function () {
   'use strict';
 
-  // ============================================================
-  // Theme definitions
-  // ============================================================
-  var THEMES = [
-    {
-      id: 'wechat',
-      name: '微信清新',
-      colors: ['#FFFFFF', '#07C160', '#576B95', '#F7F8FA']
+  // ---- Constants ----
+  var STORAGE_KEY_THEME = 'axtrivc_theme_v2';
+  var STORAGE_KEY_BG = 'axtrivc_custom_bg_v2';
+
+  // ---- Theme Definitions ----
+  var THEME_STYLES = {
+    wechat: {
+      name: 'WeChat',
+      colors: ['#FFFFFF', '#07C160', '#576B95', '#FFFFFF', '#191919', '#666666'],
+      bg: '#FFFFFF', body: '#FFFFFF', nav: 'rgba(255,255,255,0.96)', card: '#FFFFFF',
+      text: '#191919', heading: '#111111', secondary: '#5D5D5D', accent: '#07C160',
+      border: '#E8E8E8', pageHeader: '#FFFFFF', navText: '#333333', navTextHover: '#07C160'
     },
-    {
-      id: 'warm-beige',
-      name: '暖米原色',
-      colors: ['#F5F0E8', '#8B6F47', '#C4A96A', '#FFFFFF']
+    'warm-beige': {
+      name: 'Warm Beige',
+      colors: ['#F0E4D0', '#B8860B', '#C4A96A', '#FFF9EE', '#3D2B1A', '#8A7A66'],
+      bg: '#F0E4D0', body: '#F0E4D0', nav: 'rgba(240,228,208,0.92)', card: '#FFFBF5',
+      text: '#3D2B1A', heading: '#2A1A0A', secondary: '#8A7A66', accent: '#B8860B',
+      border: 'rgba(184,134,11,0.16)', pageHeader: '#E8DCC8', navText: '#3D2B1A', navTextHover: '#B8860B'
     },
-    {
-      id: 'sky-blue',
-      name: '天空浅蓝',
-      colors: ['#F5F9FC', '#5B9BD5', '#6BB5F0', '#FFFFFF']
+    'sky-blue': {
+      name: 'Sky Blue',
+      colors: ['#DAECFA', '#2980B9', '#6BB5F0', '#F0F8FF', '#1A3A5C', '#4A7094'],
+      bg: '#DAECFA', body: '#DAECFA', nav: 'rgba(218,236,250,0.92)', card: '#F0F8FF',
+      text: '#1A3A5C', heading: '#0D253F', secondary: '#4A7094', accent: '#2980B9',
+      border: 'rgba(41,128,185,0.18)', pageHeader: '#C5DEF5', navText: '#1A3A5C', navTextHover: '#2980B9'
     },
-    {
-      id: 'dusk-pink',
-      name: '薄暮粉',
-      colors: ['#FDF8F5', '#D4958B', '#F0A3B3', '#FFFFFF']
+    'dusk-pink': {
+      name: 'Dusk Pink',
+      colors: ['#F8DDD4', '#C06030', '#F0A3B3', '#FFF5F0', '#5C2E24', '#A06A5C'],
+      bg: '#F8DDD4', body: '#F8DDD4', nav: 'rgba(248,221,212,0.92)', card: '#FFF5F0',
+      text: '#5C2E24', heading: '#3D1A12', secondary: '#A06A5C', accent: '#C06030',
+      border: 'rgba(192,96,48,0.18)', pageHeader: '#F0C8BA', navText: '#5C2E24', navTextHover: '#C06030'
     },
-    {
-      id: 'mint',
-      name: '薄荷清绿',
-      colors: ['#F5FAF8', '#5FAB8D', '#7ECDAD', '#FFFFFF']
+    mint: {
+      name: 'Mint',
+      colors: ['#D4EEE4', '#27AE60', '#7ECDAD', '#F0FFF8', '#1A3D2E', '#4A8068'],
+      bg: '#D4EEE4', body: '#D4EEE4', nav: 'rgba(212,238,228,0.92)', card: '#F0FFF8',
+      text: '#1A3D2E', heading: '#0D261A', secondary: '#4A8068', accent: '#27AE60',
+      border: 'rgba(39,174,96,0.18)', pageHeader: '#BFE0D4', navText: '#1A3D2E', navTextHover: '#27AE60'
     },
-    {
-      id: 'minimal',
-      name: '极简灰白',
-      colors: ['#FAFAFA', '#3A3A3A', '#8C8C8C', '#FFFFFF']
+    minimal: {
+      name: 'Minimal',
+      colors: ['#EBEBEB', '#444444', '#888888', '#FFFFFF', '#222222', '#777777'],
+      bg: '#EBEBEB', body: '#EBEBEB', nav: 'rgba(235,235,235,0.92)', card: '#FFFFFF',
+      text: '#222222', heading: '#111111', secondary: '#777777', accent: '#444444',
+      border: '#CCCCCC', pageHeader: '#DDDDDD', navText: '#222222', navTextHover: '#444444'
+    },
+    // === 新增方案 A：微信经典绿白（绿茵足球风） ===
+    'wechat-classic': {
+      name: 'WeChat Green',
+      colors: ['#FFFFFF', '#07C160', '#FA5151', '#F7F7F7', '#191919', '#7A7A7A'],
+      bg: '#FFFFFF', body: '#FFFFFF', nav: 'rgba(255,255,255,0.96)', card: '#FFFFFF',
+      text: '#191919', heading: '#07A548', secondary: '#7A7A7A', accent: '#07C160',
+      border: '#EDEDED', pageHeader: '#FFFFFF', navText: '#191919', navTextHover: '#07C160'
+    },
+    // === 新增方案 B：清晨湖蓝（年轻活力） ===
+    'lake-blue': {
+      name: 'Lake Blue',
+      colors: ['#F4FBFF', '#10AEFF', '#FF976A', '#FFFFFF', '#0C447C', '#5A9EC9'],
+      bg: '#F4FBFF', body: '#F4FBFF', nav: 'rgba(244,251,255,0.95)', card: '#FFFFFF',
+      text: '#191919', heading: '#0C447C', secondary: '#5A9EC9', accent: '#10AEFF',
+      border: 'rgba(16,174,255,0.18)', pageHeader: '#E6F5FF', navText: '#0C447C', navTextHover: '#10AEFF'
+    },
+    // === 新增方案 C：雾霾蓝灰（沉稳） ===
+    'haze-blue': {
+      name: 'Haze Blue',
+      colors: ['#FAFBFC', '#4A5568', '#B85C5C', '#FFFFFF', '#2D3748', '#718096'],
+      bg: '#FAFBFC', body: '#FAFBFC', nav: 'rgba(250,251,252,0.95)', card: '#FFFFFF',
+      text: '#2D3748', heading: '#1A202C', secondary: '#718096', accent: '#4A5568',
+      border: '#EAECEF', pageHeader: '#F0F2F5', navText: '#2D3748', navTextHover: '#4A5568'
+    },
+    // === 新增方案 D：米色升级版（扁平化米色） ===
+    'beige-lite': {
+      name: 'Beige Lite',
+      colors: ['#FFFCF5', '#8B6F47', '#C4A96A', '#FFFFFF', '#3A2A1A', '#9A8866'],
+      bg: '#FFFCF5', body: '#FFFCF5', nav: 'rgba(255,252,245,0.96)', card: '#FFFFFF',
+      text: '#3A2A1A', heading: '#3A2A1A', secondary: '#9A8866', accent: '#8B6F47',
+      border: '#EFE8DA', pageHeader: '#FFFCF5', navText: '#3A2A1A', navTextHover: '#8B6F47'
     }
-  ];
+  };
 
-  var STORAGE_KEY_THEME = 'axtrivc-theme';
-  var STORAGE_KEY_BG = 'axtrivc-bg-image';
-  var STORAGE_KEY_BG_OPACITY = 'axtrivc-bg-opacity';
-  var STORAGE_KEY_BG_BLUR = 'axtrivc-bg-blur';
+  // Current state — DEFAULT to WeChat (pure white, most noticeable change)
+  var currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'wechat';
+  var customBg = null;
+  try { customBg = JSON.parse(localStorage.getItem(STORAGE_KEY_BG)); } catch(e) { customBg = null; }
 
-  // ============================================================
-  // State
-  // ============================================================
-  var currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'warm-beige';
-  var panelOpen = false;
-
-  // ============================================================
-  // DOM creation
-  // ============================================================
-
-  // Create trigger button
-  var trigger = document.createElement('div');
-  trigger.id = 'theme-trigger';
-  trigger.title = '切换主题';
-  trigger.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-
-  // Create overlay
-  var overlay = document.createElement('div');
-  overlay.id = 'theme-overlay';
-
-  // Build theme option HTML
-  function buildThemeGrid() {
-    var html = '';
-    THEMES.forEach(function (t) {
-      var activeClass = (currentTheme === t.id) ? ' active' : '';
-      var dots = t.colors.map(function (c) {
-        return '<span class="swatch-dot" style="background:' + c + '"></span>';
-      }).join('');
-      html +=
-        '<div class="theme-option' + activeClass + '" data-theme="' + t.id + '">' +
-          '<div class="theme-swatch">' + dots + '</div>' +
-          '<span class="theme-name">' + t.name + '</span>' +
-        '</div>';
-    });
-    return html;
-  }
-
-  // Create panel
-  var panel = document.createElement('div');
-  panel.id = 'theme-panel';
-  panel.innerHTML =
-    '<div class="panel-header">' +
-      '<span class="panel-title"><span class="icon">🎨</span>主题切换</span>' +
-      '<button class="panel-close" title="关闭">&times;</button>' +
-    '</div>' +
-    '<div class="panel-section-label">配色方案</div>' +
-    '<div class="theme-grid">' + buildThemeGrid() + '</div>' +
-    '<div class="panel-section-label">🖼 自定义背景</div>' +
-    '<div class="bg-section">' +
-      '<div class="bg-upload-area" id="bg-upload-area">' +
-        '<div class="upload-icon">📷</div>' +
-        '<div class="upload-text">点击或拖拽图片到这里</div>' +
-        '<div class="upload-hint">建议 1920×1080 以上，JPG/PNG/WebP</div>' +
-      '</div>' +
-      '<div class="bg-url-row">' +
-        '<input class="bg-url-input" id="bg-url-input" type="text" placeholder="或粘贴图片链接...">' +
-        '<button class="bg-url-btn" id="bg-url-btn">应用</button>' +
-      '</div>' +
-      '<div class="bg-controls">' +
-        '<div class="bg-control">' +
-          '<label>透明度 <span id="opacity-val">35</span>%</label>' +
-          '<input type="range" id="bg-opacity" min="5" max="80" value="35">' +
-        '</div>' +
-        '<div class="bg-control">' +
-          '<label>模糊 <span id="blur-val">0</span>px</label>' +
-          '<input type="range" id="bg-blur" min="0" max="20" value="0">' +
-        '</div>' +
-      '</div>' +
-      '<button class="bg-remove-btn hidden" id="bg-remove-btn">✕ 移除背景</button>' +
-    '</div>';
-
-  // Hidden file input
-  var fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = 'image/jpeg,image/png,image/webp,image/gif';
-  fileInput.style.display = 'none';
-
-  // Append to body
-  document.body.appendChild(trigger);
-  document.body.appendChild(overlay);
-  document.body.appendChild(panel);
-  document.body.appendChild(fileInput);
-
-  // ============================================================
-  // Theme functions
-  // ============================================================
-
+  // ================================================================
+  // APPLY THEME — called immediately on load AND on user selection
+  // ================================================================
   function applyTheme(themeId) {
-    document.body.setAttribute('data-theme', themeId);
-    currentTheme = themeId;
-    localStorage.setItem(STORAGE_KEY_THEME, themeId);
+    var t = THEME_STYLES[themeId];
+    if (!t) return;
 
-    // Update active state in panel
-    var opts = panel.querySelectorAll('.theme-option');
-    opts.forEach(function (el) {
-      if (el.getAttribute('data-theme') === themeId) {
-        el.classList.add('active');
-      } else {
-        el.classList.remove('active');
-      }
+    // CRITICAL: #web_bg overrides Butterfly's hardcoded background
+    var webBg = document.getElementById('web_bg');
+    if (webBg) {
+      webBg.style.backgroundColor = t.bg;
+      webBg.style.transition = 'background-color 0.45s ease';
+    }
+
+    // html + body background
+    document.documentElement.style.backgroundColor = t.bg;
+    document.body.style.backgroundColor = t.body;
+    document.body.style.color = t.text;
+
+    // Navigation bar
+    var nav = document.getElementById('nav');
+    if (nav) { nav.style.background = t.nav; }
+
+    // Nav menu items text color
+    var navLinks = document.querySelectorAll('#menus .menus_item a, #nav a.site-page, .menus_items a');
+    navLinks.forEach(function(link) { link.style.color = t.navText || t.text; });
+
+    // Nav hover style injection
+    var styleNavHover = document.getElementById('theme-nav-hover-style');
+    if (!styleNavHover) {
+      styleNavHover = document.createElement('style');
+      styleNavHover.id = 'theme-nav-hover-style';
+      document.head.appendChild(styleNavHover);
+    }
+    styleNavHover.textContent =
+      '#menus .menus_item a:hover, #nav a.site-page:hover, .menus_items a:hover { color: ' + (t.navTextHover || t.accent) + ' !important; }';
+
+    // Site title
+    var siteTitle = document.querySelector('#site-title, #site-name, .site-name a');
+    if (siteTitle) { siteTitle.style.color = t.heading; }
+
+    // Page header / hero
+    var pageHeader = document.getElementById('page-header');
+    if (pageHeader) { pageHeader.style.backgroundColor = t.pageHeader; }
+
+    // Article cards
+    document.querySelectorAll('.recent-post-item').forEach(function(c) {
+      c.style.backgroundColor = t.card;
+      c.style.borderColor = t.border;
     });
 
-    // Update music bar dynamically
-    updateMusicBar(themeId);
-  }
+    // Sidebar widgets
+    document.querySelectorAll('.card-widget').forEach(function(w) {
+      w.style.backgroundColor = t.card;
+      w.style.borderColor = t.border;
+    });
 
-  function updateMusicBar(themeId) {
-    var bar = document.getElementById('music-bar');
-    var mpanel = document.getElementById('music-panel');
-    if (!bar || !mpanel) return;
+    // Headings
+    document.querySelectorAll('.article-title, .site-name, #site-title, .item-headline').forEach(function(h) {
+      h.style.color = t.heading;
+    });
 
-    // Theme-specific music bar colors
-    var styles = {
-      'wechat': {
-        bg: 'rgba(255,255,255,0.90)',
-        border: 'rgba(0,0,0,0.06)',
-        title: '#191919',
-        sub: '#8E8E93',
-        accent: '#07C160',
-        shadow: 'rgba(0,0,0,0.05)'
-      },
-      'warm-beige': {
-        bg: 'rgba(245,240,232,0.92)',
-        border: 'rgba(139,111,71,0.12)',
-        title: '#4a3728',
-        sub: '#a09080',
-        accent: '#8B6F47',
-        shadow: 'rgba(139,111,71,0.08)'
-      },
-      'sky-blue': {
-        bg: 'rgba(245,249,252,0.90)',
-        border: 'rgba(91,155,213,0.10)',
-        title: '#2C3E50',
-        sub: '#7F8C8D',
-        accent: '#5B9BD5',
-        shadow: 'rgba(91,155,213,0.06)'
-      },
-      'dusk-pink': {
-        bg: 'rgba(253,248,245,0.90)',
-        border: 'rgba(212,149,139,0.10)',
-        title: '#4A3535',
-        sub: '#9A8A8A',
-        accent: '#D4958B',
-        shadow: 'rgba(212,149,139,0.06)'
-      },
-      'mint': {
-        bg: 'rgba(245,250,248,0.90)',
-        border: 'rgba(95,171,141,0.10)',
-        title: '#2D3E35',
-        sub: '#7A8D83',
-        accent: '#5FAB8D',
-        shadow: 'rgba(95,171,141,0.06)'
-      },
-      'minimal': {
-        bg: 'rgba(250,250,250,0.90)',
-        border: 'rgba(0,0,0,0.06)',
-        title: '#1A1A1A',
-        sub: '#8C8C8C',
-        accent: '#3A3A3A',
-        shadow: 'rgba(0,0,0,0.04)'
+    // Secondary text (but NOT footer background — handled below)
+    document.querySelectorAll('.article-meta-wrap, .article-meta-label, .post-meta-date, time, .aside-list-item .content time').forEach(function(s) {
+      s.style.color = t.secondary;
+    });
+
+    // Accent links
+    document.querySelectorAll('.recent-post-info a.article-title, .aside-list-item .content .title a, #pagination a').forEach(function(l) {
+      l.style.color = t.accent;
+    });
+
+    // ---- Elements that were previously missed ----
+
+    // Footer: background + text color — use a slightly darker shade than body bg
+    var footerWrap = document.getElementById('footer-wrap');
+    if (footerWrap) {
+      footerWrap.style.backgroundColor = themeId === 'wechat' ? '#FAFAFA' : t.nav;
+      footerWrap.style.color = themeId === 'wechat' ? '#666666' : t.secondary;
+      footerWrap.style.borderTopColor = t.border;
+    }
+    // Also target footer itself
+    document.querySelectorAll('#footer, footer').forEach(function(f) {
+      f.style.backgroundColor = themeId === 'wechat' ? '#FAFAFA' : t.nav;
+      f.style.color = themeId === 'wechat' ? '#666666' : t.secondary;
+    });
+
+    // Pagination: current/active page number + all page links bg
+    document.querySelectorAll('#pagination .page-number, #pagination .current, .pagination .page-number, .pagination .current').forEach(function(p) {
+      if (p.classList.contains('current') || p.id === 'page-current') {
+        p.style.backgroundColor = t.accent;
+        p.style.borderColor = t.accent;
+        p.style.color = '#FFFFFF';
+      } else {
+        p.style.backgroundColor = t.card;
+        p.style.borderColor = t.border;
+        p.style.color = t.text;
       }
-    };
+    });
+    // pagination arrow buttons
+    document.querySelectorAll('#pagination .extend, #pagination .next, #pagination .prev, .pagination .extend, .pagination a.extend').forEach(function(e) {
+      e.style.backgroundColor = t.card;
+      e.style.borderColor = t.border;
+      e.style.color = t.text;
+    });
 
-    var s = styles[themeId] || styles['warm-beige'];
-    bar.style.background = s.bg;
-    bar.style.borderTop = '1px solid ' + s.border;
-    bar.style.boxShadow = '0 -2px 20px ' + s.shadow;
-    mpanel.style.background = s.bg;
-    mpanel.style.border = '1px solid ' + s.border;
-    mpanel.style.boxShadow = '0 8px 40px ' + s.shadow;
+    // Right-side floating buttons (actual DOM: #go-up, #rightside-config)
+    document.querySelectorAll('#rightside > button, #go-up, #rightside-config, #hide-aside-btn').forEach(function(btn) {
+      btn.style.backgroundColor = t.accent;
+      btn.style.color = '#FFFFFF';
+    });
 
-    // Update text colors
-    var barTitle = bar.querySelector('.bar-title');
-    var barSub = bar.querySelector('.bar-sub');
-    var barBtns = bar.querySelectorAll('.bar-btn');
-    var toggleBtn = bar.querySelector('.bar-btn-toggle');
-    if (barTitle) barTitle.style.color = s.title;
-    if (barSub) barSub.style.color = s.sub;
-    barBtns.forEach(function (b) { b.style.color = s.accent; });
-    if (toggleBtn) {
-      toggleBtn.style.background = s.accent;
-      toggleBtn.style.color = '#fff';
+    // Sidebar Follow Me button (actual DOM id: #card-info-btn)
+    var followBtn = document.getElementById('card-info-btn');
+    if (followBtn) {
+      followBtn.style.backgroundColor = t.accent;
+      followBtn.style.color = '#FFFFFF';
     }
 
-    // Update panel header
-    var panelHeader = mpanel.querySelector('.panel-header span');
-    if (panelHeader) panelHeader.style.color = s.title;
-  }
+    // Body wrap transparent (let web_bg show through)
+    var bodyWrap = document.getElementById('body-wrap');
+    if (bodyWrap) { bodyWrap.style.backgroundColor = 'transparent'; }
 
-  // ============================================================
-  // Panel toggle
-  // ============================================================
+    // CSS custom properties for panel styling + CSS fallbacks
+    document.documentElement.style.setProperty('--theme-accent-current', t.accent);
+    document.documentElement.style.setProperty('--theme-surface-current', t.card);
+    document.documentElement.style.setProperty('--theme-nav-current', t.nav);
+    document.documentElement.style.setProperty('--theme-secondary-current', t.secondary);
+    document.documentElement.style.setProperty('--theme-text-current', t.text);
+    document.documentElement.style.setProperty('--theme-border-current', t.border);
+    document.documentElement.style.setProperty('--theme-card-current', t.card);
 
-  function openPanel() {
-    panelOpen = true;
-    panel.classList.add('show');
-    overlay.classList.add('show');
-    trigger.style.transform = 'rotate(45deg)';
-  }
-
-  function closePanel() {
-    panelOpen = false;
-    panel.classList.remove('show');
-    overlay.classList.remove('show');
-    trigger.style.transform = 'rotate(0deg)';
-  }
-
-  function togglePanel() {
-    if (panelOpen) {
-      closePanel();
-    } else {
-      openPanel();
+    // Music bar theme adaptation
+    var musicBar = document.getElementById('music-bar');
+    if (musicBar) {
+      musicBar.style.background = t.nav;
+      musicBar.style.borderTopColor = t.border;
+      musicBar.style.color = t.text;
+      musicBar.querySelectorAll('.bar-btn').forEach(function(btn) { btn.style.color = t.accent; });
+      var toggleBtn = musicBar.querySelector('.bar-btn-toggle');
+      if (toggleBtn) { toggleBtn.style.background = t.accent; toggleBtn.style.color = '#FFFFFF'; }
+      var cover = musicBar.querySelector('.bar-cover');
+      if (cover) { cover.style.background = 'linear-gradient(135deg, ' + t.accent + ' 0%, ' + t.secondary + ' 100%)'; }
     }
+
+    document.body.setAttribute('data-theme-custom', themeId);
   }
 
-  // ============================================================
-  // Background functions
-  // ============================================================
+  // ================================================================
+  // IMMEDIATE APPLICATION — don't wait for full DOM!
+  // Run applyTheme as soon as #web_bg element exists
+  // ================================================================
+  function tryApplyNow() {
+    // Try immediately if #web_bg already exists
+    if (document.getElementById('web_bg')) {
+      applyTheme(currentTheme);
+      if (customBg) applyCustomBgNow();
+      return true;
+    }
+    return false;
+  }
 
-  function applyBackground(dataUrl) {
-    document.body.style.setProperty('--custom-bg-url', 'url(' + dataUrl + ')');
+  // Strategy 1: Try right away (script runs at bottom of body)
+  if (!tryApplyNow()) {
+    // Strategy 2: Use MutationObserver to detect when #web_bg appears
+    var mo = new MutationObserver(function(mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        var addedNodes = mutations[i].addedNodes;
+        for (var j = 0; j < addedNodes.length; j++) {
+          if (addedNodes[j].id === 'web_bg' || (addedNodes[j].querySelector && addedNodes[j].querySelector('#web_bg'))) {
+            mo.disconnect();
+            applyTheme(currentTheme);
+            if (customBg) applyCustomBgNow();
+            return;
+          }
+        }
+      }
+    });
+    mo.observe(document.documentElement || document.body, { childList: true, subtree: true });
+    
+    // Fallback: interval (in case observer misses it)
+    var fallbackTries = 0;
+    var fallbackInt = setInterval(function() {
+      fallbackTries++;
+      if (tryApplyNow()) clearInterval(fallbackInt);
+      if (fallbackTries > 40) clearInterval(fallbackInt); // max 2 seconds
+    }, 50);
+  }
+
+  // ================================================================
+  // NAV BUTTON INJECTION
+  // ================================================================
+  function setupNavButton() {
+    var menusContainer = document.querySelector('#menus .menus_items');
+    if (!menusContainer || document.getElementById('nav-theme-trigger')) return false;
+
+    var item = document.createElement('div');
+    item.className = 'menus_item';
+    var link = document.createElement('a');
+    link.className = 'site-page';
+    link.id = 'nav-theme-trigger';
+    link.href = 'javascript:void(0)';
+    // Set initial color immediately to prevent FOUC flash (white on light nav)
+    link.style.color = '#333333';
+    link.innerHTML = '<i class="fas fa-palette"></i><span>Theme</span>';
+    link.setAttribute('title', 'Switch Theme & Background');
+    item.appendChild(link);
+    menusContainer.appendChild(item);
+
+    link.addEventListener('click', function(e) {
+      e.preventDefault(); e.stopPropagation(); togglePanel(); return false;
+    });
+    return true;
+  }
+
+  // ================================================================
+  // PANEL BUILD & EVENTS
+  // ================================================================
+  function buildPanel() {
+    var oldPanel = document.getElementById('theme-panel'), oldOverlay = document.getElementById('theme-overlay');
+    if (oldPanel) oldPanel.remove();
+    if (oldOverlay) oldOverlay.remove();
+
+    var overlay = document.createElement('div'); overlay.id = 'theme-overlay';
+    overlay.addEventListener('click', closePanel); document.body.appendChild(overlay);
+
+    var panel = document.createElement('div'); panel.id = 'theme-panel';
+    var html = '<div class="panel-header">';
+    html += '<span class="panel-title"><span class="icon">🎨</span>Theme</span>';
+    html += '<button class="panel-close" title="Close">&times;</button></div>';
+    html += '<div class="panel-section-label">Color Scheme</div>';
+    html += '<div class="panel-section-sub">Classic themes</div>';
+    html += '<div class="theme-grid">';
+    // 原有 6 个主题
+    var classicIds = ['wechat', 'warm-beige', 'sky-blue', 'dusk-pink', 'mint', 'minimal'];
+    classicIds.forEach(function(id) {
+      var th = THEME_STYLES[id]; if (!th) return;
+      var activeClass = (currentTheme === id) ? ' active' : '';
+      var swatches = '';
+      th.colors.slice(0, 4).forEach(function(c) { swatches += '<span class="swatch-dot" style="background:' + c + ';"></span>'; });
+      html += '<div class="theme-option' + activeClass + '" data-theme="' + id + '" role="button" tabindex="0">';
+      html += '<div class="theme-swatch">' + swatches + '</div>';
+      html += '<span class="theme-name">' + th.name + '</span></div>';
+    });
+    html += '</div>';
+
+    // 新增 4 个简约清新风方案
+    html += '<div class="panel-section-label">Color Scheme</div>';
+    html += '<div class="panel-section-sub">NEW &middot; 简约清新风</div>';
+    html += '<div class="theme-grid">';
+    var newIds = ['wechat-classic', 'lake-blue', 'haze-blue', 'beige-lite'];
+    newIds.forEach(function(id) {
+      var th = THEME_STYLES[id]; if (!th) return;
+      var activeClass = (currentTheme === id) ? ' active' : '';
+      var swatches = '';
+      th.colors.slice(0, 4).forEach(function(c) { swatches += '<span class="swatch-dot" style="background:' + c + ';"></span>'; });
+      html += '<div class="theme-option' + activeClass + '" data-theme="' + id + '" role="button" tabindex="0">';
+      html += '<div class="theme-swatch">' + swatches + '</div>';
+      html += '<span class="theme-name">' + th.name + '</span></div>';
+    });
+    html += '</div>';
+
+    // Background section
+    html += '<div class="panel-section-label">Background Image</div><div class="bg-section">';
+    html += '<div class="bg-upload-area" id="bg-upload" tabindex="0" role="button">';
+    html += '<div class="upload-icon">📷</div>';
+    html += '<div class="upload-text"><strong>Click or Drag</strong> to upload image<br>or paste URL below</div>';
+    html += '<div class="upload-hint">JPG / PNG / WebP &le; 10MB</div></div>';
+    html += '<div class="bg-url-row">';
+    html += '<input type="text" class="bg-url-input" id="bg-url-input" placeholder="Paste image URL here...">';
+    html += '<button class="bg-url-btn" id="bg-url-btn">Apply</button></div>';
+    html += '<div class="bg-controls">';
+    html += '<div class="bg-control"><label>Opacity <span id="opacity-val">35%</span></label><input type="range" id="bg-opacity" min="5" max="80" value="35"></div>';
+    html += '<div class="bg-control"><label>Blur <span id="blur-val">0px</span></label><input type="range" id="bg-blur" min="0" max="20" value="0"></div></div>';
+    html += '<button class="bg-remove-btn' + (customBg ? '' : ' hidden') + '" id="bg-remove">Remove Background Image</button></div>';
+
+    panel.innerHTML = html; document.body.appendChild(panel); bindPanelEvents();
+  }
+
+  function bindPanelEvents() {
+    var closeBtn = document.querySelector('.panel-close');
+    if (closeBtn) closeBtn.addEventListener('click', closePanel);
+
+    document.querySelectorAll('.theme-option[data-theme]').forEach(function(opt) {
+      opt.addEventListener('click', function() { selectTheme(this.getAttribute('data-theme')); });
+      opt.addEventListener('keydown', function(e) { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); selectTheme(this.getAttribute('data-theme')); }});
+    });
+
+    var uploadArea = document.getElementById('bg-upload');
+    if (uploadArea) {
+      uploadArea.addEventListener('click', function() {
+        var input = document.createElement('input'); input.type='file'; input.accept='image/jpeg,image/png,image/webp';
+        input.onchange = function(e) { var f=e.target.files[0]; if(!f||f.size>10*1024*1024)return alert('File too large (>10MB)');
+          var r=new FileReader(); r.onload=function(ev){applyCustomBg(ev.target.result)}; r.readAsDataURL(f); };
+        input.click();
+      });
+      ['dragenter','dragover'].forEach(function(ev){uploadArea.addEventListener(ev,function(e){e.preventDefault();this.style.borderColor='#333'},false)});
+      ['dragleave','drop'].forEach(function(ev){uploadArea.addEventListener(ev,function(e){e.preventDefault();this.style.borderColor='rgba(0,0,0,0.12)'},false)});
+      uploadArea.addEventListener('drop',function(e){e.preventDefault();var f=e.dataTransfer.files[0];if(!f||f.size>10*1024*1024)return alert('File too large');var r=new FileReader();r.onload=function(ev){applyCustomBg(ev.target.result)};r.readAsDataURL(f)},false);
+    }
+    var urlBtn=document.getElementById('bg-url-btn'), urlInput=document.getElementById('bg-url-input');
+    if(urlBtn&&urlInput){
+      urlBtn.addEventListener('click',function(){var u=urlInput.value.trim();if(!u)return alert('Enter URL');if(!u.match(/^https?:\/\//i))return alert('URL must start with http/https');applyCustomBg(u)});
+      urlInput.addEventListener('keydown',function(e){if(e.key==='Enter')urlBtn.click()});
+    }
+    var opSlider=document.getElementById('bg-opacity'), blSlider=document.getElementById('bg-blur');
+    if(opSlider) opSlider.addEventListener('input',function(){document.getElementById('opacity-val').textContent=this.value+'%';if(customBg){customBg.opacity=parseInt(this.value)/100;updateCustomBgStyle()}});
+    if(blSlider) blSlider.addEventListener('input',function(){document.getElementById('blur-val').textContent=this.value+'px';if(customBg){customBg.blur=parseInt(this.value);updateCustomBgStyle()}});
+    var rmBtn=document.getElementById('bg-remove');
+    if(rmBtn) rmBtn.addEventListener('click', removeCustomBg);
+  }
+
+  function selectTheme(id) {
+    currentTheme=id; localStorage.setItem(STORAGE_KEY_THEME,id); applyTheme(id);
+    document.querySelectorAll('.theme-option[data-theme]').forEach(function(o){o.classList.toggle('active',o.getAttribute('data-theme')===id)});
+  }
+
+  // Custom background functions
+  function applyCustomBg(url) {
+    customBg={url:url,opacity:0.35,blur:0};
+    var opEl=document.getElementById('bg-opacity'), blEl=document.getElementById('bg-blur');
+    if(opEl) customBg.opacity=parseInt(opEl.value)/100; if(blEl) customBg.blur=parseInt(blEl.value);
+    localStorage.setItem(STORAGE_KEY_BG,JSON.stringify(customBg)); updateCustomBgStyle();
+    var rmBtn=document.getElementById('bg-remove'); if(rmBtn) rmBtn.classList.remove('hidden');
+    var ua=document.getElementById('bg-upload'); if(ua) ua.innerHTML='<div class="upload-icon">✅</div><div class="upload-text"><strong>Image applied!</strong></div>';
+  }
+  function applyCustomBgNow() {
+    if (!customBg) return;
     document.body.classList.add('custom-bg');
-    localStorage.setItem(STORAGE_KEY_BG, dataUrl);
-
-    // Show remove button
-    var removeBtn = document.getElementById('bg-remove-btn');
-    if (removeBtn) removeBtn.classList.remove('hidden');
+    document.documentElement.style.setProperty('--custom-bg-image',"url('"+customBg.url+"')");
+    document.documentElement.style.setProperty('--custom-bg-opacity', customBg.opacity);
+    document.documentElement.style.setProperty('--custom-bg-blur', customBg.blur+'px');
   }
-
-  function removeBackground() {
-    document.body.style.removeProperty('--custom-bg-url');
+  function updateCustomBgStyle() {
+    applyCustomBgNow(); applyTheme(currentTheme);
+  }
+  function removeCustomBg() {
+    customBg=null; localStorage.removeItem(STORAGE_KEY_BG);
     document.body.classList.remove('custom-bg');
-    localStorage.removeItem(STORAGE_KEY_BG);
-
-    var removeBtn = document.getElementById('bg-remove-btn');
-    if (removeBtn) removeBtn.classList.add('hidden');
-  }
-
-  function setBgOpacity(val) {
-    var opacity = val / 100;
-    document.body.style.setProperty('--custom-bg-opacity', opacity);
-    localStorage.setItem(STORAGE_KEY_BG_OPACITY, val);
-
-    var label = document.getElementById('opacity-val');
-    if (label) label.textContent = val;
-  }
-
-  function setBgBlur(val) {
-    document.body.style.setProperty('--custom-bg-blur', val + 'px');
-    localStorage.setItem(STORAGE_KEY_BG_BLUR, val);
-
-    var label = document.getElementById('blur-val');
-    if (label) label.textContent = val;
-  }
-
-  function handleFile(file) {
-    if (!file || !file.type.match(/^image\/(jpeg|png|webp|gif)$/)) {
-      alert('请选择 JPG、PNG、WebP 或 GIF 格式的图片');
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      alert('图片大小不能超过 10MB');
-      return;
-    }
-
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      applyBackground(e.target.result);
-    };
-    reader.readAsDataURL(file);
-  }
-
-  // ============================================================
-  // Initialize
-  // ============================================================
-
-  function init() {
-    // Apply saved theme
+    document.documentElement.style.setProperty('--custom-bg-image','');
+    document.documentElement.style.setProperty('--custom-bg-opacity','');
+    document.documentElement.style.setProperty('--custom-bg-blur','');
     applyTheme(currentTheme);
-
-    // Restore background
-    var savedBg = localStorage.getItem(STORAGE_KEY_BG);
-    if (savedBg) {
-      applyBackground(savedBg);
-    }
-
-    // Restore opacity
-    var savedOpacity = localStorage.getItem(STORAGE_KEY_BG_OPACITY);
-    if (savedOpacity) {
-      setBgOpacity(parseInt(savedOpacity, 10));
-      var opacitySlider = document.getElementById('bg-opacity');
-      if (opacitySlider) opacitySlider.value = savedOpacity;
-    }
-
-    // Restore blur
-    var savedBlur = localStorage.getItem(STORAGE_KEY_BG_BLUR);
-    if (savedBlur) {
-      setBgBlur(parseInt(savedBlur, 10));
-      var blurSlider = document.getElementById('bg-blur');
-      if (blurSlider) blurSlider.value = savedBlur;
-    }
+    var rmBtn=document.getElementById('bg-remove'); if(rmBtn) rmBtn.classList.add('hidden');
+    var ua=document.getElementById('bg-upload');
+    if(ua) ua.innerHTML='<div class="upload-icon">📷</div><div class="upload-text"><strong>Click or Drag</strong> to upload image<br>or paste URL below</div><div class="upload-hint">JPG/PNG/WebP ≤10MB</div>';
   }
 
-  // ============================================================
-  // Event listeners
-  // ============================================================
+  function openPanel() { buildPanel(); var o=document.getElementById('theme-overlay'),p=document.getElementById('theme-panel'); if(o)o.classList.add('show');if(p)p.classList.add('show');}
+  function closePanel() {var o=document.getElementById('theme-overlay'),p=document.getElementById('theme-panel'); if(o)o.classList.remove('show');if(p)p.classList.remove('show');}
+  function togglePanel() { var p=document.getElementById('theme-panel'); if(p&&p.classList.contains('show')) closePanel(); else openPanel(); }
 
-  // Trigger button
-  trigger.addEventListener('click', function (e) {
-    e.stopPropagation();
-    togglePanel();
-  });
-
-  // Overlay click → close
-  overlay.addEventListener('click', function () {
-    closePanel();
-  });
-
-  // Close button
-  panel.addEventListener('click', function (e) {
-    var closeBtn = e.target.closest('.panel-close');
-    if (closeBtn) {
-      closePanel();
-      return;
-    }
-
-    // Theme selection
-    var themeOpt = e.target.closest('.theme-option');
-    if (themeOpt) {
-      var themeId = themeOpt.getAttribute('data-theme');
-      if (themeId && themeId !== currentTheme) {
-        applyTheme(themeId);
+  // ================================================================
+  // INIT — setup nav button + keyboard shortcuts
+  // ================================================================
+  function init() {
+    var tries = 0;
+    var iv = setInterval(function(){
+      tries++;
+      if (document.querySelector('#menus .menus_items') || tries > 15) {
+        clearInterval(iv); setupNavButton();
       }
-    }
-  });
+    }, 100);
 
-  // Upload area click
-  panel.addEventListener('click', function (e) {
-    var uploadArea = e.target.closest('#bg-upload-area');
-    if (uploadArea) {
-      fileInput.click();
-    }
-  });
-
-  // URL apply button
-  panel.addEventListener('click', function (e) {
-    var urlBtn = e.target.closest('#bg-url-btn');
-    if (urlBtn) {
-      var urlInput = document.getElementById('bg-url-input');
-      if (urlInput.value.trim()) {
-        // Create an image to verify URL works
-        var img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = function () {
-          var canvas = document.createElement('canvas');
-          canvas.width = img.naturalWidth;
-          canvas.height = img.naturalHeight;
-          var ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          applyBackground(canvas.toDataURL('image/jpeg', 0.85));
-          urlInput.value = '';
-        };
-        img.onerror = function () {
-          alert('无法加载图片，请检查链接是否有效');
-        };
-        img.src = urlInput.value.trim();
-      }
-    }
-  });
-
-  // Remove bg button
-  panel.addEventListener('click', function (e) {
-    var removeBtn = e.target.closest('#bg-remove-btn');
-    if (removeBtn) {
-      removeBackground();
-    }
-  });
-
-  // File input change
-  fileInput.addEventListener('change', function () {
-    if (fileInput.files && fileInput.files[0]) {
-      handleFile(fileInput.files[0]);
-      fileInput.value = '';
-    }
-  });
-
-  // Drag & drop
-  panel.addEventListener('dragover', function (e) {
-    var uploadArea = e.target.closest('#bg-upload-area');
-    if (uploadArea) {
-      e.preventDefault();
-      uploadArea.style.borderColor = 'var(--accent)';
-      uploadArea.style.background = 'var(--accent-light)';
-    }
-  });
-
-  panel.addEventListener('dragleave', function (e) {
-    var uploadArea = e.target.closest('#bg-upload-area');
-    if (uploadArea) {
-      uploadArea.style.borderColor = '';
-      uploadArea.style.background = '';
-    }
-  });
-
-  panel.addEventListener('drop', function (e) {
-    var uploadArea = e.target.closest('#bg-upload-area');
-    if (uploadArea) {
-      e.preventDefault();
-      uploadArea.style.borderColor = '';
-      uploadArea.style.background = '';
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        handleFile(e.dataTransfer.files[0]);
-      }
-    }
-  });
-
-  // Opacity slider
-  panel.addEventListener('input', function (e) {
-    if (e.target.id === 'bg-opacity') {
-      setBgOpacity(parseInt(e.target.value, 10));
-    }
-    if (e.target.id === 'bg-blur') {
-      setBgBlur(parseInt(e.target.value, 10));
-    }
-  });
-
-  // Keyboard shortcut
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && panelOpen) {
-      closePanel();
-    }
-  });
-
-  // Close panel on outside click
-  document.addEventListener('click', function (e) {
-    if (panelOpen && !panel.contains(e.target) && e.target !== trigger && !trigger.contains(e.target)) {
-      closePanel();
-    }
-  });
-
-  // ============================================================
-  // Start
-  // ============================================================
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePanel(); });
+    document.addEventListener('click', function(e) {
+      var panel = document.getElementById('theme-panel'), trigger = document.getElementById('nav-theme-trigger');
+      if (panel && panel.classList.contains('show') && !panel.contains(e.target) && (!trigger || !trigger.contains(e.target))) closePanel();
+    });
   }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 
 })();
