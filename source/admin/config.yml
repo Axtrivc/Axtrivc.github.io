@@ -6,7 +6,7 @@ backend:
   name: github
   repo: Axtrivc/Axtrivc.github.io
   branch: master
-  base_url: https://axtrivc-oauth.pages.dev   # ← OAuth 代理地址（Cloudflare Pages 部署后填入）
+  base_url: https://axtrivc-oauth.leeyg0512.workers.dev   # ← Cloudflare Worker 实际域名
   auth_endpoint: /api/auth
 
 # 发布时自动提交到 master，会触发 GitHub Actions 构建 → main 部署
@@ -28,8 +28,6 @@ collections:
     delete: true
     slug: "{{slug}}"
     extension: "md"
-    format: "frontmatter"
-    frontmatter_delimiter: ["---", "---"]
     summary: "{{title}} · {{date}}"
     sortable_fields: ['date', 'title']
     fields:
@@ -80,8 +78,6 @@ collections:
     delete: true
     slug: "football-evening-{{year}}-{{month}}-{{day}}"
     extension: "md"
-    format: "frontmatter"
-    frontmatter_delimiter: ["---", "---"]
     summary: "⚽ {{title}}"
     fields:
       - {
@@ -123,8 +119,6 @@ collections:
     create: true
     slug: "espanol-{{slug}}"
     extension: "md"
-    format: "frontmatter"
-    frontmatter_delimiter: ["---", "---"]
     summary: "🇪🇸 {{title}}"
     fields:
       - { label: "标题", name: "title", widget: "string", required: true }
