@@ -10,6 +10,20 @@
   background-image: none !important;
 }
 
+/* CRITICAL: Override #page-header brown bg + dark overlay (root cause of gray!) */
+#page-header {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+#page-header::before {
+  background-color: transparent !important;
+  opacity: 0 !important;
+}
+#page-header.full_page {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
 /* Hide Butterfly dark mode toggle */
 #toggle-sidebar,
 #darkmode_button,
