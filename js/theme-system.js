@@ -368,7 +368,19 @@
     });
     html += '</div>';
 
-    // Background section removed (v2) — 用户反馈没啥用
+    // Background section
+    html += '<div class="panel-section-label">Background Image</div><div class="bg-section">';
+    html += '<div class="bg-upload-area" id="bg-upload" tabindex="0" role="button">';
+    html += '<div class="upload-icon">📷</div>';
+    html += '<div class="upload-text"><strong>Click or Drag</strong> to upload image<br>or paste URL below</div>';
+    html += '<div class="upload-hint">JPG / PNG / WebP &le; 10MB</div></div>';
+    html += '<div class="bg-url-row">';
+    html += '<input type="text" class="bg-url-input" id="bg-url-input" placeholder="Paste image URL here...">';
+    html += '<button class="bg-url-btn" id="bg-url-btn">Apply</button></div>';
+    html += '<div class="bg-controls">';
+    html += '<div class="bg-control"><label>Opacity <span id="opacity-val">35%</span></label><input type="range" id="bg-opacity" min="5" max="80" value="35"></div>';
+    html += '<div class="bg-control"><label>Blur <span id="blur-val">0px</span></label><input type="range" id="bg-blur" min="0" max="20" value="0"></div></div>';
+    html += '<button class="bg-remove-btn' + (customBg ? '' : ' hidden') + '" id="bg-remove">Remove Background Image</button></div>';
 
     panel.innerHTML = html; document.body.appendChild(panel); bindPanelEvents();
   }
