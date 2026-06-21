@@ -332,50 +332,82 @@
 
     "  vec3 col = sky;\n" +
 
-    // 4 层山脉参数
-    "  float baseY[4], scaleArr[4], gainArr[4], seedArr[4];\n" +
-    "  baseY[0]  = 0.42; scaleArr[0] = 2.0; gainArr[0] = 0.038; seedArr[0] = 3.1;\n" +
-    "  baseY[1]  = 0.36; scaleArr[1] = 3.2; gainArr[1] = 0.050; seedArr[1] = 10.4;\n" +
-    "  baseY[2]  = 0.29; scaleArr[2] = 4.5; gainArr[2] = 0.065; seedArr[2] = 17.7;\n" +
-    "  baseY[3]  = 0.21; scaleArr[3] = 6.0; gainArr[3] = 0.082; seedArr[3] = 25.0;\n" +
+    // ── 通用：单层山脉绘制（输入参数 + 该层受光色）──
+    // 输出：col 被覆盖为 mtCol 的部分
+    // 为避免 GLSL ES 1.00 的动态数组索引限制，手动展开 4 层
 
-    "  vec3 litColors[3];\n" +
-    "  litColors[0] = mtFarLit; litColors[1] = mtMidLit; litColors[2] = mtNearLit;\n" +
-
-    "  for(int i=0;i<4;i++){\n" +
-    "    float by = baseY[i];\n" +
-    "    float sc = scaleArr[i];\n" +
-    "    float gn = gainArr[i];\n" +
-    "    float sd = seedArr[i];\n" +
-    "    float depth = float(i) / 3.0;\n" +
-    "    int ci = min(int(depth * 2.99), 2);\n" +
-
+    // ── L0：远山（最浅，雾化最强）──
+    "  {\n" +
+    "    float by = 0.42, sc = 2.0, gn = 0.038, sd = 3.1;\n" +
     "    float h = mtHeight(uv, sc, gn, sd);\n" +
     "    float ridge_y = by + h;\n" +
-
-    // 法线
     "    float hL = mtHeight(uv + vec2(0.004, 0.0), sc, gn, sd);\n" +
     "    float hR = mtHeight(uv + vec2(-0.004, 0.0), sc, gn, sd);\n" +
     "    vec3 normal = normalize(vec3((hR - hL) * 22.0, 0.6, 0.3));\n" +
-
-    // Lambert 光照（强度跟随太阳高度）
     "    float lambert = max(dot(normal, lightDir), 0.0);\n" +
     "    float hill = pow(lambert, 0.75) * lightIntensity;\n" +
-
-    // 山体颜色选择
-    "    vec3 mtLitCol = litColors[ci];\n" +
-    "    vec3 mtCol = mix(mtShade, mtLitCol, hill);\n" +
-
-    // 远处雾化
-    "    float fog = mix(0.50, 0.0, depth);\n" +
-    "  vec3 fogCol = mix(skyBot, skySet * 0.6, wSunset + wSunrise * 0.5);\n" +
-    "    mtCol = mix(mtCol, fogCol, fog * 0.55);\n" +
-
-    // 山顶边缘光
+    "    vec3 mtCol = mix(mtShade, mtFarLit, hill);\n" +
+    "    vec3 fogCol = mix(skyBot, skySet * 0.6, wSunset + wSunrise * 0.5);\n" +
+    "    mtCol = mix(mtCol, fogCol, 0.50 * 0.55);\n" +
     "    float edgeLight = smoothstep(ridge_y - 0.010, ridge_y, uv.y) * step(uv.y, ridge_y);\n" +
     "    mtCol += sunGlowColor * edgeLight * (0.25 + wSunset * 0.35) * sunVisible;\n" +
+    "    float mask = step(uv.y, ridge_y);\n" +
+    "    col = mix(col, mtCol, mask);\n" +
+    "  }\n" +
 
-    // 合成
+    // ── L1：中山 ──
+    "  {\n" +
+    "    float by = 0.36, sc = 3.2, gn = 0.050, sd = 10.4;\n" +
+    "    float h = mtHeight(uv, sc, gn, sd);\n" +
+    "    float ridge_y = by + h;\n" +
+    "    float hL = mtHeight(uv + vec2(0.004, 0.0), sc, gn, sd);\n" +
+    "    float hR = mtHeight(uv + vec2(-0.004, 0.0), sc, gn, sd);\n" +
+    "    vec3 normal = normalize(vec3((hR - hL) * 22.0, 0.6, 0.3));\n" +
+    "    float lambert = max(dot(normal, lightDir), 0.0);\n" +
+    "    float hill = pow(lambert, 0.75) * lightIntensity;\n" +
+    "    vec3 mtCol = mix(mtShade, mtMidLit, hill);\n" +
+    "    vec3 fogCol = mix(skyBot, skySet * 0.6, wSunset + wSunrise * 0.5);\n" +
+    "    mtCol = mix(mtCol, fogCol, 0.333 * 0.55);\n" +
+    "    float edgeLight = smoothstep(ridge_y - 0.010, ridge_y, uv.y) * step(uv.y, ridge_y);\n" +
+    "    mtCol += sunGlowColor * edgeLight * (0.25 + wSunset * 0.35) * sunVisible;\n" +
+    "    float mask = step(uv.y, ridge_y);\n" +
+    "    col = mix(col, mtCol, mask);\n" +
+    "  }\n" +
+
+    // ── L2：中近山 ──
+    "  {\n" +
+    "    float by = 0.29, sc = 4.5, gn = 0.065, sd = 17.7;\n" +
+    "    float h = mtHeight(uv, sc, gn, sd);\n" +
+    "    float ridge_y = by + h;\n" +
+    "    float hL = mtHeight(uv + vec2(0.004, 0.0), sc, gn, sd);\n" +
+    "    float hR = mtHeight(uv + vec2(-0.004, 0.0), sc, gn, sd);\n" +
+    "    vec3 normal = normalize(vec3((hR - hL) * 22.0, 0.6, 0.3));\n" +
+    "    float lambert = max(dot(normal, lightDir), 0.0);\n" +
+    "    float hill = pow(lambert, 0.75) * lightIntensity;\n" +
+    "    vec3 mtCol = mix(mtShade, mtNearLit, hill);\n" +
+    "    vec3 fogCol = mix(skyBot, skySet * 0.6, wSunset + wSunrise * 0.5);\n" +
+    "    mtCol = mix(mtCol, fogCol, 0.167 * 0.55);\n" +
+    "    float edgeLight = smoothstep(ridge_y - 0.010, ridge_y, uv.y) * step(uv.y, ridge_y);\n" +
+    "    mtCol += sunGlowColor * edgeLight * (0.25 + wSunset * 0.35) * sunVisible;\n" +
+    "    float mask = step(uv.y, ridge_y);\n" +
+    "    col = mix(col, mtCol, mask);\n" +
+    "  }\n" +
+
+    // ── L3：近山（最深、雾化最弱）──
+    "  {\n" +
+    "    float by = 0.21, sc = 6.0, gn = 0.082, sd = 25.0;\n" +
+    "    float h = mtHeight(uv, sc, gn, sd);\n" +
+    "    float ridge_y = by + h;\n" +
+    "    float hL = mtHeight(uv + vec2(0.004, 0.0), sc, gn, sd);\n" +
+    "    float hR = mtHeight(uv + vec2(-0.004, 0.0), sc, gn, sd);\n" +
+    "    vec3 normal = normalize(vec3((hR - hL) * 22.0, 0.6, 0.3));\n" +
+    "    float lambert = max(dot(normal, lightDir), 0.0);\n" +
+    "    float hill = pow(lambert, 0.75) * lightIntensity;\n" +
+    "    vec3 mtCol = mix(mtShade, mtNearLit, hill);\n" +
+    "    vec3 fogCol = mix(skyBot, skySet * 0.6, wSunset + wSunrise * 0.5);\n" +
+    "    mtCol = mix(mtCol, fogCol, 0.0);\n" +
+    "    float edgeLight = smoothstep(ridge_y - 0.010, ridge_y, uv.y) * step(uv.y, ridge_y);\n" +
+    "    mtCol += sunGlowColor * edgeLight * (0.25 + wSunset * 0.35) * sunVisible;\n" +
     "    float mask = step(uv.y, ridge_y);\n" +
     "    col = mix(col, mtCol, mask);\n" +
     "  }\n" +
