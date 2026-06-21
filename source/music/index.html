@@ -3,41 +3,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>歌单分享 · My Playlist</title>
-  <link rel="stylesheet" href="/football/assets/common.css" />
+  <title>歌单分享 · Axtrivc's Blog</title>
+  <script src="/js/standalone-theme.js"></script>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--theme-body);
+      color: var(--theme-text);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      min-height: 100vh;
+      transition: background 0.45s ease, color 0.45s ease;
+    }
+
+    /* 顶部导航 */
+    .top-nav {
+      background: var(--theme-card);
+      border-bottom: 1px solid var(--theme-border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background 0.45s ease, border-color 0.45s ease;
+    }
+    .top-nav a { color: var(--theme-secondary); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+    .top-nav a:hover { color: var(--theme-accent); }
+    .top-nav .nav-sep { color: var(--theme-border); }
+    .top-nav .nav-current { color: var(--theme-heading); font-size: 14px; font-weight: 600; }
+
     .music-page { max-width: 860px; margin: 0 auto; padding: 20px; }
     .music-hero { text-align: center; padding: 40px 0 30px; }
-    .music-hero h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: #4a3728; }
-    .music-hero p { color: #8B6F47; font-size: 14px; }
+    .music-hero h2 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--theme-heading);
+      transition: color 0.45s ease;
+    }
+    .music-hero p {
+      color: var(--theme-secondary);
+      font-size: 14px;
+      transition: color 0.45s ease;
+    }
 
-    /* My Spotify Section */
+    /* Section 标题 */
     .spotify-section { margin-bottom: 36px; }
-    .spotify-section h3 { font-size: 18px; font-weight: 600; color: #4a3728; margin-bottom: 16px; padding-left: 12px; border-left: 3px solid #8B6F47; }
+    .spotify-section h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--theme-heading);
+      margin-bottom: 16px;
+      padding-left: 12px;
+      border-left: 3px solid var(--theme-accent);
+      transition: color 0.45s ease, border-color 0.45s ease;
+    }
     .spotify-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 600px) { .spotify-grid { grid-template-columns: 1fr; } }
-    .spotify-card { border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .spotify-card {
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--theme-card);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: background 0.45s ease;
+    }
 
-    /* Tabs */
+    /* Tab 切换 */
     .playlist-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-    .playlist-tab { padding: 10px 22px; border-radius: 20px; border: 1.5px solid #e0d5c5; background: transparent; color: #8B6F47; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; }
-    .playlist-tab:hover { background: #f5f0e8; }
-    .playlist-tab.active { background: #8B6F47; color: #fff; border-color: #8B6F47; }
+    .playlist-tab {
+      padding: 10px 22px;
+      border-radius: 20px;
+      border: 1.5px solid var(--theme-border);
+      background: transparent;
+      color: var(--theme-secondary);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .playlist-tab:hover { background: var(--theme-card); }
+    .playlist-tab.active {
+      background: var(--theme-accent);
+      color: #fff;
+      border-color: var(--theme-accent);
+    }
 
-    /* Tab Content */
+    /* Tab 内容 */
     .playlist-panel { display: none; }
     .playlist-panel.active { display: block; }
     .panel-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .panel-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-    .panel-icon.piano { background: #f0e8d8; }
-    .panel-icon.hits { background: #fce4e4; }
-    .panel-icon.workout { background: #e4f0e4; }
-    .panel-icon.random { background: #e4e8f0; }
-    .panel-title { font-size: 18px; font-weight: 700; color: #4a3728; }
-    .panel-desc { font-size: 12px; color: #a09080; margin-top: 2px; }
+    .panel-icon {
+      width: 48px; height: 48px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+      background: var(--theme-card);
+    }
+    .panel-title { font-size: 18px; font-weight: 700; color: var(--theme-heading); transition: color 0.45s ease; }
+    .panel-desc { font-size: 12px; color: var(--theme-secondary); margin-top: 2px; transition: color 0.45s ease; }
 
     /* Spotify Embed */
-    .spotify-embed { border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 16px; }
+    .spotify-embed {
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--theme-card);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 16px;
+      transition: background 0.45s ease;
+    }
+
+    /* Tip */
+    .music-tip {
+      text-align: center;
+      color: var(--theme-secondary);
+      font-size: 12px;
+      padding: 20px 0;
+      opacity: 0.75;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--theme-secondary);
+      padding: 16px 0 24px;
+      opacity: 0.55;
+    }
   </style>
 </head>
 <body>
@@ -55,7 +147,6 @@
       <p>用音乐记录心情 · 点击播放，享受每一刻</p>
     </div>
 
-    <!-- My Spotify -->
     <div class="spotify-section">
       <h3>🎧 我的歌单</h3>
       <div class="spotify-grid">
@@ -68,7 +159,6 @@
       </div>
     </div>
 
-    <!-- Category Tabs -->
     <div class="playlist-tabs">
       <button class="playlist-tab active" onclick="switchTab('piano', this)">🎹 纯音乐</button>
       <button class="playlist-tab" onclick="switchTab('hits', this)">🔥 热搜榜</button>
@@ -76,10 +166,9 @@
       <button class="playlist-tab" onclick="switchTab('random', this)">🎲 随机</button>
     </div>
 
-    <!-- 纯音乐 -->
     <div class="playlist-panel active" id="panel-piano">
       <div class="panel-header">
-        <div class="panel-icon piano">🎹</div>
+        <div class="panel-icon">🎹</div>
         <div>
           <div class="panel-title">Peaceful Piano</div>
           <div class="panel-desc">安静钢琴曲，适合学习、阅读和发呆</div>
@@ -93,10 +182,9 @@
       </div>
     </div>
 
-    <!-- 热搜榜 -->
     <div class="playlist-panel" id="panel-hits">
       <div class="panel-header">
-        <div class="panel-icon hits">🔥</div>
+        <div class="panel-icon">🔥</div>
         <div>
           <div class="panel-title">Today's Top Hits</div>
           <div class="panel-desc">全球最火的歌曲都在这里</div>
@@ -110,10 +198,9 @@
       </div>
     </div>
 
-    <!-- 运动 -->
     <div class="playlist-panel" id="panel-workout">
       <div class="panel-header">
-        <div class="panel-icon workout">🏃</div>
+        <div class="panel-icon">🏃</div>
         <div>
           <div class="panel-title">Workout Beats</div>
           <div class="panel-desc">燃烧卡路里的最佳伴奏</div>
@@ -127,33 +214,27 @@
       </div>
     </div>
 
-    <!-- 随机 -->
     <div class="playlist-panel" id="panel-random">
       <div class="panel-header">
-        <div class="panel-icon random">🎲</div>
+        <div class="panel-icon">🎲</div>
         <div>
           <div class="panel-title">Mint</div>
           <div class="panel-desc">随机推荐，每次都有惊喜</div>
         </div>
       </div>
       <div class="spotify-embed">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX4dyzvuaRJ0n?utm_source=generator&theme=0" width="100%" height="480" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX4dyzvuaRJ0n?utm_source=generator&theme=0" width="100%" height="480" frameBoarder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
       <div class="spotify-embed">
         <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX1H8t5R8EiV?utm_source=generator&theme=0" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
     </div>
 
-    <!-- Tip -->
-    <div style="text-align:center;color:#a09080;font-size:12px;padding:20px 0;">
-      💡 登录 Spotify 可播放完整歌曲
-    </div>
+    <div class="music-tip">💡 登录 Spotify 可播放完整歌曲</div>
 
   </div>
 
-  <div class="footer">
-    数据来源：Spotify
-  </div>
+  <div class="footer">数据来源：Spotify</div>
 
   <script>
     function switchTab(id, btn) {
