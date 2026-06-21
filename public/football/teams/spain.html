@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>西班牙国家队 · 足球日报</title>
   <script src="/js/standalone-theme.js"></script>
+  <script src="/js/team-dynamic.js"></script>
   <link rel="stylesheet" href="/football/assets/common.css" />
 </head>
 <body>
@@ -32,6 +33,24 @@
       <div><div class="team-stat-num">1x</div><div class="team-stat-label">欧国联</div></div>
       <div><div class="team-stat-num">🇺🇸</div><div class="team-stat-label">2026世界杯</div></div>
     </div>
+  </div>
+
+  <!-- 📰 最新资讯（ESPN World Cup / 国际赛新闻，自动刷新） -->
+  <div class="card news-card">
+    <div class="news-section-title">
+      <span>📰 最新资讯</span>
+      <span class="news-section-meta">
+        <span class="news-refresh-pill">⏱ <span id="refreshCountdown">5:00</span></span>
+        <span id="newsLastUpdate">—</span>
+      </span>
+    </div>
+    <div id="newsLoading" style="padding:16px 20px;">
+      <div class="skel-row" style="height:32px;margin-bottom:6px;background:linear-gradient(90deg, var(--theme-border, #e8e8e8) 25%, var(--theme-card, #f5f5f5) 50%, var(--theme-border, #e8e8e8) 75%);background-size:200% 100%;animation:sk-shimmer 1.5s infinite;border-radius:6px;"></div>
+      <div class="skel-row" style="height:24px;background:linear-gradient(90deg, var(--theme-border, #e8e8e8) 25%, var(--theme-card, #f5f5f5) 50%, var(--theme-border, #e8e8e8) 75%);background-size:200% 100%;animation:sk-shimmer 1.5s infinite;border-radius:6px;margin-top:8px;"></div>
+      <div class="skel-row" style="height:24px;background:linear-gradient(90deg, var(--theme-border, #e8e8e8) 25%, var(--theme-card, #f5f5f5) 50%, var(--theme-border, #e8e8e8) 75%);background-size:200% 100%;animation:sk-shimmer 1.5s infinite;border-radius:6px;margin-top:6px;margin-bottom:12px;"></div>
+    </div>
+    <style>@keyframes sk-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }</style>
+    <div class="news-list" id="newsContent" style="display:none;"></div>
   </div>
 
   <!-- 近期动态 -->
@@ -208,6 +227,31 @@ function showPlayer(id) {
   document.body.style.overflow = 'hidden';
 }
 function closePlayer() { document.getElementById('playerModal').classList.remove('show'); document.body.style.overflow = ''; }
+
+/* ===========================
+   新闻流：ESPN 国际赛新闻 + 西班牙关键词过滤
+   =========================== */
+function loadTeamNews() {
+  if (!window.TeamDynamic) return;
+  TeamDynamic.loadTeamNews({
+    league: 'fifa.world',
+    keywords: ['spain', 'españa', 'yamal', 'rodri', 'morata', 'de la fuente', 'delafuente', 'williams', 'olmo', 'pedri', 'cubarsi'],
+    limit: 5,
+    containerId: 'newsContent',
+    loadingId: 'newsLoading'
+  });
+}
+
+function setupAutoRefresh() {
+  if (!window.TeamDynamic) return;
+  window.__autoRefreshCallbacks = [loadTeamNews];
+  TeamDynamic.setupAutoRefresh(300, window.__autoRefreshCallbacks, 'refreshCountdown');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadTeamNews();
+  setupAutoRefresh();
+});
   </script>
 
 </body>

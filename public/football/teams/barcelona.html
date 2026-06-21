@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>巴塞罗那 · 足球日报</title>
   <script src="/js/standalone-theme.js"></script>
+  <script src="/js/team-dynamic.js"></script>
   <link rel="stylesheet" href="/football/assets/common.css" />
   <style>
     .loading-skeleton { background: linear-gradient(90deg, var(--theme-border, #f0ece3) 25%, var(--theme-card, #faf8f3) 50%, var(--theme-border, #f0ece3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
@@ -52,6 +53,23 @@
       <div class="skel-row" style="margin-top:8px;"></div>
     </div>
     <div id="statsContent" style="display:none;"></div>
+  </div>
+
+  <!-- 📰 最新资讯（ESPN News API，自动刷新） -->
+  <div class="card news-card">
+    <div class="news-section-title">
+      <span>📰 最新资讯</span>
+      <span class="news-section-meta">
+        <span class="news-refresh-pill">⏱ <span id="refreshCountdown">5:00</span></span>
+        <span id="newsLastUpdate">—</span>
+      </span>
+    </div>
+    <div id="newsLoading">
+      <div class="skel-row"></div>
+      <div class="skel-row" style="height:24px;margin-top:8px;"></div>
+      <div class="skel-row" style="height:24px;margin-top:4px;"></div>
+    </div>
+    <div class="news-list" id="newsContent" style="display:none;"></div>
   </div>
 
   <!-- 最近5场比赛（API动态加载） -->
@@ -696,7 +714,35 @@ function closePlayer() {
 /* ===========================
    初始化：页面加载时拉取积分榜
    =========================== */
-document.addEventListener('DOMContentLoaded', function() { loadStandings(); loadRecentMatches(); });
+document.addEventListener('DOMContentLoaded', function() {
+  loadStandings();
+  loadRecentMatches();
+  loadTeamNews();
+  setupAutoRefresh();
+});
+
+/* ===========================
+   新闻流：ESPN LaLiga 新闻 + 巴萨关键词过滤
+   =========================== */
+function loadTeamNews() {
+  if (!window.TeamDynamic) return;
+  TeamDynamic.loadTeamNews({
+    league: 'esp.1',
+    keywords: ['barcelona', 'barca', 'flick', 'yamal', 'pedri', 'lewandowski', 'gavi', 'kounde', 'raphinha', 'ter stegen'],
+    limit: 5,
+    containerId: 'newsContent',
+    loadingId: 'newsLoading'
+  });
+}
+
+/* ===========================
+   自动刷新：每 5 分钟重新拉取所有动态数据
+   =========================== */
+function setupAutoRefresh() {
+  if (!window.TeamDynamic) return;
+  window.__autoRefreshCallbacks = [loadStandings, loadRecentMatches, loadTeamNews];
+  TeamDynamic.setupAutoRefresh(300, window.__autoRefreshCallbacks, 'refreshCountdown');
+}
 
 /* ===========================
    加载最近5场比赛（ESPN Schedule API）
