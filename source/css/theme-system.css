@@ -203,6 +203,11 @@ footer {
 #footer .footer-other {
   padding: 10px 20px !important;
 }
+/* © 2026 By xxx 这行字跟随主题副标题同色（--theme-heading） */
+#footer .copyright {
+  color: var(--theme-heading, #07C160) !important;
+  font-weight: 600 !important;
+}
 #footer a {
   color: var(--theme-secondary-current, #666666) !important;
 }
