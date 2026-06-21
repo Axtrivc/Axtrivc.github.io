@@ -330,3 +330,16 @@ a[id="card-info-btn"] {
   --btn-hover-color: var(--theme-heading, #07C160);
   --text-bg-hover: var(--theme-accent-current, rgba(7,193,96,0.7));
 }
+
+/* ============================================================
+   头像悬停效果：去掉 Butterfly 默认的 rotate(360deg)（会导致横跳）
+   改为轻微放大 + 柔和阴影，更专业
+   ============================================================ */
+.avatar-img img {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              filter 0.35s ease !important;
+}
+.avatar-img img:hover {
+  transform: scale(1.08) !important;
+  filter: brightness(1.05) !important;
+}

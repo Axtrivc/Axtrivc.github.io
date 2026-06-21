@@ -6,6 +6,9 @@
   <title>巴塞罗那 · 足球日报</title>
   <script src="/js/standalone-theme.js"></script>
   <script src="/js/team-dynamic.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="/football/assets/fonts.css" />
   <link rel="stylesheet" href="/football/assets/common.css" />
   <style>
     .loading-skeleton { background: linear-gradient(90deg, var(--theme-border, #f0ece3) 25%, var(--theme-card, #faf8f3) 50%, var(--theme-border, #f0ece3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
@@ -41,9 +44,11 @@
   </div>
 
   <div class="team-hero" style="background: linear-gradient(180deg, #a5004412 0%, transparent 100%);">
-    <div class="team-emoji">🔴🔵</div>
-    <div class="team-name">FC Barcelona</div>
-    <div class="team-sub">西甲 · 欧冠 · 2025-26赛季 · 主帅：弗里克</div>
+    <div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/soccer/500/83.png" alt="FC Barcelona" loading="lazy" onerror="this.parentNode.className='team-emoji'; this.parentNode.innerHTML='⚽';" /></div>
+    <div class="team-text">
+      <div class="team-name">FC Barcelona</div>
+      <div class="team-sub">西甲 · 欧冠 · 2025-26赛季 · 主帅：弗里克</div>
+    </div>
   </div>
 
   <!-- 数据总览（API动态加载） -->
