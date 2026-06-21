@@ -327,7 +327,7 @@
     // 山体基础色（受色温影响）
     "  vec3 mtFarLit   = mix(vec3(0.160,0.220,0.320), vec3(0.450,0.300,0.280), wSunset+wSunrise*0.7);\n" +
     "  vec3 mtMidLit   = mix(vec3(0.110,0.170,0.260), vec3(0.380,0.240,0.220), wSunset+wSunrise*0.7);\n" +
-    "  vec3 mtNearLit  = mix(vec3.050,0.100,0.170), vec3(0.280,0.160,0.150), wSunset+wSunrise*0.7);\n" +
+    "  vec3 mtNearLit  = mix(vec3(0.050,0.100,0.170), vec3(0.280,0.160,0.150), wSunset+wSunrise*0.7);\n" +
     "  vec3 mtShade    = mix(vec3(0.020,0.040,0.075), vec3(0.080,0.040,0.060), wSunset+wSunrise*0.5);\n" +
 
     "  vec3 col = sky;\n" +
