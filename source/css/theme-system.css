@@ -189,19 +189,24 @@
    Uses CSS custom properties set by theme-system.js
    ============================================================ */
 
-/* Footer — 清爽紧凑（减小垂直内边距，从 40px → 10px） */
+/* Footer — 跟随主题色（与正文同色调，不再用黑底白字） */
 #footer-wrap,
 #footer,
 footer {
-  background-color: var(--theme-text-current, #1a1a1a) !important;
-  color: rgba(255, 255, 255, 0.65) !important;
-  border-top-color: var(--theme-accent-current, #07C160) !important;
+  background-color: var(--theme-card-current, #FFFFFF) !important;
+  color: var(--theme-secondary-current, #666666) !important;
+  border-top: 1px solid var(--theme-border-current, #E8E8E8) !important;
   transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease;
 }
 #footer .footer-other {
   padding: 10px 20px !important;  /* 原 40px，太占地方 */
 }
-#footer a { color: inherit; }
+#footer a {
+  color: var(--theme-secondary-current, #666666) !important;
+}
+#footer a:hover {
+  color: var(--theme-accent-current, #07C160) !important;
+}
 
 /* 隐藏框架信息行 "框架 Hexo 7.3.0 | 主题 Butterfly 5.5.4" */
 #footer .framework-info {
