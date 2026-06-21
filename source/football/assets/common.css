@@ -868,3 +868,111 @@ body {
   .news-title { font-size: 13px; }
 }
 
+/* ============================
+   动态球员名单（team-dynamic.js · roster）
+   ============================ */
+
+.roster-card { margin-bottom: 12px; }
+
+.roster-pos-title {
+  padding: 16px 20px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--theme-heading);
+  letter-spacing: 0;
+}
+
+.roster-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+.roster-table th {
+  padding: 8px 12px;
+  background: color-mix(in srgb, var(--theme-accent) 6%, var(--theme-card));
+  color: var(--theme-secondary);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--theme-border);
+}
+.roster-table th:first-child { padding-left: 20px; }
+.roster-table th:last-child { padding-right: 20px; }
+
+.rt-row {
+  transition: background 0.15s;
+}
+.rt-row:hover {
+  background: color-mix(in srgb, var(--theme-accent) 4%, var(--theme-card));
+}
+.rt-row td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--theme-border);
+  color: var(--theme-text);
+}
+.rt-row td:first-child { padding-left: 20px; }
+.rt-row td:last-child { padding-right: 20px; }
+.rt-row:last-child td { border-bottom: none; }
+
+.rt-row.rt-injured {
+  opacity: 0.6;
+}
+
+.rt-jer {
+  font-weight: 700;
+  color: var(--theme-heading);
+  width: 40px;
+  text-align: center;
+}
+
+.rt-name {
+  min-width: 100px;
+}
+.rt-flag {
+  width: 18px;
+  height: 14px;
+  vertical-align: middle;
+  margin-right: 6px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.rt-name-text {
+  font-weight: 600;
+  vertical-align: middle;
+}
+.rt-inj-badge {
+  margin-left: 6px;
+  vertical-align: middle;
+  font-size: 11px;
+}
+
+.rt-stat {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--theme-text);
+}
+.rt-stat.rt-goal { color: var(--theme-accent); font-weight: 700; }
+.rt-stat.rt-assist { color: var(--theme-heading); font-weight: 600; }
+
+.rt-card {
+  text-align: center;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.rt-card .rt-yellow { color: #d97706; font-weight: 600; }
+.rt-card .rt-red { color: #dc2626; font-weight: 700; }
+
+@media (max-width: 540px) {
+  .roster-table { font-size: 12px; }
+  .roster-table th { font-size: 9px; padding: 6px 8px; }
+  .roster-table th:first-child { padding-left: 14px; }
+  .roster-table th:last-child { padding-right: 14px; }
+  .rt-row td { padding: 7px 8px; }
+  .rt-row td:first-child { padding-left: 14px; }
+  .rt-row td:last-child { padding-right: 14px; }
+  .rt-name-text { font-size: 12px; }
+}
+

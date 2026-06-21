@@ -65,7 +65,24 @@
     </div>
   </div>
 
-  <!-- 大名单 -->
+  <!-- 📊 球员本赛季数据（ESPN Roster API，动态加载） -->
+  <div class="card roster-card">
+    <div class="news-section-title">
+      <span>👥 2026 大名单数据</span>
+      <span class="news-section-meta">
+        <span class="news-refresh-pill">📊 ESPN</span>
+        <span id="rosterLastUpdate">—</span>
+      </span>
+    </div>
+    <div id="rosterLoading" style="padding:16px 20px;">
+      <div style="height:32px;margin-bottom:6px;background:linear-gradient(90deg, var(--theme-border, #e8e8e8) 25%, var(--theme-card, #f5f5f5) 50%, var(--theme-border, #e8e8e8) 75%);background-size:200% 100%;animation:sk-shimmer 1.5s infinite;border-radius:6px;"></div>
+      <div style="height:24px;background:linear-gradient(90deg, var(--theme-border, #e8e8e8) 25%, var(--theme-card, #f5f5f5) 50%, var(--theme-border, #e8e8e8) 75%);background-size:200% 100%;animation:sk-shimmer 1.5s infinite;border-radius:6px;margin-top:8px;"></div>
+      <div style="height:24px;background:linear-gradient(90deg, var(--theme-border, #e8e8e8) 25%, var(--theme-card, #f5f5f5) 50%, var(--theme-border, #e8e8e8) 75%);background-size:200% 100%;animation:sk-shimmer 1.5s infinite;border-radius:6px;margin-top:6px;margin-bottom:12px;"></div>
+    </div>
+    <div id="rosterContent" style="display:none;padding-bottom:8px;"></div>
+  </div>
+
+  <!-- 大名单（历史快照） -->
   <div class="card">
     <div class="team-section-title">👥 国家队常备阵容（点击查看详情）</div>
 
@@ -242,14 +259,29 @@ function loadTeamNews() {
   });
 }
 
+/* ===========================
+   球员本赛季数据：ESPN Roster API（fifa.world / 西班牙国家队 id=164）
+   =========================== */
+function loadTeamRoster() {
+  if (!window.TeamDynamic) return;
+  TeamDynamic.loadTeamRoster({
+    league: 'fifa.world',
+    teamId: '164',
+    season: '2026',
+    containerId: 'rosterContent',
+    loadingId: 'rosterLoading'
+  });
+}
+
 function setupAutoRefresh() {
   if (!window.TeamDynamic) return;
-  window.__autoRefreshCallbacks = [loadTeamNews];
+  window.__autoRefreshCallbacks = [loadTeamNews, loadTeamRoster];
   TeamDynamic.setupAutoRefresh(300, window.__autoRefreshCallbacks, 'refreshCountdown');
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   loadTeamNews();
+  loadTeamRoster();
   setupAutoRefresh();
 });
   </script>

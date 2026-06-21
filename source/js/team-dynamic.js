@@ -211,9 +211,156 @@
     }
   });
 
+  /* ---------- 球员数据动态加载 ---------- */
+
+  /**
+   * 加载球队本赛季球员统计（出场/进球/助攻/黄牌/红牌）
+   * 数据源：ESPN site API roster，支持 CORS
+   *
+   * @param {Object} opts
+   *   - league: 'esp.1' / 'usa.1' / 'fifa.world'
+   *   - teamId: '83' / '18996' / ...
+   *   - season: 年份，如 '2025'
+   *   - highlightJersey: 'BAR' 等需要高亮的球衣号（可选，留空则不高亮）
+   *   - containerId: 渲染目标
+   *   - loadingId: 加载占位
+   */
+  function loadTeamRoster(opts) {
+    opts = opts || {};
+    var league = opts.league;
+    var teamId = opts.teamId;
+    var season = opts.season || new Date().getFullYear();
+    var containerId = opts.containerId || 'rosterContent';
+    var loadingId = opts.loadingId || 'rosterLoading';
+    if (!league || !teamId) return;
+
+    var cacheKey = 'roster_' + league + '_' + teamId + '_' + season;
+    var cached = readCache(cacheKey);
+    if (cached) { renderRoster(cached, containerId, loadingId); return; }
+
+    var url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/' + league + '/teams/' + teamId + '/roster?season=' + season;
+
+    fetch(url)
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        var athletes = data.athletes || [];
+        if (!athletes.length) throw new Error('空名单');
+
+        // 解析每个球员的关键统计
+        var parsed = athletes.map(function (a) {
+          var cats = (a.statistics && a.statistics.splits && a.statistics.splits.categories) || [];
+          var general = [], offensive = [], goalkeeping = [];
+          cats.forEach(function (c) {
+            if (c.name === 'general') general = c.stats || [];
+            else if (c.name === 'offensive') offensive = c.stats || [];
+            else if (c.name === 'goalKeeping') goalkeeping = c.stats || [];
+          });
+          function pick(arr, key) {
+            var s = arr.find(function (x) { return x.name === key; });
+            return s ? (s.displayValue !== undefined ? s.displayValue : s.value) : '0';
+          }
+          return {
+            id: a.id,
+            name: a.fullName || a.shortName || a.displayName || 'Unknown',
+            jersey: a.jersey || '',
+            position: a.position ? a.position.abbreviation : '',
+            positionName: a.position ? a.position.name : '',
+            age: a.age || '',
+            citizenship: a.citizenship || '',
+            flag: a.flag && a.flag.href ? a.flag.href : '',
+            appearances: pick(general, 'appearances'),
+            subIns: pick(general, 'subIns'),
+            goals: pick(offensive, 'totalGoals'),
+            assists: pick(offensive, 'goalAssists'),
+            shotsOnTarget: pick(offensive, 'shotsOnTarget'),
+            yellowCards: pick(general, 'yellowCards'),
+            redCards: pick(general, 'redCards'),
+            foulsCommitted: pick(general, 'foulsCommitted'),
+            foulsSuffered: pick(general, 'foulsSuffered'),
+            saves: pick(goalkeeping, 'saves'),
+            goalsConceded: pick(goalkeeping, 'goalsConceded'),
+            injuries: a.injuries || []
+          };
+        });
+
+        writeCache(cacheKey, parsed);
+        renderRoster(parsed, containerId, loadingId);
+      })
+      .catch(function (e) {
+        console.warn('球员数据加载失败:', e.message);
+        var el = document.getElementById(loadingId);
+        if (el) {
+          el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--theme-secondary, #888);font-size:12px;">👥 暂时无法加载球员数据</div>';
+        }
+      });
+  }
+
+  function renderRoster(players, containerId, loadingId) {
+    var container = document.getElementById(containerId);
+    var loading = document.getElementById(loadingId);
+    if (!container) return;
+
+    // 按 GK → D → M → F 排序
+    var order = { G: 0, D: 1, M: 2, F: 3 };
+    players.sort(function (a, b) {
+      var oa = order[a.position] || 9;
+      var ob = order[b.position] || 9;
+      if (oa !== ob) return oa - ob;
+      // 同位置按出场数降序
+      return (parseInt(b.appearances) || 0) - (parseInt(a.appearances) || 0);
+    });
+
+    // 位置组中文名
+    var posLabels = { G: '🧤 守门员', D: '🛡️ 后卫', M: '⚽ 中场', F: '🎯 前锋' };
+    var lastPos = '';
+
+    var html = '';
+    players.forEach(function (p) {
+      if (p.position !== lastPos) {
+        if (lastPos) html += '</tbody></table>';
+        html += '<div class="roster-pos-title">' + (posLabels[p.position] || '其他') + '</div>';
+        html += '<table class="roster-table"><thead><tr>' +
+          '<th class="rt-jer">#</th>' +
+          '<th class="rt-name">球员</th>' +
+          '<th class="rt-stat" title="出场">场</th>' +
+          '<th class="rt-stat" title="进球">球</th>' +
+          '<th class="rt-stat" title="助攻">助</th>' +
+          '<th class="rt-card" title="黄牌/红牌">🟨/🟥</th>' +
+        '</tr></thead><tbody>';
+        lastPos = p.position;
+      }
+      var injured = p.injuries && p.injuries.length > 0;
+      var injClass = injured ? ' rt-injured' : '';
+      html += '<tr class="rt-row' + injClass + '">' +
+        '<td class="rt-jer">' + escapeHtml(p.jersey) + '</td>' +
+        '<td class="rt-name">' +
+          (p.flag ? '<img class="rt-flag" src="' + escapeHtml(p.flag) + '" alt="" loading="lazy" />' : '') +
+          '<span class="rt-name-text">' + escapeHtml(p.name) + '</span>' +
+          (injured ? '<span class="rt-inj-badge">🩹</span>' : '') +
+        '</td>' +
+        '<td class="rt-stat">' + escapeHtml(p.appearances) + '</td>' +
+        '<td class="rt-stat rt-goal">' + escapeHtml(p.goals) + '</td>' +
+        '<td class="rt-stat rt-assist">' + escapeHtml(p.assists) + '</td>' +
+        '<td class="rt-card"><span class="rt-yellow">' + escapeHtml(p.yellowCards) + '</span>/<span class="rt-red">' + escapeHtml(p.redCards) + '</span></td>' +
+      '</tr>';
+    });
+    if (lastPos) html += '</tbody></table>';
+
+    container.innerHTML = html;
+    if (loading) loading.style.display = 'none';
+    container.style.display = '';
+
+    var tsEl = document.getElementById('rosterLastUpdate');
+    if (tsEl) tsEl.textContent = '更新于 ' + new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  }
+
   // 导出
   global.TeamDynamic = {
     loadTeamNews: loadTeamNews,
+    loadTeamRoster: loadTeamRoster,
     setupAutoRefresh: setupAutoRefresh,
     escapeHtml: escapeHtml,
     timeAgo: timeAgo
