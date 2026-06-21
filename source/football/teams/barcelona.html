@@ -7,7 +7,7 @@
   <script src="/js/standalone-theme.js"></script>
   <link rel="stylesheet" href="/football/assets/common.css" />
   <style>
-    .loading-skeleton { background: linear-gradient(90deg, #f0ece3 25%, #faf8f3 50%, #f0ece3 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+    .loading-skeleton { background: linear-gradient(90deg, var(--theme-border, #f0ece3) 25%, var(--theme-card, #faf8f3) 50%, var(--theme-border, #f0ece3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     .skel-row { height: 32px; margin: 0 20px 6px; }
     .skel-table-row { height: 28px; margin: 0 16px 4px; }
@@ -123,7 +123,7 @@
       </div>
 
       <div class="ucl-round-title" style="margin-top:10px;">1/4决赛（首回合 4/7-8，次回合 4/14-15）</div>
-      <div class="ucl-match" style="background:#faf8f3;border-radius:8px;padding:10px 8px;">
+      <div class="ucl-match" style="background:var(--theme-card, #faf8f3);border-radius:8px;padding:10px 8px;">
         <span class="ucl-team">🔴 巴萨</span><span class="ucl-vs">vs</span><span class="ucl-team">马德里竞技</span>
         <span style="margin-left:auto;font-size:11px;color:var(--accent-amber);font-weight:700;">即将开打</span>
       </div>
@@ -131,7 +131,7 @@
         <span class="ucl-team">皇家马德里</span><span class="ucl-vs">vs</span><span class="ucl-team">拜仁慕尼黑</span>
         <span style="margin-left:auto;font-size:11px;color:var(--accent-amber);font-weight:700;">即将开打</span>
       </div>
-      <div class="ucl-match" style="background:#faf8f3;border-radius:8px;padding:10px 8px;">
+      <div class="ucl-match" style="background:var(--theme-card, #faf8f3);border-radius:8px;padding:10px 8px;">
         <span class="ucl-team">巴黎圣日耳曼</span><span class="ucl-vs">vs</span><span class="ucl-team">利物浦</span>
         <span style="margin-left:auto;font-size:11px;color:var(--accent-amber);font-weight:700;">即将开打</span>
       </div>
@@ -148,145 +148,145 @@
 
     <div class="pos-group-title">🧤 守门员</div>
     <div class="player-row" onclick="showPlayer('terStegen')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">1</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">1</div></div>
       <div class="player-info"><div class="player-name">特尔施特根</div><div class="player-pos">门将 · 🇩🇪 · 33岁</div></div>
       <span class="player-flag">🇩🇪</span>
     </div>
     <div class="player-row" onclick="showPlayer('joanGarcia')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">13</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">13</div></div>
       <div class="player-info"><div class="player-name">霍安·加西亚</div><div class="player-pos">门将 · 🇪🇸 · 24岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('szczesny')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">25</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">25</div></div>
       <div class="player-info"><div class="player-name">什琴斯尼</div><div class="player-pos">门将 · 🇵🇱 · 35岁</div></div>
       <span class="player-flag">🇵🇱</span>
     </div>
 
     <div class="pos-group-title">🛡️ 后卫</div>
     <div class="player-row" onclick="showPlayer('cancelo')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">2</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">2</div></div>
       <div class="player-info"><div class="player-name">坎塞洛</div><div class="player-pos">右后卫 · 🇵🇹 · 31岁</div></div>
       <span class="player-flag">🇵🇹</span>
     </div>
     <div class="player-row" onclick="showPlayer('balde')">
       <div class="player-num-wrap">
-        <div class="player-num" style="background:#a50044;">3</div>
+        <div class="player-num" style="background:var(--barca-red);">3</div>
         <div class="player-injured-badge">🩹</div>
       </div>
       <div class="player-info"><div class="player-name">巴尔德</div><div class="player-pos">左后卫 · 🇪🇸 · 22岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('araujo')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">4</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">4</div></div>
       <div class="player-info"><div class="player-name">阿劳霍</div><div class="player-pos">中后卫 · 🇺🇾 · 27岁</div></div>
       <span class="player-flag">🇺🇾</span>
     </div>
     <div class="player-row" onclick="showPlayer('kounde')">
       <div class="player-num-wrap">
-        <div class="player-num" style="background:#a50044;">23</div>
+        <div class="player-num" style="background:var(--barca-red);">23</div>
         <div class="player-injured-badge">🩹</div>
       </div>
       <div class="player-info"><div class="player-name">孔德</div><div class="player-pos">中后卫 · 🇫🇷 · 27岁</div></div>
       <span class="player-flag">🇫🇷</span>
     </div>
     <div class="player-row" onclick="showPlayer('cubiarsi')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">5</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">5</div></div>
       <div class="player-info"><div class="player-name">库巴西</div><div class="player-pos">中后卫 · 🇪🇸 · 19岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('cristensen')">
       <div class="player-num-wrap">
-        <div class="player-num" style="background:#a50044;">15</div>
+        <div class="player-num" style="background:var(--barca-red);">15</div>
         <div class="player-injured-badge">🩹</div>
       </div>
       <div class="player-info"><div class="player-name">克里斯滕森</div><div class="player-pos">中后卫 · 🇩🇰 · 29岁</div></div>
       <span class="player-flag">🇩🇰</span>
     </div>
     <div class="player-row" onclick="showPlayer('ericGarcia')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">24</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">24</div></div>
       <div class="player-info"><div class="player-name">埃里克·加西亚</div><div class="player-pos">中后卫 · 🇪🇸 · 25岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('gerardMartin')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">18</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">18</div></div>
       <div class="player-info"><div class="player-name">杰拉德·马丁</div><div class="player-pos">左后卫 · 🇪🇸 · 24岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('tolra')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">26</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">26</div></div>
       <div class="player-info"><div class="player-name">托伦茨</div><div class="player-pos">中后卫 · 🇪🇸 · 19岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
 
     <div class="pos-group-title">⚽ 中场</div>
     <div class="player-row" onclick="showPlayer('gavi')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">6</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">6</div></div>
       <div class="player-info"><div class="player-name">加维</div><div class="player-pos">中场 · 🇪🇸 · 21岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('pedri')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">8</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">8</div></div>
       <div class="player-info"><div class="player-name">佩德里</div><div class="player-pos">中场 · 🇪🇸 · 23岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('fermin')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">16</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">16</div></div>
       <div class="player-info"><div class="player-name">费尔明</div><div class="player-pos">中场 · 🇪🇸 · 22岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('cassado')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">17</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">17</div></div>
       <div class="player-info"><div class="player-name">卡萨多</div><div class="player-pos">中场 · 🇪🇸 · 22岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('olmo')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">20</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">20</div></div>
       <div class="player-info"><div class="player-name">奥尔莫</div><div class="player-pos">攻击中场 · 🇪🇸 · 27岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('deJong')">
       <div class="player-num-wrap">
-        <div class="player-num" style="background:#a50044;">21</div>
+        <div class="player-num" style="background:var(--barca-red);">21</div>
         <div class="player-injured-badge">🩹</div>
       </div>
       <div class="player-info"><div class="player-name">德容</div><div class="player-pos">中场 · 🇳🇱 · 28岁</div></div>
       <span class="player-flag">🇳🇱</span>
     </div>
     <div class="player-row" onclick="showPlayer('bernal')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">22</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">22</div></div>
       <div class="player-info"><div class="player-name">伯纳尔</div><div class="player-pos">中场 · 🇪🇸 · 18岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
 
     <div class="pos-group-title">🎯 前锋</div>
     <div class="player-row" onclick="showPlayer('ferran')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">7</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">7</div></div>
       <div class="player-info"><div class="player-name">费兰·托雷斯</div><div class="player-pos">左边锋 · 🇪🇸 · 26岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('lewandowski')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">9</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">9</div></div>
       <div class="player-info"><div class="player-name">莱万多夫斯基</div><div class="player-pos">中锋 · 🇵🇱 · 37岁</div></div>
       <span class="player-flag">🇵🇱</span>
     </div>
     <div class="player-row" onclick="showPlayer('yamal')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">10</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">10</div></div>
       <div class="player-info"><div class="player-name">亚马尔</div><div class="player-pos">右边锋 · 🇪🇸 · 18岁</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('raffinha')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">11</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">11</div></div>
       <div class="player-info"><div class="player-name">拉菲尼亚</div><div class="player-pos">左边锋 · 🇧🇷 · 29岁</div></div>
       <span class="player-flag">🇧🇷</span>
     </div>
     <div class="player-row" onclick="showPlayer('rashford')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">14</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">14</div></div>
       <div class="player-info"><div class="player-name">拉什福德</div><div class="player-pos">左边锋 · 🏴󠁧󠁢󠁥󠁮󠁧󠁿 · 28岁</div></div>
       <span class="player-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
     </div>
     <div class="player-row" onclick="showPlayer('badji')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#a50044;">19</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--barca-red);">19</div></div>
       <div class="player-info"><div class="player-name">巴德吉</div><div class="player-pos">前锋 · 🇸🇪 · 20岁</div></div>
       <span class="player-flag">🇸🇪</span>
     </div>

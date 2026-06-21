@@ -1,6 +1,7 @@
 /* ============================================================
    Axtrivc's Blog — Birthday Countdown
    从 _config.butterfly.yml 的 inject 段抽离
+   主题适配：所有颜色走 var(--theme-*) 由 theme-system.js 注入
    ============================================================ */
 
 #recent-posts { display: flex; flex-direction: column; }
@@ -9,23 +10,26 @@
   max-width: 100%;
   margin: 0 auto 16px;
   padding: 14px 20px;
-  background: linear-gradient(135deg, rgba(139, 111, 71, 0.05) 0%, rgba(196, 169, 106, 0.07) 100%);
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--theme-accent-current, #07C160) 6%, var(--theme-card-current, #FFFFFF)) 0%,
+    color-mix(in srgb, var(--theme-accent-current, #07C160) 10%, var(--theme-card-current, #FFFFFF)) 100%);
   border-radius: 12px;
-  border: 1px solid rgba(139, 111, 71, 0.08);
+  border: 1px solid var(--theme-border-current, rgba(0, 0, 0, 0.06));
   text-align: center;
   flex-shrink: 0;
+  transition: background 0.45s ease, border-color 0.45s ease;
 }
 .bday-countdown .bday-emoji { font-size: 20px; margin-bottom: 2px; }
 .bday-countdown .bday-label {
   font-size: 10px;
-  color: #b0a090;
+  color: var(--theme-secondary-current, #7A7A7A);
   letter-spacing: 1.5px;
   margin-bottom: 2px;
 }
 .bday-countdown .bday-name {
   font-size: 14px;
   font-weight: 600;
-  color: #4a3728;
+  color: var(--theme-heading, #1a1a1a);
   margin-bottom: 8px;
 }
 .bday-countdown .bday-grid {
@@ -43,18 +47,21 @@
 .bday-countdown .bday-num .num {
   font-size: 20px;
   font-weight: 700;
-  color: #8B6F47;
+  color: var(--theme-accent-current, #07C160);
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
 }
 .bday-countdown .bday-num .unit {
   font-size: 10px;
-  color: #b0a090;
+  color: var(--theme-secondary-current, #7A7A7A);
   margin-top: 2px;
 }
-.bday-countdown .bday-date { font-size: 10px; color: #c4b49a; }
+.bday-countdown .bday-date {
+  font-size: 10px;
+  color: var(--theme-secondary-current, #7A7A7A);
+}
 
 /* 生日当天的特殊样式 */
-.bday-countdown.today .bday-name { color: #C4A96A; }
+.bday-countdown.today .bday-name { color: var(--theme-accent-current, #07C160); }
 .bday-countdown.today .bday-label { display: none; }
 .bday-countdown.today .bday-grid { display: none; }

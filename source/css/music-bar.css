@@ -1,23 +1,25 @@
 /* ============================================================
    Axtrivc's Blog — Music Bar (Spotify 嵌入播放器)
    从 _config.butterfly.yml 的 inject 段抽离
+   主题适配：所有颜色走 var(--theme-*) 由 theme-system.js 注入
    ============================================================ */
 
 #music-bar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: 56px;
-  background: var(--bg-nav, rgba(245, 240, 232, 0.94));
+  background: var(--theme-nav-current, rgba(255, 255, 255, 0.94));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(139, 111, 71, 0.10);
+  border-top: 1px solid var(--theme-border-current, rgba(0, 0, 0, 0.08));
+  color: var(--theme-text-current, #1a1a1a);
   z-index: 9980;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 28px;
-  transition: all 0.3s ease;
-  box-shadow: 0 -2px 20px rgba(139, 111, 71, 0.06);
+  transition: background 0.45s ease, border-color 0.45s ease, color 0.45s ease;
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.04);
 }
 
 #music-bar .bar-left {
@@ -31,21 +33,25 @@
 #music-bar .bar-cover {
   width: 40px; height: 40px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #8B6F47 0%, #C4A96A 100%);
+  /* 渐变由 theme-system.js 动态设置 inline style，CSS 这里的 fallback 仅用于首屏 */
+  background: linear-gradient(135deg, var(--theme-accent-current, #07C160) 0%, var(--theme-secondary-current, #7A7A7A) 100%);
   display: flex; align-items: center; justify-content: center;
   font-size: 20px;
   flex-shrink: 0;
-  box-shadow: 0 2px 10px rgba(139, 111, 71, 0.2);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--theme-accent-current, #07C160) 30%, transparent);
 }
 
 #music-bar .bar-info { display: block; }
 #music-bar .bar-title {
   font-size: 13px; font-weight: 600;
-  color: #4a3728;
+  color: var(--theme-heading, #1a1a1a);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   max-width: 220px;
 }
-#music-bar .bar-sub { font-size: 11px; color: #a09080; }
+#music-bar .bar-sub {
+  font-size: 11px;
+  color: var(--theme-secondary-current, #7A7A7A);
+}
 
 #music-bar .bar-controls {
   display: flex; align-items: center; gap: 12px;
@@ -60,14 +66,17 @@
   transition: all 0.22s;
   font-size: 16px;
   background: transparent;
-  color: #8B6F47;
+  color: var(--theme-accent-current, #07C160);
 }
-.bar-btn:hover { background: rgba(139, 111, 71, 0.08); transform: scale(1.05); }
+.bar-btn:hover {
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 12%, transparent);
+  transform: scale(1.05);
+}
 
 #music-bar .bar-btn-toggle {
   width: 36px; height: 36px;
   border-radius: 50%;
-  background: #8B6F47;
+  background: var(--theme-accent-current, #07C160);
   color: #fff;
   font-size: 13px;
   border: none;
@@ -75,7 +84,10 @@
   display: flex; align-items: center; justify-content: center;
   transition: all 0.22s;
 }
-#music-bar .bar-btn-toggle:hover { background: #A0845C; transform: scale(1.05); }
+#music-bar .bar-btn-toggle:hover {
+  background: var(--theme-heading, #0A3D2A);
+  transform: scale(1.05);
+}
 
 #music-panel {
   position: fixed;
@@ -83,15 +95,15 @@
   width: 360px;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 48px rgba(139, 111, 71, 0.20);
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.15);
   z-index: 9985;
   opacity: 0;
   pointer-events: none;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  background: var(--bg-surface, rgba(255, 255, 255, 0.96));
+  background: var(--theme-card-current, rgba(255, 255, 255, 0.96));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(139, 111, 71, 0.12);
+  border: 1px solid var(--theme-border-current, rgba(0, 0, 0, 0.08));
   transform: translateY(16px) scale(0.95);
 }
 #music-panel.show {
@@ -105,15 +117,17 @@
 }
 #music-panel .panel-header span {
   font-size: 14px; font-weight: 600;
-  color: var(--text-heading, #4a3728);
+  color: var(--theme-heading, #1a1a1a);
 }
 #music-panel .panel-header button {
   background: none; border: none; cursor: pointer;
-  color: var(--text-secondary, #a09080);
+  color: var(--theme-secondary-current, #7A7A7A);
   font-size: 17px; padding: 4px;
   transition: color 0.2s;
 }
-#music-panel .panel-header button:hover { color: var(--text-heading, #4a3728); }
+#music-panel .panel-header button:hover {
+  color: var(--theme-heading, #1a1a1a);
+}
 
 #player-embed-container { width: 100%; }
 #player-embed-container iframe {

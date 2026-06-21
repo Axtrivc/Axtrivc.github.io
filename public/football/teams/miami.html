@@ -7,7 +7,7 @@
   <script src="/js/standalone-theme.js"></script>
   <link rel="stylesheet" href="/football/assets/common.css" />
   <style>
-    .loading-skeleton { background: linear-gradient(90deg, #f0ece3 25%, #faf8f3 50%, #f0ece3 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+    .loading-skeleton { background: linear-gradient(90deg, var(--theme-border, #f0ece3) 25%, var(--theme-card, #faf8f3) 50%, var(--theme-border, #f0ece3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     .skel-row { height: 32px; margin: 0 20px 6px; }
     .skel-table-row { height: 28px; margin: 0 16px 4px; }
@@ -91,129 +91,129 @@
 
     <div class="pos-group-title">🧤 守门员</div>
     <div class="player-row" onclick="showPlayer('saintClair')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">97</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">97</div></div>
       <div class="player-info"><div class="player-name">达尼·圣克莱尔</div><div class="player-pos">门将 · 出场360'</div></div>
     </div>
     <div class="player-row" onclick="showPlayer('novo')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">34</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">34</div></div>
       <div class="player-info"><div class="player-name">诺沃</div><div class="player-pos">门将 · 🇦🇷 · 出场90'</div></div>
     </div>
     <div class="player-row" onclick="showPlayer('barraza')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">13</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">13</div></div>
       <div class="player-info"><div class="player-name">路易斯·巴拉扎</div><div class="player-pos">门将</div></div>
     </div>
 
     <div class="pos-group-title">🛡️ 后卫</div>
     <div class="player-row" onclick="showPlayer('silva')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">16</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">16</div></div>
       <div class="player-info"><div class="player-name">席尔瓦</div><div class="player-pos">后卫 · 🇧🇷 · 1球 · 出场360'</div></div>
       <span class="player-flag">🇧🇷</span>
     </div>
     <div class="player-row" onclick="showPlayer('lujan')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">2</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">2</div></div>
       <div class="player-info"><div class="player-name">卢扬</div><div class="player-pos">后卫 · 🇦🇷 · 1球 · 出场183'</div></div>
       <span class="player-flag">🇦🇷</span>
     </div>
     <div class="player-row" onclick="showPlayer('allen')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">32</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">32</div></div>
       <div class="player-info"><div class="player-name">艾伦</div><div class="player-pos">后卫 · 🇺🇸 · 1助攻 · 出场405'</div></div>
       <span class="player-flag">🇺🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('falcon')">
       <div class="player-num-wrap">
-        <div class="player-num" style="background:#e8891d;">37</div>
+        <div class="player-num" style="background:var(--miami-orange);">37</div>
         <div class="player-injured-badge">🩹</div>
       </div>
       <div class="player-info"><div class="player-name">法尔肯</div><div class="player-pos">后卫 · 🇺🇾 · 出场270'</div></div>
       <span class="player-flag">🇺🇾</span>
     </div>
     <div class="player-row" onclick="showPlayer('mura')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">4</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">4</div></div>
       <div class="player-info"><div class="player-name">穆拉</div><div class="player-pos">后卫 · 出场238'</div></div>
     </div>
     <div class="player-row" onclick="showPlayer('frei')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">17</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">17</div></div>
       <div class="player-info"><div class="player-name">弗雷</div><div class="player-pos">后卫 · 🇯🇲 · 出场212'</div></div>
       <span class="player-flag">🇯🇲</span>
     </div>
     <div class="player-row" onclick="showPlayer('reguilon')">
       <div class="player-num-wrap">
-        <div class="player-num" style="background:#e8891d;">3</div>
+        <div class="player-num" style="background:var(--miami-orange);">3</div>
         <div class="player-injured-badge">🩹</div>
       </div>
       <div class="player-info"><div class="player-name">雷吉隆</div><div class="player-pos">后卫 · 🇪🇸 · 出场68'</div></div>
       <span class="player-flag">🇪🇸</span>
     </div>
     <div class="player-row" onclick="showPlayer('hall')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">26</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">26</div></div>
       <div class="player-info"><div class="player-name">哈尔</div><div class="player-pos">后卫 · 🇺🇸 · 20岁</div></div>
       <span class="player-flag">🇺🇸</span>
     </div>
 
     <div class="pos-group-title">⚽ 中场</div>
     <div class="player-row" onclick="showPlayer('segovia')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">8</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">8</div></div>
       <div class="player-info"><div class="player-name">塞戈维亚</div><div class="player-pos">中场 · 🇻🇪 · 1球3助 · 出场375'</div></div>
       <span class="player-flag">🇻🇪</span>
     </div>
     <div class="player-row" onclick="showPlayer('dePaul')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">7</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">7</div></div>
       <div class="player-info"><div class="player-name">德保罗</div><div class="player-pos">中场 · 🇦🇷 · 1球 · 出场270'</div></div>
       <span class="player-flag">🇦🇷</span>
     </div>
     <div class="player-row" onclick="showPlayer('bright')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">42</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">42</div></div>
       <div class="player-info"><div class="player-name">布莱特</div><div class="player-pos">中场 · 🇮🇹 · 出场325'</div></div>
       <span class="player-flag">🇮🇹</span>
     </div>
     <div class="player-row" onclick="showPlayer('ayala')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">22</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">22</div></div>
       <div class="player-info"><div class="player-name">大卫·阿亚拉</div><div class="player-pos">中场 · 出场163'</div></div>
     </div>
     <div class="player-row" onclick="showPlayer('ruiz')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">41</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">41</div></div>
       <div class="player-info"><div class="player-name">鲁伊斯</div><div class="player-pos">中场 · 🇭🇳 · 出场81'</div></div>
     </div>
     <div class="player-row" onclick="showPlayer('morales')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">20</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">20</div></div>
       <div class="player-info"><div class="player-name">莫拉莱斯</div><div class="player-pos">中场 · 19岁 · 出场73'</div></div>
     </div>
     <div class="player-row" onclick="showPlayer('shaw')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">88</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">88</div></div>
       <div class="player-info"><div class="player-name">亚历山大·肖</div><div class="player-pos">中场 · 出场22'</div></div>
     </div>
 
     <div class="pos-group-title">🎯 前锋</div>
     <div class="player-row" onclick="showPlayer('messi')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">10</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">10</div></div>
       <div class="player-info"><div class="player-name">梅西</div><div class="player-pos">前锋 · 🇦🇷 · 4球 · 出场360' ⭐</div></div>
       <span class="player-flag">🇦🇷</span>
     </div>
     <div class="player-row" onclick="showPlayer('suarez')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">9</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">9</div></div>
       <div class="player-info"><div class="player-name">苏亚雷斯</div><div class="player-pos">中锋 · 🇺🇾 · 出场99'</div></div>
       <span class="player-flag">🇺🇾</span>
     </div>
     <div class="player-row" onclick="showPlayer('silveti')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">24</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">24</div></div>
       <div class="player-info"><div class="player-name">西尔维蒂</div><div class="player-pos">前锋 · 1球1助 · 出场364'</div></div>
     </div>
     <div class="player-row" onclick="showPlayer('botterame')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">19</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">19</div></div>
       <div class="player-info"><div class="player-name">博特拉梅</div><div class="player-pos">前锋 · 🇲🇽 · 出场300'</div></div>
       <span class="player-flag">🇲🇽</span>
     </div>
     <div class="player-row" onclick="showPlayer('allende')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">21</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">21</div></div>
       <div class="player-info"><div class="player-name">阿连德</div><div class="player-pos">前锋 · 🇦🇷 · 2助攻 · 出场203'</div></div>
       <span class="player-flag">🇦🇷</span>
     </div>
     <div class="player-row" onclick="showPlayer('pinter')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">56</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">56</div></div>
       <div class="player-info"><div class="player-name">丹尼尔·品特</div><div class="player-pos">前锋 · 出场107'</div></div>
     </div>
     <div class="player-row" onclick="showPlayer('abadia')">
-      <div class="player-num-wrap"><div class="player-num" style="background:#e8891d;">-</div></div>
+      <div class="player-num-wrap"><div class="player-num" style="background:var(--miami-orange);">-</div></div>
       <div class="player-info"><div class="player-name">阿巴迪亚-雷达</div><div class="player-pos">前锋 · 出场22'</div></div>
     </div>
   </div>

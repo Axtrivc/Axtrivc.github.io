@@ -9,80 +9,199 @@ aside: false
 <style>
 .tools-page { max-width: 800px; margin: 0 auto; padding: 20px; }
 .tools-hero { text-align: center; padding: 30px 0 24px; }
-.tools-hero h2 { font-size: 26px; font-weight: 700; color: #4a3728; margin-bottom: 6px; }
-.tools-hero p { color: #8B6F47; font-size: 13px; }
+.tools-hero h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; color: var(--theme-heading, #1a1a1a); margin-bottom: 6px; }
+.tools-hero p { color: var(--theme-secondary-current, #7A7A7A); font-size: 13px; }
 
 /* Tool Grid */
 .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 30px; }
-.tool-card { background: #fff; border-radius: 14px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.25s; box-shadow: 0 1px 6px rgba(0,0,0,0.04); border: 2px solid transparent; }
-.tool-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); border-color: #C4A96A; }
-.tool-card.active { border-color: #8B6F47; box-shadow: 0 4px 16px rgba(139,111,71,0.15); }
+.tool-card {
+  background: var(--theme-card-current, #fff);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  border: 1.5px solid var(--theme-border-current, #EDEDED);
+}
+.tool-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--theme-accent-current, #07C160) 18%, transparent);
+  border-color: var(--theme-accent-current, #07C160);
+}
+.tool-card.active {
+  border-color: var(--theme-accent-current, #07C160);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--theme-accent-current, #07C160) 22%, transparent);
+}
 .tool-icon { font-size: 32px; margin-bottom: 10px; }
-.tool-name { font-weight: 600; color: #4a3728; font-size: 15px; margin-bottom: 4px; }
-.tool-desc { font-size: 12px; color: #a09080; }
+.tool-name { font-weight: 700; color: var(--theme-heading, #1a1a1a); font-size: 15px; margin-bottom: 4px; }
+.tool-desc { font-size: 12px; color: var(--theme-secondary-current, #7A7A7A); }
 
 /* Tool Panel */
-.tool-panel { display: none; background: #fff; border-radius: 16px; padding: 28px; box-shadow: 0 2px 16px rgba(0,0,0,0.05); animation: slideUp 0.3s ease; }
+.tool-panel {
+  display: none;
+  background: var(--theme-card-current, #fff);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+  border: 1px solid var(--theme-border-current, #EDEDED);
+  animation: slideUp 0.3s ease;
+}
 .tool-panel.active { display: block; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-.panel-title { font-size: 20px; font-weight: 700; color: #4a3728; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #f0ebe3; }
+.panel-title {
+  font-size: 20px; font-weight: 800; letter-spacing: -0.01em;
+  color: var(--theme-heading, #1a1a1a);
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--theme-border-current, #EDEDED);
+}
 
 /* Common Form Styles */
 .input-group { margin-bottom: 16px; }
-.input-group label { display: block; font-size: 13px; font-weight: 600; color: #5a4a3a; margin-bottom: 6px; }
-.input-group input, .input-group select {
-  width: 100%; padding: 10px 14px; border: 1.5px solid #e0d5c5; border-radius: 8px;
-  font-size: 14px; outline: none; transition: border-color 0.2s; background: #faf8f4; box-sizing: border-box;
+.input-group label {
+  display: block; font-size: 13px; font-weight: 700;
+  color: var(--theme-text, #2D3748); margin-bottom: 6px;
 }
-.input-group input:focus, .input-group select:focus { border-color: #8B6F47; }
+.input-group input, .input-group select {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--theme-border-current, #EDEDED);
+  border-radius: 8px;
+  font-size: 14px; outline: none; transition: border-color 0.2s;
+  background: var(--theme-body-current, #faf8f4);
+  color: var(--theme-text, #1a1a1a);
+  box-sizing: border-box;
+}
+.input-group input:focus, .input-group select:focus {
+  border-color: var(--theme-accent-current, #07C160);
+}
 .form-row { display: flex; gap: 12px; margin-bottom: 16px; }
 .form-row .input-group { flex: 1; margin-bottom: 0; }
 
-.btn-primary { padding: 10px 28px; background: #8B6F47; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-.btn-primary:hover { background: #A0845C; }
-.btn-secondary { padding: 10px 28px; background: #f0ebe3; color: #5a4a3a; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; transition: background 0.2s; }
-.btn-secondary:hover { background: #e0d5c5; }
+.btn-primary {
+  padding: 10px 28px;
+  background: var(--theme-accent-current, #07C160);
+  color: #fff; border: none; border-radius: 8px;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: var(--theme-heading, #0A3D2A); }
+.btn-secondary {
+  padding: 10px 28px;
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 10%, var(--theme-card-current, #fff));
+  color: var(--theme-text, #2D3748);
+  border: 1px solid var(--theme-border-current, #EDEDED);
+  border-radius: 8px; font-size: 14px; cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-secondary:hover {
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 18%, var(--theme-card-current, #fff));
+}
 
-.result-box { background: linear-gradient(135deg, #faf8f4 0%, #f5eedf 100%); border-radius: 12px; padding: 20px; margin-top: 20px; }
-.result-label { font-size: 12px; color: #a09080; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-.result-value { font-size: 28px; font-weight: 700; color: #8B6F47; }
-.result-sub { font-size: 13px; color: #a09080; margin-top: 6px; }
+.result-box {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--theme-accent-current, #07C160) 6%, var(--theme-card-current, #fff)) 0%,
+    color-mix(in srgb, var(--theme-accent-current, #07C160) 10%, var(--theme-card-current, #fff)) 100%);
+  border-radius: 12px; padding: 20px; margin-top: 20px;
+}
+.result-label {
+  font-size: 12px; color: var(--theme-secondary-current, #7A7A7A);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+}
+.result-value {
+  font-size: 28px; font-weight: 800;
+  color: var(--theme-accent-current, #07C160);
+}
+.result-sub { font-size: 13px; color: var(--theme-secondary-current, #7A7A7A); margin-top: 6px; }
 
 /* GPA Specific */
 .gpa-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 16px; }
-.gpa-table th { background: #f5eedf; padding: 10px 12px; font-size: 12px; font-weight: 600; color: #5a4a3a; text-align: center; }
+.gpa-table th {
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 8%, var(--theme-card-current, #fff));
+  padding: 10px 12px; font-size: 12px; font-weight: 700;
+  color: var(--theme-text, #2D3748); text-align: center;
+}
 .gpa-table th:first-child { border-radius: 8px 0 0 0; }
 .gpa-table th:last-child { border-radius: 0 8px 0 0; }
-.gpa-table td { padding: 8px 10px; text-align: center; border-bottom: 1px solid #f0ebe3; }
-.gpa-table input { width: 100%; padding: 6px 8px; border: 1px solid #e0d5c5; border-radius: 6px; text-align: center; font-size: 13px; outline: none; background: #fff; }
-.gpa-table input:focus { border-color: #8B6F47; }
-.gpa-table .btn-del { color: #d4a0a0; cursor: pointer; font-size: 16px; background: none; border: none; padding: 2px 6px; border-radius: 4px; }
-.gpa-table .btn-del:hover { color: #c0392b; background: #fce4e4; }
+.gpa-table td {
+  padding: 8px 10px; text-align: center;
+  border-bottom: 1px solid var(--theme-border-current, #EDEDED);
+}
+.gpa-table input {
+  width: 100%; padding: 6px 8px;
+  border: 1px solid var(--theme-border-current, #EDEDED);
+  border-radius: 6px; text-align: center; font-size: 13px;
+  outline: none; background: var(--theme-card-current, #fff);
+  color: var(--theme-text, #1a1a1a);
+}
+.gpa-table input:focus { border-color: var(--theme-accent-current, #07C160); }
+.gpa-table .btn-del {
+  color: var(--theme-secondary-current, #a09080);
+  cursor: pointer; font-size: 16px;
+  background: none; border: none; padding: 2px 6px; border-radius: 4px;
+}
+.gpa-table .btn-del:hover {
+  color: #c0392b;
+  background: color-mix(in srgb, #c0392b 15%, transparent);
+}
 
 /* Timer Specific */
 .timer-display { text-align: center; padding: 40px 0; }
-.timer-circle { width: 200px; height: 200px; border-radius: 50%; border: 4px solid #e0d5c5; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; position: relative; }
-.timer-circle.running { border-color: #8B6F47; box-shadow: 0 0 30px rgba(139,111,71,0.15); }
-.timer-text { font-size: 42px; font-weight: 700; color: #4a3728; font-variant-numeric: tabular-nums; }
-.timer-label { font-size: 13px; color: #a09080; margin-top: 8px; }
+.timer-circle {
+  width: 200px; height: 200px; border-radius: 50%;
+  border: 4px solid var(--theme-border-current, #EDEDED);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px; position: relative;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.timer-circle.running {
+  border-color: var(--theme-accent-current, #07C160);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--theme-accent-current, #07C160) 30%, transparent);
+}
+.timer-text {
+  font-size: 42px; font-weight: 800;
+  color: var(--theme-heading, #1a1a1a);
+  font-variant-numeric: tabular-nums;
+}
+.timer-label { font-size: 13px; color: var(--theme-secondary-current, #7A7A7A); margin-top: 8px; }
 .timer-btns { display: flex; gap: 12px; justify-content: center; }
 
 /* Countdown Specific */
 .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center; margin-bottom: 20px; }
-.countdown-item { background: #faf8f4; border-radius: 12px; padding: 16px 8px; }
-.countdown-num { font-size: 36px; font-weight: 700; color: #8B6F47; font-variant-numeric: tabular-nums; }
-.countdown-unit { font-size: 12px; color: #a09080; margin-top: 4px; }
+.countdown-item {
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 8%, var(--theme-card-current, #fff));
+  border-radius: 12px; padding: 16px 8px;
+}
+.countdown-num {
+  font-size: 36px; font-weight: 800;
+  color: var(--theme-accent-current, #07C160);
+  font-variant-numeric: tabular-nums;
+}
+.countdown-unit { font-size: 12px; color: var(--theme-secondary-current, #7A7A7A); margin-top: 4px; }
 
 /* Converter Specific */
-.convert-arrow { display: flex; align-items: center; justify-content: center; margin: 0 12px; color: #c4b49a; font-size: 18px; flex-shrink: 0; }
+.convert-arrow {
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 12px; color: var(--theme-secondary-current, #c4b49a);
+  font-size: 18px; flex-shrink: 0;
+}
 
 /* Color Picker */
-.color-display { width: 100%; height: 80px; border-radius: 12px; margin-bottom: 16px; border: 2px solid #e0d5c5; }
+.color-display { width: 100%; height: 80px; border-radius: 12px; margin-bottom: 16px; border: 2px solid var(--theme-border-current, #EDEDED); }
 .color-values { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.color-value { background: #faf8f4; padding: 10px 14px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 13px; color: #5a4a3a; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-.color-value:hover { background: #f0ebe3; }
-.copy-hint { font-size: 10px; color: #c4b49a; }
+.color-value {
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 5%, var(--theme-card-current, #fff));
+  padding: 10px 14px; border-radius: 8px;
+  font-family: 'Courier New', monospace; font-size: 13px;
+  color: var(--theme-text, #2D3748);
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer;
+}
+.color-value:hover {
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 12%, var(--theme-card-current, #fff));
+}
+.copy-hint { font-size: 10px; color: var(--theme-secondary-current, #c4b49a); }
 
 @media (max-width: 500px) {
   .countdown-grid { grid-template-columns: repeat(2, 1fr); }
@@ -100,32 +219,32 @@ aside: false
 
   <!-- Tool Selector -->
   <div class="tool-grid">
-    <div class="tool-card active" onclick="showTool('gpa')">
+    <div class="tool-card active" onclick="showTool('gpa', event)">
       <div class="tool-icon">📊</div>
       <div class="tool-name">GPA 计算器</div>
       <div class="tool-desc">加权平均 / 4.0 制</div>
     </div>
-    <div class="tool-card" onclick="showTool('countdown')">
+    <div class="tool-card" onclick="showTool('countdown', event)">
       <div class="tool-icon">⏳</div>
       <div class="tool-name">倒计时</div>
       <div class="tool-desc">考试 / 假期 / 生日</div>
     </div>
-    <div class="tool-card" onclick="showTool('timer')">
+    <div class="tool-card" onclick="showTool('timer', event)">
       <div class="tool-icon">⏱️</div>
       <div class="tool-name">番茄钟</div>
       <div class="tool-desc">25 分钟专注 · 5 分钟休息</div>
     </div>
-    <div class="tool-card" onclick="showTool('convert')">
+    <div class="tool-card" onclick="showTool('convert', event)">
       <div class="tool-icon">📐</div>
       <div class="tool-name">单位换算</div>
       <div class="tool-desc">长度 / 重量 / 温度</div>
     </div>
-    <div class="tool-card" onclick="showTool('color')">
+    <div class="tool-card" onclick="showTool('color', event)">
       <div class="tool-icon">🎨</div>
       <div class="tool-name">颜色选择器</div>
       <div class="tool-desc">HEX / RGB / HSL</div>
     </div>
-    <div class="tool-card" onclick="showTool('json')">
+    <div class="tool-card" onclick="showTool('json', event)">
       <div class="tool-icon">📋</div>
       <div class="tool-name">JSON 格式化</div>
       <div class="tool-desc">美化 / 压缩 / 校验</div>
@@ -168,7 +287,7 @@ aside: false
     </div>
     <div class="result-box" id="cdResult" style="display:none">
       <div style="text-align:center;margin-bottom:16px">
-        <div style="font-size:14px;color:#5a4a3a;font-weight:600" id="cdTitle"></div>
+        <div style="font-size:14px;color:var(--theme-text, #2D3748);font-weight:700" id="cdTitle"></div>
       </div>
       <div class="countdown-grid">
         <div class="countdown-item"><div class="countdown-num" id="cdDays">0</div><div class="countdown-unit">天</div></div>
@@ -197,8 +316,8 @@ aside: false
         <button class="btn-primary" id="timerStartBtn" onclick="toggleTimer()">开始专注</button>
         <button class="btn-secondary" onclick="resetTimer()">重置</button>
       </div>
-      <div style="margin-top:16px;font-size:13px;color:#a09080">
-        已完成 <strong id="pomodoroCount" style="color:#8B6F47">0</strong> 个番茄
+      <div style="margin-top:16px;font-size:13px;color:var(--theme-secondary-current, #7A7A7A)">
+        已完成 <strong id="pomodoroCount" style="color:var(--theme-accent-current, #07C160)">0</strong> 个番茄
       </div>
     </div>
   </div>
@@ -239,15 +358,15 @@ aside: false
   <!-- ========== Color Picker ========== -->
   <div class="tool-panel" id="panel-color">
     <div class="panel-title">🎨 颜色选择器</div>
-    <div class="color-display" id="colorDisplay" style="background:#8B6F47"></div>
+    <div class="color-display" id="colorDisplay" style="background:#07C160"></div>
     <div class="input-group">
-      <input type="color" id="colorPicker" value="#8B6F47" oninput="updateColor()" style="width:60px;height:40px;border:none;cursor:pointer;padding:0" />
+      <input type="color" id="colorPicker" value="#07C160" oninput="updateColor()" style="width:60px;height:40px;border:none;cursor:pointer;padding:0" />
     </div>
     <div class="color-values">
-      <div class="color-value" onclick="copyColor('hex')"><span id="colorHex">#8B6F47</span><span class="copy-hint">点击复制</span></div>
-      <div class="color-value" onclick="copyColor('rgb')"><span id="colorRgb">rgb(139, 111, 71)</span><span class="copy-hint">点击复制</span></div>
-      <div class="color-value" onclick="copyColor('hsl')"><span id="colorHsl">hsl(36, 32%, 41%)</span><span class="copy-hint">点击复制</span></div>
-      <div class="color-value" onclick="copyColor('css')"><span id="colorCss">color: #8B6F47</span><span class="copy-hint">点击复制</span></div>
+      <div class="color-value" onclick="copyColor('hex', event)"><span id="colorHex">#07C160</span><span class="copy-hint">点击复制</span></div>
+      <div class="color-value" onclick="copyColor('rgb', event)"><span id="colorRgb">rgb(7, 193, 96)</span><span class="copy-hint">点击复制</span></div>
+      <div class="color-value" onclick="copyColor('hsl', event)"><span id="colorHsl">hsl(146, 93%, 39%)</span><span class="copy-hint">点击复制</span></div>
+      <div class="color-value" onclick="copyColor('css', event)"><span id="colorCss">color: #07C160</span><span class="copy-hint">点击复制</span></div>
     </div>
   </div>
 
@@ -256,7 +375,7 @@ aside: false
     <div class="panel-title">📋 JSON 格式化</div>
     <div class="input-group">
       <label>输入 JSON</label>
-      <textarea id="jsonInput" style="width:100%;min-height:120px;padding:10px 14px;border:1.5px solid #e0d5c5;border-radius:8px;font-size:13px;font-family:'Courier New',monospace;outline:none;background:#faf8f4;resize:vertical;box-sizing:border-box" placeholder='{"key": "value"}'></textarea>
+      <textarea id="jsonInput" style="width:100%;min-height:120px;padding:10px 14px;border:1.5px solid var(--theme-border-current, #EDEDED);border-radius:8px;font-size:13px;font-family:'Courier New',monospace;outline:none;background:var(--theme-body-current, #faf8f4);color:var(--theme-text, #1a1a1a);resize:vertical;box-sizing:border-box" placeholder='{"key": "value"}'></textarea>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:16px">
       <button class="btn-primary" onclick="formatJson(true)">美化</button>
@@ -265,7 +384,7 @@ aside: false
     <div id="jsonError" style="color:#c0392b;font-size:13px;margin-bottom:10px;display:none"></div>
     <div class="result-box">
       <div class="result-label">输出结果</div>
-      <pre id="jsonOutput" style="white-space:pre-wrap;word-break:break-all;font-size:13px;font-family:'Courier New',monospace;color:#5a4a3a;margin:8px 0 0">等待输入...</pre>
+      <pre id="jsonOutput" style="white-space:pre-wrap;word-break:break-all;font-size:13px;font-family:'Courier New',monospace;color:var(--theme-text, #2D3748);margin:8px 0 0">等待输入...</pre>
     </div>
   </div>
 
@@ -273,10 +392,11 @@ aside: false
 
 <script>
 // ========== Tool Navigation ==========
-function showTool(id) {
+// 用 event 参数避免依赖全局 event 对象（旧代码的隐式全局 event 在严格模式下会失效）
+function showTool(id, ev) {
   document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active'));
   document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  if (ev && ev.currentTarget) ev.currentTarget.classList.add('active');
   document.getElementById('panel-' + id).classList.add('active');
 }
 
@@ -295,10 +415,54 @@ function gradeToGPA(grade) {
   return 0;
 }
 
-function addGpaRow(name='', grade='', credit='') {
+// XSS 防护：所有用户输入走 textContent，不进 innerHTML
+function addGpaRow(name, grade, credit) {
+  name = name || '';
+  grade = grade != null ? grade : '';
+  credit = credit != null ? credit : '';
   const tbody = document.getElementById('gpaBody');
   const tr = document.createElement('tr');
-  tr.innerHTML = `<td><input type="text" value="${name}" placeholder="科目名称"></td><td><input type="number" value="${grade}" placeholder="0-100" min="0" max="100" class="gpa-grade" oninput="calcGPA()"></td><td><input type="number" value="${credit}" placeholder="学分" min="0" step="0.5" class="gpa-credit" oninput="calcGPA()"></td><td><button class="btn-del" onclick="this.closest('tr').remove();calcGPA()">✕</button></td>`;
+
+  const tdName = document.createElement('td');
+  const inpName = document.createElement('input');
+  inpName.type = 'text';
+  inpName.value = name;
+  inpName.placeholder = '科目名称';
+  tdName.appendChild(inpName);
+
+  const tdGrade = document.createElement('td');
+  const inpGrade = document.createElement('input');
+  inpGrade.type = 'number';
+  inpGrade.value = grade;
+  inpGrade.placeholder = '0-100';
+  inpGrade.min = 0;
+  inpGrade.max = 100;
+  inpGrade.className = 'gpa-grade';
+  inpGrade.oninput = calcGPA;
+  tdGrade.appendChild(inpGrade);
+
+  const tdCredit = document.createElement('td');
+  const inpCredit = document.createElement('input');
+  inpCredit.type = 'number';
+  inpCredit.value = credit;
+  inpCredit.placeholder = '学分';
+  inpCredit.min = 0;
+  inpCredit.step = '0.5';
+  inpCredit.className = 'gpa-credit';
+  inpCredit.oninput = calcGPA;
+  tdCredit.appendChild(inpCredit);
+
+  const tdDel = document.createElement('td');
+  const btnDel = document.createElement('button');
+  btnDel.className = 'btn-del';
+  btnDel.textContent = '✕';
+  btnDel.onclick = function() { tr.remove(); calcGPA(); };
+  tdDel.appendChild(btnDel);
+
+  tr.appendChild(tdName);
+  tr.appendChild(tdGrade);
+  tr.appendChild(tdCredit);
+  tr.appendChild(tdDel);
   tbody.appendChild(tr);
 }
 
@@ -459,7 +623,6 @@ function convertUnit() {
   if (isNaN(val)) { document.getElementById('convValue').textContent = '—'; return; }
   let result;
   if (type === 'temp') {
-    // Special temp conversion
     let celsius;
     if (fromI === 0) celsius = val;
     else if (fromI === 1) celsius = (val - 32) * 5 / 9;
@@ -483,7 +646,6 @@ function updateColor() {
   const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
   document.getElementById('colorHex').textContent = hex.toUpperCase();
   document.getElementById('colorRgb').textContent = `rgb(${r}, ${g}, ${b})`;
-  // HSL
   const rr = r / 255, gg = g / 255, bb = b / 255;
   const max = Math.max(rr, gg, bb), min = Math.min(rr, gg, bb), l = (max + min) / 2;
   let h = 0, s = 0;
@@ -497,10 +659,10 @@ function updateColor() {
   document.getElementById('colorHsl').textContent = `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`;
   document.getElementById('colorCss').textContent = `color: ${hex}`;
 }
-function copyColor(type) {
+function copyColor(type, ev) {
   const text = document.getElementById('color' + type.charAt(0).toUpperCase() + type.slice(1)).textContent;
   navigator.clipboard.writeText(text).then(() => {
-    const el = event.currentTarget;
+    const el = ev.currentTarget;
     const hint = el.querySelector('.copy-hint');
     hint.textContent = '已复制!';
     setTimeout(() => hint.textContent = '点击复制', 1500);
