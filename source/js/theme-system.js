@@ -84,6 +84,14 @@
       bg: '#FFFCF5', body: '#FFFCF5', nav: 'rgba(255,252,245,0.96)', card: '#FFFFFF',
       text: '#3A2A1A', heading: '#3A2A1A', secondary: '#9A8866', accent: '#8B6F47',
       border: '#EFE8DA', pageHeader: '#FFFCF5', navText: '#3A2A1A', navTextHover: '#8B6F47'
+    },
+    // === 新增方案 E：柠檬黄 + 深靛蓝（极简时尚撞色） ===
+    'lemon-indigo': {
+      name: 'Lemon Indigo',
+      colors: ['#FFFFFF', '#042C53', '#FFE44D', '#FAFAFA', '#042C53', '#5F5E5A'],
+      bg: '#FAFAFA', body: '#FAFAFA', nav: 'rgba(255,255,255,0.96)', card: '#FFFFFF',
+      text: '#042C53', heading: '#042C53', secondary: '#5F5E5A', accent: '#FFE44D',
+      border: '#B5D4F4', pageHeader: '#FFFFFF', navText: '#042C53', navTextHover: '#FFE44D'
     }
   };
 
@@ -362,7 +370,7 @@
     html += '<div class="panel-section-label">Color Scheme</div>';
     html += '<div class="theme-grid">';
     // 仅保留 4 个简约清新风主题（删除原 6 个 classic 主题）
-    var newIds = ['wechat-classic', 'lake-blue', 'haze-blue', 'beige-lite'];
+    var newIds = ['wechat-classic', 'lake-blue', 'haze-blue', 'beige-lite', 'lemon-indigo'];
     newIds.forEach(function(id) {
       var th = THEME_STYLES[id]; if (!th) return;
       var activeClass = (currentTheme === id) ? ' active' : '';
