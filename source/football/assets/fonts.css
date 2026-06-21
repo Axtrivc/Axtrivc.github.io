@@ -1,0 +1,8 @@
+/* ============================
+   足球日报 - 字体加载
+   思源黑体（Noto Sans SC）via Google Fonts
+   语义化字重：400 常规 / 500 中等 / 700 加粗 / 900 黑体
+   ============================ */
+
+/* Google Fonts 官方中国镜像，preconnect 已在 HTML head 中预热 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap');

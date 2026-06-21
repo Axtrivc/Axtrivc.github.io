@@ -1,0 +1,51 @@
+/* ============================================================
+   足球日报文章页字体覆盖
+   作用域：Butterfly 主题渲染的足球日报 markdown 文章
+   检测：post path 包含 /football- 或文章标题包含"足球早报/晚报"
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+/* 用属性选择器匹配 football 文章的 canonical link */
+html:has(link[rel="canonical"][href*="/football-morning"]),
+html:has(link[rel="canonical"][href*="/football-evening"]) {
+  --football-post: 1;
+}
+
+html:has(link[rel="canonical"][href*="/football-morning"]) body,
+html:has(link[rel="canonical"][href*="/football-evening"]) body {
+  font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  font-size: 15.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* 文章主体 */
+html:has(link[rel="canonical"][href*="/football-"]) #article-container,
+html:has(link[rel="canonical"][href*="/football-"]) #article-container p,
+html:has(link[rel="canonical"][href*="/football-"]) #article-container li {
+  font-family: "Noto Sans SC", -apple-system, "PingFang SC", sans-serif;
+  font-size: 15.5px;
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+}
+
+/* 标题 */
+html:has(link[rel="canonical"][href*="/football-"]) #article-container h1,
+html:has(link[rel="canonical"][href*="/football-"]) #article-container h2,
+html:has(link[rel="canonical"][href*="/football-"]) #article-container h3 {
+  font-family: "Noto Sans SC", -apple-system, "PingFang SC", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+}
+
+/* 引用块（战报、赛程速览常用） */
+html:has(link[rel="canonical"][href*="/football-"]) #article-container blockquote {
+  font-family: "Noto Sans SC", -apple-system, "PingFang SC", sans-serif;
+  line-height: 1.7;
+}

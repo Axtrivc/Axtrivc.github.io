@@ -225,12 +225,13 @@ pagination:
 # -------------------------------------------------------
 inject:
   head:
-    - <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=LXGW+WenKai+Screen&display=swap" rel="stylesheet">
+    - <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=LXGW+WenKai+Screen&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
     - <link rel="stylesheet" href="/css/theme-system.css?v={{cache_bust}}">
     - <link rel="stylesheet" href="/css/publish-button.css?v={{cache_bust}}">
     - <link rel="stylesheet" href="/css/hide-rightside.css?v={{cache_bust}}">
     - <link rel="stylesheet" href="/css/music-bar.css?v={{cache_bust}}">
     - <link rel="stylesheet" href="/css/birthday-countdown.css?v={{cache_bust}}">
+    - <link rel="stylesheet" href="/css/football-typography.css?v={{cache_bust}}">
   bottom:
     - |
       <div id="music-bar">

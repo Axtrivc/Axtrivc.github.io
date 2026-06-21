@@ -40,14 +40,18 @@
 body {
   background: var(--theme-body, #f7f3eb);
   color: var(--theme-text, #222);
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
-  font-size: 15px;
-  font-weight: 500;
+  font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  font-size: 15.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
   padding: 0;
   max-width: 760px;
   margin: 0 auto;
   transition: background 0.45s ease, color 0.45s ease;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 @media (min-width: 768px) {
