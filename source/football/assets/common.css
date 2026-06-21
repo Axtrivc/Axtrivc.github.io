@@ -320,19 +320,31 @@ body {
 }
 
 /* ============================
-   球队详情页
+   球队详情页 - 极简 hero
    ============================ */
-.team-hero { padding: 24px 20px 20px; text-align: center; }
-.team-hero .team-emoji { font-size: 48px; margin-bottom: 8px; }
+.team-hero {
+  padding: 48px 20px 24px;
+  text-align: left;
+  border-bottom: 1px solid var(--theme-border);
+  margin-bottom: 16px;
+}
+.team-hero .team-emoji {
+  font-size: 28px;
+  margin-bottom: 14px;
+  line-height: 1;
+}
 .team-hero .team-name {
-  font-size: 22px;
-  font-weight: 800;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--theme-heading);
+  margin-bottom: 6px;
 }
 .team-hero .team-sub {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--theme-secondary);
   margin-top: 4px;
+  font-weight: 400;
 }
 
 .team-stats {
@@ -588,23 +600,32 @@ body {
 .trophy-count { font-size: 13px; font-weight: 800; color: var(--gold); }
 
 /* ============================
-   归档页
+   归档页 - 极简 hero
    ============================ */
 .archive-header {
-  padding: 24px 20px 8px;
-  text-align: center;
+  padding: 48px 20px 24px;
+  text-align: left;
+  border-bottom: 1px solid var(--theme-border);
+  margin-bottom: 24px;
 }
-.archive-header .archive-icon { font-size: 36px; margin-bottom: 6px; }
+.archive-header .archive-icon {
+  font-size: 28px;
+  margin-bottom: 14px;
+  line-height: 1;
+}
 .archive-header h1 {
-  font-size: 22px;
-  font-weight: 800;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--theme-heading);
+  margin-bottom: 6px;
 }
 .archive-header .archive-sub {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--theme-secondary);
   margin-top: 6px;
   line-height: 1.6;
+  font-weight: 400;
 }
 
 .archive-month-label {

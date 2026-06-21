@@ -24,17 +24,63 @@
     transition: background 0.45s ease, color 0.45s ease;
   }
 
-  /* Hero - 保留西班牙国旗橙红渐变（视觉识别） */
+  /* Hero - Apple/Notion 极简风（去掉橙红渐变背景） */
   .site-header {
-    background: linear-gradient(135deg, var(--es-flag-red) 0%, var(--es-flag-orange) 100%);
-    color: #fff; padding: 28px 24px 20px; text-align: center;
+    background: transparent;
+    color: var(--theme-heading);
+    padding: 48px 24px 24px;
+    text-align: left;
+    border-bottom: 1px solid var(--theme-border);
+    margin-bottom: 8px;
   }
-  .site-header h1 { font-size: 2rem; letter-spacing: 1px; }
-  .site-header p { opacity: .85; margin-top: 6px; font-size: .95rem; }
-  .back-link { display:inline-block; margin-bottom:10px; color:#fff; opacity:.8; text-decoration:none; font-size:.85rem; }
-  .back-link:hover { opacity:1; }
-  .progress-bar-wrap { background: rgba(255,255,255,0.25); border-radius: 99px; height: 8px; margin: 14px auto 0; max-width: 320px; }
-  .progress-bar-inner { height: 8px; border-radius: 99px; background: #fff; transition: width .5s; }
+  .site-header .hero-emoji {
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .site-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .site-header p {
+    color: var(--theme-secondary);
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 400;
+    opacity: 1;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 16px;
+    color: var(--theme-secondary);
+    opacity: 1;
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--theme-accent); }
+  .progress-bar-wrap {
+    background: color-mix(in srgb, var(--theme-secondary) 15%, transparent);
+    border-radius: 99px;
+    height: 6px;
+    margin: 16px 0 0;
+    max-width: 320px;
+  }
+  .progress-bar-inner {
+    height: 6px;
+    border-radius: 99px;
+    background: var(--theme-accent);
+    transition: width .5s;
+  }
+  #globalProgressText {
+    color: var(--theme-secondary) !important;
+    font-size: 12px !important;
+    margin-top: 6px !important;
+    opacity: 1 !important;
+  }
 
   /* Level Tabs */
   .level-tabs { display: flex; gap: 8px; padding: 18px 24px 0; overflow-x: auto; }
@@ -313,9 +359,10 @@
 <body>
 
 <div class="site-header">
-  <a href="/" class="back-link">&larr; 返回博客</a>
-  <h1>🇪🇸 西班牙语学习中心</h1>
-  <p>从零基础到 C1 &middot; 发音 &middot; 语法 &middot; 词汇 &middot; 对话 &middot; 习题</p>
+  <a href="/" class="back-link">← 返回博客</a>
+  <span class="hero-emoji">🇪🇸</span>
+  <h1>西班牙语学习中心</h1>
+  <p>从零基础到 C1 · 发音 · 语法 · 词汇 · 对话 · 习题</p>
   <div class="progress-bar-wrap">
     <div class="progress-bar-inner" id="globalProgress" style="width:0%"></div>
   </div>

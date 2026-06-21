@@ -34,30 +34,45 @@
     .top-nav .nav-current { color: var(--theme-heading); font-size: 14px; font-weight: 600; }
 
     .music-page { max-width: 860px; margin: 0 auto; padding: 20px; }
-    .music-hero { text-align: center; padding: 40px 0 30px; }
-    .music-hero h2 {
+
+    /* Hero - Apple/Notion 极简风 */
+    .music-hero {
+      text-align: left;
+      padding: 48px 0 24px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--theme-border);
+    }
+    .music-hero .hero-emoji {
       font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 8px;
+      line-height: 1;
+      margin-bottom: 14px;
+      display: block;
+    }
+    .music-hero h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
       color: var(--theme-heading);
+      margin-bottom: 6px;
       transition: color 0.45s ease;
     }
     .music-hero p {
       color: var(--theme-secondary);
       font-size: 14px;
+      font-weight: 400;
       transition: color 0.45s ease;
     }
 
-    /* Section 标题 */
+    /* Section 标题 - 极简风（去掉装饰条） */
     .spotify-section { margin-bottom: 36px; }
     .spotify-section h3 {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--theme-heading);
-      margin-bottom: 16px;
-      padding-left: 12px;
-      border-left: 3px solid var(--theme-accent);
-      transition: color 0.45s ease, border-color 0.45s ease;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--theme-secondary);
+      margin-bottom: 14px;
+      transition: color 0.45s ease;
     }
     .spotify-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 600px) { .spotify-grid { grid-template-columns: 1fr; } }
@@ -69,39 +84,62 @@
       transition: background 0.45s ease;
     }
 
-    /* Tab 切换 */
-    .playlist-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    /* Tab 切换 - 极简风（细线 tab，去掉胶囊背景） */
+    .playlist-tabs {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--theme-border);
+    }
     .playlist-tab {
-      padding: 10px 22px;
-      border-radius: 20px;
-      border: 1.5px solid var(--theme-border);
+      padding: 10px 0;
+      border: none;
       background: transparent;
       color: var(--theme-secondary);
       cursor: pointer;
       font-size: 13px;
       font-weight: 500;
-      transition: all 0.2s;
+      transition: color 0.2s;
+      position: relative;
     }
-    .playlist-tab:hover { background: var(--theme-card); }
-    .playlist-tab.active {
+    .playlist-tab:hover { color: var(--theme-text); }
+    .playlist-tab.active { color: var(--theme-heading); }
+    .playlist-tab.active::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
       background: var(--theme-accent);
-      color: #fff;
-      border-color: var(--theme-accent);
+      transition: background 0.45s ease;
     }
 
     /* Tab 内容 */
     .playlist-panel { display: none; }
     .playlist-panel.active { display: block; }
+    /* Panel header - 极简风（缩小 icon、去掉彩色背景） */
     .panel-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
     .panel-icon {
-      width: 48px; height: 48px;
-      border-radius: 10px;
+      width: 32px; height: 32px;
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; flex-shrink: 0;
+      font-size: 16px; flex-shrink: 0;
       background: var(--theme-card);
+      border: 1px solid var(--theme-border);
     }
-    .panel-title { font-size: 18px; font-weight: 700; color: var(--theme-heading); transition: color 0.45s ease; }
-    .panel-desc { font-size: 12px; color: var(--theme-secondary); margin-top: 2px; transition: color 0.45s ease; }
+    .panel-title {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--theme-heading);
+      transition: color 0.45s ease;
+    }
+    .panel-desc {
+      font-size: 12px;
+      color: var(--theme-secondary);
+      margin-top: 2px;
+      transition: color 0.45s ease;
+    }
 
     /* Spotify Embed */
     .spotify-embed {
@@ -143,12 +181,13 @@
   <div class="music-page">
 
     <div class="music-hero">
-      <h2>🎵 My Playlist</h2>
+      <span class="hero-emoji">🎵</span>
+      <h2>My Playlist</h2>
       <p>用音乐记录心情 · 点击播放，享受每一刻</p>
     </div>
 
     <div class="spotify-section">
-      <h3>🎧 我的歌单</h3>
+      <h3>我的歌单</h3>
       <div class="spotify-grid">
         <div class="spotify-card">
           <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6T6g0jNwBR1YLNfCO5miEo?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
