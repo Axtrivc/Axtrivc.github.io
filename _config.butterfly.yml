@@ -226,11 +226,11 @@ pagination:
 inject:
   head:
     - <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=LXGW+WenKai+Screen&display=swap" rel="stylesheet">
-    - <link rel="stylesheet" href="/css/theme-system.css?v=20260621b">
-    - <link rel="stylesheet" href="/css/publish-button.css?v=20260621a">
-    - <link rel="stylesheet" href="/css/hide-rightside.css?v=20260621a">
-    - <link rel="stylesheet" href="/css/music-bar.css?v=20260621a">
-    - <link rel="stylesheet" href="/css/birthday-countdown.css?v=20260621a">
+    - <link rel="stylesheet" href="/css/theme-system.css?v={{cache_bust}}">
+    - <link rel="stylesheet" href="/css/publish-button.css?v={{cache_bust}}">
+    - <link rel="stylesheet" href="/css/hide-rightside.css?v={{cache_bust}}">
+    - <link rel="stylesheet" href="/css/music-bar.css?v={{cache_bust}}">
+    - <link rel="stylesheet" href="/css/birthday-countdown.css?v={{cache_bust}}">
   bottom:
     - |
       <div id="music-bar">
@@ -257,8 +257,8 @@ inject:
         </div>
         <div id="player-embed-container"></div>
       </div>
-    - <script src="/js/music-bar.js?v=20260621a"></script>
-    - <script src="/js/birthday-countdown.js?v=20260621a"></script>
-    - <script src="/js/theme-system.js?v=20260621e"></script>
-    - <script src="/js/publish-button.js?v=20260621a"></script>
-    - <script src="/js/dynamic-avatar.js?v=20260621a"></script>
+    - <script src="/js/music-bar.js?v={{cache_bust}}"></script>
+    - <script src="/js/birthday-countdown.js?v={{cache_bust}}"></script>
+    - <script src="/js/theme-system.js?v={{cache_bust}}"></script>
+    - <script src="/js/publish-button.js?v={{cache_bust}}"></script>
+    - <script src="/js/dynamic-avatar.js?v={{cache_bust}}"></script>

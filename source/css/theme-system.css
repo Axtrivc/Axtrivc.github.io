@@ -99,30 +99,39 @@
 /* Header */
 #theme-panel .panel-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 18px 10px; border-bottom: 1px solid rgba(0,0,0,0.06);
+  padding: 16px 18px 10px;
+  border-bottom: 1px solid var(--theme-border-current, rgba(0,0,0,0.06));
 }
 #theme-panel .panel-header .panel-title {
-  font-size: 14px; font-weight: 700; color: #222;
+  font-size: 14px; font-weight: 700;
+  color: var(--theme-heading, #222);
   display: flex; align-items: center; gap: 8px;
 }
 #theme-panel .panel-header .icon { font-size: 16px; }
 #theme-panel .panel-close {
   width:28px; height:28px; border-radius:50%; border:none;
-  background: rgba(0,0,0,0.05); color:#888; cursor:pointer;
+  background: rgba(0,0,0,0.05);
+  color: var(--theme-secondary-current, #888);
+  cursor:pointer;
   display:flex; align-items:center; justify-content:center;
   font-size:14px; transition:all 0.2s;
 }
-#theme-panel .panel-close:hover { background:rgba(0,0,0,0.12); color:#333; }
+#theme-panel .panel-close:hover {
+  background:rgba(0,0,0,0.12);
+  color: var(--theme-heading, #333);
+}
 
 /* Section labels */
 .panel-section-label {
   padding: 14px 18px 6px;
-  font-size: 11px; font-weight: 700; color:#aaa;
+  font-size: 11px; font-weight: 700;
+  color: var(--theme-secondary-current, #aaa);
   text-transform: uppercase; letter-spacing: 1.2px;
 }
 .panel-section-sub {
   padding: 0 18px 8px;
-  font-size: 10px; color: #bbb;
+  font-size: 10px;
+  color: var(--theme-secondary-current, #bbb);
   letter-spacing: 0.5px;
 }
 
@@ -139,7 +148,7 @@
   cursor: pointer; transition: all 0.22s ease;
 }
 .theme-option:hover {
-  border-color: rgba(0,0,0,0.08);
+  border-color: var(--theme-border-current, rgba(0,0,0,0.08));
   transform: translateY(-1px);
   box-shadow: 0 3px 10px rgba(0,0,0,0.05);
 }
@@ -155,6 +164,11 @@
   color: var(--theme-accent-current, #07C160);
   font-weight: 700;
 }
+.theme-name {
+  font-size: 11px; font-weight:600;
+  color: var(--theme-text-current, #333);
+  white-space:nowrap;
+}
 
 /* Swatches */
 .theme-swatch { display: flex; gap: 3px; }
@@ -162,7 +176,6 @@
   width:16px; height:16px; border-radius:50%;
   border: 1.5px solid rgba(255,255,255,0.6); box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-.theme-name { font-size: 11px; font-weight:600; color:#333; white-space:nowrap; }
 
 /* Background section */
 .bg-section { padding: 0 18px 16px; }

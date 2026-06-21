@@ -87,8 +87,12 @@
   justify-content: flex-end;
   gap: 12px;
   text-decoration: none;
-  color: #333;
+  color: var(--theme-text-current, #333);
   cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-family: inherit;
 }
 
 #axtrivc-fab .fab-item-label {
@@ -97,7 +101,7 @@
   border-radius: 16px;
   font-size: 13px;
   font-weight: 600;
-  color: #333;
+  color: var(--theme-text-current, #333);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   white-space: nowrap;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
