@@ -351,10 +351,8 @@
     // 初次全量翻译
     translateNode(cmsRoot);
 
-    // 2. 头像预览：监听 URL 变化
-    var lastHash = '';
-    var avatarCheckInterval = setInterval(function () {
-      // 进入 settings 页面时挂载预览
+    // 2. 头像预览：监听 URL 变化（改用 hashchange，不再用永不清理的 setInterval）
+    function onHashChange() {
       if (location.hash.indexOf('settings') !== -1) {
         if (mountAvatarPreview()) {
           // 挂载成功后，监听图片变化
@@ -374,7 +372,10 @@
           }
         }
       }
-    }, 1000);
+    }
+    window.addEventListener('hashchange', onHashChange);
+    // 初始触发一次（用户可能直接打开 settings 页）
+    onHashChange();
   }
 
   if (document.readyState === 'loading') {

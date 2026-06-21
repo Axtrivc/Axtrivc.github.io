@@ -247,20 +247,7 @@ footer {
 }
 #footer a { color: inherit; }
 
-/* Right-side floating buttons — move go-up above music bar */
-#rightside > button,
-#go-up,
-#rightside-config,
-#hide-aside-btn,
-#darkmode {
-  background-color: var(--theme-accent-current, #07C160) !important;
-  color: #FFFFFF !important;
-  transition: background-color 0.45s ease, color 0.45s ease !important;
-}
-/* Push rightside buttons higher to avoid music bar (music bar ~44px tall) */
-#rightside {
-  bottom: 60px !important;
-}
+/* Right-side floating buttons 已通过 hide-rightside.css 完全隐藏，这里不再处理 */
 
 /* Pagination buttons */
 #pagination .page-number,
@@ -320,8 +307,8 @@ a[id="card-info-btn"] {
   transition: color 0.45s ease !important;
 }
 
-/* 站点主标题 "Axtrivc's Blog" — 强制黑色 */
+/* 站点主标题 "Axtrivc's Blog" — 跟随主题 heading 色 */
 #site-title {
-  color: #1a1a1a !important;
+  color: var(--theme-heading, #1a1a1a) !important;
   text-shadow: none !important;
 }

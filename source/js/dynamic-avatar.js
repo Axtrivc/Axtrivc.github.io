@@ -1,6 +1,10 @@
 /* ============================================================
-   Axtrivc's Blog — Dynamic Avatar Loader v2
+   Axtrivc's Blog — Dynamic Avatar Loader v3
    适配 Butterfly 主题的懒加载机制（data-lazy-src + onerror）
+   v3 修复：
+   - observer 无限循环（用 dataset 标记 + 规范化 URL 比较）
+   - 多 selector 命中同一元素（用 WeakSet 去重）
+   - 定时器泄漏（成功后立即清理）
    ============================================================ */
 (function () {
   'use strict';
@@ -9,29 +13,28 @@
   var avatarUrl = cfg.avatar || '';
   if (!avatarUrl) return;
 
+  // 把相对 URL 规范化为绝对 URL，便于比较
+  function normalizeUrl(u) {
+    try { return new URL(u, location.origin).href; } catch (e) { return u; }
+  }
+  var avatarAbs = normalizeUrl(avatarUrl);
+
+  // 标记是否已成功设置过
+  var applied = new WeakSet();
+
   function setImg(img) {
-    if (!img) return;
+    if (!img || applied.has(img)) return;
     // 移除懒加载兜底
     img.removeAttribute('onerror');
     img.removeAttribute('data-lazy-src');
     img.removeAttribute('data-src');
     // 直接设置 src
     img.src = avatarUrl;
-    // 兜底：如果设置了之后又被改回去
-    var attempt = 0;
-    var iv = setInterval(function () {
-      if (img.src.indexOf(avatarUrl) === -1 && attempt < 5) {
-        img.removeAttribute('data-lazy-src');
-        img.src = avatarUrl;
-        attempt++;
-      } else {
-        clearInterval(iv);
-      }
-    }, 300);
+    applied.add(img);
+    img.dataset.axAvatar = 'applied';
   }
 
   function applyAvatar() {
-    // 1. Butterfly 侧边栏头像（主要位置）
     var selectors = [
       '#card-info img.avatar-img',
       '#card-info img[alt="avatar"]',
@@ -41,13 +44,9 @@
       'img.avatar-img',
       'img[alt="avatar"]'
     ];
-    var seen = {};
     selectors.forEach(function (sel) {
       document.querySelectorAll(sel).forEach(function (img) {
-        if (!seen[img]) {
-          seen[img] = true;
-          setImg(img);
-        }
+        setImg(img);
       });
     });
   }
@@ -58,35 +57,48 @@
     applyAvatar();
   }
 
-  // Butterfly 的懒加载会延迟设置 src，多次尝试覆盖
+  // Butterfly 懒加载会延迟设置 src，做有限的几次重试
   var tries = 0;
   var iv = setInterval(function () {
     applyAvatar();
-    if (++tries > 10) clearInterval(iv);
+    if (++tries > 6) clearInterval(iv);
   }, 500);
 
-  // 用 MutationObserver 监听头像元素属性变化（防止主题 JS 把 src 改回去）
-  function observeAvatars() {
-    var imgs = document.querySelectorAll('img.avatar-img, img[alt="avatar"], .author-info__avatar img, #card-info img');
-    imgs.forEach(function (img) {
-      if (img.dataset.axAvatarObserved) return;
-      img.dataset.axAvatarObserved = '1';
-      var observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function (m) {
-          if (m.type === 'attributes' && (m.attributeName === 'src' || m.attributeName === 'data-lazy-src')) {
-            // 检查是否被改回占位
-            if (img.src.indexOf(avatarUrl) === -1) {
-              img.removeAttribute('data-lazy-src');
-              img.src = avatarUrl;
-            }
+  // 用单个 MutationObserver 监听整个 body 的图片变化（避免每个 img 挂一个 observer）
+  function setupObserver() {
+    if (window.__axAvatarObserver) return;
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (m) {
+        // 属性变化：检查是不是头像被改回占位
+        if (m.type === 'attributes' && m.target && m.target.tagName === 'IMG') {
+          var img = m.target;
+          if (!img.matches('img.avatar-img, img[alt="avatar"], .author-info__avatar img, #card-info img')) return;
+          // 用规范化后的 URL 比较，避免相对/绝对不一致
+          var currentAbs = normalizeUrl(img.src);
+          if (currentAbs !== avatarAbs) {
+            img.removeAttribute('data-lazy-src');
+            img.src = avatarUrl;
           }
-        });
+        }
+        // 新增节点：可能是懒加载刚插入的头像
+        if (m.type === 'childList' && m.addedNodes) {
+          m.addedNodes.forEach(function (node) {
+            if (node.nodeType === 1 && node.querySelector) {
+              applyAvatar();
+            }
+          });
+        }
       });
-      observer.observe(img, { attributes: true, attributeFilter: ['src', 'data-lazy-src'] });
     });
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['src', 'data-lazy-src'],
+      subtree: true,
+      childList: true
+    });
+    window.__axAvatarObserver = observer;
   }
 
   // 等待 DOM 稳定后挂 observer
-  setTimeout(observeAvatars, 1000);
-  setTimeout(observeAvatars, 3000);
+  setTimeout(setupObserver, 1000);
 })();

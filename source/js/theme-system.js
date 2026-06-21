@@ -11,48 +11,6 @@
 
   // ---- Theme Definitions ----
   var THEME_STYLES = {
-    wechat: {
-      name: 'WeChat',
-      colors: ['#FFFFFF', '#07C160', '#576B95', '#FFFFFF', '#191919', '#666666'],
-      bg: '#FFFFFF', body: '#FFFFFF', nav: 'rgba(255,255,255,0.96)', card: '#FFFFFF',
-      text: '#191919', heading: '#0A3D2A', secondary: '#5D5D5D', accent: '#07C160',
-      border: '#E8E8E8', pageHeader: '#FFFFFF', navText: '#333333', navTextHover: '#07C160'
-    },
-    'warm-beige': {
-      name: 'Warm Beige',
-      colors: ['#F0E4D0', '#B8860B', '#C4A96A', '#FFF9EE', '#3D2B1A', '#8A7A66'],
-      bg: '#F0E4D0', body: '#F0E4D0', nav: 'rgba(240,228,208,0.92)', card: '#FFFBF5',
-      text: '#3D2B1A', heading: '#3D2B1A', secondary: '#8A7A66', accent: '#B8860B',
-      border: 'rgba(184,134,11,0.16)', pageHeader: '#E8DCC8', navText: '#3D2B1A', navTextHover: '#B8860B'
-    },
-    'sky-blue': {
-      name: 'Sky Blue',
-      colors: ['#DAECFA', '#2980B9', '#6BB5F0', '#F0F8FF', '#1A3A5C', '#4A7094'],
-      bg: '#DAECFA', body: '#DAECFA', nav: 'rgba(218,236,250,0.92)', card: '#F0F8FF',
-      text: '#1A3A5C', heading: '#1A3A5C', secondary: '#4A7094', accent: '#2980B9',
-      border: 'rgba(41,128,185,0.18)', pageHeader: '#C5DEF5', navText: '#1A3A5C', navTextHover: '#2980B9'
-    },
-    'dusk-pink': {
-      name: 'Dusk Pink',
-      colors: ['#F8DDD4', '#C06030', '#F0A3B3', '#FFF5F0', '#5C2E24', '#A06A5C'],
-      bg: '#F8DDD4', body: '#F8DDD4', nav: 'rgba(248,221,212,0.92)', card: '#FFF5F0',
-      text: '#5C2E24', heading: '#5C2E24', secondary: '#A06A5C', accent: '#C06030',
-      border: 'rgba(192,96,48,0.18)', pageHeader: '#F0C8BA', navText: '#5C2E24', navTextHover: '#C06030'
-    },
-    mint: {
-      name: 'Mint',
-      colors: ['#D4EEE4', '#27AE60', '#7ECDAD', '#F0FFF8', '#1A3D2E', '#4A8068'],
-      bg: '#D4EEE4', body: '#D4EEE4', nav: 'rgba(212,238,228,0.92)', card: '#F0FFF8',
-      text: '#1A3D2E', heading: '#1A3D2E', secondary: '#4A8068', accent: '#27AE60',
-      border: 'rgba(39,174,96,0.18)', pageHeader: '#BFE0D4', navText: '#1A3D2E', navTextHover: '#27AE60'
-    },
-    minimal: {
-      name: 'Minimal',
-      colors: ['#EBEBEB', '#444444', '#888888', '#FFFFFF', '#222222', '#777777'],
-      bg: '#EBEBEB', body: '#EBEBEB', nav: 'rgba(235,235,235,0.92)', card: '#FFFFFF',
-      text: '#222222', heading: '#222222', secondary: '#777777', accent: '#444444',
-      border: '#CCCCCC', pageHeader: '#DDDDDD', navText: '#222222', navTextHover: '#444444'
-    },
     // === 新增方案 A：微信经典绿白（绿茵足球风） ===
     'wechat-classic': {
       name: 'WeChat Green',
@@ -95,9 +53,12 @@
     }
   };
 
-  // Current state — DEFAULT to WeChat (pure white, most noticeable change)
-  var currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'wechat-classic';
+  // Current state — DEFAULT to WeChat Green
+  var currentTheme = 'wechat-classic';
   var customBg = null;
+  try {
+    currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'wechat-classic';
+  } catch (e) { /* Safari 隐私模式或禁用存储时降级到默认 */ }
   try { customBg = JSON.parse(localStorage.getItem(STORAGE_KEY_BG)); } catch(e) { customBg = null; }
 
   // ================================================================
@@ -179,18 +140,7 @@
 
     // ---- Elements that were previously missed ----
 
-    // Footer: background + text color — use a slightly darker shade than body bg
-    var footerWrap = document.getElementById('footer-wrap');
-    if (footerWrap) {
-      footerWrap.style.backgroundColor = themeId === 'wechat' ? '#FAFAFA' : t.nav;
-      footerWrap.style.color = themeId === 'wechat' ? '#666666' : t.secondary;
-      footerWrap.style.borderTopColor = t.border;
-    }
-    // Also target footer itself
-    document.querySelectorAll('#footer, footer').forEach(function(f) {
-      f.style.backgroundColor = themeId === 'wechat' ? '#FAFAFA' : t.nav;
-      f.style.color = themeId === 'wechat' ? '#666666' : t.secondary;
-    });
+    // Footer: 走 CSS !important 规则（theme-system.css 已统一处理），这里不再设内联 style
 
     // Pagination: current/active page number + all page links bg
     document.querySelectorAll('#pagination .page-number, #pagination .current, .pagination .page-number, .pagination .current').forEach(function(p) {
@@ -211,11 +161,7 @@
       e.style.color = t.text;
     });
 
-    // Right-side floating buttons (actual DOM: #go-up, #rightside-config)
-    document.querySelectorAll('#rightside > button, #go-up, #rightside-config, #hide-aside-btn').forEach(function(btn) {
-      btn.style.backgroundColor = t.accent;
-      btn.style.color = '#FFFFFF';
-    });
+    // Right-side floating buttons 已被 hide-rightside.css 隐藏，无需设置样式
 
     // Sidebar Follow Me button (actual DOM id: #card-info-btn)
     var followBtn = document.getElementById('card-info-btn');

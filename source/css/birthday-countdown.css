@@ -1,0 +1,60 @@
+/* ============================================================
+   Axtrivc's Blog — Birthday Countdown
+   从 _config.butterfly.yml 的 inject 段抽离
+   ============================================================ */
+
+#recent-posts { display: flex; flex-direction: column; }
+
+.bday-countdown {
+  max-width: 100%;
+  margin: 0 auto 16px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(139, 111, 71, 0.05) 0%, rgba(196, 169, 106, 0.07) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(139, 111, 71, 0.08);
+  text-align: center;
+  flex-shrink: 0;
+}
+.bday-countdown .bday-emoji { font-size: 20px; margin-bottom: 2px; }
+.bday-countdown .bday-label {
+  font-size: 10px;
+  color: #b0a090;
+  letter-spacing: 1.5px;
+  margin-bottom: 2px;
+}
+.bday-countdown .bday-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a3728;
+  margin-bottom: 8px;
+}
+.bday-countdown .bday-grid {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.bday-countdown .bday-num {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 44px;
+}
+.bday-countdown .bday-num .num {
+  font-size: 20px;
+  font-weight: 700;
+  color: #8B6F47;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.bday-countdown .bday-num .unit {
+  font-size: 10px;
+  color: #b0a090;
+  margin-top: 2px;
+}
+.bday-countdown .bday-date { font-size: 10px; color: #c4b49a; }
+
+/* 生日当天的特殊样式 */
+.bday-countdown.today .bday-name { color: #C4A96A; }
+.bday-countdown.today .bday-label { display: none; }
+.bday-countdown.today .bday-grid { display: none; }

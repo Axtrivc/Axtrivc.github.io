@@ -1,0 +1,144 @@
+/* ============================================================
+   Axtrivc's Blog — Music Bar (Spotify 嵌入播放器)
+   从 _config.butterfly.yml 的 inject 段抽离
+   ============================================================ */
+
+#music-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 56px;
+  background: var(--bg-nav, rgba(245, 240, 232, 0.94));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(139, 111, 71, 0.10);
+  z-index: 9980;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  transition: all 0.3s ease;
+  box-shadow: 0 -2px 20px rgba(139, 111, 71, 0.06);
+}
+
+#music-bar .bar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+#music-bar .bar-cover {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #8B6F47 0%, #C4A96A 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(139, 111, 71, 0.2);
+}
+
+#music-bar .bar-info { display: block; }
+#music-bar .bar-title {
+  font-size: 13px; font-weight: 600;
+  color: #4a3728;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 220px;
+}
+#music-bar .bar-sub { font-size: 11px; color: #a09080; }
+
+#music-bar .bar-controls {
+  display: flex; align-items: center; gap: 12px;
+}
+
+.bar-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.22s;
+  font-size: 16px;
+  background: transparent;
+  color: #8B6F47;
+}
+.bar-btn:hover { background: rgba(139, 111, 71, 0.08); transform: scale(1.05); }
+
+#music-bar .bar-btn-toggle {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: #8B6F47;
+  color: #fff;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.22s;
+}
+#music-bar .bar-btn-toggle:hover { background: #A0845C; transform: scale(1.05); }
+
+#music-panel {
+  position: fixed;
+  bottom: 60px; right: 24px;
+  width: 360px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 48px rgba(139, 111, 71, 0.20);
+  z-index: 9985;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--bg-surface, rgba(255, 255, 255, 0.96));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 111, 71, 0.12);
+  transform: translateY(16px) scale(0.95);
+}
+#music-panel.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+#music-panel .panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px 10px;
+}
+#music-panel .panel-header span {
+  font-size: 14px; font-weight: 600;
+  color: var(--text-heading, #4a3728);
+}
+#music-panel .panel-header button {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-secondary, #a09080);
+  font-size: 17px; padding: 4px;
+  transition: color 0.2s;
+}
+#music-panel .panel-header button:hover { color: var(--text-heading, #4a3728); }
+
+#player-embed-container { width: 100%; }
+#player-embed-container iframe {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 0 0 16px 16px;
+}
+
+body { padding-bottom: 62px !important; }
+
+.vinyl-spin { animation: vinyl-rotate 4s linear infinite paused; }
+.vinyl-spin.playing { animation-play-state: running; }
+@keyframes vinyl-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 手机端适配 */
+@media (max-width: 768px) {
+  #music-bar { height: 50px; padding: 0 16px; }
+  #music-bar .bar-cover { width: 34px; height: 34px; font-size: 17px; }
+  #music-bar .bar-title { max-width: 140px; font-size: 12px; }
+  .bar-btn { width: 32px; height: 32px; font-size: 14px; }
+  #music-bar .bar-btn-toggle { width: 30px; height: 30px; font-size: 11px; }
+  #music-panel { right: 12px; bottom: 54px; width: calc(100vw - 24px); }
+  body { padding-bottom: 56px !important; }
+}
