@@ -22,9 +22,7 @@ categories:
 
 ### 巴萨
 
-**相关新闻**
-
-- [沙特主帅：亚马尔是梅西在巴萨的接班人，能和他交手是享受](https://www.dongqiudi.com/article/5953876)
+> 暂无近期动态
 
 
 ### 皇马
@@ -58,55 +56,54 @@ categories:
 
 **相关新闻**
 
+- [阿斯：我们被西班牙高标准惯坏了，如今该相信亚马尔](https://www.dongqiudi.com/article/5954268)
 - [何塞普：皇马买邓弗里斯完全选对了人；期待入选西班牙国家队](https://www.dongqiudi.com/article/5953966)
-- [传到西班牙了？阿斯谈马宁：这名裁判尺度严格，绰号卡牌大师](https://www.dongqiudi.com/article/5953942)
 
 
 ## 足坛新闻
 
 ### 📰 足坛头条
 
-- [德国2-1逆转科特迪瓦出线，昂达夫双响+补时绝杀，凯西破门](https://www.dongqiudi.com/article/5953678)
-- [荷兰5-1大胜瑞典暂居第一，加克波两球+助攻，布罗比梅开二度](https://www.dongqiudi.com/article/5953328)
-- [懂球帝海报：昂达夫的励志之路](https://www.dongqiudi.com/article/5953747)
-- [昂达夫：赢下这样的比赛意义重大，这会让我们下一场更自信](https://www.dongqiudi.com/article/5953968)
-- [何塞普：皇马买邓弗里斯完全选对了人；期待入选西班牙国家队](https://www.dongqiudi.com/article/5953966) ⭐
+- [库拉索0-0逼平厄瓜多尔，鲁姆15次扑救破纪录，马宁出示6黄](https://www.dongqiudi.com/article/5954098)
+- [我走了很远的路，才来到你的面前！](https://www.dongqiudi.com/article/5954137)
+- [橙色海浪，荷兰球迷在德克萨斯巡游场面震撼](https://www.dongqiudi.com/article/5954342)
+- [伊朗主帅：伊朗第3战终于可提前两天抵达赛地](https://www.dongqiudi.com/article/5954341)
+- [中学英语教辅材料，苏超、海港傻傻分不清](https://www.dongqiudi.com/article/5954331)
 
 #### 西甲新闻
 
-- [何塞普：皇马买邓弗里斯完全选对了人；期待入选西班牙国家队](https://www.dongqiudi.com/article/5953966)
-- [TyC：冈萨雷斯、小蜘蛛有望首发，蒙铁尔恢复合练](https://www.dongqiudi.com/article/5953927)
-- [默尼耶：国内的动乱不会削弱伊朗队，只会让比赛变得更加困难](https://www.dongqiudi.com/article/5953932)
+- [太阳报：堪萨斯一位老太太将珍藏20年台球桌卖给英格兰队](https://www.dongqiudi.com/article/5954313)
+- [太阳报：贝克汉姆世界杯期间靠广告赚约1900万英镑](https://www.dongqiudi.com/article/5954290)
+- [久保建英：从我刚入选国家队起，南野拓实就一直很照顾我](https://www.dongqiudi.com/article/5954301)
 
 #### 英超新闻
 
-- [懂球帝海报：昂达夫的励志之路](https://www.dongqiudi.com/article/5953747)
-- [何塞普：皇马买邓弗里斯完全选对了人；期待入选西班牙国家队](https://www.dongqiudi.com/article/5953966)
-- [鲁迪-加西亚：特罗萨德球商很高；希望帕尔多能重演奥里吉的故事](https://www.dongqiudi.com/article/5953858)
+- [萌翻了，拉斐尔的儿子模仿库尼亚进球后的冲浪庆祝](https://www.dongqiudi.com/article/5954317)
+- [太阳报：堪萨斯一位老太太将珍藏20年台球桌卖给英格兰队](https://www.dongqiudi.com/article/5954313)
+- [太阳报：贝克汉姆世界杯期间靠广告赚约1900万英镑](https://www.dongqiudi.com/article/5954290)
 
 #### 意甲新闻
 
-- [何塞普：皇马买邓弗里斯完全选对了人；期待入选西班牙国家队](https://www.dongqiudi.com/article/5953966)
-- [鲁迪-加西亚：特罗萨德球商很高；希望帕尔多能重演奥里吉的故事](https://www.dongqiudi.com/article/5953858)
-- [TA：荷兰队边路下底进攻套路熟练，他们是世界杯夺冠热门之一](https://www.dongqiudi.com/article/5953878)
+- [太阳报：堪萨斯一位老太太将珍藏20年台球桌卖给英格兰队](https://www.dongqiudi.com/article/5954313)
+- [太阳报：贝克汉姆世界杯期间靠广告赚约1900万英镑](https://www.dongqiudi.com/article/5954290)
+- [OptaJean：勒纳尔成法国第二位在世界杯执教3支国家队的教练](https://www.dongqiudi.com/article/5954280)
 
 #### 德甲新闻
 
-- [懂球帝海报：昂达夫的励志之路](https://www.dongqiudi.com/article/5953747)
-- [昂达夫：赢下这样的比赛意义重大，这会让我们下一场更自信](https://www.dongqiudi.com/article/5953968)
-- [阿米里：和昂达夫一起替补改变比赛，这是我完美的世界杯首秀](https://www.dongqiudi.com/article/5953954)
+- [纳格尔斯曼：萨内在防守端非常积极，为基米希提供了很好支持](https://www.dongqiudi.com/article/5954309)
+- [太阳报：堪萨斯一位老太太将珍藏20年台球桌卖给英格兰队](https://www.dongqiudi.com/article/5954313)
+- [OptaJean：勒纳尔成法国第二位在世界杯执教3支国家队的教练](https://www.dongqiudi.com/article/5954280)
 
 #### 法甲新闻
 
-- [默尼耶：国内的动乱不会削弱伊朗队，只会让比赛变得更加困难](https://www.dongqiudi.com/article/5953932)
-- [鲁迪-加西亚：特罗萨德球商很高；希望帕尔多能重演奥里吉的故事](https://www.dongqiudi.com/article/5953858)
-- [德拉富恩特：其实我知道外界的消息，但说我不关注显得我淡定](https://www.dongqiudi.com/article/5953881)
+- [久保建英：从我刚入选国家队起，南野拓实就一直很照顾我](https://www.dongqiudi.com/article/5954301)
+- [英媒：纽卡有意摩洛哥国脚阿布德，帕尔多也在引援名单中](https://www.dongqiudi.com/article/5954278)
+- [日媒分析日本阵型：3-4-2-1，伊东纯也右翼卫，镰田大地前腰](https://www.dongqiudi.com/article/5954266)
 
 #### 我的主队动态
 
+- ⭐ [阿斯：我们被西班牙高标准惯坏了，如今该相信亚马尔](https://www.dongqiudi.com/article/5954268)
 - ⭐ [何塞普：皇马买邓弗里斯完全选对了人；期待入选西班牙国家队](https://www.dongqiudi.com/article/5953966)
-- ⭐ [传到西班牙了？阿斯谈马宁：这名裁判尺度严格，绰号卡牌大师](https://www.dongqiudi.com/article/5953942)
-- ⭐ [沙特主帅：亚马尔是梅西在巴萨的接班人，能和他交手是享受](https://www.dongqiudi.com/article/5953876)
 
 
 ---
