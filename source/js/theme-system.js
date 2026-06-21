@@ -7,7 +7,6 @@
 
   // ---- Constants ----
   var STORAGE_KEY_THEME = 'axtrivc_theme_v2';
-  var STORAGE_KEY_BG = 'axtrivc_custom_bg_v2';
 
   // ---- Theme Definitions ----
   var THEME_STYLES = {
@@ -55,11 +54,9 @@
 
   // Current state — DEFAULT to WeChat Green
   var currentTheme = 'wechat-classic';
-  var customBg = null;
   try {
     currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'wechat-classic';
   } catch (e) { /* Safari 隐私模式或禁用存储时降级到默认 */ }
-  try { customBg = JSON.parse(localStorage.getItem(STORAGE_KEY_BG)); } catch(e) { customBg = null; }
 
   // ================================================================
   // APPLY THEME — called immediately on load AND on user selection
@@ -221,7 +218,6 @@
     // Try immediately if #web_bg already exists
     if (document.getElementById('web_bg')) {
       applyTheme(currentTheme);
-      if (customBg) applyCustomBgNow();
       return true;
     }
     return false;
@@ -237,7 +233,6 @@
           if (addedNodes[j].id === 'web_bg' || (addedNodes[j].querySelector && addedNodes[j].querySelector('#web_bg'))) {
             mo.disconnect();
             applyTheme(currentTheme);
-            if (customBg) applyCustomBgNow();
             return;
           }
         }
@@ -342,20 +337,6 @@
     });
     html += '</div>';
 
-    // Background section
-    html += '<div class="panel-section-label">Background Image</div><div class="bg-section">';
-    html += '<div class="bg-upload-area" id="bg-upload" tabindex="0" role="button">';
-    html += '<div class="upload-icon">📷</div>';
-    html += '<div class="upload-text"><strong>Click or Drag</strong> to upload image<br>or paste URL below</div>';
-    html += '<div class="upload-hint">JPG / PNG / WebP &le; 10MB</div></div>';
-    html += '<div class="bg-url-row">';
-    html += '<input type="text" class="bg-url-input" id="bg-url-input" placeholder="Paste image URL here...">';
-    html += '<button class="bg-url-btn" id="bg-url-btn">Apply</button></div>';
-    html += '<div class="bg-controls">';
-    html += '<div class="bg-control"><label>Opacity <span id="opacity-val">35%</span></label><input type="range" id="bg-opacity" min="5" max="80" value="35"></div>';
-    html += '<div class="bg-control"><label>Blur <span id="blur-val">0px</span></label><input type="range" id="bg-blur" min="0" max="20" value="0"></div></div>';
-    html += '<button class="bg-remove-btn' + (customBg ? '' : ' hidden') + '" id="bg-remove">Remove Background Image</button></div>';
-
     panel.innerHTML = html; document.body.appendChild(panel); bindPanelEvents();
   }
 
@@ -367,65 +348,11 @@
       opt.addEventListener('click', function() { selectTheme(this.getAttribute('data-theme')); });
       opt.addEventListener('keydown', function(e) { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); selectTheme(this.getAttribute('data-theme')); }});
     });
-
-    var uploadArea = document.getElementById('bg-upload');
-    if (uploadArea) {
-      uploadArea.addEventListener('click', function() {
-        var input = document.createElement('input'); input.type='file'; input.accept='image/jpeg,image/png,image/webp';
-        input.onchange = function(e) { var f=e.target.files[0]; if(!f||f.size>10*1024*1024)return alert('File too large (>10MB)');
-          var r=new FileReader(); r.onload=function(ev){applyCustomBg(ev.target.result)}; r.readAsDataURL(f); };
-        input.click();
-      });
-      ['dragenter','dragover'].forEach(function(ev){uploadArea.addEventListener(ev,function(e){e.preventDefault();this.style.borderColor='#333'},false)});
-      ['dragleave','drop'].forEach(function(ev){uploadArea.addEventListener(ev,function(e){e.preventDefault();this.style.borderColor='rgba(0,0,0,0.12)'},false)});
-      uploadArea.addEventListener('drop',function(e){e.preventDefault();var f=e.dataTransfer.files[0];if(!f||f.size>10*1024*1024)return alert('File too large');var r=new FileReader();r.onload=function(ev){applyCustomBg(ev.target.result)};r.readAsDataURL(f)},false);
-    }
-    var urlBtn=document.getElementById('bg-url-btn'), urlInput=document.getElementById('bg-url-input');
-    if(urlBtn&&urlInput){
-      urlBtn.addEventListener('click',function(){var u=urlInput.value.trim();if(!u)return alert('Enter URL');if(!u.match(/^https?:\/\//i))return alert('URL must start with http/https');applyCustomBg(u)});
-      urlInput.addEventListener('keydown',function(e){if(e.key==='Enter')urlBtn.click()});
-    }
-    var opSlider=document.getElementById('bg-opacity'), blSlider=document.getElementById('bg-blur');
-    if(opSlider) opSlider.addEventListener('input',function(){document.getElementById('opacity-val').textContent=this.value+'%';if(customBg){customBg.opacity=parseInt(this.value)/100;updateCustomBgStyle()}});
-    if(blSlider) blSlider.addEventListener('input',function(){document.getElementById('blur-val').textContent=this.value+'px';if(customBg){customBg.blur=parseInt(this.value);updateCustomBgStyle()}});
-    var rmBtn=document.getElementById('bg-remove');
-    if(rmBtn) rmBtn.addEventListener('click', removeCustomBg);
   }
 
   function selectTheme(id) {
     currentTheme=id; localStorage.setItem(STORAGE_KEY_THEME,id); applyTheme(id);
     document.querySelectorAll('.theme-option[data-theme]').forEach(function(o){o.classList.toggle('active',o.getAttribute('data-theme')===id)});
-  }
-
-  // Custom background functions
-  function applyCustomBg(url) {
-    customBg={url:url,opacity:0.35,blur:0};
-    var opEl=document.getElementById('bg-opacity'), blEl=document.getElementById('bg-blur');
-    if(opEl) customBg.opacity=parseInt(opEl.value)/100; if(blEl) customBg.blur=parseInt(blEl.value);
-    localStorage.setItem(STORAGE_KEY_BG,JSON.stringify(customBg)); updateCustomBgStyle();
-    var rmBtn=document.getElementById('bg-remove'); if(rmBtn) rmBtn.classList.remove('hidden');
-    var ua=document.getElementById('bg-upload'); if(ua) ua.innerHTML='<div class="upload-icon">✅</div><div class="upload-text"><strong>Image applied!</strong></div>';
-  }
-  function applyCustomBgNow() {
-    if (!customBg) return;
-    document.body.classList.add('custom-bg');
-    document.documentElement.style.setProperty('--custom-bg-image',"url('"+customBg.url+"')");
-    document.documentElement.style.setProperty('--custom-bg-opacity', customBg.opacity);
-    document.documentElement.style.setProperty('--custom-bg-blur', customBg.blur+'px');
-  }
-  function updateCustomBgStyle() {
-    applyCustomBgNow(); applyTheme(currentTheme);
-  }
-  function removeCustomBg() {
-    customBg=null; localStorage.removeItem(STORAGE_KEY_BG);
-    document.body.classList.remove('custom-bg');
-    document.documentElement.style.setProperty('--custom-bg-image','');
-    document.documentElement.style.setProperty('--custom-bg-opacity','');
-    document.documentElement.style.setProperty('--custom-bg-blur','');
-    applyTheme(currentTheme);
-    var rmBtn=document.getElementById('bg-remove'); if(rmBtn) rmBtn.classList.add('hidden');
-    var ua=document.getElementById('bg-upload');
-    if(ua) ua.innerHTML='<div class="upload-icon">📷</div><div class="upload-text"><strong>Click or Drag</strong> to upload image<br>or paste URL below</div><div class="upload-hint">JPG/PNG/WebP ≤10MB</div>';
   }
 
   function openPanel() { buildPanel(); var o=document.getElementById('theme-overlay'),p=document.getElementById('theme-panel'); if(o)o.classList.add('show');if(p)p.classList.add('show');}
