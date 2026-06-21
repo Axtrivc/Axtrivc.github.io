@@ -307,12 +307,16 @@ a[id="card-info-btn"] {
    注：Footer 保持 Butterfly 默认黑色，不改动
    ============================================================ */
 
-/* 站点副标题：跟随主题主色调（由 JS 注入 --theme-accent 变量） */
+/* 站点副标题：跟随主题 heading 色（深色稳重，避免荧光感）
+   原 Butterfly 默认 var(--light-grey) #EEEEEE 太浅
+   原方案用 --theme-accent 会导致亮色主题（如湖蓝）副标题发荧光
+   现改用 --theme-heading（每个主题的深色变体），自动适配
+   注：Footer 保持 Butterfly 默认黑色，不改动 */
 #site-subtitle,
 #subtitle {
-  color: var(--theme-accent, #07C160) !important;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35), 0 0 3px rgba(0, 0, 0, 0.45) !important;
-  font-weight: 500 !important;
+  color: var(--theme-heading, #07C160) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08) !important;
+  font-weight: 600 !important;
   transition: color 0.45s ease !important;
 }
 
