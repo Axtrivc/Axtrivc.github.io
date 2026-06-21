@@ -179,6 +179,7 @@
     document.documentElement.style.setProperty('--theme-text-current', t.text);
     document.documentElement.style.setProperty('--theme-border-current', t.border);
     document.documentElement.style.setProperty('--theme-card-current', t.card);
+    document.documentElement.style.setProperty('--theme-body-current', t.body);
 
     // Music bar theme adaptation
     var musicBar = document.getElementById('music-bar');

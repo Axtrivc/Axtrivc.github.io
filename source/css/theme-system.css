@@ -189,17 +189,19 @@
    Uses CSS custom properties set by theme-system.js
    ============================================================ */
 
-/* Footer — 跟随主题色（与正文同色调，不再用黑底白字） */
+/* Footer — 完全融入背景（不单独拎出来，与背景同色） */
 #footer-wrap,
 #footer,
 footer {
-  background-color: var(--theme-card-current, #FFFFFF) !important;
+  background-color: var(--theme-body-current, transparent) !important;
+  background: transparent !important;
   color: var(--theme-secondary-current, #666666) !important;
-  border-top: 1px solid var(--theme-border-current, #E8E8E8) !important;
-  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease;
+  border-top: none !important;
+  box-shadow: none !important;
+  transition: color 0.45s ease;
 }
 #footer .footer-other {
-  padding: 10px 20px !important;  /* 原 40px，太占地方 */
+  padding: 10px 20px !important;
 }
 #footer a {
   color: var(--theme-secondary-current, #666666) !important;
