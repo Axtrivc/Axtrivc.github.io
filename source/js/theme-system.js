@@ -88,10 +88,10 @@
     // === 新增方案 E：柠檬黄 + 深靛蓝（极简时尚撞色） ===
     'lemon-indigo': {
       name: 'Lemon Indigo',
-      colors: ['#FFFFFF', '#021B35', '#FFE44D', '#FAFAFA', '#021B35', '#4A4A4A'],
+      colors: ['#FFFFFF', '#1E3A8A', '#F5C518', '#FAFAFA', '#1E3A8A', '#4A5568'],
       bg: '#FAFAFA', body: '#FAFAFA', nav: 'rgba(255,255,255,0.97)', card: '#FFFFFF',
-      text: '#021B35', heading: '#000814', secondary: '#4A4A4A', accent: '#FFE44D',
-      border: '#B5D4F4', pageHeader: '#FFFFFF', navText: '#021B35', navTextHover: '#C49B00'
+      text: '#1E3A8A', heading: '#1E3A8A', secondary: '#4A5568', accent: '#F5C518',
+      border: '#C7D2FE', pageHeader: '#FFFFFF', navText: '#1E3A8A', navTextHover: '#B45309'
     }
   };
 
@@ -252,7 +252,7 @@
 
     document.body.setAttribute('data-theme-custom', themeId);
 
-    // === Lemon Indigo 专属：加粗放大标题文字，让深蓝色更清晰 ===
+    // === Lemon Indigo 专属：副标题用深蓝（不是黄色 accent，避免荧光感） ===
     var liStyle = document.getElementById('theme-lemon-indigo-style');
     if (themeId === 'lemon-indigo') {
       if (!liStyle) {
@@ -261,6 +261,7 @@
         document.head.appendChild(liStyle);
       }
       liStyle.textContent =
+        '#site-subtitle, #subtitle { color: #1E3A8A !important; text-shadow: none !important; font-weight: 600 !important; }' +
         '#site-title, .site-name, .site-name a { font-weight: 800 !important; }' +
         '.article-title, .recent-post-info a.article-title { font-weight: 700 !important; }' +
         '#menus .menus_item a, #nav a.site-page, .menus_items a { font-weight: 600 !important; }' +
