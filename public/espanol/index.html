@@ -4,228 +4,695 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>西班牙语学习中心 · Axtrivc's Blog</title>
+<script src="/js/standalone-theme.js"></script>
 <style>
+  /* ============================================================
+     西班牙语学习中心 v2 - 单列流式布局
+     字重对齐首页：body 600 / 标题 700-800 / label 500
+     ============================================================ */
   :root {
-    --bg: #fdf8f2;
-    --card: #fff;
-    --accent: #e07b39;
-    --accent2: #c0392b;
-    --green: #27ae60;
-    --red: #e74c3c;
-    --text: #3d2b1f;
-    --sub: #7a6152;
-    --border: #e8d5c4;
-    --shadow: 0 2px 12px rgba(150,90,50,0.10);
-    --radius: 14px;
+    --es-red: #c0392b;
+    --es-orange: #e07b39;
+    --es-soft: rgba(224,123,57,0.10);
+    --green-ok: #16a34a;
+    --red-wrong: #dc2626;
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 16px;
+    --max-w: 760px;
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', 'PingFang SC', sans-serif; min-height: 100vh; }
-
-  .site-header {
-    background: linear-gradient(135deg, #c0392b 0%, #e07b39 100%);
-    color: #fff; padding: 28px 24px 20px; text-align: center;
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--theme-body);
+    color: var(--theme-text);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Segoe UI", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.65;
+    min-height: 100vh;
+    transition: background 0.45s ease, color 0.45s ease;
+    -webkit-font-smoothing: antialiased;
   }
-  .site-header h1 { font-size: 2rem; letter-spacing: 1px; }
-  .site-header p { opacity: .85; margin-top: 6px; font-size: .95rem; }
-  .back-link { display:inline-block; margin-bottom:10px; color:#fff; opacity:.8; text-decoration:none; font-size:.85rem; }
-  .back-link:hover { opacity:1; }
-  .progress-bar-wrap { background: rgba(255,255,255,0.25); border-radius: 99px; height: 8px; margin: 14px auto 0; max-width: 320px; }
-  .progress-bar-inner { height: 8px; border-radius: 99px; background: #fff; transition: width .5s; }
 
-  .level-tabs { display: flex; gap: 8px; padding: 18px 24px 0; overflow-x: auto; }
-  .level-tabs::-webkit-scrollbar { display:none; }
-  .level-tab {
-    flex-shrink: 0; padding: 8px 20px; border-radius: 99px; border: 2px solid var(--border);
-    background: var(--card); color: var(--sub); cursor: pointer; font-weight: 600; font-size: .9rem;
-    transition: all .2s;
+  /* ─── 顶部导航 ─── */
+  .top-nav {
+    background: var(--theme-card);
+    border-bottom: 1px solid var(--theme-border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    transition: background 0.45s ease, border-color 0.45s ease;
   }
-  .level-tab.active, .level-tab:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .level-tab .badge { font-size: .72rem; margin-left: 4px; opacity: .75; }
-
-  .main-wrap { display: flex; gap: 20px; padding: 20px 24px 40px; max-width: 1100px; margin: 0 auto; }
-  .sidebar { width: 260px; flex-shrink: 0; }
-  .content-area { flex: 1; min-width: 0; }
-
-  .unit-list { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; position: sticky; top: 12px; }
-  .unit-item {
-    display: flex; align-items: center; gap: 12px; padding: 13px 16px;
-    cursor: pointer; border-bottom: 1px solid var(--border); transition: background .15s;
+  .top-nav a {
+    color: var(--theme-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
   }
-  .unit-item:last-child { border-bottom: none; }
-  .unit-item:hover { background: #fef3ea; }
-  .unit-item.active { background: #fef3ea; border-left: 3px solid var(--accent); }
-  .unit-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; background: #fde8d8; }
-  .unit-done .unit-icon { background: #d5f5e3; }
-  .unit-text { flex: 1; min-width: 0; }
-  .unit-name { font-weight: 600; font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .unit-desc { font-size: .75rem; color: var(--sub); margin-top: 2px; }
-  .unit-check { color: var(--green); font-size: .85rem; }
-
-  .lesson-header { margin-bottom: 16px; }
-  .lesson-header h2 { font-size: 1.4rem; color: var(--text); }
-  .lesson-header p { color: var(--sub); margin-top: 4px; font-size: .9rem; }
-  .lesson-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-  .lesson-tab {
-    padding: 6px 16px; border-radius: 99px; border: 1.5px solid var(--border);
-    background: var(--card); color: var(--sub); cursor: pointer; font-size: .85rem; font-weight: 600; transition: all .2s;
+  .top-nav a:hover { color: var(--theme-accent); }
+  .top-nav .nav-sep { color: var(--theme-border); }
+  .top-nav .nav-current {
+    color: var(--theme-heading);
+    font-size: 15px;
+    font-weight: 700;
   }
-  .lesson-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-  .section { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 16px; }
-  .section h3 { font-size: 1.05rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .section h3 .tag { font-size: .72rem; background: #fde8d8; color: var(--accent); border-radius: 5px; padding: 2px 7px; font-weight: 700; }
-  .section .note { font-size: .88rem; color: var(--sub); line-height: 1.7; margin-top: 8px; }
-
-  .phoneme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
-  .phoneme-card {
-    background: #fdf8f2; border: 1.5px solid var(--border); border-radius: 10px;
-    padding: 12px 8px; text-align: center; cursor: pointer; transition: all .2s;
+  .top-nav .nav-right {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    align-items: center;
   }
-  .phoneme-card:hover { border-color: var(--accent); background: #fef3ea; transform: translateY(-2px); }
-  .phoneme-letter { font-size: 1.6rem; font-weight: 700; color: var(--accent2); }
-  .phoneme-ipa { font-size: .8rem; color: var(--sub); margin-top: 2px; }
-  .phoneme-example { font-size: .75rem; color: #7a6152; margin-top: 4px; font-style: italic; }
-
-  .grammar-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
-  .grammar-table th { background: #fef3ea; color: var(--accent2); padding: 8px 12px; text-align: left; border-bottom: 2px solid var(--border); }
-  .grammar-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
-  .grammar-table tr:last-child td { border-bottom: none; }
-  .highlight-word { color: var(--accent2); font-weight: 700; }
-
-  .dialog-box { background: #f0f7ff; border: 1.5px solid #b3d4f5; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
-  .dialog-line { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
-  .dialog-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; background: #e8f0fe; }
-  .dialog-bubble { background: #fff; border-radius: 10px; padding: 8px 12px; font-size: .9rem; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
-  .dialog-bubble .es { font-weight: 600; color: var(--accent2); display: flex; align-items: center; gap: 6px; }
-  .dialog-bubble .zh { font-size: .8rem; color: var(--sub); margin-top: 2px; }
-
-  .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
-  .vocab-card {
-    background: #fdf8f2; border: 1.5px solid var(--border); border-radius: 10px;
-    padding: 12px; cursor: pointer; transition: all .2s; position: relative; overflow: hidden;
+  .tts-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    border: 1px solid var(--theme-border);
+    background: transparent;
+    color: var(--theme-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
   }
-  .vocab-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(150,90,50,.12); }
-  .vocab-es { font-size: 1.1rem; font-weight: 700; color: var(--accent2); display: flex; align-items: center; gap: 6px; }
-  .vocab-zh { font-size: .85rem; color: var(--sub); margin-top: 4px; }
-  .vocab-example { font-size: .75rem; color: #aaa; margin-top: 6px; font-style: italic; display: none; }
-  .vocab-card.flipped .vocab-example { display: block; color: var(--text); }
-
-  .speak-btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 24px; height: 24px; border-radius: 50%; border: none;
-    background: #fde8d8; color: var(--accent); cursor: pointer;
-    font-size: .85rem; transition: all .2s; flex-shrink: 0;
+  .tts-pill:hover { color: var(--theme-text); border-color: var(--theme-secondary); }
+  .tts-pill.active {
+    background: var(--theme-accent);
+    border-color: var(--theme-accent);
+    color: #fff;
   }
-  .speak-btn:hover { background: var(--accent); color: #fff; transform: scale(1.1); }
 
-  .tts-bar {
-    display: flex; align-items: center; gap: 10px; padding: 8px 24px;
-    background: #fff8f3; border-bottom: 1px solid var(--border);
-    font-size: .82rem; color: var(--sub);
+  /* ─── 容器 ─── */
+  .container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 24px;
   }
-  .tts-bar label { font-weight: 600; color: var(--text); }
-  .speed-btn {
-    padding: 4px 12px; border-radius: 99px; border: 1.5px solid var(--border);
-    background: var(--card); cursor: pointer; font-size: .8rem; font-weight: 600;
-    color: var(--sub); transition: all .2s;
-  }
-  .speed-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-  .quiz-progress { font-size: .82rem; color: var(--sub); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-  .quiz-progress-track { background: var(--border); border-radius: 99px; height: 6px; flex: 1; margin-left: 10px; }
-  .quiz-progress-fill { background: var(--accent); border-radius: 99px; height: 6px; transition: width .4s; }
-  .quiz-question { font-size: 1.1rem; font-weight: 600; margin-bottom: 18px; line-height: 1.5; }
-  .quiz-tip { font-size: .82rem; color: var(--sub); margin-bottom: 10px; }
-  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .option-btn {
-    padding: 12px 10px; border-radius: 10px; border: 2px solid var(--border);
-    background: var(--card); cursor: pointer; font-size: .9rem; text-align: left;
-    transition: all .2s; display: flex; align-items: center; gap: 8px;
+  /* ─── Hero ─── */
+  .hero {
+    padding: 56px 0 32px;
+    border-bottom: 1px solid var(--theme-border);
+    margin-bottom: 8px;
   }
-  .option-btn:hover:not(:disabled) { border-color: var(--accent); background: #fef3ea; }
-  .option-btn.correct { border-color: var(--green); background: #eafaf1; color: var(--green); }
-  .option-btn.wrong { border-color: var(--red); background: #fdf0ee; color: var(--red); }
-  .option-letter { width: 24px; height: 24px; border-radius: 50%; background: var(--border); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: .8rem; flex-shrink: 0; }
-  .correct .option-letter { background: var(--green); color: #fff; }
-  .wrong .option-letter { background: var(--red); color: #fff; }
-
-  .fill-input {
-    width: 100%; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--border);
-    font-size: 1rem; outline: none; transition: border .2s; background: var(--bg);
-    color: var(--text); margin-bottom: 12px;
+  .hero .hero-emoji {
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 16px;
+    display: block;
   }
-  .fill-input:focus { border-color: var(--accent); }
-  .fill-input.correct { border-color: var(--green); background: #eafaf1; }
-  .fill-input.wrong { border-color: var(--red); background: #fdf0ee; }
+  .hero h1 {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--theme-heading);
+    margin-bottom: 8px;
+    line-height: 1.15;
+  }
+  .hero .hero-sub {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--theme-secondary);
+    margin-bottom: 20px;
+  }
+  .hero .progress-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--theme-secondary);
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: color-mix(in srgb, var(--theme-secondary) 18%, transparent);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--theme-accent);
+    border-radius: 99px;
+    transition: width .5s ease;
+  }
 
-  .quiz-feedback { padding: 12px 16px; border-radius: 10px; margin-bottom: 14px; font-weight: 600; font-size: .9rem; display: none; }
+  /* ─── 等级选择横条 ─── */
+  .level-row {
+    display: flex;
+    gap: 8px;
+    padding: 24px 0 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .level-row::-webkit-scrollbar { display: none; }
+  .level-chip {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 99px;
+    border: 1px solid var(--theme-border);
+    background: transparent;
+    color: var(--theme-secondary);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .level-chip:hover {
+    color: var(--theme-text);
+    border-color: var(--theme-secondary);
+  }
+  .level-chip.active {
+    background: var(--theme-heading);
+    border-color: var(--theme-heading);
+    color: var(--theme-card);
+  }
+  .level-chip .chip-pct {
+    font-size: 11px;
+    opacity: 0.7;
+    font-weight: 600;
+  }
+
+  /* ─── 单元卡片（流式核心） ─── */
+  .units-flow {
+    padding: 8px 0 40px;
+  }
+  .unit-card {
+    background: var(--theme-card);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--r-lg);
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .unit-card:hover {
+    border-color: var(--theme-secondary);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  }
+  .unit-card.done {
+    border-left: 3px solid var(--green-ok);
+  }
+  .unit-card.active {
+    border-color: var(--theme-accent);
+    box-shadow: 0 4px 24px color-mix(in srgb, var(--theme-accent) 18%, transparent);
+  }
+
+  .unit-head {
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .unit-emoji {
+    font-size: 24px;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--es-soft);
+    border-radius: var(--r-sm);
+  }
+  .unit-info { flex: 1; min-width: 0; }
+  .unit-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--theme-heading);
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+  .unit-desc {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--theme-secondary);
+  }
+  .unit-toggle {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--theme-secondary);
+    font-size: 14px;
+    transition: transform 0.2s;
+  }
+  .unit-card.active .unit-toggle { transform: rotate(90deg); }
+  .unit-done-mark {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--green-ok);
+    color: #fff;
+    font-size: 11px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+  }
+  .unit-card.done .unit-done-mark { display: flex; }
+
+  .unit-body {
+    display: none;
+    padding: 0 22px 22px;
+    border-top: 1px solid var(--theme-border);
+    margin-top: 0;
+  }
+  .unit-card.active .unit-body { display: block; }
+  .unit-body > * + * { margin-top: 24px; }
+
+  /* ─── 区块标题 ─── */
+  .blk-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--theme-secondary);
+    margin: 18px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .blk-label:first-child { margin-top: 18px; }
+
+  /* ─── 发音表 ─── */
+  .phoneme-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 8px;
+  }
+  .phoneme-tile {
+    background: var(--theme-body);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--r-sm);
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .phoneme-tile:hover {
+    border-color: var(--theme-accent);
+    background: var(--theme-card);
+    transform: translateY(-1px);
+  }
+  .phoneme-letter {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--es-red);
+    line-height: 1;
+  }
+  .phoneme-ipa {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--theme-secondary);
+    margin-top: 4px;
+  }
+  .phoneme-ex {
+    font-size: 11px;
+    color: var(--theme-secondary);
+    margin-top: 2px;
+    font-style: italic;
+    opacity: 0.85;
+  }
+
+  /* ─── 对话 ─── */
+  .dialog-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dialog-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .dialog-av {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--es-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .dialog-bx {
+    flex: 1;
+    background: var(--theme-body);
+    border-radius: var(--r-md);
+    padding: 10px 14px;
+    min-width: 0;
+  }
+  .dialog-es {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--es-red);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .dialog-zh {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--theme-secondary);
+    margin-top: 4px;
+  }
+
+  /* ─── 语法表 ─── */
+  .grammar-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    border-radius: var(--r-md);
+    overflow: hidden;
+    border: 1px solid var(--theme-border);
+  }
+  .grammar-tbl th {
+    background: var(--es-soft);
+    color: var(--es-red);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--theme-border);
+  }
+  .grammar-tbl td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--theme-border);
+    font-weight: 500;
+  }
+  .grammar-tbl tr:last-child td { border-bottom: none; }
+  .grammar-note {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--theme-secondary);
+    line-height: 1.7;
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: var(--theme-body);
+    border-radius: var(--r-sm);
+    border-left: 3px solid var(--theme-accent);
+  }
+
+  /* ─── 词汇 ─── */
+  .vocab-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+  }
+  .vocab-tile {
+    background: var(--theme-body);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--r-sm);
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .vocab-tile:hover {
+    border-color: var(--theme-accent);
+    background: var(--theme-card);
+    transform: translateY(-1px);
+  }
+  .vocab-es {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--es-red);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .vocab-zh {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--theme-secondary);
+    margin-top: 2px;
+  }
+  .vocab-ex {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--theme-text);
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--theme-border);
+    display: none;
+  }
+  .vocab-tile.flipped .vocab-ex { display: block; }
+
+  /* ─── TTS 按钮 ─── */
+  .speak-mini {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--es-orange);
+    cursor: pointer;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .speak-mini:hover {
+    background: var(--theme-accent);
+    color: #fff;
+  }
+
+  /* ─── 测验 ─── */
+  .quiz-box {
+    background: var(--theme-body);
+    border-radius: var(--r-md);
+    padding: 18px 20px;
+    border: 1px solid var(--theme-border);
+  }
+  .quiz-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--theme-secondary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .quiz-top .score-tag {
+    background: var(--theme-card);
+    padding: 3px 10px;
+    border-radius: 99px;
+    color: var(--theme-heading);
+  }
+  .quiz-q {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--theme-heading);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .quiz-opts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .quiz-opt {
+    padding: 12px 14px;
+    border-radius: var(--r-sm);
+    border: 1.5px solid var(--theme-border);
+    background: var(--theme-card);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    color: var(--theme-text);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .quiz-opt:hover:not(:disabled) {
+    border-color: var(--theme-secondary);
+    transform: translateX(2px);
+  }
+  .quiz-opt.correct {
+    border-color: var(--green-ok);
+    background: color-mix(in srgb, var(--green-ok) 12%, var(--theme-card));
+    color: var(--green-ok);
+  }
+  .quiz-opt.wrong {
+    border-color: var(--red-wrong);
+    background: color-mix(in srgb, var(--red-wrong) 10%, var(--theme-card));
+    color: var(--red-wrong);
+  }
+  .opt-letter {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--theme-border);
+    color: var(--theme-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .quiz-opt.correct .opt-letter { background: var(--green-ok); color: #fff; }
+  .quiz-opt.wrong .opt-letter { background: var(--red-wrong); color: #fff; }
+
+  .quiz-input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: var(--r-sm);
+    border: 1.5px solid var(--theme-border);
+    background: var(--theme-card);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--theme-text);
+    outline: none;
+    transition: border 0.15s;
+    font-family: inherit;
+  }
+  .quiz-input:focus { border-color: var(--theme-accent); }
+  .quiz-input.correct { border-color: var(--green-ok); }
+  .quiz-input.wrong { border-color: var(--red-wrong); }
+
+  .quiz-feedback {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    font-weight: 600;
+    display: none;
+  }
   .quiz-feedback.show { display: block; }
-  .quiz-feedback.correct { background: #eafaf1; color: var(--green); border: 1.5px solid var(--green); }
-  .quiz-feedback.wrong { background: #fdf0ee; color: var(--red); border: 1.5px solid var(--red); }
+  .quiz-feedback.correct {
+    background: color-mix(in srgb, var(--green-ok) 12%, transparent);
+    color: var(--green-ok);
+  }
+  .quiz-feedback.wrong {
+    background: color-mix(in srgb, var(--red-wrong) 10%, transparent);
+    color: var(--red-wrong);
+  }
 
-  .btn { padding: 10px 24px; border-radius: 99px; border: none; cursor: pointer; font-weight: 700; font-size: .95rem; transition: all .2s; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:hover { background: #c9672a; transform: translateY(-1px); }
-  .btn-secondary { background: var(--border); color: var(--sub); }
-  .btn-secondary:hover { background: #d9c3b0; }
+  .btn-primary {
+    margin-top: 12px;
+    padding: 10px 22px;
+    border-radius: 99px;
+    border: none;
+    background: var(--theme-heading);
+    color: var(--theme-card);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--theme-heading) 30%, transparent);
+  }
 
-  .quiz-result { text-align: center; padding: 30px 20px; }
-  .result-score { font-size: 3rem; font-weight: 800; color: var(--accent); }
-  .result-msg { font-size: 1.1rem; margin-top: 8px; color: var(--text); }
-  .result-stars { font-size: 2rem; margin: 12px 0; }
+  .quiz-result-box {
+    text-align: center;
+    padding: 24px;
+  }
+  .result-num {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--theme-accent);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .result-msg {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--theme-heading);
+    margin-top: 8px;
+  }
+  .result-stars {
+    font-size: 22px;
+    margin: 12px 0 16px;
+  }
 
-  .site-footer { text-align:center; padding:20px; color:var(--sub); font-size:.8rem; opacity:.6; }
+  /* ─── Footer ─── */
+  .footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--theme-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.6;
+    border-top: 1px solid var(--theme-border);
+    margin-top: 40px;
+  }
 
-  @media (max-width: 700px) {
-    .main-wrap { flex-direction: column; padding: 14px 12px 40px; }
-    .sidebar { width: 100%; }
-    .unit-list { position: static; }
-    .options-grid { grid-template-columns: 1fr; }
-    .phoneme-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
-    .vocab-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  /* ─── 响应式 ─── */
+  @media (max-width: 640px) {
+    .container { padding: 0 16px; }
+    .hero { padding: 40px 0 24px; }
+    .hero h1 { font-size: 30px; }
+    .unit-head { padding: 16px 18px; }
+    .unit-body { padding: 0 18px 18px; }
+    .top-nav { padding: 10px 14px; }
   }
 </style>
 </head>
 <body>
 
-<div class="site-header">
-  <a href="/" class="back-link">&larr; 返回博客</a>
-  <h1>🇪🇸 西班牙语学习中心</h1>
-  <p>从零基础到 C1 &middot; 发音 &middot; 语法 &middot; 词汇 &middot; 对话 &middot; 习题</p>
-  <div class="progress-bar-wrap">
-    <div class="progress-bar-inner" id="globalProgress" style="width:0%"></div>
-  </div>
-  <p style="font-size:.78rem;margin-top:6px;opacity:.75" id="globalProgressText">加载中...</p>
-</div>
-
-<div class="tts-bar">
-  <label>🔊 语速：</label>
-  <button class="speed-btn" onclick="setSpeed(0.6,this)">慢速</button>
-  <button class="speed-btn active" onclick="setSpeed(0.9,this)">正常</button>
-  <button class="speed-btn" onclick="setSpeed(1.2,this)">快速</button>
-  <span style="margin-left:auto;opacity:.65;font-size:.78rem">点击 🔊 听发音</span>
-</div>
-
-<div class="level-tabs" id="levelTabs"></div>
-
-<div class="main-wrap">
-  <div class="sidebar"><div class="unit-list" id="unitList"></div></div>
-  <div class="content-area" id="contentArea">
-    <div class="lesson-header">
-      <h2 id="lessonTitle">加载中...</h2>
-      <p id="lessonDesc"></p>
-    </div>
-    <div class="lesson-tabs">
-      <button class="lesson-tab active" onclick="switchTab('learn',this)">📖 学习</button>
-      <button class="lesson-tab" onclick="switchTab('quiz',this)">✏️ 测验</button>
-    </div>
-    <div id="tabContent"></div>
+<div class="top-nav">
+  <a href="/">首页</a>
+  <span class="nav-sep">|</span>
+  <span class="nav-current">🇪🇸 西班牙语学习中心</span>
+  <div class="nav-right">
+    <button class="tts-pill" onclick="setSpeed(0.6,this)">慢</button>
+    <button class="tts-pill active" onclick="setSpeed(0.9,this)">常</button>
+    <button class="tts-pill" onclick="setSpeed(1.2,this)">快</button>
   </div>
 </div>
 
-<div class="site-footer">&copy; Axtrivc &middot; 🇪🇸 西班牙语学习中心 &middot; A1&rarr;C1 完整体系</div>
+<div class="container">
 
-<!-- Load course data files -->
+  <div class="hero">
+    <span class="hero-emoji">🇪🇸</span>
+    <h1>西班牙语学习中心</h1>
+    <p class="hero-sub">从零基础到 C1 · 发音 · 语法 · 词汇 · 对话 · 习题</p>
+    <div class="progress-line">
+      <span id="globalProgressText">加载中...</span>
+      <div class="progress-track"><div class="progress-fill" id="globalProgress" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="level-row" id="levelTabs"></div>
+
+  <div class="units-flow" id="unitsFlow"></div>
+
+</div>
+
+<div class="footer">© Axtrivc · 🇪🇸 西班牙语学习中心 · A1→C1 完整体系</div>
+
 <script src="data/courses-a1.js"></script>
 <script src="data/courses-a2.js"></script>
 <script src="data/courses-b1.js"></script>
@@ -234,16 +701,13 @@
 
 <script>
 // ════════════════════════════════════════════════════════════
-// App State & Logic
+// App State
 // ════════════════════════════════════════════════════════════
-
 let ttsRate = 0.9;
 let currentLevel = 'A1';
-let currentUnitIdx = 0;
-let currentTab = 'learn';
-let quizState = { idx: 0, score: 0, answered: false };
+let activeUnitIdx = null;  // null = none expanded
+const quizStates = {};      // unitIdx -> { idx, score, answered }
 
-// Course registry
 const COURSE_MAP = {
   A1: typeof COURSES_A1 !== 'undefined' ? COURSES_A1 : null,
   A2: typeof COURSES_A2 !== 'undefined' ? COURSES_A2 : null,
@@ -254,6 +718,12 @@ const COURSE_MAP = {
 
 function getAllLevels() { return ['A1','A2','B1','B2','C1']; }
 function getLevelCourse(lv) { return COURSE_MAP[lv]; }
+function getLevelPct(lv) {
+  const c = getLevelCourse(lv);
+  if (!c || !c.units.length) return 0;
+  const done = c.units.filter(u => u.done).length;
+  return Math.round(done / c.units.length * 100);
+}
 function getProgress() {
   let total = 0, done = 0;
   getAllLevels().forEach(lv => {
@@ -266,19 +736,20 @@ function getProgress() {
 // ── TTS ──
 function setSpeed(r, btn) {
   ttsRate = r;
-  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tts-pill').forEach(b => b.classList.remove('active'));
   if(btn) btn.classList.add('active');
 }
-function speak(text, lang) {
+function speak(text) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang || 'es-ES';
+  u.lang = 'es-ES';
   u.rate = ttsRate;
   window.speechSynthesis.speak(u);
 }
 function speakBtn(text) {
-  return '<button class="speak-btn" onclick="speak(\'' + text.replace(/'/g,"\\'") + '\')" title="播放发音">🔊</button>';
+  const safe = text.replace(/'/g, "\\'").split(' ')[0];
+  return '<button class="speak-mini" onclick="speak(\'' + safe + '\')" title="听发音">🔊</button>';
 }
 
 // ── Level Tabs ──
@@ -288,10 +759,9 @@ function renderLevelTabs() {
   getAllLevels().forEach(lv => {
     const c = getLevelCourse(lv);
     if (!c) return;
-    const doneCount = c.units.filter(u=>u.done).length;
-    html += '<button class="level-tab' + (lv===currentLevel?' active':'') + '" onclick="switchLevel(\'' + lv + '\')">';
-    html += lv + ' <span class="badge">' + (c.title||lv) + '</span>';
-    if (doneCount > 0) html += ' <span class="badge">✓' + doneCount + '</span>';
+    const pct = getLevelPct(lv);
+    html += '<button class="level-chip' + (lv===currentLevel?' active':'') + '" onclick="switchLevel(\'' + lv + '\')">';
+    html += lv + ' <span class="chip-pct">' + pct + '%</span>';
     html += '</button>';
   });
   el.innerHTML = html;
@@ -299,257 +769,249 @@ function renderLevelTabs() {
 
 function switchLevel(lv) {
   currentLevel = lv;
-  currentUnitIdx = 0;
-  currentTab = 'learn';
+  activeUnitIdx = null;
   renderAll();
+  // 滚动回顶部
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── Unit Sidebar ──
-function renderUnitList() {
-  const el = document.getElementById('unitList');
+// ── Units Flow ──
+function renderUnitsFlow() {
+  const el = document.getElementById('unitsFlow');
   const c = getLevelCourse(currentLevel);
-  if (!c) { el.innerHTML = '<div style="padding:20px;color:#999">课程加载中...</div>'; return; }
+  if (!c) { el.innerHTML = '<div style="padding:40px;text-align:center;color:var(--theme-secondary)">课程加载中...</div>'; return; }
+
   let html = '';
   c.units.forEach((u, i) => {
-    html += '<div class="unit-item' + (i===currentUnitIdx?' active':'') + (u.done?' unit-done':'') + '" onclick="selectUnit(' + i + ')">';
-    html += '<div class="unit-icon">' + u.icon + '</div>';
-    html += '<div class="unit-text"><div class="unit-name">' + u.name + '</div>';
-    html += '<div class="unit-desc">' + u.desc + '</div></div>';
-    if (u.done) html += '<span class="unit-check">✓</span>';
+    const isActive = (activeUnitIdx === i);
+    const isDone = u.done;
+    html += '<div class="unit-card' + (isActive?' active':'') + (isDone?' done':'') + '">';
+    html += '<div class="unit-head" onclick="toggleUnit(' + i + ')">';
+    html += '<div class="unit-emoji">' + u.icon + '</div>';
+    html += '<div class="unit-info">';
+    html += '<div class="unit-name">' + u.name + '</div>';
+    html += '<div class="unit-desc">' + u.desc + '</div>';
+    html += '</div>';
+    html += '<div class="unit-done-mark">✓</div>';
+    html += '<div class="unit-toggle">▶</div>';
+    html += '</div>';
+    if (isActive) {
+      html += '<div class="unit-body" id="unitBody' + i + '">' + renderUnitBody(u, i) + '</div>';
+    }
     html += '</div>';
   });
   el.innerHTML = html;
 }
 
-function selectUnit(idx) {
-  currentUnitIdx = idx;
-  currentTab = 'learn';
-  renderUnitList();
-  renderContent();
-  // Reset lesson tabs
-  document.querySelectorAll('.lesson-tab').forEach((t,i) => t.classList.toggle('active', i===0));
-}
-
-// ── Tabs ──
-function switchTab(tab, btn) {
-  currentTab = tab;
-  document.querySelectorAll('.lesson-tab').forEach(t => t.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  renderContent();
-}
-
-// ── Content Rendering ──
-function renderContent() {
-  const c = getLevelCourse(currentLevel);
-  if (!c || !c.units[currentUnitIdx]) return;
-  const u = c.units[currentUnitIdx];
-  document.getElementById('lessonTitle').textContent = u.icon + ' ' + u.name;
-  document.getElementById('lessonDesc').textContent = u.desc;
-
-  const container = document.getElementById('tabContent');
-  if (currentTab === 'learn') {
-    container.innerHTML = renderLearn(u);
-  } else if (currentTab === 'quiz') {
-    quizState = { idx: 0, score: 0, answered: false };
-    container.innerHTML = renderQuiz(u);
+function toggleUnit(idx) {
+  if (activeUnitIdx === idx) {
+    activeUnitIdx = null;
+  } else {
+    activeUnitIdx = idx;
+    // 重置该单元的测验状态
+    if (!quizStates[idx]) quizStates[idx] = { idx: 0, score: 0, answered: false };
   }
+  renderUnitsFlow();
 }
 
-function renderLearn(u) {
-  const L = u.learn;
-  if (!L) return '<div class="section"><p>暂无学习内容</p></div>';
+function renderUnitBody(u, unitIdx) {
   let html = '';
 
-  // Phonetics
-  if (L.phonetics && L.phonetics.length) {
-    html += '<div class="section"><h3>🔤 发音表 <span class="tag">Phonetics</span></h3>';
-    html += '<div class="phoneme-grid">';
-    L.phonetics.forEach(p => {
-      html += '<div class="phoneme-card" onclick="speak(\'' + (p.example||p.letter).split(' ')[0].replace(/'/g,"\\'") + '\')">';
-      html += '<div class="phoneme-letter">' + p.letter + '</div>';
-      html += '<div class="phoneme-ipa">' + p.ipa + '</div>';
-      html += '<div class="phoneme-example">' + (p.example||'') + '</div>';
+  // 学习内容
+  const L = u.learn;
+  if (L) {
+    // Phonetics
+    if (L.phonetics && L.phonetics.length) {
+      html += '<div class="blk-label">🔤 发音 · Phonetics</div>';
+      html += '<div class="phoneme-row">';
+      L.phonetics.forEach(p => {
+        const ex = (p.example || p.letter).split(' ')[0].replace(/'/g, "\\'");
+        html += '<div class="phoneme-tile" onclick="speak(\'' + ex + '\')">';
+        html += '<div class="phoneme-letter">' + p.letter + '</div>';
+        html += '<div class="phoneme-ipa">/' + p.ipa + '/</div>';
+        if (p.example) html += '<div class="phoneme-ex">' + p.example + '</div>';
+        html += '</div>';
+      });
       html += '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // Dialogue
-  if (L.dialogue && L.dialogue.length) {
-    html += '<div class="section"><h3>💬 对话练习 <span class="tag">Dialogue</span></h3>';
-    html += '<div class="dialog-box">';
-    L.dialogue.forEach(d => {
-      const avatar = d.avatar || (d.role==='A'?'👦':'👧');
-      const esText = d.es || d.text || '';
-      const zhText = d.zh || '';
-      html += '<div class="dialog-line">';
-      html += '<div class="dialog-avatar">' + avatar + '</div>';
-      html += '<div class="dialog-bubble">';
-      html += '<div class="es">' + esText + ' ' + speakBtn(esText.replace(/'/g,"\\'")) + '</div>';
-      if (zhText) html += '<div class="zh">' + zhText + '</div>';
-      html += '</div></div>';
-    });
-    html += '</div></div>';
-  }
-
-  // Grammar
-  if (L.grammar && L.grammar.rows && L.grammar.rows.length) {
-    html += '<div class="section"><h3>📝 语法 <span class="tag">Grammar</span></h3>';
-    html += '<table class="grammar-table"><thead><tr>';
-    L.grammar.rows[0].forEach(h => html += '<th>' + h + '</th>');
-    html += '</tr></thead><tbody>';
-    for (let i = 1; i < L.grammar.rows.length; i++) {
-      html += '<tr>';
-      L.grammar.rows[i].forEach(cell => html += '<td>' + cell + '</td>');
-      html += '</tr>';
     }
-    html += '</tbody></table>';
-    if (L.grammar.note) html += '<div class="note">' + L.grammar.note + '</div>';
-    html += '</div>';
-  }
 
-  // Note (standalone)
-  if (L.note && !L.grammar) {
-    html += '<div class="section"><h3>💡 要点 <span class="tag">Note</span></h3>';
-    html += '<div class="note">' + L.note + '</div></div>';
-  }
-
-  // Vocab
-  if (L.vocab && L.vocab.length) {
-    html += '<div class="section"><h3>📖 词汇 <span class="tag">Vocabulary</span></h3>';
-    html += '<div class="vocab-grid">';
-    L.vocab.forEach(v => {
-      html += '<div class="vocab-card" onclick="this.classList.toggle(\'flipped\')">';
-      html += '<div class="vocab-es">' + v.es + ' ' + speakBtn(v.es.replace(/'/g,"\\'")) + '</div>';
-      html += '<div class="vocab-zh">' + v.zh + '</div>';
-      html += '<div class="vocab-example">' + (v.ex||'') + '</div>';
+    // Dialogue
+    if (L.dialogue && L.dialogue.length) {
+      html += '<div class="blk-label">💬 对话 · Dialogue</div>';
+      html += '<div class="dialog-list">';
+      L.dialogue.forEach(d => {
+        const avatar = d.avatar || (d.role==='A'?'👦':'👧');
+        const esText = d.es || d.text || '';
+        const zhText = d.zh || '';
+        html += '<div class="dialog-item">';
+        html += '<div class="dialog-av">' + avatar + '</div>';
+        html += '<div class="dialog-bx">';
+        html += '<div class="dialog-es">' + esText + ' ' + speakBtn(esText) + '</div>';
+        if (zhText) html += '<div class="dialog-zh">' + zhText + '</div>';
+        html += '</div></div>';
+      });
       html += '</div>';
-    });
-    html += '</div></div>';
+    }
+
+    // Grammar
+    if (L.grammar && L.grammar.rows && L.grammar.rows.length) {
+      html += '<div class="blk-label">📝 语法 · Grammar</div>';
+      html += '<table class="grammar-tbl"><thead><tr>';
+      L.grammar.rows[0].forEach(h => html += '<th>' + h + '</th>');
+      html += '</tr></thead><tbody>';
+      for (let i = 1; i < L.grammar.rows.length; i++) {
+        html += '<tr>';
+        L.grammar.rows[i].forEach(cell => html += '<td>' + cell + '</td>');
+        html += '</tr>';
+      }
+      html += '</tbody></table>';
+      if (L.grammar.note) html += '<div class="grammar-note">' + L.grammar.note + '</div>';
+    }
+
+    // Standalone note
+    if (L.note && !L.grammar) {
+      html += '<div class="blk-label">💡 要点 · Note</div>';
+      html += '<div class="grammar-note">' + L.note + '</div>';
+    }
+
+    // Vocab
+    if (L.vocab && L.vocab.length) {
+      html += '<div class="blk-label">📖 词汇 · Vocabulary <span style="font-weight:500;opacity:0.7;text-transform:none;letter-spacing:0;font-size:11px">点击卡片看例句</span></div>';
+      html += '<div class="vocab-row">';
+      L.vocab.forEach(v => {
+        html += '<div class="vocab-tile" onclick="this.classList.toggle(\'flipped\')">';
+        html += '<div class="vocab-es">' + v.es + ' ' + speakBtn(v.es) + '</div>';
+        html += '<div class="vocab-zh">' + v.zh + '</div>';
+        if (v.ex) html += '<div class="vocab-ex">' + v.ex + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+  }
+
+  // 测验
+  if (u.quiz && u.quiz.length) {
+    html += renderQuizSection(u, unitIdx);
   }
 
   return html;
 }
 
-// ── Quiz ──
-function renderQuiz(u) {
-  if (!u.quiz || !u.quiz.length) return '<div class="section"><p>暂无测验题</p></div>';
-  return renderQuizQuestion(u);
-}
+function renderQuizSection(u, unitIdx) {
+  if (!quizStates[unitIdx]) quizStates[unitIdx] = { idx: 0, score: 0, answered: false };
+  const st = quizStates[unitIdx];
+  const q = u.quiz[st.idx];
+  if (!q) return renderQuizResult(u, unitIdx);
 
-function renderQuizQuestion(u) {
-  const q = u.quiz[quizState.idx];
-  if (!q) return renderQuizResult(u);
+  let html = '<div class="blk-label">✏️ 测验 · Quiz</div>';
+  html += '<div class="quiz-box">';
+  html += '<div class="quiz-top">';
+  html += '<span>' + (st.idx + 1) + ' / ' + u.quiz.length + '</span>';
+  html += '<span class="score-tag">' + st.score + ' 分</span>';
+  html += '</div>';
 
-  const total = u.quiz.length;
-  const num = quizState.idx + 1;
-  const pctDone = Math.round(quizState.idx / total * 100);
-
-  let html = '<div class="quiz-progress"><span>' + num + ' / ' + total + '</span>';
-  html += '<div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:' + pctDone + '%"></div></div>';
-  html += '<span>' + quizState.score + ' 分</span></div>';
-
-  html += '<div class="section">';
   if (q.type === 'choice') {
-    html += '<div class="quiz-question">' + q.q + '</div>';
-    html += '<div class="options-grid">';
+    html += '<div class="quiz-q">' + q.q + '</div>';
+    html += '<div class="quiz-opts">';
     const letters = ['A','B','C','D'];
     q.options.forEach((opt, i) => {
-      html += '<button class="option-btn" id="opt-' + i + '" onclick="checkChoice(' + i + ',' + q.answer + ',\'' + (q.explain||'').replace(/'/g,"\\'") + '\')">';
-      html += '<span class="option-letter">' + letters[i] + '</span> ' + opt;
+      html += '<button class="quiz-opt" id="qopt-' + unitIdx + '-' + i + '" onclick="checkChoice(' + unitIdx + ',' + i + ',' + q.answer + ',\'' + (q.explain||'').replace(/'/g,"\\'") + '\')">';
+      html += '<span class="opt-letter">' + letters[i] + '</span> ' + opt;
       html += '</button>';
     });
     html += '</div>';
   } else if (q.type === 'fill') {
-    html += '<div class="quiz-question">' + q.q + '</div>';
-    html += '<input class="fill-input" id="fillInput" type="text" placeholder="输入你的答案..." onkeydown="if(event.key===\'Enter\')checkFill(this,\'' + q.answer.replace(/'/g,"\\'") + '\',\'' + (q.explain||'').replace(/'/g,"\\'") + '\')">';
-    html += '<div style="display:flex;gap:10px"><button class="btn btn-primary" onclick="checkFill(document.getElementById(\'fillInput\'),\'' + q.answer.replace(/'/g,"\\'") + '\',\'' + (q.explain||'').replace(/'/g,"\\'") + '\')">提交</button></div>';
+    html += '<div class="quiz-q">' + q.q + '</div>';
+    html += '<input class="quiz-input" id="qfill-' + unitIdx + '" type="text" placeholder="输入答案..." onkeydown="if(event.key===\'Enter\')checkFill(' + unitIdx + ',\'' + q.answer.replace(/'/g,"\\'") + '\',\'' + (q.explain||'').replace(/'/g,"\\'") + '\')">';
+    html += '<button class="btn-primary" onclick="checkFill(' + unitIdx + ',\'' + q.answer.replace(/'/g,"\\'") + '\',\'' + (q.explain||'').replace(/'/g,"\\'") + '\')">提交</button>';
   }
-  html += '<div class="quiz-feedback" id="quizFeedback"></div>';
-  html += '<div id="nextBtnWrap" style="display:none"><button class="btn btn-primary" onclick="nextQuestion()">下一题 →</button></div>';
+
+  html += '<div class="quiz-feedback" id="qfb-' + unitIdx + '"></div>';
+  html += '<div id="qnext-' + unitIdx + '" style="display:none"><button class="btn-primary" onclick="nextQuestion(' + unitIdx + ')">下一题 →</button></div>';
   html += '</div>';
 
-  quizState.answered = false;
   return html;
 }
 
-function checkChoice(selected, correct, explain) {
-  if (quizState.answered) return;
-  quizState.answered = true;
+function checkChoice(unitIdx, selected, correct, explain) {
+  const st = quizStates[unitIdx];
+  if (st.answered) return;
+  st.answered = true;
 
-  document.getElementById('opt-' + selected).classList.add(selected === correct ? 'correct' : 'wrong');
-  if (selected !== correct) document.getElementById('opt-' + correct).classList.add('correct');
+  const selEl = document.getElementById('qopt-' + unitIdx + '-' + selected);
+  if (selEl) selEl.classList.add(selected === correct ? 'correct' : 'wrong');
+  if (selected !== correct) {
+    const corEl = document.getElementById('qopt-' + unitIdx + '-' + correct);
+    if (corEl) corEl.classList.add('correct');
+  }
 
-  const fb = document.getElementById('quizFeedback');
+  const fb = document.getElementById('qfb-' + unitIdx);
   if (selected === correct) {
-    quizState.score += 20;
+    st.score += 20;
     fb.className = 'quiz-feedback show correct';
     fb.textContent = '✅ 正确！' + (explain ? ' ' + explain : '');
   } else {
     fb.className = 'quiz-feedback show wrong';
     fb.textContent = '❌ 错误。' + (explain ? ' ' + explain : '');
   }
-  document.getElementById('nextBtnWrap').style.display = 'block';
-
-  // Disable all options
-  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  document.getElementById('qnext-' + unitIdx).style.display = 'block';
+  document.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true);
 }
 
-function checkFill(input, answer, explain) {
-  if (quizState.answered) return;
+function checkFill(unitIdx, answer, explain) {
+  const st = quizStates[unitIdx];
+  if (st.answered) return;
+  const input = document.getElementById('qfill-' + unitIdx);
   const userAns = input.value.trim().toLowerCase();
   const correctAns = answer.toLowerCase();
   if (!userAns) return;
 
-  quizState.answered = true;
-  const fb = document.getElementById('quizFeedback');
-
-  // Fuzzy match: allow small differences
+  st.answered = true;
+  const fb = document.getElementById('qfb-' + unitIdx);
   const isCorrect = userAns === correctAns ||
     userAns.replace(/\s+/g,'') === correctAns.replace(/\s+/g,'') ||
-    correctAns.includes(userAns) && userAns.length >= correctAns.length * 0.6;
+    (correctAns.includes(userAns) && userAns.length >= correctAns.length * 0.6);
 
   input.classList.add(isCorrect ? 'correct' : 'wrong');
   if (isCorrect) {
-    quizState.score += 20;
+    st.score += 20;
     fb.className = 'quiz-feedback show correct';
     fb.textContent = '✅ 正确！答案：' + answer + (explain ? ' ' + explain : '');
   } else {
     fb.className = 'quiz-feedback show wrong';
     fb.textContent = '❌ 错误。正确答案：' + answer + (explain ? ' ' + explain : '');
   }
-  document.getElementById('nextBtnWrap').style.display = 'block';
+  document.getElementById('qnext-' + unitIdx).style.display = 'block';
   input.disabled = true;
 }
 
-function nextQuestion() {
-  quizState.idx++;
+function nextQuestion(unitIdx) {
+  quizStates[unitIdx].idx++;
+  quizStates[unitIdx].answered = false;
+  // 仅重渲染当前展开单元的 body
   const c = getLevelCourse(currentLevel);
-  const u = c.units[currentUnitIdx];
-  const container = document.getElementById('tabContent');
-  if (quizState.idx >= u.quiz.length) {
-    container.innerHTML = renderQuizResult(u);
-  } else {
-    container.innerHTML = renderQuizQuestion(u);
-  }
+  const u = c.units[unitIdx];
+  const bodyEl = document.getElementById('unitBody' + unitIdx);
+  if (bodyEl) bodyEl.innerHTML = renderUnitBody(u, unitIdx);
 }
 
-function renderQuizResult(u) {
+function renderQuizResult(u, unitIdx) {
+  const st = quizStates[unitIdx];
   const total = u.quiz.length * 20;
-  const score = quizState.score;
-  const pct = Math.round(score / total * 100);
-  let stars = '';
+  const pct = Math.round(st.score / total * 100);
+  let stars = '😅';
   if (pct >= 90) stars = '⭐⭐⭐';
   else if (pct >= 70) stars = '⭐⭐';
   else if (pct >= 40) stars = '⭐';
-  else stars = '😅';
 
-  // Mark unit as done if score >= 60
   if (pct >= 60) {
     u.done = true;
     saveProgress();
-    renderUnitList();
+    // 不立刻 re-render 整个 flow（避免折叠），只更新 done 标记
+    const cards = document.querySelectorAll('.unit-card');
+    if (cards[unitIdx]) cards[unitIdx].classList.add('done');
     updateGlobalProgress();
+    renderLevelTabs();
   }
 
   let msg = '';
@@ -558,29 +1020,33 @@ function renderQuizResult(u) {
   else if (pct >= 60) msg = '及格了，再复习一下会更好！';
   else msg = '需要多练习，别灰心！';
 
-  let html = '<div class="section"><div class="quiz-result">';
-  html += '<div class="result-score">' + score + '</div>';
+  let html = '<div class="blk-label">✏️ 测验 · Quiz</div>';
+  html += '<div class="quiz-box"><div class="quiz-result-box">';
+  html += '<div class="result-num">' + st.score + '</div>';
   html += '<div class="result-msg">' + msg + '</div>';
   html += '<div class="result-stars">' + stars + '</div>';
-  html += '<div style="margin-top:20px;display:flex;gap:10px;justify-content:center">';
-  html += '<button class="btn btn-secondary" onclick="switchTab(\'learn\',document.querySelectorAll(\'.lesson-tab\')[0])">📖 重新学习</button>';
-  html += '<button class="btn btn-primary" onclick="switchTab(\'quiz\',document.querySelectorAll(\'.lesson-tab\')[1])">✏️ 再测一次</button>';
-  html += '</div></div></div>';
+  html += '<button class="btn-primary" onclick="resetQuiz(' + unitIdx + ')">再测一次</button>';
+  html += '</div></div>';
   return html;
 }
 
-// ── Progress Persistence ──
+function resetQuiz(unitIdx) {
+  quizStates[unitIdx] = { idx: 0, score: 0, answered: false };
+  const c = getLevelCourse(currentLevel);
+  const u = c.units[unitIdx];
+  const bodyEl = document.getElementById('unitBody' + unitIdx);
+  if (bodyEl) bodyEl.innerHTML = renderUnitBody(u, unitIdx);
+}
+
+// ── Progress ──
 function saveProgress() {
   const data = {};
   getAllLevels().forEach(lv => {
     const c = getLevelCourse(lv);
-    if (c) {
-      data[lv] = c.units.map(u => u.done ? 1 : 0);
-    }
+    if (c) data[lv] = c.units.map(u => u.done ? 1 : 0);
   });
   try { localStorage.setItem('espanol_progress', JSON.stringify(data)); } catch(e) {}
 }
-
 function loadProgress() {
   try {
     const raw = localStorage.getItem('espanol_progress');
@@ -588,31 +1054,27 @@ function loadProgress() {
     const data = JSON.parse(raw);
     getAllLevels().forEach(lv => {
       const c = getLevelCourse(lv);
-      if (c && data[lv]) {
-        data[lv].forEach((d, i) => { if (c.units[i]) c.units[i].done = !!d; });
-      }
+      if (c && data[lv]) data[lv].forEach((d, i) => { if (c.units[i]) c.units[i].done = !!d; });
     });
   } catch(e) {}
 }
-
 function updateGlobalProgress() {
   const p = getProgress();
   document.getElementById('globalProgress').style.width = p.pct + '%';
-  document.getElementById('globalProgressText').textContent =
-    '总进度 ' + p.pct + '% · ' + p.done + '/' + p.total + ' 单元已完成';
+  document.getElementById('globalProgressText').textContent = p.pct + '% · ' + p.done + '/' + p.total + ' 单元';
   saveProgress();
 }
 
 // ── Init ──
 function renderAll() {
   renderLevelTabs();
-  renderUnitList();
-  renderContent();
+  renderUnitsFlow();
   updateGlobalProgress();
 }
 
 loadProgress();
 renderAll();
 </script>
+
 </body>
 </html>

@@ -29,23 +29,40 @@
 #darkmode_button,
 .darkmode_toggle { display: none !important; }
 
-/* Theme nav item highlight */
+/* Theme nav item highlight - 跟随主题主色 + 强制居中下划线 */
 #nav-theme-trigger {
   position: relative;
-  /* Prevent FOUC: visible dark color before JS theme applies */
   color: #333333 !important;
 }
 #nav-theme-trigger::after {
   content: '';
   position: absolute;
-  bottom: -2px; left: 50%;
-  transform: translateX(-50%);
+  bottom: -2px; left: 50% !important;
+  transform: translateX(-50%) !important;
   width: 0; height: 2px;
-  background: var(--theme-accent-current, #07C160);
+  background: var(--theme-accent, #07C160) !important;
   border-radius: 1px;
-  transition: width 0.25s ease;
+  transition: width 0.25s ease, background 0.45s ease;
 }
-#nav-theme-trigger:hover::after { width: 80%; }
+#nav-theme-trigger:hover::after { width: 80% !important; }
+
+/* 全局导航菜单下划线 - 跟随主题主色，但排除 Theme 按钮（避免覆盖其居中定位） */
+#menus .menus_item a:not(#nav-theme-trigger),
+#nav a.site-page:not(#nav-theme-trigger),
+.menus_items a:not(#nav-theme-trigger) {
+  position: relative;
+}
+#menus .menus_item a:not(#nav-theme-trigger)::after,
+#nav a.site-page:not(#nav-theme-trigger)::after,
+.menus_items a:not(#nav-theme-trigger)::after {
+  background: var(--theme-accent, #07C160) !important;
+  transition: background 0.45s ease;
+}
+/* Butterfly 原生下划线选择器兼容 */
+#menus .menus_item:hover > a:not(#nav-theme-trigger)::after,
+.menus_item:hover > a.site-page:not(#nav-theme-trigger)::after {
+  background: var(--theme-accent, #07C160) !important;
+}
 
 /* Panel overlay */
 #theme-overlay {
@@ -82,30 +99,39 @@
 /* Header */
 #theme-panel .panel-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 18px 10px; border-bottom: 1px solid rgba(0,0,0,0.06);
+  padding: 16px 18px 10px;
+  border-bottom: 1px solid var(--theme-border-current, rgba(0,0,0,0.06));
 }
 #theme-panel .panel-header .panel-title {
-  font-size: 14px; font-weight: 700; color: #222;
+  font-size: 14px; font-weight: 700;
+  color: var(--theme-heading, #222);
   display: flex; align-items: center; gap: 8px;
 }
 #theme-panel .panel-header .icon { font-size: 16px; }
 #theme-panel .panel-close {
   width:28px; height:28px; border-radius:50%; border:none;
-  background: rgba(0,0,0,0.05); color:#888; cursor:pointer;
+  background: rgba(0,0,0,0.05);
+  color: var(--theme-secondary-current, #888);
+  cursor:pointer;
   display:flex; align-items:center; justify-content:center;
   font-size:14px; transition:all 0.2s;
 }
-#theme-panel .panel-close:hover { background:rgba(0,0,0,0.12); color:#333; }
+#theme-panel .panel-close:hover {
+  background:rgba(0,0,0,0.12);
+  color: var(--theme-heading, #333);
+}
 
 /* Section labels */
 .panel-section-label {
   padding: 14px 18px 6px;
-  font-size: 11px; font-weight: 700; color:#aaa;
+  font-size: 11px; font-weight: 700;
+  color: var(--theme-secondary-current, #aaa);
   text-transform: uppercase; letter-spacing: 1.2px;
 }
 .panel-section-sub {
   padding: 0 18px 8px;
-  font-size: 10px; color: #bbb;
+  font-size: 10px;
+  color: var(--theme-secondary-current, #bbb);
   letter-spacing: 0.5px;
 }
 
@@ -122,7 +148,7 @@
   cursor: pointer; transition: all 0.22s ease;
 }
 .theme-option:hover {
-  border-color: rgba(0,0,0,0.08);
+  border-color: var(--theme-border-current, rgba(0,0,0,0.08));
   transform: translateY(-1px);
   box-shadow: 0 3px 10px rgba(0,0,0,0.05);
 }
@@ -138,6 +164,11 @@
   color: var(--theme-accent-current, #07C160);
   font-weight: 700;
 }
+.theme-name {
+  font-size: 11px; font-weight:600;
+  color: var(--theme-text-current, #333);
+  white-space:nowrap;
+}
 
 /* Swatches */
 .theme-swatch { display: flex; gap: 3px; }
@@ -145,69 +176,8 @@
   width:16px; height:16px; border-radius:50%;
   border: 1.5px solid rgba(255,255,255,0.6); box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-.theme-name { font-size: 11px; font-weight:600; color:#333; white-space:nowrap; }
 
-/* Background section */
-.bg-section { padding: 0 18px 16px; }
-.bg-upload-area {
-  border: 2px dashed rgba(0,0,0,0.12); border-radius: 12px;
-  padding: 20px; text-align: center; cursor: pointer;
-  transition: all 0.25s ease;
-}
-.bg-upload-area:hover {
-  border-color: rgba(0,0,0,0.22);
-  background: rgba(0,0,0,0.02);
-}
-.upload-icon { font-size: 26px; margin-bottom: 6px; }
-.upload-text { font-size: 12px; color:#888; line-height:1.6; }
-.upload-hint { font-size:10px; color:#bbb; }
-
-.bg-url-row { display:flex; gap:8px; margin-top:10px; }
-.bg-url-input {
-  flex:1; height:34px; border:1px solid rgba(0,0,0,0.12); border-radius:8px;
-  padding:0 10px; font-size:12px; color:#333; outline:none;
-  transition:border-color 0.2s;
-}
-.bg-url-input:focus { border-color:#555; }
-.bg-url-input::placeholder { color:#bbb; }
-.bg-url-btn {
-  height:34px; padding:0 14px; border:none; border-radius:8px;
-  background:#333; color:#fff; font-size:12px; font-weight:500;
-  cursor:pointer; transition:all 0.2s;
-}
-.bg-url-btn:hover { background:#111; }
-
-.bg-controls { display:flex; gap:12px; margin-top:10px; }
-.bg-control { flex:1; }
-.bg-control label { display:block; font-size:10px; color:#888; margin-bottom:4px; }
-.bg-control input[type="range"] {
-  width:100%; height:4px; -webkit-appearance:none; appearance:none;
-  border-radius:2px; background:rgba(0,0,0,0.12); outline:none;
-}
-.bg-control input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance:none; appearance:none;
-  width:14px; height:14px; border-radius:50%;
-  background:#333; cursor:pointer; transition:transform 0.15s;
-}
-.bg-control input[type="range"]::-webkit-slider-thumb:hover { transform:scale(1.2); }
-
-.bg-remove-btn {
-  width:100%; margin-top:10px; height:32px;
-  border:1px solid rgba(220,53,69,0.25); border-radius:8px;
-  background:transparent; color:#DC3545; font-size:12px; cursor:pointer;
-  transition:all 0.2s;
-}
-.bg-remove-btn:hover { background:rgba(220,53,69,0.04); }
-.bg-remove-btn.hidden { display:none; }
-
-/* Custom background overlay */
-body.custom-bg::before {
-  content:''; position:fixed; top:0;left:0; width:100%;height:100%;
-  background-image:var(--custom-bg-image);
-  background-size:cover; background-position:center; background-repeat:no-repeat;
-  background-attachment:fixed; z-index:-1; opacity:var(--custom-bg-opacity,0.35);
-  filter:blur(var(--custom-bg-blur,0px));
-}
+/* Background section styles removed — feature deleted */
 
 /* Responsive */
 @media(max-width:768px){
@@ -219,31 +189,38 @@ body.custom-bg::before {
    Uses CSS custom properties set by theme-system.js
    ============================================================ */
 
-/* Footer — clean gray, clearly readable text */
+/* Footer — 完全融入背景（不单独拎出来，与背景同色） */
 #footer-wrap,
 #footer,
 footer {
-  background-color: #FAFAFA !important;
-  color: #666666 !important;
-  border-top-color: #E8E8E8 !important;
-  transition: background-color 0.45s ease, color 0.45s ease;
+  background-color: var(--theme-body-current, transparent) !important;
+  background: transparent !important;
+  color: var(--theme-secondary-current, #666666) !important;
+  border-top: none !important;
+  box-shadow: none !important;
+  transition: color 0.45s ease;
 }
-#footer a { color: inherit; }
+#footer .footer-other {
+  padding: 10px 20px !important;
+}
+/* © 2026 By xxx 这行字跟随主题副标题同色（--theme-heading） */
+#footer .copyright {
+  color: var(--theme-heading, #07C160) !important;
+  font-weight: 600 !important;
+}
+#footer a {
+  color: var(--theme-secondary-current, #666666) !important;
+}
+#footer a:hover {
+  color: var(--theme-accent-current, #07C160) !important;
+}
 
-/* Right-side floating buttons — move go-up above music bar */
-#rightside > button,
-#go-up,
-#rightside-config,
-#hide-aside-btn,
-#darkmode {
-  background-color: var(--theme-accent-current, #07C160) !important;
-  color: #FFFFFF !important;
-  transition: background-color 0.45s ease, color 0.45s ease !important;
+/* 隐藏框架信息行 "框架 Hexo 7.3.0 | 主题 Butterfly 5.5.4" */
+#footer .framework-info {
+  display: none !important;
 }
-/* Push rightside buttons higher to avoid music bar (music bar ~44px tall) */
-#rightside {
-  bottom: 60px !important;
-}
+
+/* Right-side floating buttons 已通过 hide-rightside.css 完全隐藏，这里不再处理 */
 
 /* Pagination buttons */
 #pagination .page-number,
@@ -290,16 +267,66 @@ a[id="card-info-btn"] {
    注：Footer 保持 Butterfly 默认黑色，不改动
    ============================================================ */
 
-/* 站点副标题：打字机变化的那行字 — 微信主绿 #07C160 */
+/* 站点副标题：跟随主题 heading 色（深色稳重，避免荧光感）
+   原 Butterfly 默认 var(--light-grey) #EEEEEE 太浅
+   原方案用 --theme-accent 会导致亮色主题（如湖蓝）副标题发荧光
+   现改用 --theme-heading（每个主题的深色变体），自动适配
+   注：Footer 保持 Butterfly 默认黑色，不改动 */
 #site-subtitle,
 #subtitle {
-  color: #07C160 !important;
-  text-shadow: 0 1px 10px rgba(0, 60, 25, 0.75), 0 0 3px rgba(0, 0, 0, 0.55) !important;
-  font-weight: 500 !important;
+  color: var(--theme-heading, #07C160) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08) !important;
+  font-weight: 600 !important;
+  transition: color 0.45s ease !important;
 }
 
-/* 站点主标题 "Axtrivc's Blog" — 强制黑色 */
+/* 站点主标题 "Axtrivc's Blog" — 强制黑色（不跟随主题） */
 #site-title {
   color: #1a1a1a !important;
   text-shadow: none !important;
+}
+
+/* ============================================================
+   2026-06-20: 侧边栏 widget hover 跟随主题色
+   原问题：Butterfly 用 Stylus 编译期变量 $theme-color (#8B6F47)
+   硬编码到 hover 规则，运行时 CSS 变量改不了，必须 !important 覆盖
+   ============================================================ */
+
+/* 标签云 hover 文字色 */
+#aside-content .card-tag-cloud a:hover {
+  color: var(--theme-accent-current, #07C160) !important;
+}
+
+/* 最新评论/最近文章列表 hover 文字色 */
+#aside-content .aside-list-item .content > .title:hover,
+#aside-content .aside-list-item .content > .comment:hover {
+  color: var(--theme-accent-current, #07C160) !important;
+}
+
+/* 归档 / 分类列表 hover 背景 + 文字色（原 rgba(139,111,71,.7)） */
+#aside-content .card-archives .card-archive-list-item a:hover,
+#aside-content .card-categories .card-category-list-item a:hover {
+  background-color: var(--theme-accent-current, #07C160) !important;
+  color: #FFFFFF !important;
+}
+
+/* 目录（TOC）hover 文字色 */
+#aside-content #card-toc .toc-link:hover {
+  color: var(--theme-accent-current, #07C160) !important;
+}
+
+/* 站点数据（文章数/分类数/标签数）hover 文字色 */
+.site-data > a:hover div {
+  color: var(--theme-accent-current, #07C160) !important;
+}
+
+/* Follow 按钮 hover 背景（原 --btn-hover-color #C4A96A） */
+#aside-content #card-info-btn:hover {
+  background-color: var(--theme-heading, #0A3D2A) !important;
+}
+
+/* 全局覆盖 Butterfly 的 hover 变量，给其他未捕获的规则兜底 */
+:root {
+  --btn-hover-color: var(--theme-heading, #07C160);
+  --text-bg-hover: var(--theme-accent-current, rgba(7,193,96,0.7));
 }

@@ -10,7 +10,7 @@ backend:
   auth_endpoint: /api/auth
 
 # 发布时自动提交到 master，会触发 GitHub Actions 构建 → main 部署
-publish_mode: editorial_workflow
+# 关闭 editorial_workflow，直接 Save 即发布，流程更简单
 site_url: https://axtrivc.github.io
 
 # 在内容列表中展示的字段
@@ -19,6 +19,26 @@ public_folder: "/img"
 
 # 集合：你可以在管理界面创建/编辑的内容类型
 collections:
+  # ===== 站点设置（头像、简介等） =====
+  - name: "settings"
+    label: "站点设置"
+    label_singular: "设置"
+    folder: "source/_data"
+    create: false
+    delete: false
+    slug: "{{slug}}"
+    extension: "yml"
+    summary: "⚙️ {{title}}"
+    fields:
+      - { label: "标题（不要改）", name: "title", widget: "string", default: "站点设置" }
+      - {
+          label: "头像",
+          name: "avatar",
+          widget: "image",
+          required: false,
+          hint: "上传/更换头像后会自动应用到全站（侧边栏、评论区等）"
+        }
+
   # ===== 博客文章 =====
   - name: "posts"
     label: "博客文章"

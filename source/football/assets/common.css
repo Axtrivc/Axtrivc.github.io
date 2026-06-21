@@ -41,10 +41,13 @@ body {
   background: var(--theme-body, #f7f3eb);
   color: var(--theme-text, #222);
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
   padding: 0;
-  max-width: 540px;
+  max-width: 760px;
   margin: 0 auto;
   transition: background 0.45s ease, color 0.45s ease;
+  -webkit-font-smoothing: antialiased;
 }
 
 @media (min-width: 768px) {
@@ -56,31 +59,33 @@ body {
   .archive-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* 顶部导航 */
+/* 顶部导航 - 加粗体跟随首页字重 */
 .top-nav {
   background: var(--theme-card, #fff);
   border-bottom: 1px solid var(--theme-border, #e8e2d6);
-  padding: 10px 16px;
+  padding: 12px 20px;
   display: flex;
   align-items: center;
   gap: 12px;
   position: sticky;
   top: 0;
   z-index: 100;
+  backdrop-filter: blur(8px);
   transition: background 0.45s ease, border-color 0.45s ease;
 }
 .top-nav a {
   color: var(--theme-secondary, #888);
   text-decoration: none;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 500;
   transition: color 0.2s;
 }
 .top-nav a:hover { color: var(--theme-accent); }
 .top-nav .nav-sep { color: var(--theme-border, #ddd); }
 .top-nav .nav-current {
   color: var(--theme-heading, #222);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .page-header { padding: 20px 20px 12px; }
@@ -98,14 +103,14 @@ body {
 /* 通用卡片 */
 .card {
   background: var(--theme-card, #fff);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 4px 0;
-  margin: 0 16px 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  margin: 0 24px 14px;
+  border: 1px solid var(--theme-border, #e8e2d6);
   transition: background 0.45s ease;
 }
 .card-title {
-  padding: 14px 20px 10px;
+  padding: 16px 22px 12px;
   font-size: 15px;
   font-weight: 700;
   color: var(--theme-heading);
@@ -113,6 +118,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
+  letter-spacing: -0.01em;
 }
 .card-title .badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
 .badge-red { background: var(--red-hot); color: #fff; }
@@ -287,20 +293,21 @@ body {
 .follow-bar {
   display: flex;
   gap: 8px;
-  padding: 8px 20px 14px;
+  padding: 10px 22px 16px;
   overflow-x: auto;
 }
 .follow-bar::-webkit-scrollbar { display: none; }
 .follow-chip {
   flex-shrink: 0;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
   white-space: nowrap;
   text-decoration: none;
   transition: transform 0.15s, box-shadow 0.15s;
   cursor: pointer;
+  border: none;
 }
 .follow-chip:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
 /* 队伍品牌色 - 保留 */
@@ -313,9 +320,10 @@ body {
 
 .footer {
   text-align: center;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 500;
   color: var(--theme-secondary);
-  padding: 16px 0 20px;
+  padding: 24px 0 28px;
   opacity: 0.6;
 }
 
@@ -600,95 +608,123 @@ body {
 .trophy-count { font-size: 13px; font-weight: 800; color: var(--gold); }
 
 /* ============================
-   归档页 - 极简 hero
+   归档页 - 重构卡片网格
+   字重对齐首页：标题 800 / 月份 700 / 日期 800
    ============================ */
 .archive-header {
-  padding: 48px 20px 24px;
+  padding: 56px 24px 32px;
   text-align: left;
   border-bottom: 1px solid var(--theme-border);
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 }
 .archive-header .archive-icon {
-  font-size: 28px;
-  margin-bottom: 14px;
+  font-size: 32px;
+  margin-bottom: 16px;
   line-height: 1;
+  display: block;
 }
 .archive-header h1 {
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
   color: var(--theme-heading);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  line-height: 1.15;
 }
 .archive-header .archive-sub {
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
   color: var(--theme-secondary);
   margin-top: 6px;
   line-height: 1.6;
-  font-weight: 400;
 }
 
+.archive-section { padding: 0; }
+
 .archive-month-label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--theme-heading);
-  padding: 16px 20px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--theme-secondary);
+  padding: 28px 24px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.archive-month-label::before {
+  content: '';
+  width: 4px;
+  height: 14px;
+  background: var(--theme-accent);
+  border-radius: 2px;
+  display: inline-block;
 }
 
 .archive-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  padding: 0 16px 4px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 24px 8px;
 }
 
 .archive-card {
   display: block;
   background: var(--theme-card);
-  border-radius: 12px;
-  padding: 14px 16px;
+  border-radius: 14px;
+  padding: 16px 18px;
   text-decoration: none;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  transition: transform 0.15s, box-shadow 0.15s, background 0.45s ease;
-  border: 1px solid var(--theme-border);
+  border: 1.5px solid var(--theme-border);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 .archive-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   border-color: var(--theme-accent);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--theme-accent) 14%, transparent);
+}
+.archive-card:active {
+  transform: translateY(0);
 }
 
 .ac-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 .ac-type {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 /* 早晚报配色保留 - 视觉识别 */
 .ac-morning { background: var(--morning-bg); color: var(--morning-text); }
 .ac-evening { background: var(--evening-bg); color: var(--evening-text); }
 
 .ac-date {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 17px;
+  font-weight: 800;
   color: var(--theme-heading);
+  letter-spacing: -0.01em;
 }
 
 .ac-weekday {
   font-size: 12px;
+  font-weight: 600;
   color: var(--theme-secondary);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  margin-top: 2px;
 }
 
 .ac-desc {
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 500;
   color: var(--theme-secondary);
 }
 
@@ -701,5 +737,8 @@ body {
 .archive-empty p { font-size: 13px; }
 
 @media (max-width: 540px) {
-  .archive-grid { grid-template-columns: 1fr 1fr; }
+  .archive-grid { grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px 8px; }
+  .archive-header { padding: 40px 16px 24px; }
+  .archive-header h1 { font-size: 30px; }
+  .archive-month-label { padding: 20px 16px 12px; }
 }
