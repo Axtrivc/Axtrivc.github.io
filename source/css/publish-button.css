@@ -5,8 +5,8 @@
 #axtrivc-fab {
   position: fixed;
   right: 28px;
-  bottom: 96px;  /* 避开 Butterfly 的回到顶部按钮 */
-  z-index: 999;
+  bottom: 72px;  /* 在音乐栏（56px）之上 */
+  z-index: 9990;  /* 高于音乐栏 9980 */
   pointer-events: none;
 }
 
