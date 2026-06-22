@@ -24,19 +24,20 @@ categories:
 
 **相关新闻**
 
-- [巴萨球员国家队战报：亚马尔世界杯首球，奥尔莫收获助攻](https://www.dongqiudi.com/article/5956733)
+- [世体：多队有意托尼-费尔南德斯，但他专注于参加巴萨季前赛](https://www.dongqiudi.com/article/5957241)
 
 
 ### 皇马
 
-> 暂无近期动态
+**相关新闻**
+
+- [库库伴侣：我从小就是皇马球迷，很开心能和他一起分享这一切](https://www.dongqiudi.com/article/5957258)
+- [西媒：皇马派球探考察了迪奥曼德，并对其表现印象深刻](https://www.dongqiudi.com/article/5957085)
 
 
 ### 马竞
 
-**相关新闻**
-
-- [阿斯：马竞已敲定格里马尔多，最终转会费将降至2000万欧左右](https://www.dongqiudi.com/article/5956349)
+> 暂无近期动态
 
 
 ### 迈阿密国际
@@ -56,58 +57,52 @@ categories:
 
 **下一场**：6月25日 03:00 世界杯 - Switzerland vs Canada
 
-**相关新闻**
-
-- [斯卡洛尼：对西班牙战平佛得角感到意外，他们仍是冠军竞争者](https://www.dongqiudi.com/article/5956727)
-- [打平就晋级，西班牙队末轮战平乌拉圭大概率将小组第一出线](https://www.dongqiudi.com/article/5956609)
-
 
 ## 足坛新闻
 
 ### 📰 足坛头条
 
-- [埃及3-1逆转新西兰，萨拉赫、齐科传射，马哈茂德-特雷泽盖破门](https://www.dongqiudi.com/article/5956650)
 - [乌拉圭2-2佛得角 ，凯文-皮纳打破僵局，瓦雷拉扳平比分](https://www.dongqiudi.com/article/5956359)
-- [懂球帝美加墨世界杯6月22日红黑榜](https://www.dongqiudi.com/article/5956774)
-- [2026届新秀巡礼之达伦-彼得森：天才全能后场，又是上乔下科？](https://www.dongqiudi.com/article/5956526)
-- [官方：梅州客家中场么旭辰加盟大连可为](https://www.dongqiudi.com/article/5956768)
+- [球员来自欧洲集训也在葡萄牙，佛得角足球的“借壳生蛋”](https://www.dongqiudi.com/article/5954638)
+- [懂球帝6月22日世界杯之星：奥亚萨瓦尔](https://www.dongqiudi.com/article/5956930)
+- [比利时国脚德克伊珀：我本该进球的，对手门将太神勇了](https://www.dongqiudi.com/article/5957360)
+- [都体：劳塔罗在阿根廷集训期间向尼科-帕斯介绍国米](https://www.dongqiudi.com/article/5957342)
 
 #### 西甲新闻
 
-- [懂球帝美加墨世界杯6月22日红黑榜](https://www.dongqiudi.com/article/5956774)
-- [元敏诚参加劳尔见面活动，与老队长合影并收获签名球衣](https://www.dongqiudi.com/article/5956761)
-- [利物浦球员国家队战报：萨拉赫传射，埃及逆转胜](https://www.dongqiudi.com/article/5956762)
+- [球员来自欧洲集训也在葡萄牙，佛得角足球的“借壳生蛋”](https://www.dongqiudi.com/article/5954638)
+- [懂球帝6月22日世界杯之星：奥亚萨瓦尔](https://www.dongqiudi.com/article/5956930)
+- [英媒：热刺有意拉什福德，但他目前无意加盟其他英超俱乐部](https://www.dongqiudi.com/article/5957323)
 
 #### 英超新闻
 
-- [懂球帝美加墨世界杯6月22日红黑榜](https://www.dongqiudi.com/article/5956774)
-- [利物浦球员国家队战报：萨拉赫传射，埃及逆转胜](https://www.dongqiudi.com/article/5956762)
-- [伊布：哈兰德球商很高，不像有些球员爱强行做超出能力的事情](https://www.dongqiudi.com/article/5956713)
+- [比利时国脚德克伊珀：我本该进球的，对手门将太神勇了](https://www.dongqiudi.com/article/5957360)
+- [TA：曼联为老特拉福德更换14年来首块新草皮](https://www.dongqiudi.com/article/5957341)
+- [英媒：热刺有意拉什福德，但他目前无意加盟其他英超俱乐部](https://www.dongqiudi.com/article/5957323)
 
 #### 意甲新闻
 
-- [懂球帝美加墨世界杯6月22日红黑榜](https://www.dongqiudi.com/article/5956774)
-- [让我自相矛盾的心头好 帕莱斯特拉](https://www.dongqiudi.com/article/5956748)
-- [罗马诺：科莫对切尔西中卫查洛巴感兴趣，但交易很难完成](https://www.dongqiudi.com/article/5956715)
+- [都体：劳塔罗在阿根廷集训期间向尼科-帕斯介绍国米](https://www.dongqiudi.com/article/5957342)
+- [卢卡库：我的状态已恢复超过一半了，离100%还有一段距离](https://www.dongqiudi.com/article/5957262)
+- [全市场：德弗赖今天将赴雅典体检，加盟帕纳辛纳科斯](https://www.dongqiudi.com/article/5957268)
 
 #### 德甲新闻
 
-- [李金羽：德国队仍需成绩检验，面对顶级强队才能看出是否复苏](https://www.dongqiudi.com/article/5956752)
-- [官方：波兰青年国门武比克租借加盟克拉科夫维斯瓦](https://www.dongqiudi.com/article/5956750)
-- [克洛普：德国队并不是完胜科特迪瓦，丢失球权后需全力回防](https://www.dongqiudi.com/article/5956734)
+- [英媒：热刺有意拉什福德，但他目前无意加盟其他英超俱乐部](https://www.dongqiudi.com/article/5957323)
+- [克洛普：德国队目前没有理由改变首发，昂达夫应该继续替补](https://www.dongqiudi.com/article/5957318)
+- [RMC：阿穆拉大腿受伤，将缺席阿尔及利亚两场比赛](https://www.dongqiudi.com/article/5957319)
 
 #### 法甲新闻
 
-- [懂球帝美加墨世界杯6月22日红黑榜](https://www.dongqiudi.com/article/5956774)
-- [克洛普：德国队并不是完胜科特迪瓦，丢失球权后需全力回防](https://www.dongqiudi.com/article/5956734)
-- [纽约市长：想阿森纳签姆巴佩但不可能，那就希望他们签克鲁皮](https://www.dongqiudi.com/article/5956549)
+- [妻子透露马金2022世界杯创伤： 从那以后他再也没有罚过点球](https://www.dongqiudi.com/article/5957308)
+- [前队友：我曾担任过姆巴佩的队长，他偶像C罗且追求卓越](https://www.dongqiudi.com/article/5957296)
+- [库尔图瓦：我们吃到一张愚蠢的红牌，队友应该更早把球传给我](https://www.dongqiudi.com/article/5957227)
 
 #### 我的主队动态
 
-- ⭐ [斯卡洛尼：对西班牙战平佛得角感到意外，他们仍是冠军竞争者](https://www.dongqiudi.com/article/5956727)
-- ⭐ [巴萨球员国家队战报：亚马尔世界杯首球，奥尔莫收获助攻](https://www.dongqiudi.com/article/5956733)
-- ⭐ [打平就晋级，西班牙队末轮战平乌拉圭大概率将小组第一出线](https://www.dongqiudi.com/article/5956609)
-- ⭐ [阿斯：马竞已敲定格里马尔多，最终转会费将降至2000万欧左右](https://www.dongqiudi.com/article/5956349)
+- ⭐ [库库伴侣：我从小就是皇马球迷，很开心能和他一起分享这一切](https://www.dongqiudi.com/article/5957258)
+- ⭐ [世体：多队有意托尼-费尔南德斯，但他专注于参加巴萨季前赛](https://www.dongqiudi.com/article/5957241)
+- ⭐ [西媒：皇马派球探考察了迪奥曼德，并对其表现印象深刻](https://www.dongqiudi.com/article/5957085)
 
 
 ---
