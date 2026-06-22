@@ -1,0 +1,294 @@
+---
+layout: false
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>River Hero · 预览（river.ai 原版复刻）</title>
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🌊</text></svg>" />
+  <style>
+    :root {
+      --hero-overscan: 0px;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0E2F7E;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    /* ── River.ai 的 hero 容器结构 ───────────────────────── */
+    .hero {
+      position: relative;
+      height: 100vh;            /* viewport 高 */
+      height: 100dvh;           /* dynamic viewport，浏览器 chrome 收起时也跟随 */
+      width: 100%;
+      overflow: hidden;
+      background: #0E2F7E;
+    }
+
+    /* 静态兜底：CSS 渐变（WebGL 不可用时显示） */
+    .hero-placeholder {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, #1E6CC4 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 70%, #6DA89F 0%, transparent 60%),
+        radial-gradient(ellipse at 60% 40%, #BCDAD0 0%, transparent 40%),
+        linear-gradient(180deg, #0E2F7E 0%, #15397A 100%);
+      filter: saturate(0.95);
+      z-index: 0;
+    }
+
+    /* WebGL ASCII-river shader 主视觉 */
+    .hero-ascii {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+      opacity: 0.95;
+    }
+
+    /* 静态 fallback（webgl 失败时显示） */
+    .hero-still {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .hero-still.is-shown { opacity: 0.95; }
+
+    /* 顶部暗角：让文字浮在天空上方更易读 */
+    .hero-vignette {
+      position: absolute; inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(180deg,
+          rgba(14, 47, 126, 0.45) 0,
+          rgba(14, 47, 126, 0.30) 30vh,
+          rgba(14, 47, 126, 0.00) 55vh,
+          rgba(14, 47, 126, 0.00) 100%);
+      pointer-events: none;
+    }
+
+    /* 文字层 */
+    .hero-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 3;
+      pointer-events: none;
+      padding: 0 24px;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+    .hero-text-headline {
+      font-size: clamp(28px, 5vw, 56px);
+      font-weight: 600;
+      line-height: 1.1;
+      max-width: 900px;
+      text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .hero-text-sub {
+      margin-top: 16px;
+      font-size: clamp(14px, 1.5vw, 18px);
+      font-weight: 400;
+      opacity: 0.85;
+      max-width: 600px;
+      line-height: 1.5;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .hero-text-headline.shown,
+    .hero-text-sub.shown {
+      opacity: 1;
+    }
+
+    /* FPS 指示 */
+    .perf-meter {
+      position: fixed;
+      bottom: 16px; right: 16px;
+      z-index: 10;
+      color: rgba(255,255,255,0.4);
+      font-size: 11px;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      pointer-events: none;
+    }
+
+    /* 调试条 */
+    .tod-debug {
+      position: fixed;
+      bottom: 16px; left: 16px;
+      z-index: 10;
+      pointer-events: auto;
+    }
+    .dbg-toggle {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+    }
+    .dbg-toggle:hover { background: rgba(255,255,255,0.16); }
+
+    .dbg-grid {
+      display: none;
+      margin-top: 8px;
+      padding: 14px;
+      background: rgba(8, 18, 40, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      grid-template-columns: repeat(2, minmax(170px, 1fr));
+      gap: 8px 16px;
+      color: rgba(255,255,255,0.85);
+      font-size: 12px;
+      min-width: 360px;
+    }
+    .dbg-grid.expanded { display: grid; }
+    .dbg-row { display: contents; }
+    .dbg-row label { opacity: 0.7; }
+    .dbg-row input[type="range"] {
+      grid-column: span 2;
+      width: 100%;
+    }
+    .dbg-row .val {
+      text-align: right;
+      font-family: ui-monospace, Menlo, monospace;
+      color: #4ade80;
+    }
+
+    /* 隐藏 screen reader only 文本（保留结构以便 river-hero.js 不报 null） */
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+  </style>
+</head>
+<body>
+  <section class="hero" id="hero">
+    <div class="hero-placeholder" aria-hidden="true"></div>
+    <canvas class="hero-ascii" id="asciiRiver" aria-hidden="true"></canvas>
+    <img class="hero-still" id="heroStill" src="hero-static.jpg" alt="" aria-hidden="true" />
+    <div class="hero-vignette" aria-hidden="true"></div>
+
+    <div class="hero-text" id="heroText" aria-hidden="true">
+      <div class="hero-text-headline" id="heroHeadlineLive"></div>
+      <div class="hero-text-sub" id="heroSublineLive"></div>
+    </div>
+
+    <div class="perf-meter" id="fpsMeter" aria-hidden="true">-- fps</div>
+
+    <h1 class="sr-only">River — Hero</h1>
+    <p class="sr-only">复刻自 river.ai 的 hero ASCII-river WebGL 动画</p>
+
+    <div class="tod-debug minimized" id="debugBar" aria-hidden="true">
+      <button class="dbg-toggle" id="dbgToggle" type="button" aria-label="展开调试面板">+</button>
+      <div class="dbg-grid" id="dbgGrid">
+        <div class="dbg-row">
+          <label>RENDER SCALE</label>
+          <input type="range" id="renderScaleSlider" min="50" max="100" step="5" value="100" />
+          <span class="val" id="renderScaleLabel">1.00</span>
+        </div>
+        <div class="dbg-row">
+          <label>AA MODE</label>
+          <select id="aaModeSelect" class="tod-select" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:4px 8px;font-size:12px;">
+            <option value="0">off</option>
+            <option value="4">SSAA ×4</option>
+            <option value="8" selected>SSAA ×8</option>
+            <option value="9">SSAA ×9</option>
+            <option value="sdf">SDF 1×</option>
+          </select>
+        </div>
+        <div class="dbg-row">
+          <label>MARCH STEPS</label>
+          <input type="range" id="canyonStepsSlider" min="48" max="240" step="4" value="112" />
+          <span class="val" id="canyonStepsLabel">112</span>
+        </div>
+        <div class="dbg-row">
+          <label>STEP SCALE</label>
+          <input type="range" id="canyonStepScaleSlider" min="100" max="260" step="5" value="118" />
+          <span class="val" id="canyonStepScaleLabel">1.18</span>
+        </div>
+        <div class="dbg-row">
+          <label>REFINE</label>
+          <input type="range" id="refineSlider" min="4" max="14" step="1" value="14" />
+          <span class="val" id="refineLabel">14</span>
+        </div>
+        <div class="dbg-row">
+          <label>FPS CAP</label>
+          <input type="range" id="fpsCapSlider" min="15" max="60" step="5" value="50" />
+          <span class="val" id="fpsCapLabel">50</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="river-hero.js"></script>
+  <script>
+    // 调试面板展开
+    document.getElementById('dbgToggle').addEventListener('click', function() {
+      var grid = document.getElementById('dbgGrid');
+      var expanded = grid.classList.toggle('expanded');
+      this.textContent = expanded ? '−' : '+';
+    });
+    // 在 slider 旁实时显示数值
+    function bindSlider(id, labelId, fmt) {
+      var el = document.getElementById(id);
+      var lab = document.getElementById(labelId);
+      if (!el || !lab) return;
+      el.addEventListener('input', function() {
+        lab.textContent = fmt ? fmt(parseFloat(el.value)) : el.value;
+      });
+    }
+    bindSlider('renderScaleSlider', 'renderScaleLabel', function(v){return (v/100).toFixed(2);});
+    bindSlider('canyonStepsSlider', 'canyonStepsLabel');
+    bindSlider('canyonStepScaleSlider', 'canyonStepScaleLabel', function(v){return (v/100).toFixed(2);});
+    bindSlider('refineSlider', 'refineLabel');
+    bindSlider('fpsCapSlider', 'fpsCapLabel');
+
+    // 静态文本（detect-gpu tier<3 时显示，作为打字机的替代）
+    (function(){
+      var head = document.getElementById('heroHeadlineLive');
+      var sub  = document.getElementById('heroSublineLive');
+      if (!head || !sub) return;
+      var headline = "Intelligence that flows with you.";
+      var subline  = "River.ai 的 WebGL ASCII-river 峡谷日夜循环动画";
+      var i = 0;
+      function type() {
+        if (i <= headline.length) {
+          head.textContent = headline.slice(0, i);
+          head.classList.add('shown');
+          i++;
+          setTimeout(type, 36);
+        } else {
+          sub.textContent = subline;
+          sub.classList.add('shown');
+        }
+      }
+      setTimeout(type, 400);
+    })();
+  </script>
+</body>
+</html>

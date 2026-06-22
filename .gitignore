@@ -27,4 +27,6 @@ Desktop.ini
 .workbuddy/test-avatar.jpg
 
 ### Hero 实验页面（开发中，暂不部署到博客） ###
-source/hero/
+
+### Hero 调试临时帧 ###
+.workbuddy/hero_frames/
