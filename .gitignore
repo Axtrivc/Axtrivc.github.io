@@ -25,3 +25,6 @@ Desktop.ini
 
 ### WorkBuddy 临时文件 ###
 .workbuddy/test-avatar.jpg
+
+### Hero 实验页面（开发中，暂不部署到博客） ###
+source/hero/
