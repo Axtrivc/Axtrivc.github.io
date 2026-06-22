@@ -622,8 +622,8 @@
     gl.bindTexture(gl.TEXTURE_2D, sceneTex);
     gl.uniform1i(UBloom.scene, 0);
     gl.uniform2f(UBloom.texel, 1.0 / W, 1.0 / H);
-    gl.uniform1f(UBloom.bloomStrength, 1.5);  // 辉光强度略增
-    gl.uniform1f(UBloom.bloomThreshold, 0.38); // 阈值略降
+    gl.uniform1f(UBloom.bloomStrength, 1.5);
+    gl.uniform1f(UBloom.bloomThreshold, 0.38);
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
