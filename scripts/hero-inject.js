@@ -6,18 +6,20 @@
  *   - 注入位置：</header> 之后、<main> 之前
  *   - hero 占满首屏（PC + 移动端均为 100dvh），下方接博客列表
  *
- * 关键设计（2026-06-23 v4 极简转场）：
+ * 关键设计（2026-06-23 v5 「河水奔涌而去」）：
  *   1. CSS 清洗：去除 hero/index.html 的 html, body 通用选择器
  *   2. body.hero-page-active 激活注入的样式 + 折叠 full_page banner
- *   3. 滚动驱动转场（极简版）：
+ *   3. 滚动驱动转场（明显版）：
  *      - JS 通过 rAF 节流监听 scroll，写 --hero-progress (0→1) 到 <html>
- *      - hero 随 progress 进行：opacity 渐变 + 微弱 translateY 上飘（-6vh）
- *      - 文字同步淡出 + 微飘（-3vh）
+ *      - hero 整体大幅向上飘（-110vh），明显"飞出屏幕"
+ *      - opacity 从 progress=0 开始淡，到 0.55 时几乎不可见
+ *      - 文字比 canvas 飞得更快（-30vh）+ 横向散开（±6vh）
+ *      - 博客内容从下方 -60vh 滑入 + 淡入（"河水让位"的视觉）
  *      - 右侧进度导轨（PC）随 progress 填充 + 渐隐
  *      - 底部 SCROLL 提示随 progress 渐隐
- *      - 博客内容浮起阴影
  *      ❌ 无 CSS filter / SVG filter / mix-blend-mode / glitch bar
  *      ✅ 仅 transform + opacity → GPU 合成器原生，零掉帧
+ *      ✅ 0 transition → 滚动 100% 跟手
  *   4. 移动端：100dvh 全屏，隐藏侧边进度条，简化底部提示
  */
 const fs = require('fs');
@@ -100,10 +102,10 @@ hexo.extend.filter.register('after_render:html', function (data) {
   -webkit-backface-visibility: hidden;
 }
 
-/* ── 滚动驱动的 hero 转场（简洁流动风 v4 · 2026-06-23） ── */
+/* ── 滚动驱动的 hero 转场（「河水奔涌而去」v5 · 2026-06-23） ── */
 /* --hero-progress: 0 = hero 在视口顶部，1 = hero 完全滚出
  *
- * 设计原则（极简 / GPU 友好）：
+ * 设计目标：转场要"明显且特别"，但仍 0 掉帧：
  *   ❌ 不使用 CSS filter（blur / saturate / brightness / hue-rotate）
  *      → filter 在大 viewport 上每帧重新栅格化 canvas 输出，是掉帧主因
  *   ❌ 不使用 SVG filter（feColorMatrix / feOffset）
@@ -112,36 +114,39 @@ hexo.extend.filter.register('after_render:html', function (data) {
  *      → 合成器在每个 glitch bar 上重新混合像素，n 条 = n 倍开销
  *   ❌ 不使用 will-change（除 canvas 自身）
  *      → 强制常驻独立合成层，Chromium 滚动时会降采样
- *   ✅ 只用 transform: translateY + opacity
+ *   ❌ 不使用 transition
+ *      → transition 会让 transform/opacity 跟不上滚动方向，产生延迟感和"卡顿感"
+ *   ✅ 只用 transform: translateY/translateX + opacity
  *      → 这两个属性是 GPU 合成器原生路径，零 CPU 开销
  *
- * 视觉效果：river.ai 的画面"顺流而下"飘走，自然过渡到博客文章。
+ * 视觉效果：用户一开始滚动 → hero 整体被"河水"冲向上方屏幕外
+ *          + 文字比 canvas 飞得更快 + 横向散开
+ *          + 博客内容从下方滑入顶替位置
+ *          → 有方向感、有层次、不卡顿。
  */
 .hero-shell {
   --p: var(--hero-progress, 0);
-  /* 透明度分两段：
-   *   0.00 - 0.20：完全清晰（用户先欣赏动画）
-   *   0.20 - 0.85：缓慢淡出（"画面飘远"的感觉）
-   *   0.85 - 1.00：快速收尾（给博客内容让位） */
-  opacity: calc(
-    1
-    - max(0, var(--p) - 0.20) * 1.05
-    - max(0, var(--p) - 0.85) * 4
-  );
-  /* 微微向上飘：最多 -6vh，让画面有"远去"的方向感 */
-  transform: translate3d(0, calc(var(--p) * -6vh), 0);
-  transition: transform 0.12s linear;
+  /* 透明度：滚动一开始就快速淡出，到 0.55 时 hero 几乎不可见 */
+  opacity: calc(1 - clamp(var(--p) * 1.8, 0, 1));
+  /* 大幅向上飘：-110vh 让 hero 直接飞出屏幕顶部上方（视口外） */
+  transform: translate3d(0, calc(var(--p) * -110vh), 0);
+  /* 无 transition：滚动 100% 跟手，无延迟感 */
 }
 
 /* ── 博客内容：紧跟 hero 后面（hero 是 fixed，主内容从 100dvh 开始） ── */
 body.hero-page-active #content-inner,
 body.hero-page-active .layout,
 body.hero-page-active main {
+  --p: var(--hero-progress, 0);
   position: relative;
   z-index: 2;
   margin-top: 100dvh;        /* 把博客内容推到 hero 后面 */
   background: #faf8f5;
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.08);
+  /* 博客内容从下方滑入：progress=0 时在屏幕下方 60vh，progress=0.4 时到位 */
+  transform: translate3d(0, calc((1 - min(var(--p) * 2.5, 1)) * 60vh), 0);
+  /* 同步淡入：progress=0 → 0，progress=0.4 → 1 */
+  opacity: clamp(var(--p) * 2.5, 0, 1);
 }
 
 /* ── 折叠 Butterfly 的 full_page banner 到只剩 nav ── */
@@ -242,7 +247,12 @@ body.hero-page-active {
   .hero-scroll-label { display: none; }
 }
 
-/* ── hero 内部文字：仅做平滑淡出 + 微弱上飘，无 blur/hue/skew ── */
+/* ── hero 内部文字：「比 canvas 飞得更快 + 横向散开」 ──
+ * 视觉解读：hero 整图是被"河水"冲走，文字作为更轻的"浮萍"会被冲得更快、
+ *           飘得更远，且方向不一致（向左 / 向右都被河水打散）。
+ * 实现：translate3d 中 x/y 都用 CSS 变量算出来，0 transition 让滚动完全跟手。
+ * 性能：仍然只动 transform + opacity，无 filter/blend，安全。
+ */
 .hero-text-headline,
 .hero-text-sub,
 .hero-cta,
@@ -250,9 +260,19 @@ a.hero-cta,
 .hero-text-label,
 .hero-text-quote {
   --p: var(--hero-progress, 0);
-  transform: translate3d(0, calc(var(--p) * -3vh), 0);
-  opacity: calc(1 - var(--p) * 1.4);
-  transition: transform 0.12s linear, opacity 0.12s linear;
+  /* 透明度：滚动一点点就开始淡，到 0.45 时完全看不见 */
+  opacity: calc(1 - clamp(var(--p) * 2.2, 0, 1));
+  /* 飞的方向：向上 -30vh + 横向 (p-0.5)*14vh
+   *   p=0 时 x = -7vh（偏左）
+   *   p=0.5 时 x = 0（居中）
+   *   p=1 时 x = +7vh（偏右）
+   *   → 像文字被水流"扭"着飘走 */
+  transform: translate3d(
+    calc((var(--p) - 0.5) * 14vh),
+    calc(var(--p) * -30vh),
+    0
+  );
+  /* 无 transition：滚动 100% 跟手 */
 }
 `;
 
