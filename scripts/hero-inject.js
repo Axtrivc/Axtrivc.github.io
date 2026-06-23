@@ -1,52 +1,39 @@
 /**
  * Hero 注入：将 source/hero/ 下的 hero 区块插入到博客主页内容之前。
  *
- * 行为：
- *   - 只对主页（根 index.html）注入，不影响其他页面和分页
- *   - 注入位置：</header> 之后、<main> 之前
- *   - hero 占满首屏（PC + 移动端均为 100dvh），下方接博客列表
+ * v11 重大重构（2026-06-23）：
+ *   用户反复反馈：
+ *     1) "动画界面不要 nav" → hero 阶段彻底没有 nav（不只是不挡）
+ *     2) "转场动画太一般了" → 重做三段式数学（更明显的"阻力→释放"）
+ *     3) "首页 full_page 信息不要" → 彻底净化
  *
- * 关键设计（2026-06-23 v10 「nav 始终显示」）：
- *   1. CSS 清洗：去除 hero/index.html 的 html, body 通用选择器
- *   2. body.hero-page-active 激活注入的样式
- *   3. 删除首页的浮动播放器 / 右下角按钮 / 侧边栏 widget
- *      → 满屏 hero + 顶部 nav 是唯一的首屏
- *   4. **弹簧蓄力→爆裂释放转场**（两段式 + easeOutExpo）：
+ * 阶段布局：
+ *   ┌─────────────────────────────────────────────┐
+ *   │ HERO 阶段 (raw ∈ [0, 0.55])                  │
+ *   │  - 满屏 hero 动画                            │
+ *   │  - 顶部 nav 完全不显示（不只是不挡）         │
+ *   │  - 底部 SCROLL 提示                          │
+ *   │  - 右侧进度导轨 + 脉动点                     │
+ *   └─────────────────────────────────────────────┘
+ *   ┌─────────────────────────────────────────────┐
+ *   │ 转场 (raw ∈ [0.30, 0.70])                    │
+ *   │  - 0.30 → 0.50  阻力蓄力（hero 几乎不动）   │
+ *   │  - 0.50 → 0.70  急速释放（hero 飞走）       │
+ *   │  - 0.30 同步  ：nav 渐渐淡入                 │
+ *   │  - 0.55 同步  ：nav 完全显示 + main 滑入     │
+ *   └─────────────────────────────────────────────┘
+ *   ┌─────────────────────────────────────────────┐
+ *   │ MAIN 阶段 (raw ≥ 0.70)                       │
+ *   │  - nav 完整显示（金棕渐变背景）              │
+ *   │  - 博客内容正常显示                          │
+ *   └─────────────────────────────────────────────┘
  *
- *        raw     = scrollY / innerHeight        (0→1)
- *        spring  = sin(raw × π / 2)             (0→1, 起步慢中段快)
- *        pin     = min(raw / 0.45, 1)            (蓄力段 0→1)
- *        release = max((raw - 0.45) / 0.55, 0)  (释放段 0→1)
- *        ease    = 1 - (1 - release)^3          (easeOutExpo)
- *        visual  = pin < 1
- *                  ? easeInQuad(pin) × 0.22
- *                  : 0.22 + ease × 0.78
- *
- *      ┌────────── 蓄力段 (raw ∈ [0, 0.45]) ──────────┐
- *      │ hero 被往下"压"：translateY 0 → +7vh           │
- *      │ scale 1.0 → 1.08（视觉上"被压扁的鼓胀"）       │
- *      │ 文字缩小 → 1.04（被压紧）                       │
- *      │ 蓄力视觉进度 0 → 0.22（曲线前慢后快）          │
- *      └────────────────────────────────────────────┘
- *                              ↓
- *                      raw = 0.45 临界点
- *                              ↓
- *      ┌────────── 释放段 (raw ∈ [0.45, 1]) ──────────┐
- *      │ easeOutExpo：前 15% 缓慢，后 85% 急速        │
- *      │ hero 急速向上飞 → -200vh                      │
- *      │ 文字散开 ±25vh + 飞走 -60vh                    │
- *      │ 博客 main 从 +100vh 滑入                       │
- *      │ 颜色恢复、透明度 1                              │
- *      └────────────────────────────────────────────┘
- *
- *      ❌ 无 CSS filter / SVG filter / mix-blend-mode / glitch bar
- *      ❌ 无 will-change（除 canvas 自身）+ 无 transition
- *      ✅ 仅 transform: translate3d + scale + opacity → GPU 合成器原生
- *
- *   5. 移动端：100dvh 全屏，隐藏侧边进度条，简化底部提示
- *
- * JS ↔ CSS 通信：scroll listener 计算所有中间值（raw/spring/pin/release/ease/visual）
- * 直接 setProperty 到 :root，CSS 只引用变量，不再算数学。
+ * JS ↔ CSS 通信（CSS 只引用变量，不再算数学）：
+ *   --hero-raw        实际滚动量 0→1
+ *   --hero-visual     视觉进度 0→1（已由 computeVisual 计算好）
+ *   --hero-pin        pin 段原始进度 0→1
+ *   --hero-easeout    release 段 easeOutExpo 输出 0→1
+ *   --hero-nav        nav 淡入进度 0→1（hero 阶段 0，main 阶段 1）
  */
 const fs = require('fs');
 const path = require('path');
@@ -83,17 +70,17 @@ hexo.extend.filter.register('after_render:html', function (data) {
   const styleMatch = heroSrc.match(/<style>([\s\S]*?)<\/style>/);
   let heroCss = styleMatch ? styleMatch[1] : '';
 
-  // ── CSS 清洗：去除通用选择器（避免污染博客全局） ──
+  // ── CSS 清洗：去除通用选择器 ──
   heroCss = heroCss
     .replace(/^\s*html,\s*body\s*\{[^}]*\}\s*$/gm, '')
     .replace(/^\s*\*,\s*\*::before,\s\*::after\s*\{[^}]*\}\s*$/gm, '');
 
   // ── 注入专用 scoped 样式 ──
   heroCss += `
-/* ─────────── hero-inject scoped CSS v9 ─────────── */
+/* ─────────── hero-inject scoped CSS v11 「nav 分阶段 + 阻力释放」 ─────────── */
 
-/* hero-shell：占满整个首屏（hero 阶段连 nav 都隐藏）
- * z-index 提到 1000 覆盖 Butterfly nav（默认 z-index: 100~200） */
+/* hero-shell：占满整个首屏
+ * z-index 1000，nav 在 hero 阶段完全不显示（opacity 0） */
 .hero-shell {
   position: fixed;
   inset: 0 0 0 0;
@@ -125,25 +112,16 @@ hexo.extend.filter.register('after_render:html', function (data) {
 }
 
 /* ─────────────────────────────────────────────────
- * 「滚动阻力 → 临界爆发 → 急速飞走」v9 转场（2026-06-23 重构）
+ * v11 「滚动阻力 → 临界爆发 → 急速飞走」三段式
  *
- * 三段式（按滚动量 raw = scrollY/innerHeight）：
- *   - raw ∈ [0, 0.30]     → 阻力段：visual 0 → 0.10（easeInQuart），
- *                           用户"用力滚动"但 hero 几乎不动——像在压弹簧
- *   - raw ∈ [0.30, 0.50]  → 临界过渡：visual 0.10 → 0.22（线性），
+ *   raw ∈ [0, 0.30]     → 阻力段：visual 0 → 0.10（easeInQuart）
+ *                           hero 几乎不动 —— 像在压弹簧
+ *   raw ∈ [0.30, 0.50]  → 临界过渡：visual 0.10 → 0.22（线性）
  *                           阻力感消失，蓄能溢出
- *   - raw ∈ [0.50, 1.00]  → 爆发释放：visual 0.22 → 1.0（easeOutExpo），
+ *   raw ∈ [0.50, 1.00]  → 爆发释放：visual 0.22 → 1.0（easeOutExpo）
  *                           hero 急速向上飞出 -200vh，main 从 +88vh 升起
  *
- * JS 写入 :root 的 CSS 变量：
- *   --hero-raw      实际滚动量 0→1
- *   --hero-visual   视觉进度 0→1（已由 computeVisual 计算好）
- *   --hero-pin      pin 段原始进度 0→1 (raw/0.50)
- *   --hero-release  release 段原始进度 0→1 ((raw-0.50)/0.50)
- *   --hero-easeout  release 段 easeOutExpo 输出 0→1
- *   --hero-spring   pin 段 easeInQuad 输出 0→1
- *
- * 性能铁律（v3→v4→v5→v6→v7→v8 经验）：
+ * 性能铁律（v3→v4→...→v11 经验）：
  *   ❌ 不在 hero-shell 上用 CSS filter / SVG filter
  *   ❌ 不 mix-blend-mode: overlay/screen + 多层叠加
  *   ❌ 不给装饰元素加 will-change: transform
@@ -152,25 +130,11 @@ hexo.extend.filter.register('after_render:html', function (data) {
  *   ✅ 0 transition → 滚动 100% 跟手
  * ───────────────────────────────────────────────── */
 
-/* ── 主体：两段独立控制 ──
- * 蓄力段（visual 0→0.22, pin 0→1）：
- *   translateY 0 → +7vh（被往下压）
- *   scale 1.0 → 1.08（鼓胀感）
- *
- * 释放段（visual 0.22→1, ease 0→1）：
- *   translateY +7vh → -200vh（先快后慢冲到屏幕外）
- *   scale 1.08 → 1.0（恢复原状）
- *
- * 用 --hero-pin 和 --hero-easeout 两个变量分开表达：
- *   pin 0→1 时 shell translateY = pin × 7vh（向下）
- *   release 段：shell translateY = 7vh + ease × (-207vh) = 7vh - 207vh × ease
- *   合并：shell translateY = pin × 7vh - ease × 207vh
- */
 .hero-shell {
   --pin: var(--hero-pin, 0);
   --ease: var(--hero-easeout, 0);
-  /* 视觉进度控制透明度：蓄力段基本不淡（保持 0.88），释放段急速淡出 */
-  opacity: calc(0.88 - var(--ease) * 1.0);
+  /* 蓄力段基本不淡（保持 0.92），释放段急速淡出 */
+  opacity: calc(0.92 - var(--ease) * 1.05);
   /* 蓄力往下 + 释放往上飞出 */
   transform: translate3d(
     0,
@@ -178,9 +142,10 @@ hexo.extend.filter.register('after_render:html', function (data) {
     0
   );
 }
+
 /* 蓄力段"压力感"：径向暗化 vignette 在蓄力段逐渐加深
  * 用 ::after 伪元素实现，纯 background 不参与 filter 计算 → 性能安全
- * 临界点（raw 0.30）最暗，释放后 vignette 跟随 hero 一起飞走 */
+ * 临界点（raw 0.50）最暗，释放后 vignette 跟随 hero 一起飞走 */
 .hero-shell::after {
   content: "";
   position: absolute;
@@ -196,8 +161,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
   transition: none;
 }
 
-/* hero 内部 section：蓄力时被压紧 scale 1→1.08（鼓胀），释放段恢复 1.0
- * 用 hero-shell 的 pin 和 ease 单独驱动 */
+/* hero 内部 section：蓄力时被压紧 scale 1→1.08（鼓胀），释放段恢复 1.0 */
 .hero-shell > section.hero {
   --pin: var(--hero-pin, 0);
   --ease: var(--hero-easeout, 0);
@@ -206,18 +170,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
 }
 
 /* ── 博客内容：紧跟 hero 后面（z-index 1100，高于 hero-shell 1000）
- * v8 改进：让 main 在 hero 刚开始飞走（visual ≈ 0.22）就开始浮现，
- *         与 hero 飞走完全 overlap，**消除中间的空白窗口**
- *
- *   visual = 0.00  → ty = +88vh (在 188dvh，屏幕外底)
- *   visual = 0.22  → ty = +66vh (临界点：蓄力段结束、释放段开始)
- *   visual = 0.50  → ty = +26vh (已显出底部 26vh)
- *   visual = 0.75  → ty =  0    (刚好抵达屏幕底)
- *   visual = 1.00  → ty = -100vh (在屏幕顶 = 正常位置)
- *
- *   这意味着 hero 还在飞（visual 0.22~0.75）时 main 就开始跟进，
- *   用户视觉上看到的是"hero 飞走的同时博客从底部升起"。
- */
+ * visual 0.15 开始浮现，与 hero 飞走完全 overlap */
 body.hero-page-active #content-inner,
 body.hero-page-active .layout,
 body.hero-page-active main {
@@ -226,33 +179,30 @@ body.hero-page-active main {
   z-index: 1100;
   margin-top: 100dvh;
   background: #faf8f5;
-  /* box-shadow 去掉以消除"浮起"轮廓 */
-  /* main 在 visual=0.22 就开始跟上，与 hero 飞走完全 overlap */
   transform: translate3d(0, calc((0.88 - var(--p) * 1.32) * 100vh), 0);
-  /* 淡入也跟着提前：visual ≥ 0.15 后开始显示 */
   opacity: clamp((var(--p) - 0.15) * 1.6, 0, 1);
 }
 
-/* ── 「首页净化 v10」：让顶部 nav 始终显示 ──
+/* ── 「v11 nav 分阶段显示」
  *
- * 之前 v9 错误：把整个 #page-header.full_page 隐藏了，
- *  导致 nav 也跟着没了 —— 用户看不到顶部菜单。
- *
- * 正确做法：
- *   - nav 永远显示（金棕色背景 + 阴影 + 始终在顶部）
- *   - 只隐藏 full_page 模式下的首屏装饰（site-info、scroll-down）
- *   - hero 阶段 nav 不要透明 + 满屏 header 背景（让 nav 跟 hero 不打架）
+ * 用户要求：动画界面不要 nav，只有切到博客时才有。
  *
  * 实现：
- *   - #page-header.full_page → 去掉 absolute 全屏占位
- *   - #nav 永远 opacity:1、不被 --purge-progress 影响
- *   - #site-info + #scroll-down → 永远隐藏（首屏 hero 已经替代）
+ *   - hero 阶段（raw 0~0.30）       → nav 不可见，pointer-events: none
+ *   - 临界段（raw 0.30~0.55）       → nav 渐渐淡入
+ *   - main 阶段（raw ≥ 0.55）        → nav 完整显示
+ *
+ * 用 --hero-nav 变量控制：JS 端计算好后 setProperty 到 :root
+ *   --hero-nav = 0   （hero 阶段，nav 隐藏）
+ *   --hero-nav = 1   （main 阶段，nav 完全显示）
+ *
+ * 渐变曲线：hero 阶段保持 0.5s，0.30~0.55 线性上升，0.55+ 保持 1
  */
 body.hero-page-active #page-header.full_page {
   position: relative;
   height: 60px;
   background: transparent;
-  pointer-events: none;  /* 容器不再拦截点击，由 #nav 接管 */
+  pointer-events: none;
 }
 body.hero-page-active #page-header.full_page #site-info,
 body.hero-page-active #page-header.full_page #scroll-down,
@@ -260,12 +210,12 @@ body.hero-page-active #site-info,
 body.hero-page-active #scroll-down {
   display: none !important;
 }
-/* 注意：#blog-info 不再隐藏（v10 改为显示） */
 
-/* nav 永远显示：强制始终 opacity:1、不跟随 --purge-progress */
+/* nav 渐变：opacity 由 --hero-nav 驱动 */
 body.hero-page-active #nav,
 body.hero-page-active #page-header.full_page #nav {
-  opacity: 1 !important;
+  --nav-p: var(--hero-nav, 0);
+  opacity: var(--nav-p) !important;
   transform: none !important;
   pointer-events: auto;
   display: flex !important;
@@ -276,14 +226,20 @@ body.hero-page-active #page-header.full_page #nav {
   left: 0;
   right: 0;
   height: 60px;
-  z-index: 1100;
+  z-index: 1200;
   background: linear-gradient(180deg, #b8860b 0%, #cd9b1d 50%, #daa520 100%) !important;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
   padding: 0 20px;
   align-items: center;
-  transition: background 0.4s ease, box-shadow 0.4s ease;
+  transition: opacity 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
 }
-/* #menus 不再被强制 100% 宽度（让 nav flex 布局生效） */
+
+/* hero 滚走后（main 阶段）：背景变成纯色 */
+body.hero-page-active.hero-past #nav {
+  background: #b8860b !important;
+}
+
+/* #menus flex 布局 */
 body.hero-page-active #menus {
   opacity: 1 !important;
   transform: none !important;
@@ -297,7 +253,7 @@ body.hero-page-active #menus {
   background: transparent !important;
 }
 
-/* nav 内 #blog-info（Axtrivc's Blog 标题）：之前 fixed 后被切掉了，拉回来 */
+/* nav 内 logo（Axtrivc's Blog 标题） */
 body.hero-page-active #blog-info,
 body.hero-page-active #nav #blog-info,
 body.hero-page-active #page-header.full_page #blog-info {
@@ -322,16 +278,7 @@ body.hero-page-active #nav .nav-site-title {
   visibility: visible !important;
 }
 
-/* hero 滚走后（main 阶段）：背景变成纯色 */
-body.hero-page-active.hero-past #nav {
-  background: #b8860b !important;
-}
-
-/* ─────────────────────────────────────────────────
- * 「首页净化 v9」：去掉浮动播放器 + 右下角按钮 + 生日倒计时 + 发布按钮
- * 注意：#sidebar 是左侧抽屉菜单（导航用），保留
- * 注意：#aside 是文章页右侧 widget（主页本来就没有）
- * ───────────────────────────────────────────────── */
+/* ── 「首页净化」：去掉浮动播放器 + 右下角按钮 + 生日倒计时 + 发布按钮 */
 body.hero-page-active #music-bar,
 body.hero-page-active #music-panel,
 body.hero-page-active #rightside,
@@ -354,13 +301,7 @@ body.hero-page-active #article-container .need-to-hide {
   display: none !important;
 }
 
-/* ─────────────────────────────────────────────────
- * 「首页净化 v8」：去掉米色卡片与白底之间的轮廓冲突
- * Butterfly 默认 #article-container / #recent-posts / .recent-post-item
- * 有 1px border + box-shadow + 不同的 background，
- * 在主页白底上显得卡片"漂浮"且边缘突兀。
- * 解决：border 全去掉，box-shadow 极淡或去掉，让卡片融进白底。
- * 仅对主页（hero-page-active）生效，不影响文章页。 */
+/* 卡片融底 */
 body.hero-page-active #article-container,
 body.hero-page-active .recent-post-item,
 body.hero-page-active .card-widget,
@@ -384,8 +325,7 @@ body.hero-page-active {
   overflow-y: auto;
 }
 
-/* ── 右侧滚动进度导轨（PC only）：蓄力段缓慢填充，释放段快速清空 ──
- * z-index 1500 确保在 hero-shell (1000) 和 main (1100) 之上 */
+/* ── 右侧滚动进度导轨（PC only） ── */
 .hero-progress-rail {
   position: fixed;
   right: 26px;
@@ -406,9 +346,6 @@ body.hero-page-active {
   left: -1px;
   width: 4px;
   height: calc(var(--hero-visual, 0) * 100%);
-  /* 颜色渐变：蓄力段颜色淡（蓄能），释放段颜色深（释放）
-   * 用两段固定颜色的 gradient + opacity 控制整体浓度
-   */
   background: linear-gradient(180deg, #5078d0 0%, #0E2F7E 100%);
   opacity: calc(0.55 + var(--hero-easeout, 0) * 0.45);
   border-radius: 2px;
@@ -479,7 +416,6 @@ body.hero-page-active {
   z-index: 1500;
   pointer-events: none;
   animation: heroProgressPulse 1.2s ease-in-out infinite;
-  /* 蓄力段可见（pin 0→1 → 透明度 0.5→1），释放后消失 */
   opacity: calc((1 - var(--hero-visual, 0) * 6) * (0.5 + var(--hero-pin, 0) * 0.5));
 }
 @keyframes heroProgressPulse {
@@ -491,12 +427,6 @@ body.hero-page-active {
 }
 
 /* ── hero 内部文字：蓄力段跟着被压紧（轻微缩小 + 暗化），释放段急速散开飞走 ──
- * 蓄力段（visual 0→0.22）：translateY 0 → -2vh（轻微上浮，像被弹簧拉起），opacity 略降
- * 释放段（visual 0.22→1）：translateY -2vh → -60vh（急速飞出），横向 ±25vh 散开
- *   用 easeout 驱动：ty = -2vh - ease × 58vh，横向偏移 = ease × 25vh × direction
- *   实际：ty = pin × (-2vh) - ease × 58vh
- *         tx = ease × 25vh（文字会水平散开）
- *
  * 不同文字用 alternate direction 让效果更"爆裂"：
  *   headline / sub  → -25vh（向左侧）
  *   cta / label     → +25vh（向右侧）
@@ -538,7 +468,7 @@ a.hero-cta,
 `;
 
   const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
-  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=7"') : '';
+  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=8"') : '';
 
   const afterScriptIdx = heroSrc.indexOf(heroScriptTag) + heroScriptTag.length;
   const inlineScriptMatch = heroSrc.slice(afterScriptIdx).match(/<script>[\s\S]*?<\/script>/);
@@ -575,31 +505,24 @@ a.hero-cta,
 ${progressPulse}
 `;
 
-  // 滚动驱动 JS：rAF 节流 + 蓄力释放数学
+  // 滚动驱动 JS：rAF 节流 + 蓄力释放数学 + nav 阶段变量
   const scrollDriverJs = `
 <script>
 (function() {
   var rafId = null;
   var html = document.documentElement;
 
-  // easeOutExpo：t=0→1 时，曲线开始很快、后端渐近 1（爆裂感）
   function easeOutExpo(t) {
     return t >= 1 ? 1 : (1 - Math.pow(1 - t, 3));
   }
-  // easeInQuad：t=0→1 时，曲线开始慢、后端快（蓄力感）
   function easeInQuad(t) {
     return t * t;
   }
-  // easeInQuart：曲线比 easeInQuad 更陡（滚动阻力感更强）
   function easeInQuart(t) {
     return t * t * t * t;
   }
 
-  // 「滚动阻力 → 急速释放」v9 三段式：
-  //   raw ∈ [0, 0.30]     → 几乎不动：visual 0 → 0.10 （easeInQuart，阻力强）
-  //   raw ∈ [0.30, 0.50]  → 临界过渡：visual 0.10 → 0.22 （线性，蓄能溢出）
-  //   raw ∈ [0.50, 1.00]  → 急速飞走：visual 0.22 → 1.0 （easeOutExpo 加速）
-  // 给用户的感受：前 30% 滚动像"压弹簧"，中间 20% 阻力消失，最后 50% 急速滑走
+  // v11 三段式
   function computeVisual(raw) {
     if (raw <= 0.30) {
       return easeInQuart(raw / 0.30) * 0.10;
@@ -610,11 +533,20 @@ ${progressPulse}
     return 0.22 + easeOutExpo((raw - 0.50) / 0.50) * 0.78;
   }
 
+  // v11 nav 阶段变量
+  //   raw ∈ [0, 0.30]     → nav 0
+  //   raw ∈ [0.30, 0.55]  → nav 0 → 1（线性，淡入）
+  //   raw ∈ [0.55, 1.0]   → nav 1
+  function computeNav(raw) {
+    if (raw <= 0.30) return 0;
+    if (raw <= 0.55) return (raw - 0.30) / 0.25;
+    return 1;
+  }
+
   function update() {
     if (rafId) return;
     rafId = requestAnimationFrame(function() {
       var heroH = window.innerHeight;
-      // 调试支持：?raw=0.5 URL 参数直接定位滚动位置（用于截图）
       var rawOverride = null;
       try {
         var qsRaw = new URLSearchParams(window.location.search).get('raw');
@@ -627,11 +559,11 @@ ${progressPulse}
         raw = Math.max(0, Math.min(1, window.scrollY / heroH));
       }
       var visual = computeVisual(raw);
-      // v9 三段：pin 段 raw [0, 0.50]（含蓄力 + 临界过渡），release 段 raw [0.50, 1.0]
       var pin = Math.min(raw / 0.50, 1);
       var release = Math.max((raw - 0.50) / 0.50, 0);
       var easeOut = easeOutExpo(release);
       var spring = easeInQuad(pin);
+      var nav = computeNav(raw);
 
       html.style.setProperty('--hero-raw', raw.toFixed(4));
       html.style.setProperty('--hero-visual', visual.toFixed(4));
@@ -639,9 +571,8 @@ ${progressPulse}
       html.style.setProperty('--hero-release', release.toFixed(4));
       html.style.setProperty('--hero-easeout', easeOut.toFixed(4));
       html.style.setProperty('--hero-spring', spring.toFixed(4));
+      html.style.setProperty('--hero-nav', nav.toFixed(4));
 
-      // v10：滚动到 main 阶段（visual >= 0.55）后给 body 加 hero-past，
-      //  让 #nav 从金棕色渐变回主题色
       if (visual >= 0.55) {
         document.body.classList.add('hero-past');
       } else {
@@ -667,6 +598,6 @@ ${progressPulse}
     '<body$1 class="hero-page-active">'
   );
 
-  hexo.log.info('[hero-inject] ✅ v8 「空白消除 + 卡片融底」重构完成: ' + canonical);
+  hexo.log.info('[hero-inject] ✅ v11 「nav 分阶段 + 阻力释放」: ' + canonical);
   return content;
 });
