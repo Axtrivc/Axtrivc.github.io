@@ -6,21 +6,47 @@
  *   - 注入位置：</header> 之后、<main> 之前
  *   - hero 占满首屏（PC + 移动端均为 100dvh），下方接博客列表
  *
- * 关键设计（2026-06-23 v5 「河水奔涌而去」）：
+ * 关键设计（2026-06-23 v7 「弹簧蓄力→爆裂释放」重构）：
  *   1. CSS 清洗：去除 hero/index.html 的 html, body 通用选择器
- *   2. body.hero-page-active 激活注入的样式 + 折叠 full_page banner
- *   3. 滚动驱动转场（明显版）：
- *      - JS 通过 rAF 节流监听 scroll，写 --hero-progress (0→1) 到 <html>
- *      - hero 整体大幅向上飘（-110vh），明显"飞出屏幕"
- *      - opacity 从 progress=0 开始淡，到 0.55 时几乎不可见
- *      - 文字比 canvas 飞得更快（-30vh）+ 横向散开（±6vh）
- *      - 博客内容从下方 -60vh 滑入 + 淡入（"河水让位"的视觉）
- *      - 右侧进度导轨（PC）随 progress 填充 + 渐隐
- *      - 底部 SCROLL 提示随 progress 渐隐
+ *   2. body.hero-page-active 激活注入的样式
+ *   3. 删除首页的浮动播放器 / 右下角按钮 / 侧边栏 widget
+ *      → 满屏 hero + 顶部 nav 是唯一的首屏
+ *   4. **弹簧蓄力→爆裂释放转场**（两段式 + easeOutExpo）：
+ *
+ *        raw     = scrollY / innerHeight        (0→1)
+ *        spring  = sin(raw × π / 2)             (0→1, 起步慢中段快)
+ *        pin     = min(raw / 0.45, 1)            (蓄力段 0→1)
+ *        release = max((raw - 0.45) / 0.55, 0)  (释放段 0→1)
+ *        ease    = 1 - (1 - release)^3          (easeOutExpo)
+ *        visual  = pin < 1
+ *                  ? easeInQuad(pin) × 0.22
+ *                  : 0.22 + ease × 0.78
+ *
+ *      ┌────────── 蓄力段 (raw ∈ [0, 0.45]) ──────────┐
+ *      │ hero 被往下"压"：translateY 0 → +7vh           │
+ *      │ scale 1.0 → 1.08（视觉上"被压扁的鼓胀"）       │
+ *      │ 文字缩小 → 1.04（被压紧）                       │
+ *      │ 蓄力视觉进度 0 → 0.22（曲线前慢后快）          │
+ *      └────────────────────────────────────────────┘
+ *                              ↓
+ *                      raw = 0.45 临界点
+ *                              ↓
+ *      ┌────────── 释放段 (raw ∈ [0.45, 1]) ──────────┐
+ *      │ easeOutExpo：前 15% 缓慢，后 85% 急速        │
+ *      │ hero 急速向上飞 → -200vh                      │
+ *      │ 文字散开 ±25vh + 飞走 -60vh                    │
+ *      │ 博客 main 从 +100vh 滑入                       │
+ *      │ 颜色恢复、透明度 1                              │
+ *      └────────────────────────────────────────────┘
+ *
  *      ❌ 无 CSS filter / SVG filter / mix-blend-mode / glitch bar
- *      ✅ 仅 transform + opacity → GPU 合成器原生，零掉帧
- *      ✅ 0 transition → 滚动 100% 跟手
- *   4. 移动端：100dvh 全屏，隐藏侧边进度条，简化底部提示
+ *      ❌ 无 will-change（除 canvas 自身）+ 无 transition
+ *      ✅ 仅 transform: translate3d + scale + opacity → GPU 合成器原生
+ *
+ *   5. 移动端：100dvh 全屏，隐藏侧边进度条，简化底部提示
+ *
+ * JS ↔ CSS 通信：scroll listener 计算所有中间值（raw/spring/pin/release/ease/visual）
+ * 直接 setProperty 到 :root，CSS 只引用变量，不再算数学。
  */
 const fs = require('fs');
 const path = require('path');
@@ -60,28 +86,24 @@ hexo.extend.filter.register('after_render:html', function (data) {
   // ── CSS 清洗：去除通用选择器（避免污染博客全局） ──
   heroCss = heroCss
     .replace(/^\s*html,\s*body\s*\{[^}]*\}\s*$/gm, '')
-    .replace(/^\s*\*,\s*\*::before,\s*\*::after\s*\{[^}]*\}\s*$/gm, '');
+    .replace(/^\s*\*,\s*\*::before,\s\*::after\s*\{[^}]*\}\s*$/gm, '');
 
   // ── 注入专用 scoped 样式 ──
   heroCss += `
-/* ─────────── hero-inject scoped CSS ─────────── */
+/* ─────────── hero-inject scoped CSS v6 ─────────── */
 
-/* hero-shell：占满首屏容器（PC + 移动端均 100dvh） */
+/* hero-shell：占满整个首屏（hero 阶段连 nav 都隐藏）
+ * z-index 提到 1000 覆盖 Butterfly nav（默认 z-index: 100~200） */
 .hero-shell {
   position: fixed;
-  inset: 60px 0 0 0;            /* 顶部 60px 留给导航栏，不覆盖 nav */
+  inset: 0 0 0 0;
   width: 100%;
-  height: calc(100vh - 60px);
-  height: calc(100dvh - 60px);
+  height: 100dvh;
   overflow: hidden;
   background: #0E2F7E;
   margin: 0;
   padding: 0;
-  z-index: 1;
-  /* 关键：不声明 will-change！
-   * 声明 will-change: transform 会强制元素常驻独立合成层，
-   * Chromium 在滚动时会对这种层降采样渲染，导致 canvas 模糊。
-   * 这里只在 transform 实际变化时让浏览器自动提升合成层即可。 */
+  z-index: 1000;
 }
 .hero-shell > section.hero {
   position: relative;
@@ -94,7 +116,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-/* canvas：锁住独立 GPU 层，避免滚动时被 Chromium 降采样 */
+/* canvas：锁住独立 GPU 层 */
 .hero-shell canvas.hero-ascii {
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -102,72 +124,133 @@ hexo.extend.filter.register('after_render:html', function (data) {
   -webkit-backface-visibility: hidden;
 }
 
-/* ── 滚动驱动的 hero 转场（「河水奔涌而去」v5 · 2026-06-23） ── */
-/* --hero-progress: 0 = hero 在视口顶部，1 = hero 完全滚出
+/* ─────────────────────────────────────────────────
+ * 「弹簧蓄力→爆裂释放」v7 转场（2026-06-23 重构）
  *
- * 设计目标：转场要"明显且特别"，但仍 0 掉帧：
- *   ❌ 不使用 CSS filter（blur / saturate / brightness / hue-rotate）
- *      → filter 在大 viewport 上每帧重新栅格化 canvas 输出，是掉帧主因
- *   ❌ 不使用 SVG filter（feColorMatrix / feOffset）
- *      → 对整个 hero-shell 应用会强制 layout 重算
- *   ❌ 不使用 mix-blend-mode / overlay layers
- *      → 合成器在每个 glitch bar 上重新混合像素，n 条 = n 倍开销
- *   ❌ 不使用 will-change（除 canvas 自身）
- *      → 强制常驻独立合成层，Chromium 滚动时会降采样
- *   ❌ 不使用 transition
- *      → transition 会让 transform/opacity 跟不上滚动方向，产生延迟感和"卡顿感"
- *   ✅ 只用 transform: translateY/translateX + opacity
- *      → 这两个属性是 GPU 合成器原生路径，零 CPU 开销
+ * JS 写入的变量（scroll listener 在 :root 上更新）：
+ *   --hero-raw      实际滚动量 0→1 (scrollY/innerHeight)
+ *   --hero-visual   视觉进度 0→1 (蓄力 + 释放曲线，已计算好)
+ *   --hero-pin      蓄力段进度 0→1 (0~0.45, easeInQuad 曲线)
+ *   --hero-release  释放段原始进度 0→1 (0.45~1.00, 线性)
+ *   --hero-easeout  释放段 easeOutExpo 输出 0→1
+ *   --hero-spring   蓄力段 easeInQuad 输出 0→0.22
  *
- * 视觉效果：用户一开始滚动 → hero 整体被"河水"冲向上方屏幕外
- *          + 文字比 canvas 飞得更快 + 横向散开
- *          + 博客内容从下方滑入顶替位置
- *          → 有方向感、有层次、不卡顿。
+ * 两段效果：
+ *   - raw ∈ [0, 0.45]    → 蓄力：被"压"向下（+7vh）、鼓胀 scale 1.08、暗化
+ *                          文字稍微压紧（缩 1.04）、蓄能到 22%
+ *   - raw ∈ [0.45, 1.00] → 释放：easeOutExpo 前慢后快、急速飞走 -200vh
+ *                          文字散开 ±25vh + 飞走 -60vh、博客从 +100vh 滑入
+ *
+ * 性能铁律（v3→v4→v5→v6 经验）：
+ *   ❌ 不在 hero-shell 上用 CSS filter / SVG filter
+ *   ❌ 不 mix-blend-mode: overlay/screen + 多层叠加
+ *   ❌ 不给装饰元素加 will-change: transform
+ *   ✅ 只用 transform: translate3d + scale + opacity
+ *   ✅ canvas 单独加 translateZ(0) 锁独立 GPU 层
+ *   ✅ 0 transition → 滚动 100% 跟手
+ * ───────────────────────────────────────────────── */
+
+/* ── 主体：两段独立控制 ──
+ * 蓄力段（visual 0→0.22, pin 0→1）：
+ *   translateY 0 → +7vh（被往下压）
+ *   scale 1.0 → 1.08（鼓胀感）
+ *
+ * 释放段（visual 0.22→1, ease 0→1）：
+ *   translateY +7vh → -200vh（先快后慢冲到屏幕外）
+ *   scale 1.08 → 1.0（恢复原状）
+ *
+ * 用 --hero-pin 和 --hero-easeout 两个变量分开表达：
+ *   pin 0→1 时 shell translateY = pin × 7vh（向下）
+ *   release 段：shell translateY = 7vh + ease × (-207vh) = 7vh - 207vh × ease
+ *   合并：shell translateY = pin × 7vh - ease × 207vh
  */
 .hero-shell {
-  --p: var(--hero-progress, 0);
-  /* 透明度：滚动一开始就快速淡出，到 0.55 时 hero 几乎不可见 */
-  opacity: calc(1 - clamp(var(--p) * 1.8, 0, 1));
-  /* 大幅向上飘：-110vh 让 hero 直接飞出屏幕顶部上方（视口外） */
-  transform: translate3d(0, calc(var(--p) * -110vh), 0);
-  /* 无 transition：滚动 100% 跟手，无延迟感 */
+  --pin: var(--hero-pin, 0);
+  --ease: var(--hero-easeout, 0);
+  /* 视觉进度控制透明度：蓄力段基本不淡（保持 0.85），释放段急速淡出 */
+  opacity: calc(0.88 - var(--ease) * 1.0);
+  /* 蓄力往下 + 释放往上飞出 */
+  transform: translate3d(
+    0,
+    calc(var(--pin) * 7vh - var(--ease) * 207vh),
+    0
+  );
+  /* 蓄力段鼓胀（scale 1.0→1.08），释放段恢复（1.08→1.0） */
+  /* scale 用两段组合：pin 段 1.0 + pin × 0.08，释放段减 ease × 0.08 */
 }
 
-/* ── 博客内容：紧跟 hero 后面（hero 是 fixed，主内容从 100dvh 开始） ── */
+/* hero 内部 section：蓄力时被压紧 scale 1→1.08（鼓胀），释放段恢复 1.0
+ * 用 hero-shell 的 pin 和 ease 单独驱动 */
+.hero-shell > section.hero {
+  --pin: var(--hero-pin, 0);
+  --ease: var(--hero-easeout, 0);
+  transform: scale(calc(1.0 + var(--pin) * 0.08 - var(--ease) * 0.08));
+  transform-origin: center center;
+}
+
+/* ── 博客内容：紧跟 hero 后面（z-index 1100，高于 hero-shell 1000）
+ * v7 改进：让 main 跟随 visual 提前进入屏幕，避免 hero 飞出后到 main 到位之间的空白
+ *   visual=0     → ty=+100vh (main 在 200dvh，屏幕外底)
+ *   visual=0.30  → ty=+40vh  (main 进入屏幕 40vh = 约 40%)
+ *   visual=0.50  → ty=0      (main 抵达屏幕底)
+ *   visual=1.00  → ty=-100vh (main 在屏幕顶 = 正常位置)
+ */
 body.hero-page-active #content-inner,
 body.hero-page-active .layout,
 body.hero-page-active main {
-  --p: var(--hero-progress, 0);
+  --p: var(--hero-visual, 0);
   position: relative;
-  z-index: 2;
-  margin-top: 100dvh;        /* 把博客内容推到 hero 后面 */
+  z-index: 1100;
+  margin-top: 100dvh;
   background: #faf8f5;
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.08);
-  /* 博客内容从下方滑入：progress=0 时在屏幕下方 60vh，progress=0.4 时到位 */
-  transform: translate3d(0, calc((1 - min(var(--p) * 2.5, 1)) * 60vh), 0);
-  /* 同步淡入：progress=0 → 0，progress=0.4 → 1 */
-  opacity: clamp(var(--p) * 2.5, 0, 1);
+  /* main 跟随 visual 提前进入屏幕（关键：让 main 在 hero 完全飞出的同一时间进入） */
+  transform: translate3d(0, calc((0.5 - var(--p)) * 200vh), 0);
+  /* 同步淡入：visual ≥ 0.05 后开始显示 */
+  opacity: clamp((var(--p) - 0.05) * 1.3, 0, 1);
 }
 
-/* ── 折叠 Butterfly 的 full_page banner 到只剩 nav ── */
-body.hero-page-active #page-header.full_page {
-  height: auto !important;
-  min-height: 0 !important;
-  visibility: visible;
-  z-index: 10;               /* 让 nav 在 hero 上面 */
-}
+/* ── 「首页净化 v7」：hero 阶段完全隐藏 nav + 播放器 + 按钮 ──
+ * 释放段 visual ≥ 0.85 时这些元素淡入回正常状态（保留转场连续性）。
+ * 用 --hero-visual 控制淡入时机：
+ *   - visual ∈ [0, 0.85]  → opacity 0（hero 期间纯净）
+ *   - visual ∈ [0.85, 1.00] → 0 → 1 渐显（释放完成时主页元素平滑回归）
+ * 注：hero-shell z-index 已经 1000 覆盖 nav 本身，
+ *     opacity 仅作为保险（防止 nav 的 fixed 定位浮在 hero-shell 上面）。 */
+body.hero-page-active #page-header.full_page,
+body.hero-page-active #page-header.full_page #nav,
 body.hero-page-active #page-header.full_page #site-info,
-body.hero-page-active #page-header.full_page #scroll-down {
+body.hero-page-active #page-header.full_page #scroll-down,
+body.hero-page-active #nav,
+body.hero-page-active #menus,
+body.hero-page-active #blog-info {
+  --purge-progress: calc((var(--hero-visual, 0) - 0.85) / 0.15);
+  opacity: clamp(var(--purge-progress), 0, 1);
+  pointer-events: none;
+  transition: none; /* 完全跟手，不延迟 */
+}
+
+/* ─────────────────────────────────────────────────
+ * 「首页净化 v7」：去掉浮动播放器 + 右下角按钮
+ * 注意：#sidebar 是左侧抽屉菜单（导航用），保留
+ * 注意：#aside 是文章页右侧 widget（主页本来就没有）
+ * ───────────────────────────────────────────────── */
+body.hero-page-active #music-bar,
+body.hero-page-active #music-panel,
+body.hero-page-active #rightside,
+body.hero-page-active #go-up,
+body.hero-page-active #rightside-config,
+body.hero-page-active #aside {
   display: none !important;
 }
 
-/* 让页面可以正常滚动 */
 body.hero-page-active {
   overflow-x: hidden;
   overflow-y: auto;
 }
 
-/* ── 右侧滚动进度导轨（PC only） ── */
+/* ── 右侧滚动进度导轨（PC only）：蓄力段缓慢填充，释放段快速清空 ──
+ * z-index 1500 确保在 hero-shell (1000) 和 main (1100) 之上 */
 .hero-progress-rail {
   position: fixed;
   right: 26px;
@@ -177,26 +260,29 @@ body.hero-page-active {
   height: 110px;
   background: rgba(14, 47, 126, 0.18);
   border-radius: 1px;
-  z-index: 50;
+  z-index: 1500;
   overflow: hidden;
   pointer-events: none;
-  opacity: calc(1 - var(--hero-progress, 0) * 1.8);
-  transition: opacity 0.25s ease;
+  opacity: calc(1 - var(--hero-visual, 0) * 1.05);
 }
 .hero-progress-fill {
   position: absolute;
   top: 0;
   left: -1px;
   width: 4px;
-  height: calc(var(--hero-progress, 0) * 100%);
-  background: linear-gradient(180deg, #0E2F7E 0%, #5078d0 100%);
+  height: calc(var(--hero-visual, 0) * 100%);
+  /* 颜色渐变：蓄力段颜色淡（蓄能），释放段颜色深（释放）
+   * 用两段固定颜色的 gradient + opacity 控制整体浓度
+   */
+  background: linear-gradient(180deg, #5078d0 0%, #0E2F7E 100%);
+  opacity: calc(0.55 + var(--hero-easeout, 0) * 0.45);
   border-radius: 2px;
 }
 @media (max-width: 768px) {
   .hero-progress-rail { display: none; }
 }
 
-/* ── 底部 SCROLL 提示（hero 内，绝对定位） ── */
+/* ── 底部 SCROLL 提示 ── */
 .hero-scroll-hint {
   position: absolute;
   bottom: 24px;
@@ -210,8 +296,7 @@ body.hero-page-active {
   color: rgba(255, 255, 255, 0.95);
   pointer-events: none;
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-  opacity: calc(1 - var(--hero-progress, 0) * 2.5);
-  transition: opacity 0.25s ease;
+  opacity: calc(1 - var(--hero-visual, 0) * 1.6);
 }
 .hero-scroll-label {
   font-size: 11px;
@@ -232,52 +317,93 @@ body.hero-page-active {
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(var(--hero-progress, 0) * 100%);
+  height: calc(var(--hero-visual, 0) * 100%);
   background: rgba(255, 255, 255, 0.95);
 }
 .hero-scroll-arrow {
   animation: heroScrollBob 1.8s ease-in-out infinite;
 }
 @keyframes heroScrollBob {
-  0%, 100% { transform: translateY(0); opacity: 0.7; }
-  50%      { transform: translateY(5px); opacity: 1; }
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(5px); }
 }
 @media (max-width: 768px) {
   .hero-scroll-hint { bottom: 18px; gap: 8px; }
   .hero-scroll-label { display: none; }
 }
 
-/* ── hero 内部文字：「比 canvas 飞得更快 + 横向散开」 ──
- * 视觉解读：hero 整图是被"河水"冲走，文字作为更轻的"浮萍"会被冲得更快、
- *           飘得更远，且方向不一致（向左 / 向右都被河水打散）。
- * 实现：translate3d 中 x/y 都用 CSS 变量算出来，0 transition 让滚动完全跟手。
- * 性能：仍然只动 transform + opacity，无 filter/blend，安全。
+/* ── 蓄力段的"蓄能"提示：进度导轨上方的脉动圆点 ── */
+.hero-progress-pulse {
+  position: fixed;
+  right: 22px;
+  top: calc(50% - 70px);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0E2F7E;
+  z-index: 1500;
+  pointer-events: none;
+  animation: heroProgressPulse 1.2s ease-in-out infinite;
+  /* 蓄力段可见（pin 0→1 → 透明度 0.5→1），释放后消失 */
+  opacity: calc((1 - var(--hero-visual, 0) * 6) * (0.5 + var(--hero-pin, 0) * 0.5));
+}
+@keyframes heroProgressPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.8); }
+}
+@media (max-width: 768px) {
+  .hero-progress-pulse { display: none; }
+}
+
+/* ── hero 内部文字：蓄力段跟着被压紧（轻微缩小 + 暗化），释放段急速散开飞走 ──
+ * 蓄力段（visual 0→0.22）：translateY 0 → -2vh（轻微上浮，像被弹簧拉起），opacity 略降
+ * 释放段（visual 0.22→1）：translateY -2vh → -60vh（急速飞出），横向 ±25vh 散开
+ *   用 easeout 驱动：ty = -2vh - ease × 58vh，横向偏移 = ease × 25vh × direction
+ *   实际：ty = pin × (-2vh) - ease × 58vh
+ *         tx = ease × 25vh（文字会水平散开）
+ *
+ * 不同文字用 alternate direction 让效果更"爆裂"：
+ *   headline / sub  → -25vh（向左侧）
+ *   cta / label     → +25vh（向右侧）
+ *   quote           → 0（垂直飞走）
  */
 .hero-text-headline,
-.hero-text-sub,
-.hero-cta,
-a.hero-cta,
-.hero-text-label,
-.hero-text-quote {
-  --p: var(--hero-progress, 0);
-  /* 透明度：滚动一点点就开始淡，到 0.45 时完全看不见 */
-  opacity: calc(1 - clamp(var(--p) * 2.2, 0, 1));
-  /* 飞的方向：向上 -30vh + 横向 (p-0.5)*14vh
-   *   p=0 时 x = -7vh（偏左）
-   *   p=0.5 时 x = 0（居中）
-   *   p=1 时 x = +7vh（偏右）
-   *   → 像文字被水流"扭"着飘走 */
+.hero-text-sub {
+  --pin: var(--hero-pin, 0);
+  --ease: var(--hero-easeout, 0);
+  opacity: calc(0.95 - var(--ease) * 1.05);
   transform: translate3d(
-    calc((var(--p) - 0.5) * 14vh),
-    calc(var(--p) * -30vh),
+    calc(-1 * var(--ease) * 25vh),
+    calc(var(--pin) * -2vh - var(--ease) * 58vh),
     0
   );
-  /* 无 transition：滚动 100% 跟手 */
+}
+.hero-cta,
+a.hero-cta,
+.hero-text-label {
+  --pin: var(--hero-pin, 0);
+  --ease: var(--hero-easeout, 0);
+  opacity: calc(0.95 - var(--ease) * 1.05);
+  transform: translate3d(
+    calc(var(--ease) * 25vh),
+    calc(var(--pin) * -2vh - var(--ease) * 58vh),
+    0
+  );
+}
+.hero-text-quote {
+  --pin: var(--hero-pin, 0);
+  --ease: var(--hero-easeout, 0);
+  opacity: calc(0.95 - var(--ease) * 1.05);
+  transform: translate3d(
+    0,
+    calc(var(--pin) * -2vh - var(--ease) * 58vh),
+    0
+  );
 }
 `;
 
   const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
-  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=5"') : '';
+  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=7"') : '';
 
   const afterScriptIdx = heroSrc.indexOf(heroScriptTag) + heroScriptTag.length;
   const inlineScriptMatch = heroSrc.slice(afterScriptIdx).match(/<script>[\s\S]*?<\/script>/);
@@ -286,7 +412,6 @@ a.hero-cta,
   const heroStyleTag = `<style id="hero-inline-css">\n${heroCss}\n</style>`;
   let content = data.replace('</head>', heroStyleTag + '\n</head>');
 
-  // 增强版滚动提示（放在 hero-shell 内部，position:absolute 相对 .hero-shell 定位）
   const scrollHint = `
 <div class="hero-scroll-hint" aria-hidden="true">
   <span class="hero-scroll-label">SCROLL</span>
@@ -299,9 +424,8 @@ a.hero-cta,
 </div>
 `;
 
-  // ── 用 .hero-shell 包裹 hero section + 滚动提示 ──
-  // 极简 v4：删除 SVG filter 定义、删除 glitch bar 层、删除 noise 噪点层
-  // 渲染开销：只剩 hero 自身的 canvas + 几个文字 div + 1 个 scroll hint
+  const progressPulse = `<div class="hero-progress-pulse" aria-hidden="true"></div>`;
+
   const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${scrollHint}\n</div>`;
 
   content = content.replace(
@@ -309,23 +433,68 @@ a.hero-cta,
     '</header>\n\n' + heroWrapped + '\n'
   );
 
-  // 右侧进度导轨（PC only）
   const progressRail = `
 <div class="hero-progress-rail" aria-hidden="true">
   <div class="hero-progress-fill"></div>
 </div>
+${progressPulse}
 `;
 
-  // 滚动驱动 JS（rAF 节流，避免每帧多次计算）
+  // 滚动驱动 JS：rAF 节流 + 蓄力释放数学
   const scrollDriverJs = `
 <script>
 (function() {
   var rafId = null;
+  var html = document.documentElement;
+
+  // easeOutExpo：t=0→1 时，曲线开始很快、后端渐近 1（爆裂感）
+  function easeOutExpo(t) {
+    return t >= 1 ? 1 : (1 - Math.pow(1 - t, 3));
+  }
+  // easeInQuad：t=0→1 时，曲线开始慢、后端快（蓄力感）
+  function easeInQuad(t) {
+    return t * t;
+  }
+
+  // 分段函数：raw ∈ [0, 0.45] 蓄力；raw ∈ [0.45, 1] 释放
+  function computeVisual(raw) {
+    if (raw <= 0.45) {
+      // 蓄力段：easeInQuad 0 → 0.22（起步慢，中段开始加速，最后 22% 蓄满）
+      return easeInQuad(raw / 0.45) * 0.22;
+    }
+    // 释放段：easeOutExpo 0.22 → 1.0（前 15% 缓慢，后 85% 急速）
+    return 0.22 + easeOutExpo((raw - 0.45) / 0.55) * 0.78;
+  }
+
   function update() {
     if (rafId) return;
     rafId = requestAnimationFrame(function() {
-      var p = Math.max(0, Math.min(1, window.scrollY / window.innerHeight));
-      document.documentElement.style.setProperty('--hero-progress', p);
+      var heroH = window.innerHeight;
+      // 调试支持：?raw=0.5 URL 参数直接定位滚动位置（用于截图）
+      var rawOverride = null;
+      try {
+        var qsRaw = new URLSearchParams(window.location.search).get('raw');
+        if (qsRaw !== null) rawOverride = parseFloat(qsRaw);
+      } catch (e) {}
+      var raw;
+      if (rawOverride !== null && !isNaN(rawOverride)) {
+        raw = Math.max(0, Math.min(1, rawOverride));
+      } else {
+        raw = Math.max(0, Math.min(1, window.scrollY / heroH));
+      }
+      var visual = computeVisual(raw);
+      var pin = Math.min(raw / 0.45, 1);
+      var release = Math.max((raw - 0.45) / 0.55, 0);
+      var easeOut = easeOutExpo(release);
+      var spring = easeInQuad(pin);
+
+      html.style.setProperty('--hero-raw', raw.toFixed(4));
+      html.style.setProperty('--hero-visual', visual.toFixed(4));
+      html.style.setProperty('--hero-pin', pin.toFixed(4));
+      html.style.setProperty('--hero-release', release.toFixed(4));
+      html.style.setProperty('--hero-easeout', easeOut.toFixed(4));
+      html.style.setProperty('--hero-spring', spring.toFixed(4));
+
       rafId = null;
     });
   }
@@ -345,6 +514,6 @@ a.hero-cta,
     '<body$1 class="hero-page-active">'
   );
 
-  hexo.log.info('[hero-inject] ✅ hero injected with scroll transition: ' + canonical);
+  hexo.log.info('[hero-inject] ✅ v7 「弹簧蓄力→爆裂释放」重构完成: ' + canonical);
   return content;
 });
