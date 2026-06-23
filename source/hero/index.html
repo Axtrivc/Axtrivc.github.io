@@ -268,26 +268,43 @@ layout: false
     bindSlider('refineSlider', 'refineLabel');
     bindSlider('fpsCapSlider', 'fpsCapLabel');
 
-    // 静态文本（detect-gpu tier<3 时显示，作为打字机的替代）
+    // ── 静态打字机回退 ──
+    // 只在 river-hero.js 没接管文字渲染时才运行（GPU 不可用 / tier<3 / 静态
+    // 兜底场景）。river-hero.js 启动后会立刻把 window.__riverLive 设为 true，
+    // 这里轮询检测到就跳过执行，避免和 rAF 驱动的文字写入打架造成抖字/错乱。
     (function(){
       var head = document.getElementById('heroHeadlineLive');
       var sub  = document.getElementById('heroSublineLive');
       if (!head || !sub) return;
       var headline = "Intelligence that flows with you.";
       var subline  = "River.ai 的 WebGL ASCII-river 峡谷日夜循环动画";
-      var i = 0;
-      function type() {
-        if (i <= headline.length) {
-          head.textContent = headline.slice(0, i);
-          head.classList.add('shown');
-          i++;
-          setTimeout(type, 36);
-        } else {
-          sub.textContent = subline;
-          sub.classList.add('shown');
+      var started = false;
+      function startFallback() {
+        if (started) return;
+        started = true;
+        var i = 0;
+        function type() {
+          if (i <= headline.length) {
+            head.textContent = headline.slice(0, i);
+            head.classList.add('shown');
+            i++;
+            setTimeout(type, 36);
+          } else {
+            sub.textContent = subline;
+            sub.classList.add('shown');
+          }
         }
+        setTimeout(type, 400);
       }
-      setTimeout(type, 400);
+      // 1. 若 river-hero.js 已经在 800ms 内接管 → 退出
+      // 2. 若没接管（GPU 不可用 / static fallback）→ 启动静态打字机
+      var wait = 0;
+      (function poll() {
+        if (window.__riverLive === true) return;          // river-hero.js 接管了
+        if (window.__riverLive === false) return startFallback(); // 明确放弃接管
+        if (wait++ > 80) return startFallback();           // 800ms 内无信号 → fallback
+        setTimeout(poll, 10);
+      })();
     })();
   </script>
 </body>

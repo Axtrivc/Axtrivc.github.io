@@ -104,26 +104,57 @@ hexo.extend.filter.register('after_render:html', function (data) {
  *   1. 不用 scale（缩放会让 canvas 被强制重采样导致模糊）
  *   2. 不用 will-change（强制合成层反而触发滚动降采样）
  *   3. hero 用 position: fixed 脱离文档流，main 用 margin-top: 100dvh 紧跟后面
- *   4. 组合 translateY + clip-path + opacity 实现"撕开 + 渐隐"转场：
- *        - hero 整体向上漂浮
+ *   4. 组合 translateY + clip-path + 双重渐隐 实现"翻页 + 渐隐"转场：
+ *        - hero 整体向上漂浮（-30vh）
  *        - 同时从顶部被"裁掉"（像被一只手向上卷起来）
- *        - 后半段再渐隐淡出
+ *        - 配以 vignette 暗角渐入做"沉浸感"过渡
+ *        - 前 35% 不淡出（保留峡谷画面感），中段轻微淡出，后段快速消失
+ *        - 加 saturation 渐退和 blur 微增，制造"动画→静态"的呼吸感
  *   5. canvas 始终以容器原始尺寸 × dpr 渲染，滚动时不被降采样
  */
 .hero-shell {
   --p: var(--hero-progress, 0);
-  transform: translate3d(0, calc(var(--p) * -45vh), 0);
+  /* 离场向上漂浮：25vh 内先静后动，更像被风"吹起" */
+  transform: translate3d(0, calc(min(var(--p) * 1.4, 1) * -28vh), 0);
+  /* clip-path：顶部"卷起" */
   clip-path: inset(calc(var(--p) * 100%) 0 0 0);
-  filter: brightness(calc(1 - var(--p) * 0.32))
-          saturate(calc(1 - var(--p) * 0.4));
-  /* 前 50% 不淡出，后 50% 快速淡出 */
-  opacity: calc(1 - max(0, var(--p) - 0.5) * 2);
-  transition: filter 0.1s ease-out;
+  /* filter：色调渐退 + 极淡 blur → 让转场有"远去"的呼吸感而非硬切 */
+  filter:
+    brightness(calc(1 - var(--p) * 0.18))
+    saturate(calc(1 - var(--p) * 0.35))
+    blur(calc(var(--p) * 0.6px));
+  /* 透明度分三段：
+   *   0.00 - 0.35：保持清晰
+   *   0.35 - 0.65：缓慢淡出
+   *   0.65 - 1.00：快速消失
+   * 这是关键 — 之前从 0.5 直接 hard cut 太突兀 */
+  opacity: calc(
+    1
+    - max(0, var(--p) - 0.35) * 0.8   /* 0.35→0.65: 渐出 80% */
+    - max(0, var(--p) - 0.65) * 2.4   /* 0.65→1.00: 加速消失 */
+  );
+  transition: filter 0.15s ease-out;
+}
+/* 渐入暗角（vignette overlay）让转场有"进入文章"的感觉 */
+.hero-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  background:
+    radial-gradient(ellipse at 50% 60%,
+      transparent 0%,
+      transparent 35%,
+      rgba(8, 14, 36, 0.15) 65%,
+      rgba(8, 14, 36, 0.45) 100%);
+  opacity: var(--p);
+  transition: opacity 0.2s ease-out;
 }
 
 @media (max-width: 768px) {
   .hero-shell {
-    transform: translate3d(0, calc(var(--hero-progress, 0) * -30vh), 0);
+    transform: translate3d(0, calc(var(--hero-progress, 0) * -20vh), 0);
     clip-path: inset(calc(var(--hero-progress, 0) * 95%) 0 0 0);
   }
 }
@@ -242,7 +273,7 @@ body.hero-page-active {
 `;
 
   const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
-  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=4"') : '';
+  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=5"') : '';
 
   const afterScriptIdx = heroSrc.indexOf(heroScriptTag) + heroScriptTag.length;
   const inlineScriptMatch = heroSrc.slice(afterScriptIdx).match(/<script>[\s\S]*?<\/script>/);

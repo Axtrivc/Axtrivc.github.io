@@ -248,9 +248,11 @@
     if (!HERO_FORCE_STATIC) liveAllowed = !perfVetoReason();
   }
   if (!liveAllowed) {
+    window.__riverLive = false;          // signal to any inline fallback: take over text
     revealStaticFallback();
     return;
   }
+  window.__riverLive = true;             // live mode is taking over headline/subline text
 
   // ── Tunables ──────────────────────────────────────────────────
   // Ramp character sets live in RAMP_ASCII / RAMP_MATRIX below.
@@ -3559,6 +3561,29 @@
   // silently eat into (or skip past) the reveal. Re-anchored on the first live
   // rendered frame; the reduced-motion/static path never loops so is unaffected.
   let liveClockAnchored = false;
+  // ── Page-visibility time tracking ──────────────────────────────
+  // Background tabs throttle rAF to ~1Hz; on return the browser hands us a huge
+  // `now - liveT0` jump which makes the headline/sub typing fast-forward and
+  // the canyon reveal skip past its intro fade. Accumulate the hidden duration
+  // and shift `liveT0` forward when we come back, so the scene continues exactly
+  // where it left off (smooth, not jumpy).
+  let hiddenSince = 0;
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      // Mark the moment we went dark; rAF is paused here so we cannot rely on
+      // a later `now` capture from the loop.
+      hiddenSince = performance.now();
+    } else if (hiddenSince > 0) {
+      const wasAway = performance.now() - hiddenSince;
+      hiddenSince = 0;
+      // Shift liveT0 forward by the time we were away so subsequent
+      // (now - liveT0) calculations are continuous, not jumpy. Only safe to
+      // shift after the clock has been anchored (i.e. after the first live
+      // frame) — before then the scene is still in the boot fade and the
+      // headline hasn't started typing.
+      if (liveClockAnchored) liveT0 += wasAway;
+    }
+  });
 
   let headX = 0;                       // headline left, aligned to the nav logo
   let textScale   = 0.75;              // fixed boot text scale
