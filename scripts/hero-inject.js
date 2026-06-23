@@ -6,7 +6,7 @@
  *   - 注入位置：</header> 之后、<main> 之前
  *   - hero 占满首屏（PC + 移动端均为 100dvh），下方接博客列表
  *
- * 关键设计（2026-06-23 v8 「空白消除 + 卡片融底」）：
+ * 关键设计（2026-06-23 v10 「nav 始终显示」）：
  *   1. CSS 清洗：去除 hero/index.html 的 html, body 通用选择器
  *   2. body.hero-page-active 激活注入的样式
  *   3. 删除首页的浮动播放器 / 右下角按钮 / 侧边栏 widget
@@ -233,22 +233,98 @@ body.hero-page-active main {
   opacity: clamp((var(--p) - 0.15) * 1.6, 0, 1);
 }
 
-/* ── 「首页净化 v9」：hero 阶段完全隐藏 nav + 播放器 + 按钮 ──
- * v9 改进：让 nav 在 visual ≥ 0.10 就能开始浮现（与 main 同步进场），
- *         从屏幕顶部 -100% translateY 滑入到 0%，用户视觉上感受到
- *         "向下滚动时 nav 同步从顶部滑入"。 */
-body.hero-page-active #page-header.full_page,
-body.hero-page-active #page-header.full_page #nav,
+/* ── 「首页净化 v10」：让顶部 nav 始终显示 ──
+ *
+ * 之前 v9 错误：把整个 #page-header.full_page 隐藏了，
+ *  导致 nav 也跟着没了 —— 用户看不到顶部菜单。
+ *
+ * 正确做法：
+ *   - nav 永远显示（金棕色背景 + 阴影 + 始终在顶部）
+ *   - 只隐藏 full_page 模式下的首屏装饰（site-info、scroll-down）
+ *   - hero 阶段 nav 不要透明 + 满屏 header 背景（让 nav 跟 hero 不打架）
+ *
+ * 实现：
+ *   - #page-header.full_page → 去掉 absolute 全屏占位
+ *   - #nav 永远 opacity:1、不被 --purge-progress 影响
+ *   - #site-info + #scroll-down → 永远隐藏（首屏 hero 已经替代）
+ */
+body.hero-page-active #page-header.full_page {
+  position: relative;
+  height: 60px;
+  background: transparent;
+  pointer-events: none;  /* 容器不再拦截点击，由 #nav 接管 */
+}
 body.hero-page-active #page-header.full_page #site-info,
 body.hero-page-active #page-header.full_page #scroll-down,
+body.hero-page-active #site-info,
+body.hero-page-active #scroll-down {
+  display: none !important;
+}
+/* 注意：#blog-info 不再隐藏（v10 改为显示） */
+
+/* nav 永远显示：强制始终 opacity:1、不跟随 --purge-progress */
 body.hero-page-active #nav,
-body.hero-page-active #menus,
-body.hero-page-active #blog-info {
-  --purge-progress: clamp((var(--hero-visual, 0) - 0.10) / 0.55, 0, 1);
-  opacity: var(--purge-progress);
-  pointer-events: none;
-  transform: translate3d(0, calc((1 - var(--purge-progress)) * -100%), 0);
-  transition: none;
+body.hero-page-active #page-header.full_page #nav {
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 1100;
+  background: linear-gradient(180deg, #b8860b 0%, #cd9b1d 50%, #daa520 100%) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  padding: 0 20px;
+  align-items: center;
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+/* #menus 不再被强制 100% 宽度（让 nav flex 布局生效） */
+body.hero-page-active #menus {
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto;
+  display: flex !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  height: 60px;
+  align-items: center;
+  justify-content: flex-end;
+  background: transparent !important;
+}
+
+/* nav 内 #blog-info（Axtrivc's Blog 标题）：之前 fixed 后被切掉了，拉回来 */
+body.hero-page-active #blog-info,
+body.hero-page-active #nav #blog-info,
+body.hero-page-active #page-header.full_page #blog-info {
+  display: flex !important;
+  position: relative;
+  left: 0;
+  margin-right: 20px;
+  flex-shrink: 0;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+body.hero-page-active #blog-info .site-name,
+body.hero-page-active #blog-info a,
+body.hero-page-active #blog-info .nav-site-title,
+body.hero-page-active #nav #site-title,
+body.hero-page-active #nav .site-name,
+body.hero-page-active #nav .nav-site-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* hero 滚走后（main 阶段）：背景变成纯色 */
+body.hero-page-active.hero-past #nav {
+  background: #b8860b !important;
 }
 
 /* ─────────────────────────────────────────────────
@@ -563,6 +639,14 @@ ${progressPulse}
       html.style.setProperty('--hero-release', release.toFixed(4));
       html.style.setProperty('--hero-easeout', easeOut.toFixed(4));
       html.style.setProperty('--hero-spring', spring.toFixed(4));
+
+      // v10：滚动到 main 阶段（visual >= 0.55）后给 body 加 hero-past，
+      //  让 #nav 从金棕色渐变回主题色
+      if (visual >= 0.55) {
+        document.body.classList.add('hero-past');
+      } else {
+        document.body.classList.remove('hero-past');
+      }
 
       rafId = null;
     });
