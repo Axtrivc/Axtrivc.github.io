@@ -63,16 +63,20 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
 /* hero-shell：占满首屏容器（PC + 移动端均 100dvh） */
 .hero-shell {
-  position: relative;
+  position: fixed;
+  inset: 60px 0 0 0;            /* 顶部 60px 留给导航栏，不覆盖 nav */
   width: 100%;
-  height: 100vh;
-  height: 100dvh;
+  height: calc(100vh - 60px);
+  height: calc(100dvh - 60px);
   overflow: hidden;
   background: #0E2F7E;
   margin: 0;
   padding: 0;
   z-index: 1;
-  will-change: transform, filter, opacity;
+  /* 关键：不声明 will-change！
+   * 声明 will-change: transform 会强制元素常驻独立合成层，
+   * Chromium 在滚动时会对这种层降采样渲染，导致 canvas 模糊。
+   * 这里只在 transform 实际变化时让浏览器自动提升合成层即可。 */
 }
 .hero-shell > section.hero {
   position: relative;
@@ -85,31 +89,52 @@ hexo.extend.filter.register('after_render:html', function (data) {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-/* ── 滚动驱动的 hero 转场（核心效果） ── */
-/* --hero-progress: 0 = hero 在视口顶部，1 = hero 完全滚出 */
-.hero-shell {
-  transform: translate3d(0, calc(var(--hero-progress, 0) * -10vh), 0)
-             scale(calc(1 + var(--hero-progress, 0) * 0.07));
-  filter: brightness(calc(1 - var(--hero-progress, 0) * 0.5))
-          saturate(calc(1 - var(--hero-progress, 0) * 0.35));
-  opacity: calc(1 - var(--hero-progress, 0) * 0.4);
+/* canvas：锁住独立 GPU 层，避免滚动时被 Chromium 降采样 */
+.hero-shell canvas.hero-ascii {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
-/* 移动端：效果更克制，避免大幅位移 */
+/* ── 滚动驱动的 hero 转场（核心效果） ── */
+/* --hero-progress: 0 = hero 在视口顶部，1 = hero 完全滚出
+ *
+ * 设计原则：
+ *   1. 不用 scale（缩放会让 canvas 被强制重采样导致模糊）
+ *   2. 不用 will-change（强制合成层反而触发滚动降采样）
+ *   3. hero 用 position: fixed 脱离文档流，main 用 margin-top: 100dvh 紧跟后面
+ *   4. 组合 translateY + clip-path + opacity 实现"撕开 + 渐隐"转场：
+ *        - hero 整体向上漂浮
+ *        - 同时从顶部被"裁掉"（像被一只手向上卷起来）
+ *        - 后半段再渐隐淡出
+ *   5. canvas 始终以容器原始尺寸 × dpr 渲染，滚动时不被降采样
+ */
+.hero-shell {
+  --p: var(--hero-progress, 0);
+  transform: translate3d(0, calc(var(--p) * -45vh), 0);
+  clip-path: inset(calc(var(--p) * 100%) 0 0 0);
+  filter: brightness(calc(1 - var(--p) * 0.32))
+          saturate(calc(1 - var(--p) * 0.4));
+  /* 前 50% 不淡出，后 50% 快速淡出 */
+  opacity: calc(1 - max(0, var(--p) - 0.5) * 2);
+  transition: filter 0.1s ease-out;
+}
+
 @media (max-width: 768px) {
   .hero-shell {
-    height: 100dvh;
-    transform: translate3d(0, calc(var(--hero-progress, 0) * -6vh), 0)
-               scale(calc(1 + var(--hero-progress, 0) * 0.05));
+    transform: translate3d(0, calc(var(--hero-progress, 0) * -30vh), 0);
+    clip-path: inset(calc(var(--hero-progress, 0) * 95%) 0 0 0);
   }
 }
 
-/* ── 博客内容：浮起感 + 阴影（让 hero→博客衔接有立体感） ── */
+/* ── 博客内容：紧跟 hero 后面（hero 是 fixed，主内容从 100dvh 开始） ── */
 body.hero-page-active #content-inner,
 body.hero-page-active .layout,
 body.hero-page-active main {
   position: relative;
   z-index: 2;
+  margin-top: 100dvh;        /* 把博客内容推到 hero 后面 */
   background: #faf8f5;
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.08);
 }
@@ -119,6 +144,7 @@ body.hero-page-active #page-header.full_page {
   height: auto !important;
   min-height: 0 !important;
   visibility: visible;
+  z-index: 10;               /* 让 nav 在 hero 上面 */
 }
 body.hero-page-active #page-header.full_page #site-info,
 body.hero-page-active #page-header.full_page #scroll-down {
