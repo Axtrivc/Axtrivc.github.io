@@ -4,18 +4,18 @@
  * 行为：
  *   - 只对主页（根 index.html）注入，不影响其他页面和分页
  *   - 注入位置：</header> 之后、<main> 之前
- *   - hero 占满首屏，下方接博客列表
+ *   - hero 占满首屏（PC + 移动端均为 100dvh），下方接博客列表
  *
- * 关键设计（2026-06-23）：
- *   1. hero/index.html 的 CSS 里写了 `html, body { overflow:hidden; height:100% }`，
- *      注入到博客主页后会污染全局 html/body 导致整个页面无法滚动。
- *      解决：注入前清洗 CSS，把通用选择器改为 `.hero-page-active` 限定容器
- *   2. 给 body 添加 class `hero-page-active` 让清洗后的 CSS 生效
- *   3. Butterfly 主题的 #page-header.full_page 是首屏 banner（占 100vh），
- *      会把 hero 推到屏外。注入 JS 把 full_page 的 height/min-height 折叠到 nav 高
- *      （约 60-72px），让 hero 占满首屏
- *   4. hero 容器放在 .hero-shell 里，position:sticky 不行，用 relative 即可
- *   5. 加一行「向下滚动」的滚动提示
+ * 关键设计（2026-06-23 升级）：
+ *   1. CSS 清洗：去除 hero/index.html 的 html, body 通用选择器
+ *   2. body.hero-page-active 激活注入的样式 + 折叠 full_page banner
+ *   3. 滚动驱动转场（核心）：
+ *      - JS 通过 rAF 节流监听 scroll，写 --hero-progress (0→1) 到 <html>
+ *      - hero 随 progress 进行：scale up + translate up + dim + desaturate + fade
+ *      - 右侧进度导轨（PC）随 progress 填充 + 渐隐
+ *      - 底部 SCROLL 提示（SCROLL label + rail + arrow）随 progress 渐隐
+ *      - 博客内容浮起阴影
+ *   4. 移动端：100dvh 全屏，隐藏侧边进度条，简化底部提示
  */
 const fs = require('fs');
 const path = require('path');
@@ -52,18 +52,16 @@ hexo.extend.filter.register('after_render:html', function (data) {
   const styleMatch = heroSrc.match(/<style>([\s\S]*?)<\/style>/);
   let heroCss = styleMatch ? styleMatch[1] : '';
 
-  // ── 关键清洗 ──────────────────────────────────────────
-  // 1. 把 `html, body { overflow:hidden; ... }` 移除（避免污染博客全局）
-  // 2. 把 `*, *::before, *::after { margin:0; padding:0 }` 移除（不重置博客页面元素）
+  // ── CSS 清洗：去除通用选择器（避免污染博客全局） ──
   heroCss = heroCss
     .replace(/^\s*html,\s*body\s*\{[^}]*\}\s*$/gm, '')
     .replace(/^\s*\*,\s*\*::before,\s*\*::after\s*\{[^}]*\}\s*$/gm, '');
 
-  // ── 注入专用 scoped 样式 ──────────────────────────────────────────
+  // ── 注入专用 scoped 样式 ──
   heroCss += `
-/* ── hero-inject 注入专用 scoped 样式 ── */
+/* ─────────── hero-inject scoped CSS ─────────── */
 
-/* hero-shell 是 hero 的占满首屏容器，紧贴 header 下方 */
+/* hero-shell：占满首屏容器（PC + 移动端均 100dvh） */
 .hero-shell {
   position: relative;
   width: 100%;
@@ -74,6 +72,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
   margin: 0;
   padding: 0;
   z-index: 1;
+  will-change: transform, filter, opacity;
 }
 .hero-shell > section.hero {
   position: relative;
@@ -82,17 +81,40 @@ hexo.extend.filter.register('after_render:html', function (data) {
   overflow: hidden;
   background: #0E2F7E;
 }
-@media (max-width: 768px) {
-  .hero-shell { height: 80vh; height: 80dvh; }
-}
-
-/* 字体 fallback（不影响其他页面） */
 .hero-shell, .hero-shell * {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-/* 在博客主页，折叠 Butterfly 的 full_page banner 到只剩 nav 高 */
-/* 让 hero-shell 紧贴 nav 下方占满首屏 */
+/* ── 滚动驱动的 hero 转场（核心效果） ── */
+/* --hero-progress: 0 = hero 在视口顶部，1 = hero 完全滚出 */
+.hero-shell {
+  transform: translate3d(0, calc(var(--hero-progress, 0) * -10vh), 0)
+             scale(calc(1 + var(--hero-progress, 0) * 0.07));
+  filter: brightness(calc(1 - var(--hero-progress, 0) * 0.5))
+          saturate(calc(1 - var(--hero-progress, 0) * 0.35));
+  opacity: calc(1 - var(--hero-progress, 0) * 0.4);
+}
+
+/* 移动端：效果更克制，避免大幅位移 */
+@media (max-width: 768px) {
+  .hero-shell {
+    height: 100dvh;
+    transform: translate3d(0, calc(var(--hero-progress, 0) * -6vh), 0)
+               scale(calc(1 + var(--hero-progress, 0) * 0.05));
+  }
+}
+
+/* ── 博客内容：浮起感 + 阴影（让 hero→博客衔接有立体感） ── */
+body.hero-page-active #content-inner,
+body.hero-page-active .layout,
+body.hero-page-active main {
+  position: relative;
+  z-index: 2;
+  background: #faf8f5;
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* ── 折叠 Butterfly 的 full_page banner 到只剩 nav ── */
 body.hero-page-active #page-header.full_page {
   height: auto !important;
   min-height: 0 !important;
@@ -102,19 +124,99 @@ body.hero-page-active #page-header.full_page #site-info,
 body.hero-page-active #page-header.full_page #scroll-down {
   display: none !important;
 }
-body.hero-page-active #page-header.full_page #nav {
-  /* nav 维持原样（顶部菜单） */
-}
 
-/* 在博客主页，让页面可以正常滚动 */
+/* 让页面可以正常滚动 */
 body.hero-page-active {
   overflow-x: hidden;
   overflow-y: auto;
 }
+
+/* ── 右侧滚动进度导轨（PC only） ── */
+.hero-progress-rail {
+  position: fixed;
+  right: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 110px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 1px;
+  z-index: 50;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: calc(1 - var(--hero-progress, 0) * 1.6);
+  transition: opacity 0.25s ease;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+}
+.hero-progress-fill {
+  position: absolute;
+  top: 0;
+  left: -1px;
+  width: 4px;
+  height: calc(var(--hero-progress, 0) * 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #b9d2ff 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+}
+@media (max-width: 768px) {
+  .hero-progress-rail { display: none; }
+}
+
+/* ── 底部 SCROLL 提示（hero 内，绝对定位） ── */
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.95);
+  pointer-events: none;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  opacity: calc(1 - var(--hero-progress, 0) * 2.2);
+  transition: opacity 0.3s ease;
+}
+.hero-scroll-label {
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55), 0 0 12px rgba(0, 0, 0, 0.3);
+}
+.hero-scroll-rail {
+  position: relative;
+  width: 1px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.28);
+  overflow: hidden;
+}
+.hero-scroll-rail-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--hero-progress, 0) * 100%);
+  background: rgba(255, 255, 255, 0.95);
+}
+.hero-scroll-arrow {
+  animation: heroScrollBob 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.5));
+}
+@keyframes heroScrollBob {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50%      { transform: translateY(5px); opacity: 1; }
+}
+@media (max-width: 768px) {
+  .hero-scroll-hint { bottom: 18px; gap: 8px; }
+  .hero-scroll-label { display: none; }
+}
 `;
 
   const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
-  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=3"') : '';
+  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=4"') : '';
 
   const afterScriptIdx = heroSrc.indexOf(heroScriptTag) + heroScriptTag.length;
   const inlineScriptMatch = heroSrc.slice(afterScriptIdx).match(/<script>[\s\S]*?<\/script>/);
@@ -123,46 +225,55 @@ body.hero-page-active {
   const heroStyleTag = `<style id="hero-inline-css">\n${heroCss}\n</style>`;
   let content = data.replace('</head>', heroStyleTag + '\n</head>');
 
-  // 用 .hero-shell 包裹 hero section
-  const heroWrapped = `<div class="hero-shell">\n${heroSection}\n</div>`;
+  // 增强版滚动提示（放在 hero-shell 内部，position:absolute 相对 .hero-shell 定位）
+  const scrollHint = `
+<div class="hero-scroll-hint" aria-hidden="true">
+  <span class="hero-scroll-label">SCROLL</span>
+  <div class="hero-scroll-rail"><div class="hero-scroll-rail-fill"></div></div>
+  <div class="hero-scroll-arrow">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 9L12 15L18 9"/>
+    </svg>
+  </div>
+</div>
+`;
+
+  // 用 .hero-shell 包裹 hero section + 滚动提示（hint 必须在 hero-shell 内部）
+  const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${scrollHint}\n</div>`;
 
   content = content.replace(
     '</header>',
     '</header>\n\n' + heroWrapped + '\n'
   );
 
-  // 在 hero 之前插入一个滚动提示
-  const scrollHint = `
-<div class="hero-scroll-hint" aria-hidden="true">
-  <span>↓ 向下滚动查看博客</span>
+  // 右侧进度导轨（PC only）
+  const progressRail = `
+<div class="hero-progress-rail" aria-hidden="true">
+  <div class="hero-progress-fill"></div>
 </div>
-<style>
-.hero-scroll-hint {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  color: rgba(255,255,255,0.6);
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  pointer-events: none;
-  animation: heroScrollHintBob 2s ease-in-out infinite;
-  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-}
-@keyframes heroScrollHintBob {
-  0%, 100% { transform: translate(-50%, 0); opacity: 0.55; }
-  50%      { transform: translate(-50%, 6px); opacity: 1; }
-}
-</style>
 `;
 
-  content = content.replace(
-    '<div class="hero-shell">',
-    scrollHint + '<div class="hero-shell">'
-  );
+  // 滚动驱动 JS（rAF 节流，避免每帧多次计算）
+  const scrollDriverJs = `
+<script>
+(function() {
+  var rafId = null;
+  function update() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(function() {
+      var p = Math.max(0, Math.min(1, window.scrollY / window.innerHeight));
+      document.documentElement.style.setProperty('--hero-progress', p);
+      rafId = null;
+    });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+</script>
+`;
 
-  const heroScripts = heroScriptTag + '\n' + heroInitScript;
+  const heroScripts = heroScriptTag + '\n' + heroInitScript + progressRail + scrollDriverJs;
   content = content.replace('</body>', heroScripts + '\n</body>');
 
   // 给 body 加 class hero-page-active
@@ -171,6 +282,6 @@ body.hero-page-active {
     '<body$1 class="hero-page-active">'
   );
 
-  hexo.log.info('[hero-inject] ✅ hero injected: ' + canonical);
+  hexo.log.info('[hero-inject] ✅ hero injected with scroll transition: ' + canonical);
   return content;
 });
