@@ -100,23 +100,30 @@ layout: false
       line-height: 1.1;
       max-width: 900px;
       text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
-      opacity: 0;
+      /* Live path: river-hero.js writes textContent directly → keep visible.
+       * Static fallback: inline typewriter handles text — start hidden until
+       * it has typed something. The two paths share the DOM but use different
+       * visibility gates below. */
+      opacity: 1;
       transition: opacity 0.4s ease;
     }
     .hero-text-sub {
       margin-top: 16px;
       font-size: clamp(14px, 1.5vw, 18px);
       font-weight: 400;
-      opacity: 0.85;
       max-width: 600px;
       line-height: 1.5;
       text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
-      opacity: 0;
+      opacity: 1;
       transition: opacity 0.4s ease;
     }
-    .hero-text-headline.shown,
-    .hero-text-sub.shown {
-      opacity: 1;
+    /* Static-fallback gate: when river-hero.js explicitly bails (sets
+     * window.__riverLive=false), body.hero-static is added by the inline
+     * typewriter. Until the typewriter types the first character, hide the
+     * empty container so it can fade in cleanly. */
+    body.hero-static .hero-text-headline:empty,
+    body.hero-static .hero-text-sub:empty {
+      opacity: 0;
     }
 
     /* FPS 指示 */
@@ -282,16 +289,17 @@ layout: false
       function startFallback() {
         if (started) return;
         started = true;
+        // Mark static-fallback so the CSS knows to hide empty text containers
+        // until the typewriter fills them (the live path never adds this class).
+        document.body.classList.add('hero-static');
         var i = 0;
         function type() {
           if (i <= headline.length) {
             head.textContent = headline.slice(0, i);
-            head.classList.add('shown');
             i++;
             setTimeout(type, 36);
           } else {
             sub.textContent = subline;
-            sub.classList.add('shown');
           }
         }
         setTimeout(type, 400);
