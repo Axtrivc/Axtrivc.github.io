@@ -90,7 +90,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
   // ── 注入专用 scoped 样式 ──
   heroCss += `
-/* ─────────── hero-inject scoped CSS v6 ─────────── */
+/* ─────────── hero-inject scoped CSS v9 ─────────── */
 
 /* hero-shell：占满整个首屏（hero 阶段连 nav 都隐藏）
  * z-index 提到 1000 覆盖 Butterfly nav（默认 z-index: 100~200） */
@@ -125,23 +125,25 @@ hexo.extend.filter.register('after_render:html', function (data) {
 }
 
 /* ─────────────────────────────────────────────────
- * 「弹簧蓄力→爆裂释放」v7 转场（2026-06-23 重构）
+ * 「滚动阻力 → 临界爆发 → 急速飞走」v9 转场（2026-06-23 重构）
  *
- * JS 写入的变量（scroll listener 在 :root 上更新）：
- *   --hero-raw      实际滚动量 0→1 (scrollY/innerHeight)
- *   --hero-visual   视觉进度 0→1 (蓄力 + 释放曲线，已计算好)
- *   --hero-pin      蓄力段进度 0→1 (0~0.45, easeInQuad 曲线)
- *   --hero-release  释放段原始进度 0→1 (0.45~1.00, 线性)
- *   --hero-easeout  释放段 easeOutExpo 输出 0→1
- *   --hero-spring   蓄力段 easeInQuad 输出 0→0.22
+ * 三段式（按滚动量 raw = scrollY/innerHeight）：
+ *   - raw ∈ [0, 0.30]     → 阻力段：visual 0 → 0.10（easeInQuart），
+ *                           用户"用力滚动"但 hero 几乎不动——像在压弹簧
+ *   - raw ∈ [0.30, 0.50]  → 临界过渡：visual 0.10 → 0.22（线性），
+ *                           阻力感消失，蓄能溢出
+ *   - raw ∈ [0.50, 1.00]  → 爆发释放：visual 0.22 → 1.0（easeOutExpo），
+ *                           hero 急速向上飞出 -200vh，main 从 +88vh 升起
  *
- * 两段效果：
- *   - raw ∈ [0, 0.45]    → 蓄力：被"压"向下（+7vh）、鼓胀 scale 1.08、暗化
- *                          文字稍微压紧（缩 1.04）、蓄能到 22%
- *   - raw ∈ [0.45, 1.00] → 释放：easeOutExpo 前慢后快、急速飞走 -200vh
- *                          文字散开 ±25vh + 飞走 -60vh、博客从 +100vh 滑入
+ * JS 写入 :root 的 CSS 变量：
+ *   --hero-raw      实际滚动量 0→1
+ *   --hero-visual   视觉进度 0→1（已由 computeVisual 计算好）
+ *   --hero-pin      pin 段原始进度 0→1 (raw/0.50)
+ *   --hero-release  release 段原始进度 0→1 ((raw-0.50)/0.50)
+ *   --hero-easeout  release 段 easeOutExpo 输出 0→1
+ *   --hero-spring   pin 段 easeInQuad 输出 0→1
  *
- * 性能铁律（v3→v4→v5→v6 经验）：
+ * 性能铁律（v3→v4→v5→v6→v7→v8 经验）：
  *   ❌ 不在 hero-shell 上用 CSS filter / SVG filter
  *   ❌ 不 mix-blend-mode: overlay/screen + 多层叠加
  *   ❌ 不给装饰元素加 will-change: transform
@@ -167,7 +169,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
 .hero-shell {
   --pin: var(--hero-pin, 0);
   --ease: var(--hero-easeout, 0);
-  /* 视觉进度控制透明度：蓄力段基本不淡（保持 0.85），释放段急速淡出 */
+  /* 视觉进度控制透明度：蓄力段基本不淡（保持 0.88），释放段急速淡出 */
   opacity: calc(0.88 - var(--ease) * 1.0);
   /* 蓄力往下 + 释放往上飞出 */
   transform: translate3d(
@@ -175,8 +177,23 @@ hexo.extend.filter.register('after_render:html', function (data) {
     calc(var(--pin) * 7vh - var(--ease) * 207vh),
     0
   );
-  /* 蓄力段鼓胀（scale 1.0→1.08），释放段恢复（1.08→1.0） */
-  /* scale 用两段组合：pin 段 1.0 + pin × 0.08，释放段减 ease × 0.08 */
+}
+/* 蓄力段"压力感"：径向暗化 vignette 在蓄力段逐渐加深
+ * 用 ::after 伪元素实现，纯 background 不参与 filter 计算 → 性能安全
+ * 临界点（raw 0.30）最暗，释放后 vignette 跟随 hero 一起飞走 */
+.hero-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 30%,
+    rgba(0, 0, 0, 0.45) 95%
+  );
+  opacity: var(--hero-pin, 0);
+  z-index: 4;
+  transition: none;
 }
 
 /* hero 内部 section：蓄力时被压紧 scale 1→1.08（鼓胀），释放段恢复 1.0
@@ -216,13 +233,10 @@ body.hero-page-active main {
   opacity: clamp((var(--p) - 0.15) * 1.6, 0, 1);
 }
 
-/* ── 「首页净化 v7」：hero 阶段完全隐藏 nav + 播放器 + 按钮 ──
- * 释放段 visual ≥ 0.85 时这些元素淡入回正常状态（保留转场连续性）。
- * 用 --hero-visual 控制淡入时机：
- *   - visual ∈ [0, 0.85]  → opacity 0（hero 期间纯净）
- *   - visual ∈ [0.85, 1.00] → 0 → 1 渐显（释放完成时主页元素平滑回归）
- * 注：hero-shell z-index 已经 1000 覆盖 nav 本身，
- *     opacity 仅作为保险（防止 nav 的 fixed 定位浮在 hero-shell 上面）。 */
+/* ── 「首页净化 v9」：hero 阶段完全隐藏 nav + 播放器 + 按钮 ──
+ * v9 改进：让 nav 在 visual ≥ 0.10 就能开始浮现（与 main 同步进场），
+ *         从屏幕顶部 -100% translateY 滑入到 0%，用户视觉上感受到
+ *         "向下滚动时 nav 同步从顶部滑入"。 */
 body.hero-page-active #page-header.full_page,
 body.hero-page-active #page-header.full_page #nav,
 body.hero-page-active #page-header.full_page #site-info,
@@ -230,14 +244,15 @@ body.hero-page-active #page-header.full_page #scroll-down,
 body.hero-page-active #nav,
 body.hero-page-active #menus,
 body.hero-page-active #blog-info {
-  --purge-progress: calc((var(--hero-visual, 0) - 0.85) / 0.15);
-  opacity: clamp(var(--purge-progress), 0, 1);
+  --purge-progress: clamp((var(--hero-visual, 0) - 0.10) / 0.55, 0, 1);
+  opacity: var(--purge-progress);
   pointer-events: none;
-  transition: none; /* 完全跟手，不延迟 */
+  transform: translate3d(0, calc((1 - var(--purge-progress)) * -100%), 0);
+  transition: none;
 }
 
 /* ─────────────────────────────────────────────────
- * 「首页净化 v7」：去掉浮动播放器 + 右下角按钮
+ * 「首页净化 v9」：去掉浮动播放器 + 右下角按钮 + 生日倒计时 + 发布按钮
  * 注意：#sidebar 是左侧抽屉菜单（导航用），保留
  * 注意：#aside 是文章页右侧 widget（主页本来就没有）
  * ───────────────────────────────────────────────── */
@@ -246,7 +261,20 @@ body.hero-page-active #music-panel,
 body.hero-page-active #rightside,
 body.hero-page-active #go-up,
 body.hero-page-active #rightside-config,
-body.hero-page-active #aside {
+body.hero-page-active #aside,
+body.hero-page-active .bday-countdown,
+body.hero-page-active #publish-button,
+body.hero-page-active .fab-publish,
+body.hero-page-active [class*="publish"],
+body.hero-page-active #card-sponsors,
+body.hero-page-active .announcement,
+body.hero-page-active .card-announcement,
+body.hero-page-active #axtrivc-fab,
+body.hero-page-active .hexo-fab,
+body.hero-page-active #live2d,
+body.hero-page-active #live2d-widget,
+body.hero-page-active [class*="live2d"],
+body.hero-page-active #article-container .need-to-hide {
   display: none !important;
 }
 
@@ -486,15 +514,24 @@ ${progressPulse}
   function easeInQuad(t) {
     return t * t;
   }
+  // easeInQuart：曲线比 easeInQuad 更陡（滚动阻力感更强）
+  function easeInQuart(t) {
+    return t * t * t * t;
+  }
 
-  // 分段函数：raw ∈ [0, 0.45] 蓄力；raw ∈ [0.45, 1] 释放
+  // 「滚动阻力 → 急速释放」v9 三段式：
+  //   raw ∈ [0, 0.30]     → 几乎不动：visual 0 → 0.10 （easeInQuart，阻力强）
+  //   raw ∈ [0.30, 0.50]  → 临界过渡：visual 0.10 → 0.22 （线性，蓄能溢出）
+  //   raw ∈ [0.50, 1.00]  → 急速飞走：visual 0.22 → 1.0 （easeOutExpo 加速）
+  // 给用户的感受：前 30% 滚动像"压弹簧"，中间 20% 阻力消失，最后 50% 急速滑走
   function computeVisual(raw) {
-    if (raw <= 0.45) {
-      // 蓄力段：easeInQuad 0 → 0.22（起步慢，中段开始加速，最后 22% 蓄满）
-      return easeInQuad(raw / 0.45) * 0.22;
+    if (raw <= 0.30) {
+      return easeInQuart(raw / 0.30) * 0.10;
     }
-    // 释放段：easeOutExpo 0.22 → 1.0（前 15% 缓慢，后 85% 急速）
-    return 0.22 + easeOutExpo((raw - 0.45) / 0.55) * 0.78;
+    if (raw <= 0.50) {
+      return 0.10 + ((raw - 0.30) / 0.20) * 0.12;
+    }
+    return 0.22 + easeOutExpo((raw - 0.50) / 0.50) * 0.78;
   }
 
   function update() {
@@ -514,8 +551,9 @@ ${progressPulse}
         raw = Math.max(0, Math.min(1, window.scrollY / heroH));
       }
       var visual = computeVisual(raw);
-      var pin = Math.min(raw / 0.45, 1);
-      var release = Math.max((raw - 0.45) / 0.55, 0);
+      // v9 三段：pin 段 raw [0, 0.50]（含蓄力 + 临界过渡），release 段 raw [0.50, 1.0]
+      var pin = Math.min(raw / 0.50, 1);
+      var release = Math.max((raw - 0.50) / 0.50, 0);
       var easeOut = easeOutExpo(release);
       var spring = easeInQuad(pin);
 
