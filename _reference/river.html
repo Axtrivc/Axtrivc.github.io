@@ -1,0 +1,567 @@
+<!doctype html>
+<!--
+                                              _
+                                          ___( o)>
+                                          \ <_. )
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`---'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              .  .   .         . .  ..    ..    . .   .     . . .      .  .
+                ..  .    ..  .   . .   .  .  ..  ..  . .  . ..    . . .
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+         river.ai — try clicking the water in the footer.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>River AI — Intelligence that flows with you</title>
+  <meta name="description" content="River is building a new stack for Personal AI." />
+  <link rel="canonical" href="https://river.ai/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="River AI" />
+  <meta property="og:title" content="River AI — Intelligence that flows with you" />
+  <meta property="og:description" content="River is building a new stack for Personal AI." />
+  <meta property="og:url" content="https://river.ai/" />
+  <meta property="og:image" content="https://river.ai/assets/hero-static.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preload" href="assets/fonts/inter-tight-var-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="assets/fonts/fonts.css?v=1" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="styles.css?v=43" />
+  <noscript>
+    <!-- The nav is inline-hidden so script.js can reveal it after the hero
+         boots; without JS that reveal never runs, so force it visible. -->
+    <style>#nav { opacity: 1 !important; pointer-events: auto !important; }</style>
+  </noscript>
+</head>
+<body>
+
+  <nav class="nav" id="nav" style="opacity:0;pointer-events:none">
+    <a href="/" class="wordmark" aria-label="River.ai home">
+      <svg class="logo" viewBox="51 75 709 176" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M290 96.9999C290 137.317 257.344 170.066 216.875 170.066H160L166.216 145.171C168.44 136.265 176.441 130.016 185.62 130.016H216.875C235.169 130.015 250 115.222 250 96.9741V93.005C250 91.3462 251.346 90.0022 253.005 90.005L287.005 90.0613C288.66 90.064 290 91.4064 290 93.0613V96.9999Z" fill="currentColor"/><path d="M51.0004 163.066C51.0004 122.75 83.6561 90.0004 124.125 90.0002H176.159C178.11 90.0002 179.542 91.8337 179.069 93.7269L171.514 123.989C170.624 127.551 167.424 130.051 163.752 130.051H124.125C105.831 130.051 91.0004 144.844 91.0004 163.092V167.033C91.0004 168.69 89.6572 170.033 88.0004 170.033H54.0004C52.3435 170.033 51.0004 168.69 51.0004 167.033V163.066Z" fill="currentColor"/><path d="M51.0002 243.334C51.0002 203.017 83.6559 170.268 124.125 170.268L160 170L151.496 204.017C150.614 207.543 147.467 210.031 143.833 210.076L124.125 210.318C105.831 210.319 91.0002 225.112 91.0002 243.36V247.329C91.0002 248.988 89.654 250.332 87.9952 250.329L53.9952 250.273C52.3403 250.27 51.0002 248.928 51.0002 247.273V243.334Z" fill="currentColor"/><path d="M290 177C290 217.317 257.344 250.066 216.875 250.066H140L145.27 228.96C148.05 217.827 158.051 210.016 169.525 210.016H216.875C235.169 210.015 250 195.222 250 176.974V173.005C250 171.346 251.346 170.002 253.005 170.005L287.005 170.061C288.66 170.064 290 171.406 290 173.061V177Z" fill="currentColor"/><path d="M360.143 240V177.852C360.143 139.753 379.907 120.465 410.148 120.465H412.529V143.087H410.148C393.004 143.087 383.479 154.278 383.479 177.852V240H360.143ZM424.5 90.2246C424.5 81.8905 430.929 75.9376 438.787 75.9376C446.645 75.9376 452.836 82.3668 452.836 90.2246C452.836 98.0825 446.645 104.512 438.787 104.512C430.929 104.512 424.5 98.0825 424.5 90.2246ZM427.119 240V120.942H450.455V240H427.119ZM505.391 240L457.529 120.942H482.056L517.059 209.759L552.3 120.942H576.826L528.726 240H505.391ZM635.06 119.037C666.016 119.037 695.542 142.372 696.494 178.328C696.494 182.376 696.256 185.948 695.78 189.043H599.581C601.486 206.902 616.011 219.284 635.06 219.284C646.728 219.284 656.253 215.236 663.634 207.378L691.494 207.616C681.017 228.332 659.586 241.905 635.775 241.905C602.2 242.619 573.864 213.807 574.579 180.709C573.864 147.611 601.962 118.322 635.06 119.037ZM599.581 169.994H671.492C666.968 153.564 652.681 141.658 635.775 141.658C617.678 141.658 604.105 153.087 599.581 169.994ZM707.096 240V177.852C707.096 139.753 726.86 120.465 757.101 120.465H759.482V143.087H757.101C739.956 143.087 730.432 154.278 730.432 177.852V240H707.096Z" fill="currentColor"/></svg>
+    </a>
+    <div class="nav-links">
+      <a href="/api">API</a>
+      <a href="/blog">Blog</a>
+      <a href="/careers">Careers</a>
+    </div>
+  </nav>
+
+  <section class="hero" id="hero">
+    <!-- Hero visual: self-contained WebGL ASCII-river shader. No external media.
+         .hero-placeholder is the CSS fallback shown only if WebGL is unavailable. -->
+    <div class="hero-placeholder" aria-hidden="true"></div>
+    <canvas class="hero-ascii" id="asciiRiver" aria-hidden="true"></canvas>
+    <!-- Static sunrise still/fallback, shown when the live shader is skipped or frozen. -->
+    <img class="hero-still" id="heroStill" src="assets/hero-static.jpg" alt="" aria-hidden="true" />
+    <div class="hero-vignette" aria-hidden="true"></div>
+
+    <!-- DOM-rendered headline + subtitle. Crisp at native resolution and
+         in the site's font (Inter Tight), unlike the shader-baked text. -->
+    <div class="hero-text" id="heroText" aria-hidden="true">
+      <div class="hero-text-headline" id="heroHeadlineLive"></div>
+      <div class="hero-text-sub" id="heroSublineLive"></div>
+    </div>
+
+    <div class="perf-meter" id="fpsMeter" aria-hidden="true">-- fps</div>
+
+    <h1 class="sr-only">Own your intelligence</h1>
+    <p class="sr-only">River is the new standard in personal intelligence</p>
+
+    <div class="scroll-cue" aria-hidden="true" style="opacity:0;pointer-events:none">
+      <span>Scroll</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- DEBUG: shader knobs (TOD + visual tunables). Minimize to a chevron. -->
+    <div class="tod-debug minimized" id="debugBar" aria-hidden="true" style="opacity:0;pointer-events:none">
+      <button class="dbg-toggle" id="dbgToggle" type="button" aria-label="Expand debug">+</button>
+      <div class="dbg-grid">
+        <section class="dbg-col dbg-col--perf">
+          <h3 class="dbg-col-head">Performance</h3>
+
+          <span class="tod-tag">FPS CAP</span>
+          <input type="range" id="fpsCapSlider" min="15" max="60" step="5" value="40" />
+          <span class="tod-label" id="fpsCapLabel">40</span>
+
+          <span class="tod-tag">AA MODE</span>
+          <select id="aaModeSelect" class="tod-select">
+            <option value="0">off</option>
+            <option value="4">SSAA &times;4</option>
+            <option value="8" selected>SSAA &times;8</option>
+            <option value="9">SSAA &times;9</option>
+            <option value="sdf">SDF 1&times;</option>
+          </select>
+
+          <span class="tod-tag">AUTO AA</span>
+          <span></span>
+          <label class="tod-switch" aria-label="Adaptive AA governor — adjusts AA to hold the frame budget">
+            <input type="checkbox" id="aaAutoToggle" checked />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+          </label>
+
+          <span class="tod-tag">MARCH</span>
+          <input type="range" id="canyonStepsSlider" min="48" max="240" step="4" value="148" />
+          <span class="tod-label" id="canyonStepsLabel">148</span>
+
+          <span class="tod-tag">STEP</span>
+          <input type="range" id="canyonStepScaleSlider" min="100" max="260" step="5" value="100" />
+          <span class="tod-label" id="canyonStepScaleLabel">1.00</span>
+
+          <span class="tod-tag">R SCALE</span>
+          <input type="range" id="renderScaleSlider" min="50" max="100" step="5" value="100" />
+          <span class="tod-label" id="renderScaleLabel">1.00</span>
+
+          <span class="tod-tag">REFINE</span>
+          <input type="range" id="refineSlider" min="4" max="14" step="1" value="14" />
+          <span class="tod-label" id="refineLabel">14</span>
+
+          <span class="tod-tag">REFINE MODE</span>
+          <select id="refineModeSelect" class="tod-select">
+            <option value="0" selected>bisect</option>
+            <option value="1">secant</option>
+          </select>
+
+          <span class="tod-tag">HOIST</span>
+          <span></span>
+          <label class="tod-switch" aria-label="Hoist per-frame canyon constants">
+            <input type="checkbox" id="hoistToggle" checked />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+          </label>
+
+          <span class="tod-tag">NOISE TEX</span>
+          <span></span>
+          <label class="tod-switch" aria-label="Baked noise LUT vs procedural">
+            <input type="checkbox" id="noiseTexToggle" checked />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+          </label>
+
+          <span class="tod-tag">SHADOW</span>
+          <span></span>
+          <label class="tod-switch" aria-label="Canyon shadows">
+            <input type="checkbox" id="canyonShadowToggle" checked />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+          </label>
+
+          <span class="tod-tag">CLOUD</span>
+          <span></span>
+          <label class="tod-switch" aria-label="Clouds">
+            <input type="checkbox" id="cloudToggle" checked />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+          </label>
+
+          <span class="tod-tag">AUR SAMP</span>
+          <input type="range" id="aurPlaneSlider" min="8" max="56" step="1" value="28" />
+          <span class="tod-label" id="aurPlaneLabel">28</span>
+
+          <span class="tod-tag">AUR RAYS</span>
+          <input type="range" id="aurRaysSlider" min="0" max="48" step="1" value="0" />
+          <span class="tod-label" id="aurRaysLabel">0</span>
+
+          <span class="tod-tag">TEXT SUB</span>
+          <span></span>
+          <label class="tod-switch" aria-label="texSubImage2D text upload">
+            <input type="checkbox" id="textSubToggle" />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+          </label>
+
+          <span class="tod-tag">TXT HZN</span>
+          <span></span>
+          <label class="tod-switch" aria-label="Center hero text on horizon">
+            <input type="checkbox" id="textHorizonToggle" checked />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+          </label>
+
+          <span class="tod-tag">TXT X</span>
+          <input type="range" id="textOffsetXSlider" min="-300" max="300" step="5" value="-250" />
+          <span class="tod-label" id="textOffsetXLabel">-0.25</span>
+
+          <span class="tod-tag">TXT Y</span>
+          <input type="range" id="textOffsetYSlider" min="-300" max="300" step="5" value="20" />
+          <span class="tod-label" id="textOffsetYLabel">0.02</span>
+
+          <span class="tod-tag">TEXT RETRIG</span>
+          <button class="tod-button" id="textRetriggerButton" type="button">replay</button>
+          <span></span>
+        </section>
+
+        <section class="dbg-col dbg-col--scene">
+          <h3 class="dbg-col-head">Scene</h3>
+
+          <span class="tod-tag">TOD</span>
+          <input type="range" id="todSlider" min="0" max="1439" step="1" value="450" />
+          <span class="tod-label" id="todLabel">08:30</span>
+
+          <span class="tod-tag">TIME SPD</span>
+          <input type="range" id="timeSpeedSlider" min="0" max="10000" step="10" value="100" />
+          <span class="tod-label" id="timeSpeedLabel">1.00x</span>
+
+          <span class="tod-tag">WATER DOT</span>
+          <input type="range" id="waterDotSlider" min="50" max="520" step="2" value="186" />
+          <span class="tod-label" id="waterDotLabel">186</span>
+
+          <span class="tod-tag">AUR DOT</span>
+          <input type="range" id="aurDotSlider" min="0" max="400" step="2" value="186" />
+          <span class="tod-label" id="aurDotLabel">186</span>
+
+          <span class="tod-tag">CLD DOT</span>
+          <input type="range" id="cloudDotSlider" min="50" max="520" step="2" value="226" />
+          <span class="tod-label" id="cloudDotLabel">226</span>
+
+          <span class="tod-tag">SCROLL</span>
+          <input type="range" id="scrollSlider" min="0" max="400" step="1" value="118" />
+          <span class="tod-label" id="scrollLabel">1.18</span>
+
+          <span class="tod-tag">POV HZN</span>
+          <input type="range" id="viewHorizonSlider" min="350" max="700" step="1" value="570" />
+          <span class="tod-label" id="viewHorizonLabel">0.570</span>
+
+          <span class="tod-tag">CANYON</span>
+          <input type="range" id="canyonSlider" min="35" max="220" step="1" value="50" />
+          <span class="tod-label" id="canyonLabel">0.50</span>
+
+          <span class="tod-tag">SUN</span>
+          <input type="range" id="sunSlider" min="0" max="150" step="1" value="125" />
+          <span class="tod-label" id="sunLabel">1.25</span>
+
+          <span class="tod-tag">TWILIGHT</span>
+          <span></span>
+          <label class="tod-switch" aria-label="Twilight mode">
+            <input type="checkbox" id="twilightToggle" checked />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+          </label>
+
+          <span class="tod-tag">TW RAD</span>
+          <input type="range" id="twRadiusSlider" min="5" max="40" step="1" value="18" />
+          <span class="tod-label" id="twRadiusLabel">0.18</span>
+
+          <span class="tod-tag">TW ELY</span>
+          <input type="range" id="twEllipseSlider" min="10" max="100" step="1" value="90" />
+          <span class="tod-label" id="twEllipseLabel">0.90</span>
+
+          <span class="tod-tag">TW ELX</span>
+          <input type="range" id="twEllipseXSlider" min="10" max="200" step="1" value="48" />
+          <span class="tod-label" id="twEllipseXLabel">0.48</span>
+
+          <span class="tod-tag">TW ZONE</span>
+          <input type="range" id="twSunZoneSlider" min="2" max="50" step="1" value="10" />
+          <span class="tod-label" id="twSunZoneLabel">0.10</span>
+
+          <span class="tod-tag">AUR FILL</span>
+          <input type="range" id="aurFillSlider" min="0" max="100" step="1" value="100" />
+          <span class="tod-label" id="aurFillLabel">1.00</span>
+
+          <span class="tod-tag">TOP GAIN</span>
+          <input type="range" id="aurTopGainSlider" min="25" max="100" step="1" value="50" />
+          <span class="tod-label" id="aurTopGainLabel">0.50</span>
+
+          <span class="tod-tag">AUR HGT</span>
+          <input type="range" id="aurHeightSlider" min="50" max="500" step="5" value="275" />
+          <span class="tod-label" id="aurHeightLabel">2.75</span>
+
+          <span class="tod-tag">ORIG Y</span>
+          <input type="range" id="aurOriginYSlider" min="-25" max="25" step="1" value="-5" />
+          <span class="tod-label" id="aurOriginYLabel">-0.05</span>
+
+          <span class="tod-tag">ORIG TPR</span>
+          <input type="range" id="aurOriginTaperSlider" min="50" max="400" step="5" value="50" />
+          <span class="tod-label" id="aurOriginTaperLabel">0.50</span>
+
+          <span class="tod-tag">FIL DENS</span>
+          <input type="range" id="aurFilDensitySlider" min="50" max="200" step="1" value="175" />
+          <span class="tod-label" id="aurFilDensityLabel">1.75</span>
+
+          <span class="tod-tag">FIL W</span>
+          <input type="range" id="aurFilWidthSlider" min="50" max="200" step="1" value="200" />
+          <span class="tod-label" id="aurFilWidthLabel">2.00</span>
+
+          <span class="tod-tag">FIL H</span>
+          <input type="range" id="aurFilHeightSlider" min="50" max="200" step="1" value="200" />
+          <span class="tod-label" id="aurFilHeightLabel">2.00</span>
+
+          <span class="tod-tag">FIL INT</span>
+          <input type="range" id="aurFilIntSlider" min="0" max="250" step="1" value="225" />
+          <span class="tod-label" id="aurFilIntLabel">2.25</span>
+
+          <span class="tod-tag">FIL TRK</span>
+          <select id="aurFilTrackSelect" class="tod-select">
+            <option value="0">screen</option>
+            <option value="1">along</option>
+            <option value="2" selected>curve-lite</option>
+            <option value="3">curve</option>
+          </select>
+
+          <span class="tod-tag">FLOW</span>
+          <input type="range" id="flowSlider" min="0" max="300" step="1" value="70" />
+          <span class="tod-label" id="flowLabel">0.70</span>
+
+          <span class="tod-tag">FOAM</span>
+          <input type="range" id="foamSlider" min="0" max="300" step="1" value="169" />
+          <span class="tod-label" id="foamLabel">1.69</span>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="mission" id="mission">
+    <p class="mission-label">Mission</p>
+
+    <p class="mission-body">
+      At River, our mission is to create <em>personal AI</em><br class="mb-break" /> owned and shaped by each individual.
+    </p>
+
+    <p class="mission-copy">
+      Today's most powerful AIs are controlled by a handful of large corporations. They are designed to keep you hooked while automating your livelihood. As more meaningful work is handed to machines, we need an answer for how the rest of humanity can flourish.
+    </p>
+
+    <p class="mission-copy">
+      We imagine a future where your AI works entirely for you and deeply aligns with your values. Compared to the corporate chatbots of today, it will feel completely different: responsible, curious, and truly yours. Most importantly, you'll own everything: the hardware it runs on, the data it learns from, and the intelligence itself.
+    </p>
+
+    <p class="mission-copy">
+      To achieve our mission, we are rewriting the entire stack from scratch:
+    </p>
+
+    <div class="stack-viz" aria-label="River's stack — four layers, re-built end to end">
+      <div class="stack-scene">
+        <div class="stack-rotor">
+          <button class="stack-layer" type="button" style="--i:0" data-name="Personal hardware"
+                  data-desc="Powerful personal hardware to run your intelligence locally.">
+            <span class="sf sf-top"></span><span class="sf sf-fr"></span><span class="sf sf-bk"></span><span class="sf sf-rt"></span><span class="sf sf-lf"></span>
+          </button>
+          <button class="stack-layer" type="button" style="--i:1" data-name="Infrastructure"
+                  data-desc="Infrastructure built for continual specialization at scale.">
+            <span class="sf sf-top"></span><span class="sf sf-fr"></span><span class="sf sf-bk"></span><span class="sf sf-rt"></span><span class="sf sf-lf"></span>
+          </button>
+          <button class="stack-layer" type="button" style="--i:2" data-name="Models &amp; Algorithms"
+                  data-desc="Fundamental advances in training to create highly personalized, continually learning models.">
+            <span class="sf sf-top"></span><span class="sf sf-fr"></span><span class="sf sf-bk"></span><span class="sf sf-rt"></span><span class="sf sf-lf"></span>
+          </button>
+          <button class="stack-layer" type="button" style="--i:3" data-name="Interfaces"
+                  data-desc="The next generation of user interfaces that make interacting with your AI as natural as thinking.">
+            <span class="sf sf-top"></span><span class="sf sf-fr"></span><span class="sf sf-bk"></span><span class="sf sf-rt"></span><span class="sf sf-lf"></span>
+          </button>
+        </div>
+        <div class="stack-labels" aria-hidden="true">
+          <span class="stack-label">
+            <span class="stack-label-line"></span>
+            <span class="stack-label-text">
+              <span class="stack-label-title">Interfaces</span>
+              <span class="stack-label-desc">The next generation of user interfaces that make interacting with your AI as natural as thinking.</span>
+            </span>
+          </span>
+          <span class="stack-label">
+            <span class="stack-label-line"></span>
+            <span class="stack-label-text">
+              <span class="stack-label-title">Models &amp; Algorithms</span>
+              <span class="stack-label-desc">Fundamental advances in training to create highly personalized, continually learning models.</span>
+            </span>
+          </span>
+          <span class="stack-label">
+            <span class="stack-label-line"></span>
+            <span class="stack-label-text">
+              <span class="stack-label-title">Infrastructure</span>
+              <span class="stack-label-desc">Infrastructure built for continual specialization at scale.</span>
+            </span>
+          </span>
+          <span class="stack-label">
+            <span class="stack-label-line"></span>
+            <span class="stack-label-text">
+              <span class="stack-label-title">Personal hardware</span>
+              <span class="stack-label-desc">Powerful personal hardware to run your intelligence locally.</span>
+            </span>
+          </span>
+        </div>
+      </div>
+      <div class="stack-foot">
+        <div class="stack-cta" aria-hidden="true"><span class="stack-cta-dot"></span>Hover to explore</div>
+      </div>
+    </div>
+
+    <p class="mission-copy">
+      River has the soul of a research lab and the heart of a product company. We are here to achieve the breakthroughs in hardware and deep learning that make truly personal AI possible.
+    </p>
+
+    <p class="mission-copy">
+      Our team includes pioneers from the world's leading AI labs and technology companies with a proven track record of scaling AI organizations.
+    </p>
+
+    <p class="mission-copy">
+      We are always looking for amazing people to <a href="/careers">join us on this journey</a>.
+    </p>
+  </section>
+
+  <script>
+    (function () {
+      var viz = document.querySelector('.stack-viz');
+      if (!viz) return;
+      var scene  = viz.querySelector('.stack-scene');
+      var layers = Array.prototype.slice.call(viz.querySelectorAll('.stack-layer'));
+      var labels = Array.prototype.slice.call(viz.querySelectorAll('.stack-label'));
+      function activate(el) {
+        viz.classList.add('is-hovering');
+        var i = layers.indexOf(el);
+        layers.forEach(function (o, j) {
+          o.classList.toggle('is-active', o === el);
+          o.style.setProperty('--k', (j - i));   // hovered stays (k=0); others fan away from it
+        });
+        // labels run top→bottom (Interfaces … Personal hardware); layers run
+        // bottom→top, so the matching label for layer i is at (count - 1 - i).
+        var li = layers.length - 1 - i;
+        labels.forEach(function (lab, n) { lab.classList.toggle('is-active', n === li); });
+      }
+      function reset() {
+        viz.classList.remove('is-hovering');
+        layers.forEach(function (o) { o.classList.remove('is-active'); o.style.setProperty('--k', 0); });
+        labels.forEach(function (lab) { lab.classList.remove('is-active'); });
+      }
+      layers.forEach(function (el) { el.setAttribute('aria-label', el.getAttribute('data-name')); });
+      // Interactive fanning only on real hover devices. On touch, tap fires
+      // pointerover but never a clean pointerleave, so a tapped layer gets stuck
+      // fanned/dimmed — and the mobile layout already spells out every label
+      // below the tower, so the interaction adds nothing. Leave it static there.
+      if (window.matchMedia('(hover: hover)').matches) {
+        scene.addEventListener('pointerover', function (e) {
+          var el = e.target.closest ? e.target.closest('.stack-layer') : null;
+          if (el) activate(el);
+        });
+        scene.addEventListener('pointerleave', reset);
+        layers.forEach(function (el) {
+          el.addEventListener('focus', function () { activate(el); });
+          el.addEventListener('blur', reset);
+        });
+      }
+    })();
+  </script>
+
+  <section class="product" id="product">
+    <p class="product-label">API</p>
+    <h2 class="product-head">Train models that are <em>yours</em>.</h2>
+    <p class="product-copy">
+      River runs LoRA-based fine-tuning and reinforcement learning on a variety of open-source models —
+      from small 35B to large 1T parameters. Teach a model new skills and turn it into a cost-efficient
+      agent for your own tasks, all through one small Python client. Bring your data, shape the weights,
+      and own the intelligence you create.
+    </p>
+    <div class="product-actions">
+      <a class="page-cta" href="https://console.river.ai">Sign up <span class="page-cta-arrow" aria-hidden="true">→</span></a>
+      <a class="cta-ghost" href="/api">Explore the API →</a>
+      <a class="cta-ghost" href="/api#examples">See an example →</a>
+    </div>
+    <div class="product-chips" aria-label="What the API supports">
+      <span class="chip">LoRA fine-tuning</span>
+      <span class="chip">Reinforcement learning</span>
+      <span class="chip">Open models</span>
+      <span class="chip">Pay per token</span>
+    </div>
+  </section>
+
+  <section class="video">
+    <button class="video-facade" id="videoFacade" type="button" aria-label="Play video">
+      <img class="video-thumb"
+           src="https://i.ytimg.com/vi/8A_i0QBb58M/maxresdefault.jpg"
+           onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/8A_i0QBb58M/hqdefault.jpg';"
+           alt="" loading="lazy" />
+      <svg class="video-play" viewBox="0 0 88 88" aria-hidden="true" focusable="false">
+        <path d="M30 22 L70 44 L30 66 Z" fill="#F2E9D6" />
+      </svg>
+    </button>
+  </section>
+  <script>
+    (function () {
+      var fa = document.getElementById("videoFacade");
+      if (!fa) return;
+      fa.addEventListener("click", function () {
+        var ifr = document.createElement("iframe");
+        ifr.src = "https://www.youtube-nocookie.com/embed/8A_i0QBb58M?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=0";
+        ifr.title = "River video";
+        ifr.allow = "autoplay; fullscreen; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        ifr.allowFullscreen = true;
+        ifr.referrerPolicy = "strict-origin-when-cross-origin";
+        fa.innerHTML = "";
+        fa.appendChild(ifr);
+        fa.style.cursor = "default";
+      }, { once: true });
+    })();
+  </script>
+
+  <!-- Recent/blog section hidden while the blog tab is unpublished — restore when blog goes live
+  <section class="log" id="log">
+    <div class="log-head">
+      <span>Recent</span>
+      <span>2026</span>
+    </div>
+    <ul class="log-list">
+      <li>
+        <span class="date">May 14</span>
+        <span class="title">Introducing River — connective intelligence for everyday work</span>
+        <span class="arrow">↗</span>
+      </li>
+      <li>
+        <span class="date">Apr 02</span>
+        <span class="title">On flow: why model latency is a UX problem</span>
+        <span class="arrow">↗</span>
+      </li>
+      <li>
+        <span class="date">Feb 18</span>
+        <span class="title">We're hiring across research, infra, and design</span>
+        <span class="arrow">↗</span>
+      </li>
+    </ul>
+  </section>
+  -->
+
+  <section class="quote">
+    <blockquote>Intelligence that flows with you</blockquote>
+  </section>
+
+  <footer class="footer" id="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="wordmark" aria-label="River.ai home">
+          <svg class="logo" viewBox="51 75 709 176" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M290 96.9999C290 137.317 257.344 170.066 216.875 170.066H160L166.216 145.171C168.44 136.265 176.441 130.016 185.62 130.016H216.875C235.169 130.015 250 115.222 250 96.9741V93.005C250 91.3462 251.346 90.0022 253.005 90.005L287.005 90.0613C288.66 90.064 290 91.4064 290 93.0613V96.9999Z" fill="currentColor"/><path d="M51.0004 163.066C51.0004 122.75 83.6561 90.0004 124.125 90.0002H176.159C178.11 90.0002 179.542 91.8337 179.069 93.7269L171.514 123.989C170.624 127.551 167.424 130.051 163.752 130.051H124.125C105.831 130.051 91.0004 144.844 91.0004 163.092V167.033C91.0004 168.69 89.6572 170.033 88.0004 170.033H54.0004C52.3435 170.033 51.0004 168.69 51.0004 167.033V163.066Z" fill="currentColor"/><path d="M51.0002 243.334C51.0002 203.017 83.6559 170.268 124.125 170.268L160 170L151.496 204.017C150.614 207.543 147.467 210.031 143.833 210.076L124.125 210.318C105.831 210.319 91.0002 225.112 91.0002 243.36V247.329C91.0002 248.988 89.654 250.332 87.9952 250.329L53.9952 250.273C52.3403 250.27 51.0002 248.928 51.0002 247.273V243.334Z" fill="currentColor"/><path d="M290 177C290 217.317 257.344 250.066 216.875 250.066H140L145.27 228.96C148.05 217.827 158.051 210.016 169.525 210.016H216.875C235.169 210.015 250 195.222 250 176.974V173.005C250 171.346 251.346 170.002 253.005 170.005L287.005 170.061C288.66 170.064 290 171.406 290 173.061V177Z" fill="currentColor"/><path d="M360.143 240V177.852C360.143 139.753 379.907 120.465 410.148 120.465H412.529V143.087H410.148C393.004 143.087 383.479 154.278 383.479 177.852V240H360.143ZM424.5 90.2246C424.5 81.8905 430.929 75.9376 438.787 75.9376C446.645 75.9376 452.836 82.3668 452.836 90.2246C452.836 98.0825 446.645 104.512 438.787 104.512C430.929 104.512 424.5 98.0825 424.5 90.2246ZM427.119 240V120.942H450.455V240H427.119ZM505.391 240L457.529 120.942H482.056L517.059 209.759L552.3 120.942H576.826L528.726 240H505.391ZM635.06 119.037C666.016 119.037 695.542 142.372 696.494 178.328C696.494 182.376 696.256 185.948 695.78 189.043H599.581C601.486 206.902 616.011 219.284 635.06 219.284C646.728 219.284 656.253 215.236 663.634 207.378L691.494 207.616C681.017 228.332 659.586 241.905 635.775 241.905C602.2 242.619 573.864 213.807 574.579 180.709C573.864 147.611 601.962 118.322 635.06 119.037ZM599.581 169.994H671.492C666.968 153.564 652.681 141.658 635.775 141.658C617.678 141.658 604.105 153.087 599.581 169.994ZM707.096 240V177.852C707.096 139.753 726.86 120.465 757.101 120.465H759.482V143.087H757.101C739.956 143.087 730.432 154.278 730.432 177.852V240H707.096Z" fill="currentColor"/></svg>
+        </a>
+        <div class="tag">Intelligence that flows with you</div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="/api">API</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/careers">Careers</a></li>
+          <li><a href="/cdn-cgi/l/email-protection#f79f929b9b98b7859e819285d9969e">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://x.com/river_ai_inc" target="_blank" rel="noopener">X</a></li>
+          <li><a href="https://www.linkedin.com/company/river-ai-official/" target="_blank" rel="noopener">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="river-stage" id="riverStage" role="img" aria-label="An animated river. Click the water to send ripples.">
+      <span class="river-hint">Click the water →</span>
+      <canvas id="riverCanvas"></canvas>
+    </div>
+
+    <div class="footer-meta">
+      <span>© 2026 River AI, Inc.</span>
+      <div class="right">
+        <span id="koi" title="hi there">≈</span>
+      </div>
+    </div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="script.js?v=89"></script>
+</body>
+</html>

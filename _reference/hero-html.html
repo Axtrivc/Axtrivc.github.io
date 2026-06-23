@@ -1,0 +1,26 @@
+
+  <section class="hero" id="hero">
+    <!-- Hero visual: self-contained WebGL ASCII-river shader. No external media.
+         .hero-placeholder is the CSS fallback shown only if WebGL is unavailable. -->
+    <div class="hero-placeholder" aria-hidden="true"></div>
+    <canvas class="hero-ascii" id="asciiRiver" aria-hidden="true"></canvas>
+    <!-- Static sunrise still/fallback, shown when the live shader is skipped or frozen. -->
+    <img class="hero-still" id="heroStill" src="assets/hero-static.jpg" alt="" aria-hidden="true" />
+    <div class="hero-vignette" aria-hidden="true"></div>
+
+    <!-- DOM-rendered headline + subtitle. Crisp at native resolution and
+         in the site's font (Inter Tight), unlike the shader-baked text. -->
+    <div class="hero-text" id="heroText" aria-hidden="true">
+      <div class="hero-text-headline" id="heroHeadlineLive"></div>
+      <div class="hero-text-sub" id="heroSublineLive"></div>
+    </div>
+
+    <div class="perf-meter" id="fpsMeter" aria-hidden="true">-- fps</div>
+
+    <h1 class="sr-only">Own your intelligence</h1>
+    <p class="sr-only">River is the new standard in personal intelligence</p>
+
+    <div class="scroll-cue" aria-hidden="true" style="opacity:0;pointer-events:none">
+      <span>Scroll</span>
+      <span class="line"></span>
+    </div>

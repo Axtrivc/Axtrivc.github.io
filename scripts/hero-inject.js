@@ -6,7 +6,7 @@
  *   - 注入位置：</header> 之后、<main> 之前
  *   - hero 占满首屏（PC + 移动端均为 100dvh），下方接博客列表
  *
- * 关键设计（2026-06-23 v7 「弹簧蓄力→爆裂释放」重构）：
+ * 关键设计（2026-06-23 v8 「空白消除 + 卡片融底」）：
  *   1. CSS 清洗：去除 hero/index.html 的 html, body 通用选择器
  *   2. body.hero-page-active 激活注入的样式
  *   3. 删除首页的浮动播放器 / 右下角按钮 / 侧边栏 widget
@@ -189,11 +189,17 @@ hexo.extend.filter.register('after_render:html', function (data) {
 }
 
 /* ── 博客内容：紧跟 hero 后面（z-index 1100，高于 hero-shell 1000）
- * v7 改进：让 main 跟随 visual 提前进入屏幕，避免 hero 飞出后到 main 到位之间的空白
- *   visual=0     → ty=+100vh (main 在 200dvh，屏幕外底)
- *   visual=0.30  → ty=+40vh  (main 进入屏幕 40vh = 约 40%)
- *   visual=0.50  → ty=0      (main 抵达屏幕底)
- *   visual=1.00  → ty=-100vh (main 在屏幕顶 = 正常位置)
+ * v8 改进：让 main 在 hero 刚开始飞走（visual ≈ 0.22）就开始浮现，
+ *         与 hero 飞走完全 overlap，**消除中间的空白窗口**
+ *
+ *   visual = 0.00  → ty = +88vh (在 188dvh，屏幕外底)
+ *   visual = 0.22  → ty = +66vh (临界点：蓄力段结束、释放段开始)
+ *   visual = 0.50  → ty = +26vh (已显出底部 26vh)
+ *   visual = 0.75  → ty =  0    (刚好抵达屏幕底)
+ *   visual = 1.00  → ty = -100vh (在屏幕顶 = 正常位置)
+ *
+ *   这意味着 hero 还在飞（visual 0.22~0.75）时 main 就开始跟进，
+ *   用户视觉上看到的是"hero 飞走的同时博客从底部升起"。
  */
 body.hero-page-active #content-inner,
 body.hero-page-active .layout,
@@ -203,11 +209,11 @@ body.hero-page-active main {
   z-index: 1100;
   margin-top: 100dvh;
   background: #faf8f5;
-  box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.08);
-  /* main 跟随 visual 提前进入屏幕（关键：让 main 在 hero 完全飞出的同一时间进入） */
-  transform: translate3d(0, calc((0.5 - var(--p)) * 200vh), 0);
-  /* 同步淡入：visual ≥ 0.05 后开始显示 */
-  opacity: clamp((var(--p) - 0.05) * 1.3, 0, 1);
+  /* box-shadow 去掉以消除"浮起"轮廓 */
+  /* main 在 visual=0.22 就开始跟上，与 hero 飞走完全 overlap */
+  transform: translate3d(0, calc((0.88 - var(--p) * 1.32) * 100vh), 0);
+  /* 淡入也跟着提前：visual ≥ 0.15 后开始显示 */
+  opacity: clamp((var(--p) - 0.15) * 1.6, 0, 1);
 }
 
 /* ── 「首页净化 v7」：hero 阶段完全隐藏 nav + 播放器 + 按钮 ──
@@ -242,6 +248,31 @@ body.hero-page-active #go-up,
 body.hero-page-active #rightside-config,
 body.hero-page-active #aside {
   display: none !important;
+}
+
+/* ─────────────────────────────────────────────────
+ * 「首页净化 v8」：去掉米色卡片与白底之间的轮廓冲突
+ * Butterfly 默认 #article-container / #recent-posts / .recent-post-item
+ * 有 1px border + box-shadow + 不同的 background，
+ * 在主页白底上显得卡片"漂浮"且边缘突兀。
+ * 解决：border 全去掉，box-shadow 极淡或去掉，让卡片融进白底。
+ * 仅对主页（hero-page-active）生效，不影响文章页。 */
+body.hero-page-active #article-container,
+body.hero-page-active .recent-post-item,
+body.hero-page-active .card-widget,
+body.hero-page-active .card-recent-post,
+body.hero-page-active #recent-posts > .recent-post-item {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+body.hero-page-active .recent-post-item {
+  background: transparent !important;
+}
+body.hero-page-active .card-widget {
+  background: transparent !important;
+}
+body.hero-page-active #recent-posts {
+  background: transparent !important;
 }
 
 body.hero-page-active {
@@ -514,6 +545,6 @@ ${progressPulse}
     '<body$1 class="hero-page-active">'
   );
 
-  hexo.log.info('[hero-inject] ✅ v7 「弹簧蓄力→爆裂释放」重构完成: ' + canonical);
+  hexo.log.info('[hero-inject] ✅ v8 「空白消除 + 卡片融底」重构完成: ' + canonical);
   return content;
 });
