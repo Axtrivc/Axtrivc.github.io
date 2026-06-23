@@ -97,43 +97,59 @@ hexo.extend.filter.register('after_render:html', function (data) {
   -webkit-backface-visibility: hidden;
 }
 
-/* ── 滚动驱动的 hero 转场（核心效果） ── */
+/* ── 滚动驱动的 hero 转场（GLITCH 故障风 v3 · 2026-06-23） ── */
 /* --hero-progress: 0 = hero 在视口顶部，1 = hero 完全滚出
  *
- * 设计原则：
- *   1. 不用 scale（缩放会让 canvas 被强制重采样导致模糊）
- *   2. 不用 will-change（强制合成层反而触发滚动降采样）
- *   3. hero 用 position: fixed 脱离文档流，main 用 margin-top: 100dvh 紧跟后面
- *   4. 组合 translateY + clip-path + 双重渐隐 实现"翻页 + 渐隐"转场：
- *        - hero 整体向上漂浮（-30vh）
- *        - 同时从顶部被"裁掉"（像被一只手向上卷起来）
- *        - 配以 vignette 暗角渐入做"沉浸感"过渡
- *        - 前 35% 不淡出（保留峡谷画面感），中段轻微淡出，后段快速消失
- *        - 加 saturation 渐退和 blur 微增，制造"动画→静态"的呼吸感
- *   5. canvas 始终以容器原始尺寸 × dpr 渲染，滚动时不被降采样
+ * 设计思路（Glitch 故障风）：
+ *   1. canvas 整体保持原样不切片（避免模糊），只在 35%-65% 区间快速淡出
+ *   2. SVG filter #hero-rgb-split 做 RGB 三通道分离（chromatic aberration）
+ *      - 红色通道左移 3px，蓝色通道右移 3px → 经典故障色差
+ *      - intensity 由 --p 驱动（滚动越多越强）
+ *   3. 8 条 .hero-glitch-bar 错峰向上飞溅，每条携带 river.ai 主题的蓝白渐变
+ *      - 用 mix-blend-mode: screen 让它们和 canvas 颜色叠加发光
+ *      - 错峰偏移：(i-3.5) * 14px 横向 + (-95vh - i*9vh) 纵向
+ *   4. 文字标题 skew + translate 破碎飞出
+ *   5. 底部 CTA 反向缩放飞出（"按我"的反向运动）
+ *   6. RGB shift 暗角叠加层（hero-shell::before）做视觉增强
  */
 .hero-shell {
   --p: var(--hero-progress, 0);
-  /* 离场向上漂浮：25vh 内先静后动，更像被风"吹起" */
-  transform: translate3d(0, calc(min(var(--p) * 1.4, 1) * -28vh), 0);
-  /* clip-path：顶部"卷起" */
-  clip-path: inset(calc(var(--p) * 100%) 0 0 0);
-  /* filter：色调渐退 + 极淡 blur → 让转场有"远去"的呼吸感而非硬切 */
+  /* RGB 色差 + 色调渐退 + 极淡 blur → "远去 + 故障"的呼吸感 */
   filter:
+    url(#hero-rgb-split)
     brightness(calc(1 - var(--p) * 0.18))
     saturate(calc(1 - var(--p) * 0.35))
-    blur(calc(var(--p) * 0.6px));
+    blur(calc(var(--p) * 0.8px));
   /* 透明度分三段：
-   *   0.00 - 0.35：保持清晰
-   *   0.35 - 0.65：缓慢淡出
-   *   0.65 - 1.00：快速消失
-   * 这是关键 — 之前从 0.5 直接 hard cut 太突兀 */
+   *   0.00 - 0.35：保持清晰（让用户看到峡谷画面感）
+   *   0.35 - 0.65：缓慢淡出（glitch bar 开始接管视觉）
+   *   0.65 - 1.00：快速消失（被博客内容浮起阴影覆盖） */
   opacity: calc(
     1
-    - max(0, var(--p) - 0.35) * 0.8   /* 0.35→0.65: 渐出 80% */
-    - max(0, var(--p) - 0.65) * 2.4   /* 0.65→1.00: 加速消失 */
+    - max(0, var(--p) - 0.35) * 0.6
+    - max(0, var(--p) - 0.65) * 2.5
   );
-  transition: filter 0.15s ease-out;
+  transition: filter 0.18s ease-out;
+}
+
+/* RGB shift 暗角：左右两侧的彩色光晕跟随滚动偏移 */
+.hero-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background:
+    radial-gradient(ellipse at 25% 50%,
+      rgba(255, 50, 90, 0.4) 0%,
+      transparent 45%),
+    radial-gradient(ellipse at 75% 50%,
+      rgba(50, 130, 255, 0.4) 0%,
+      transparent 45%);
+  mix-blend-mode: screen;
+  opacity: calc(var(--p) * 0.85);
+  transform: translateX(calc((var(--p) - 0.5) * 14px));
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
 }
 /* 渐入暗角（vignette overlay）让转场有"进入文章"的感觉 */
 .hero-shell::after {
@@ -148,14 +164,17 @@ hexo.extend.filter.register('after_render:html', function (data) {
       transparent 35%,
       rgba(8, 14, 36, 0.15) 65%,
       rgba(8, 14, 36, 0.45) 100%);
-  opacity: var(--p);
+  opacity: calc(var(--p) * 0.9);
   transition: opacity 0.2s ease-out;
 }
 
 @media (max-width: 768px) {
   .hero-shell {
-    transform: translate3d(0, calc(var(--hero-progress, 0) * -20vh), 0);
-    clip-path: inset(calc(var(--hero-progress, 0) * 95%) 0 0 0);
+    filter:
+      url(#hero-rgb-split)
+      brightness(calc(1 - var(--p) * 0.18))
+      saturate(calc(1 - var(--p) * 0.35))
+      blur(calc(var(--p) * 0.6px));
   }
 }
 
@@ -270,6 +289,144 @@ body.hero-page-active {
   .hero-scroll-hint { bottom: 18px; gap: 8px; }
   .hero-scroll-label { display: none; }
 }
+
+/* ───────── GLITCH 切片飞溅层（核心酷炫效果） ───────── */
+.hero-glitch-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  overflow: hidden;
+  --p: var(--hero-progress, 0);
+}
+.hero-glitch-bar {
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  top: calc(var(--i, 0) * 12.5%);
+  height: 12.5%;
+  background: linear-gradient(
+    180deg,
+    rgba(120, 160, 255, 0)    0%,
+    rgba(140, 180, 255, 0.5)  25%,
+    rgba(200, 220, 255, 0.95) 50%,
+    rgba(140, 180, 255, 0.5)  75%,
+    rgba(120, 160, 255, 0)    100%
+  );
+  mix-blend-mode: screen;
+  filter: blur(0.5px) hue-rotate(calc(var(--i, 0) * 22deg));
+  will-change: transform, opacity;
+  --trigger: max(0, calc(var(--p) - 0.12));
+  --fadeout: max(0, calc(var(--p) - 0.72));
+  /* 错峰飞出：
+   *   横向偏移：(i-3.5) * 14px → 中间条几乎不动，两侧条大幅外飞
+   *   纵向偏移：-95vh - i*9vh → 上面条先飞得更远（增强层次感）
+   *   旋转：±8deg 随机倾斜，模拟画面被打碎的感觉 */
+  transform: translate3d(
+    calc((var(--i, 0) - 3.5) * var(--trigger) * 14px),
+    calc(var(--trigger) * (-95vh - var(--i, 0) * 9vh)),
+    0
+  ) rotate(calc((var(--i, 0) - 3.5) * var(--trigger) * 2.5deg));
+  opacity: calc(
+    min(var(--trigger) * 1.8, 1)
+    * (1 - min(var(--fadeout) * 3.5, 1))
+  );
+}
+/* 噪点飞溅：覆盖全屏的颗粒 */
+.hero-noise-spray {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  --p: var(--hero-progress, 0);
+  background-image:
+    repeating-linear-gradient(0deg,
+      rgba(255,255,255,0.04) 0px,
+      rgba(255,255,255,0.04) 1px,
+      transparent 1px,
+      transparent 3px),
+    repeating-linear-gradient(90deg,
+      rgba(255,255,255,0.03) 0px,
+      rgba(255,255,255,0.03) 1px,
+      transparent 1px,
+      transparent 4px);
+  mix-blend-mode: overlay;
+  opacity: calc(var(--p) * 0.9);
+  animation: noiseShift 0.4s steps(8) infinite;
+}
+@keyframes noiseShift {
+  0%   { background-position: 0 0, 0 0; }
+  25%  { background-position: -7px 3px, 4px -2px; }
+  50%  { background-position: 5px -4px, -3px 6px; }
+  75%  { background-position: -4px -2px, 7px 1px; }
+  100% { background-position: 0 0, 0 0; }
+}
+
+/* 文字标题破碎飞出（覆盖 hero/index.html 的样式） */
+.hero-text-headline {
+  --p: var(--hero-progress, 0);
+  --trigger: max(0, calc(var(--p) - 0.05));
+  transform: translate3d(
+    calc((var(--p) - 0.5) * 20px),
+    calc(var(--trigger) * -32vh),
+    0
+  ) skewY(calc(var(--trigger) * -10deg));
+  opacity: calc(1 - max(0, calc(var(--p) - 0.2)) * 2.6);
+  filter: blur(calc(max(0, calc(var(--p) - 0.2)) * 2.5px))
+          hue-rotate(calc(var(--p) * 30deg));
+  will-change: transform, opacity;
+}
+.hero-text-sub {
+  --p: var(--hero-progress, 0);
+  --trigger: max(0, calc(var(--p) - 0.08));
+  transform: translate3d(
+    calc((var(--p) - 0.5) * -16px),
+    calc(var(--trigger) * -28vh),
+    0
+  ) skewY(calc(var(--trigger) * 8deg));
+  opacity: calc(1 - max(0, calc(var(--p) - 0.25)) * 2.8);
+  filter: blur(calc(max(0, calc(var(--p) - 0.25)) * 2px));
+  will-change: transform, opacity;
+}
+.hero-cta,
+a.hero-cta {
+  --p: var(--hero-progress, 0);
+  transform: translateY(calc(max(0, calc(var(--p) - 0.1)) * 25vh))
+             scale(calc(1 - max(0, calc(var(--p) - 0.1)) * 0.4))
+             rotate(calc((var(--p) - 0.5) * 12deg));
+  opacity: calc(1 - max(0, calc(var(--p) - 0.15)) * 2.6);
+  filter: blur(calc(max(0, calc(var(--p) - 0.2)) * 1.5px));
+}
+.hero-text-label,
+.hero-text-quote {
+  --p: var(--hero-progress, 0);
+  opacity: calc(1 - max(0, calc(var(--p) - 0.05)) * 3);
+  filter: blur(calc(max(0, calc(var(--p) - 0.1)) * 1.5px));
+}
+
+/* SVG filter 定义区（藏起来，纯供 url(#hero-rgb-split) 引用） */
+.hero-filters-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 移动端：减少 glitch bar 数量（用 i 限制）、降低强度 */
+@media (max-width: 768px) {
+  .hero-glitch-bar {
+    height: 16.66%;
+    top: calc(var(--i, 0) * 16.66%);
+    filter: blur(0.3px) hue-rotate(calc(var(--i, 0) * 22deg));
+  }
+  .hero-glitch-bar[style*="--i: 6"],
+  .hero-glitch-bar[style*="--i: 7"] {
+    display: none;  /* 移动端只显示 6 条 */
+  }
+  .hero-noise-spray { opacity: calc(var(--p) * 0.6); }
+}
 `;
 
   const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
@@ -295,8 +452,60 @@ body.hero-page-active {
 </div>
 `;
 
-  // 用 .hero-shell 包裹 hero section + 滚动提示（hint 必须在 hero-shell 内部）
-  const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${scrollHint}\n</div>`;
+  // SVG filter 定义（藏起来，提供 RGB split 色差分离效果）
+  const svgFilters = `
+<svg class="hero-filters-defs" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="hero-rgb-split" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+      <!-- 红色通道：左移 4px -->
+      <feColorMatrix in="SourceGraphic" type="matrix" values="
+        1   0   0   0   0
+        0   0   0   0   0
+        0   0   0   0   0
+        0   0   0   1   0" result="redOnly"/>
+      <feOffset in="redOnly" dx="-4" dy="0" result="redOff"/>
+
+      <!-- 绿色通道：原位 -->
+      <feColorMatrix in="SourceGraphic" type="matrix" values="
+        0   0   0   0   0
+        0   1   0   0   0
+        0   0   0   0   0
+        0   0   0   1   0" result="greenOnly"/>
+
+      <!-- 蓝色通道：右移 4px -->
+      <feColorMatrix in="SourceGraphic" type="matrix" values="
+        0   0   0   0   0
+        0   0   0   0   0
+        0   0   1   0   0
+        0   0   0   1   0" result="blueOnly"/>
+      <feOffset in="blueOnly" dx="4" dy="0" result="blueOff"/>
+
+      <!-- 三通道 screen 模式混合 -->
+      <feBlend in="redOff" in2="greenOnly" mode="screen" result="rg"/>
+      <feBlend in="rg" in2="blueOff" mode="screen"/>
+    </filter>
+  </defs>
+</svg>
+`;
+
+  // Glitch 切片飞溅层：8 条横向条带，错峰上滑飞出
+  const glitchLayer = `
+<div class="hero-glitch-layer" aria-hidden="true">
+  <div class="hero-glitch-bar" style="--i: 0"></div>
+  <div class="hero-glitch-bar" style="--i: 1"></div>
+  <div class="hero-glitch-bar" style="--i: 2"></div>
+  <div class="hero-glitch-bar" style="--i: 3"></div>
+  <div class="hero-glitch-bar" style="--i: 4"></div>
+  <div class="hero-glitch-bar" style="--i: 5"></div>
+  <div class="hero-glitch-bar" style="--i: 6"></div>
+  <div class="hero-glitch-bar" style="--i: 7"></div>
+</div>
+<div class="hero-noise-spray" aria-hidden="true"></div>
+`;
+
+  // 用 .hero-shell 包裹 hero section + 滚动提示 + glitch 层（必须在 hero-shell 内部）
+  // SVG filter 定义放在 hero-shell 之前（确保 url(#hero-rgb-split) 能找到定义节点）
+  const heroWrapped = `${svgFilters}\n<div class="hero-shell">\n${heroSection}\n${glitchLayer}\n${scrollHint}\n</div>`;
 
   content = content.replace(
     '</header>',
