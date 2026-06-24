@@ -24,7 +24,7 @@ categories:
 
 **相关新闻**
 
-- [记者：巴萨认为马竞向国际足联的投诉不会有结果](https://www.dongqiudi.com/article/5961877)
+- [巴萨球员国家队战报：坎塞洛70场里程碑送助攻，葡萄牙大胜](https://www.dongqiudi.com/article/5962338)
 
 
 ### 皇马
@@ -34,9 +34,7 @@ categories:
 
 ### 马竞
 
-**相关新闻**
-
-- [记者：巴萨认为马竞向国际足联的投诉不会有结果](https://www.dongqiudi.com/article/5961877)
+> 暂无近期动态
 
 
 ### 迈阿密国际
@@ -63,43 +61,42 @@ categories:
 
 - [葡萄牙5-0乌兹别克斯坦，C罗双响，莱奥、努诺-门德斯建功](https://www.dongqiudi.com/article/5961410)
 - [英格兰0-0闷平加纳，奥赖利中框，三狮军团全场仅3射正](https://www.dongqiudi.com/article/5961747)
-- [半场：巴拿马0-0克罗地亚，何塞头球中框，巴图里纳远射造险](https://www.dongqiudi.com/article/5961904)
-- [早报：熟悉的C罗，似曾相识的英格兰](https://www.dongqiudi.com/article/5961742)
-- [埃泽：加纳的防守稳固而又紧凑，有时候会让我们陷入困境](https://www.dongqiudi.com/article/5961925)
+- [安帅：对阵苏格兰会沿用踢海地的战术，球队阵型不会变](https://www.dongqiudi.com/article/5962312)
+- [巴媒：巴西赛前全队合影的习惯将保持至世界杯结束](https://www.dongqiudi.com/article/5962369)
+- [马刺将今年35号签+2未来次轮送至掘金，换来26号签并选中里德](https://www.dongqiudi.com/article/5962355)
 
 #### 西甲新闻
 
-- [TA：戈登起不到边路突破作用，英格兰队接下来将首发拉什福德](https://www.dongqiudi.com/article/5961900)
-- [贝林厄姆：和对方教练争执？我的愚蠢的铲球动作太大带到了人](https://www.dongqiudi.com/article/5961899)
-- [图赫尔：没换凯恩是正确的；依赖他？这就是世界级球员的作用](https://www.dongqiudi.com/article/5961898)
+- [RMC：拉扬预计将顶替拉菲尼亚首发出战苏格兰，内马尔将替补](https://www.dongqiudi.com/article/5962334)
+- [巴萨球员国家队战报：坎塞洛70场里程碑送助攻，葡萄牙大胜](https://www.dongqiudi.com/article/5962338)
 
 #### 英超新闻
 
-- [埃泽：加纳的防守稳固而又紧凑，有时候会让我们陷入困境](https://www.dongqiudi.com/article/5961925)
-- [TA：戈登起不到边路突破作用，英格兰队接下来将首发拉什福德](https://www.dongqiudi.com/article/5961900)
-- [记者：切尔西求购沃顿进入深入谈判阶段，蓝军提供了7年合同](https://www.dongqiudi.com/article/5961915)
+- [安帅：对阵苏格兰会沿用踢海地的战术，球队阵型不会变](https://www.dongqiudi.com/article/5962312)
+- [RMC：拉扬预计将顶替拉菲尼亚首发出战苏格兰，内马尔将替补](https://www.dongqiudi.com/article/5962334)
+- [巴萨球员国家队战报：坎塞洛70场里程碑送助攻，葡萄牙大胜](https://www.dongqiudi.com/article/5962338)
 
 #### 意甲新闻
 
-- [11次，拉什福德追平世界杯历史替补登场次数纪录](https://www.dongqiudi.com/article/5961894)
-- [乔纳森-戴维：我希望保持进球的感觉；加拿大因为世界杯团结到一起](https://www.dongqiudi.com/article/5961882)
-- [斯基拉：切尔西正在准备文件，预计在几小时内敲定帕莱斯特拉](https://www.dongqiudi.com/article/5961829)
+- [国家队生涯200场里程碑获胜，莫德里奇赛后获赠纪念球衣](https://www.dongqiudi.com/article/5962229)
+- [迪马济奥：多特等队有意苏莱，但罗马认为报价不够](https://www.dongqiudi.com/article/5962153)
+- [阿坎吉：瑞士没有世界前十的超巨，但我们的优势就是团队足球](https://www.dongqiudi.com/article/5962151)
 
 #### 德甲新闻
 
+- [迪马济奥：多特等队有意苏莱，但罗马认为报价不够](https://www.dongqiudi.com/article/5962153)
 - [TA：戈登起不到边路突破作用，英格兰队接下来将首发拉什福德](https://www.dongqiudi.com/article/5961900)
 - [朴智星：孙兴慜的优势是终结能力，但他在比赛中孤立无援](https://www.dongqiudi.com/article/5961916)
-- [图赫尔：没换凯恩是正确的；依赖他？这就是世界级球员的作用](https://www.dongqiudi.com/article/5961898)
 
 #### 法甲新闻
 
-- [图赫尔：没换凯恩是正确的；依赖他？这就是世界级球员的作用](https://www.dongqiudi.com/article/5961898)
-- [载入史册，姆巴佩是法国队史第10位达成百场里程碑的球员](https://www.dongqiudi.com/article/5961885)
-- [姆巴佩社媒发文：我们与教练和他的家人同在，你们并不孤单](https://www.dongqiudi.com/article/5961875)
+- [RIP！法国主教练德尚母亲去世，德尚将离开世界杯...](https://www.dongqiudi.com/article/5962268)
+- [RMC：德尚母亲离世触动法国队，球队希望在周五将胜利献给德尚](https://www.dongqiudi.com/article/5962261)
+- [大巴黎FC2027能力值预测：含绯闻和转会球员！...](https://www.dongqiudi.com/article/5962131)
 
 #### 我的主队动态
 
-- ⭐ [记者：巴萨认为马竞向国际足联的投诉不会有结果](https://www.dongqiudi.com/article/5961877)
+- ⭐ [巴萨球员国家队战报：坎塞洛70场里程碑送助攻，葡萄牙大胜](https://www.dongqiudi.com/article/5962338)
 
 
 ---
