@@ -272,8 +272,6 @@ body.hero-page-active:not(.hero-released) #go-up,
 body.hero-page-active:not(.hero-released) #rightside-config,
 body.hero-page-active:not(.hero-released) #axtrivc-fab,
 body.hero-page-active:not(.hero-released) .fab-publish,
-body.hero-page-active:not(.hero-released) #birthday-countdown,
-body.hero-page-active:not(.hero-released) .bday-countdown,
 body.hero-page-active:not(.hero-released) #announcement-bg,
 body.hero-page-active:not(.hero-released) .announcement,
 body.hero-page-active:not(.hero-released) .card-announcement,
@@ -288,8 +286,7 @@ body.hero-page-active:not(.hero-released) #debugBar {
 body.hero-released #music-bar,
 body.hero-released #music-panel,
 body.hero-released #rightside,
-body.hero-released #axtrivc-fab,
-body.hero-released #birthday-countdown {
+body.hero-released #axtrivc-fab {
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
@@ -609,6 +606,47 @@ body.hero-page-active {
 
   const heroScripts = heroScriptTag + '\n' + heroInitScript + progressRail + scrollDriverJs;
   content = content.replace('</body>', heroScripts + '\n</body>');
+
+  // ── v12.1 Bug 修复:手绑 #toggle-menu(原 btf.addEventListenerPjax 在非 PJAX 下不触发) ──
+  const sidebarFix = `
+<script>
+(function () {
+  function bindMobileSidebar() {
+    var toggleMenu = document.getElementById('toggle-menu');
+    var sidebar = document.getElementById('sidebar-menus');
+    var menuMask = document.getElementById('menu-mask');
+    if (!toggleMenu || !sidebar) return;
+    if (toggleMenu.dataset.heroFixed) return;
+    toggleMenu.dataset.heroFixed = '1';
+    toggleMenu.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      sidebar.classList.add('open');
+      if (menuMask) {
+        menuMask.style.cssText = 'display:block;animation:to_show 0.5s';
+      }
+      document.body.style.overflow = 'hidden';
+    });
+    if (menuMask) {
+      menuMask.addEventListener('click', function () {
+        sidebar.classList.remove('open');
+        menuMask.style.cssText = 'animation:to_hide 0.5s';
+        setTimeout(function () { menuMask.style.cssText = ''; }, 500);
+        document.body.style.overflow = '';
+      });
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindMobileSidebar);
+  } else {
+    bindMobileSidebar();
+  }
+  // 兜底:某些主题会延迟注入 nav,500ms 后再试一次
+  setTimeout(bindMobileSidebar, 500);
+})();
+</script>
+`;
+  content = content.replace('</body>', sidebarFix + '\n</body>');
 
   // 给 body 加 class hero-page-active
   content = content.replace(
