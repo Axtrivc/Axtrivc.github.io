@@ -22,12 +22,16 @@ categories:
 
 ### 巴萨
 
-> 暂无近期动态
+**相关新闻**
+
+- [巴萨官方撰文，向委内瑞拉地震受灾者表达支持](https://www.dongqiudi.com/article/5965553)
 
 
 ### 皇马
 
-> 暂无近期动态
+**相关新闻**
+
+- [每体：皇马想和维尼修斯续约，但不会不惜一切代价](https://www.dongqiudi.com/article/5965691)
 
 
 ### 马竞
@@ -49,45 +53,56 @@ categories:
 | 6月14日 | 世界杯 | 客 vs Qatar | 1-1 | ➖ 平 |
 | 6月19日 | 世界杯 | 主 vs Bosnia-H. | 4-1 | ✅ 胜 |
 
+**相关新闻**
+
+- [西媒：此前冒充警察性侵妓女的西班牙裁判，因殴打前伴侣再被捕](https://www.dongqiudi.com/article/5965582)
+
 
 ## 足坛新闻
 
 ### 📰 足坛头条
 
-- [巴西3-0苏格兰小组头名出线，维尼修斯双响，内马尔替补出场](https://www.dongqiudi.com/article/5964399)
-- [南非1-0韩国以小组第二出线，韩国小组第三出线待定，马塞科制胜](https://www.dongqiudi.com/article/5964799)
-- [世预赛亚太区新一期实力榜：中国男篮排名第二，澳大利亚居首](https://www.dongqiudi.com/article/5964863)
-- [库尼亚3场打入3球，追平曼联球员单届世界杯进球纪录](https://www.dongqiudi.com/article/5964855)
-- [长友佑都：我在脑海中已经做好了出场去限制瑞典攻击手的准备](https://www.dongqiudi.com/article/5964861)
+- [足协官方：捂嘴染红、限时离场、5秒界外球等新规7月1日起执行](https://www.dongqiudi.com/article/5965587)
+- [福斯贝里：我会在世界杯结束后宣布退出瑞典国家队](https://www.dongqiudi.com/article/5965727)
+- [巴拉格：我认为梅西会参加2030世界杯，在阿根廷本土打揭幕战](https://www.dongqiudi.com/article/5965645)
+- [3.06，维尼修斯战苏格兰预期进球是世界杯有记录以来单场最高](https://www.dongqiudi.com/article/5965728)
+- [斯基拉：罗马续约切利克进入最后阶段，3年合同年薪300万欧元](https://www.dongqiudi.com/article/5965723)
 
 #### 西甲新闻
 
-- [库尼亚3场打入3球，追平曼联球员单届世界杯进球纪录](https://www.dongqiudi.com/article/5964855)
-- [维尼修斯谈内马尔替补出场：我们的偶像回来了](https://www.dongqiudi.com/article/5964612)
+- [3.06，维尼修斯战苏格兰预期进球是世界杯有记录以来单场最高](https://www.dongqiudi.com/article/5965728)
+- [每体：皇马想和维尼修斯续约，但不会不惜一切代价](https://www.dongqiudi.com/article/5965691)
+- [RMC：民调看好法国世界杯至少进四强；姆巴佩仍是最受欢迎球员](https://www.dongqiudi.com/article/5965669)
 
 #### 英超新闻
 
-- [库尼亚3场打入3球，追平曼联球员单届世界杯进球纪录](https://www.dongqiudi.com/article/5964855)
-- [伊萨克：为远藤航无缘世界杯感到遗憾；日本是非常优秀的队伍](https://www.dongqiudi.com/article/5964805)
-- [瑞典后卫古德蒙松：日本队实力极强，我们摸清了他们的优缺点](https://www.dongqiudi.com/article/5964794)
+- [高价出售帕莱斯特拉和埃德松，亚特兰大今夏已锁定超1亿欧收入](https://www.dongqiudi.com/article/5965681)
+- [日媒预测日本首发：三中卫预计全换，前田大然、菅原由势出战](https://www.dongqiudi.com/article/5965661)
+- [波罗：很难复制卡瓦哈尔；从未觉得热刺会降级只想着逆转局势](https://www.dongqiudi.com/article/5965656)
 
 #### 意甲新闻
 
-- [莫雷托：米兰并没有为求购埃弗顿-阿劳若提供过报价](https://www.dongqiudi.com/article/5964719)
-- [科特迪瓦主帅：球员很有动力去争取晋级，我们的野心不止于此](https://www.dongqiudi.com/article/5964654)
-- [格林伍德抵制活动：罗马本地球迷参与最多，响应者破千](https://www.dongqiudi.com/article/5964588)
+- [斯基拉：罗马续约切利克进入最后阶段，3年合同年薪300万欧元](https://www.dongqiudi.com/article/5965723)
+- [高价出售帕莱斯特拉和埃德松，亚特兰大今夏已锁定超1亿欧收入](https://www.dongqiudi.com/article/5965681)
+- [日媒预测日本首发：三中卫预计全换，前田大然、菅原由势出战](https://www.dongqiudi.com/article/5965661)
 
 #### 德甲新闻
 
-- [洪明甫：球员们尽了全力，比赛结果是教练的责任](https://www.dongqiudi.com/article/5964849)
-- [哈努斯：接下来每场都是生死战，我们会尽全力走得更远](https://www.dongqiudi.com/article/5964844)
-- [竞足看点：6月25日世界杯小组赛末轮前瞻](https://www.dongqiudi.com/article/5964846)
+- [RMC：民调看好法国世界杯至少进四强；姆巴佩仍是最受欢迎球员](https://www.dongqiudi.com/article/5965669)
+- [官方：斯图加特边锋达尔维奇租借加盟埃弗斯堡](https://www.dongqiudi.com/article/5965667)
+- [日媒预测日本首发：三中卫预计全换，前田大然、菅原由势出战](https://www.dongqiudi.com/article/5965661)
 
 #### 法甲新闻
 
-- [南非首迎世界杯小组出线，上次在世界杯赢球还是2010年2-1胜法国](https://www.dongqiudi.com/article/5964843)
-- [阿什拉夫：这场比赛很艰难，我们展现出了一直以来的拼搏精神](https://www.dongqiudi.com/article/5964727)
-- [科特迪瓦主帅：球员很有动力去争取晋级，我们的野心不止于此](https://www.dongqiudi.com/article/5964654)
+- [RMC：民调看好法国世界杯至少进四强；姆巴佩仍是最受欢迎球员](https://www.dongqiudi.com/article/5965669)
+- [日媒预测日本首发：三中卫预计全换，前田大然、菅原由势出战](https://www.dongqiudi.com/article/5965661)
+- [波罗：和顶级边锋交手能促使我进步；我在热刺待得很舒服](https://www.dongqiudi.com/article/5965572)
+
+#### 我的主队动态
+
+- ⭐ [每体：皇马想和维尼修斯续约，但不会不惜一切代价](https://www.dongqiudi.com/article/5965691)
+- ⭐ [西媒：此前冒充警察性侵妓女的西班牙裁判，因殴打前伴侣再被捕](https://www.dongqiudi.com/article/5965582)
+- ⭐ [巴萨官方撰文，向委内瑞拉地震受灾者表达支持](https://www.dongqiudi.com/article/5965553)
 
 
 ---
