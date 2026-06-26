@@ -612,7 +612,7 @@ body.hero-page-active {
 
     if (releaseArmed) {
       target = 1;  // 强制冲顶
-      // 释放段：无 inertia，直接同步
+      // 释放段：无 inertia,直接同步 (0.32 = 32% 步进,3-4 帧完成)
       progress += (target - progress) * 0.32;
       if (progress > 0.998) {
         progress = 1;
@@ -620,20 +620,18 @@ body.hero-page-active {
         applyVars(1);
         // 释放：移除 main 的 transform/opacity，scrollTo 到 hero 底部
         body.classList.add('hero-released');
-        // v12.15 fix: scrollTo 到 main 实际顶部（不是 heroH）
-        // 因为 hexo 主题 main 上方有 #page-header 等元素占位,
-        // 滚到 heroH 会让 nav 下方出现白条
-        // 用 getBoundingClientRect 找到 main 顶部的实际位置
         var mainEl = document.querySelector('main');
         var mainTop = mainEl ? mainEl.getBoundingClientRect().top + window.scrollY : heroH;
-        // 多滚 4px 避免亚像素导致 1px 空白
         window.scrollTo(0, mainTop + 4);
+        // 通知 hero 立即冻结 (v12.25: 让出 GPU)
+        var heroFrozenEvent = new Event('hero-frozen');
+        window.dispatchEvent(heroFrozenEvent);
         return;
       }
     } else {
-      // 阻力段：缓慢跟随 target（push-back 感）
-      progress += (target - progress) * 0.08;
-      // v12.14: 当 target 与 progress 差距 <0.001 时不再 RAF 调度，避免空转烧 CPU
+      // 阻力段：缓慢跟随 target (push-back 感) - v12.25 增快到 0.16 提速一倍
+      progress += (target - progress) * 0.16;
+      // v12.14: 当 target 与 progress 差距 <0.001 时不再 RAF 调度
       if (Math.abs(target - progress) < 0.001) {
         applyVars(progress);
         return;
