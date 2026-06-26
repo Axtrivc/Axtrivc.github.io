@@ -620,8 +620,14 @@ body.hero-page-active {
         applyVars(1);
         // 释放：移除 main 的 transform/opacity，scrollTo 到 hero 底部
         body.classList.add('hero-released');
-        // scrollTo 让博客内容的自然位置生效（main 顶部 = viewport 顶部）
-        window.scrollTo(0, heroH);
+        // v12.15 fix: scrollTo 到 main 实际顶部（不是 heroH）
+        // 因为 hexo 主题 main 上方有 #page-header 等元素占位,
+        // 滚到 heroH 会让 nav 下方出现白条
+        // 用 getBoundingClientRect 找到 main 顶部的实际位置
+        var mainEl = document.querySelector('main');
+        var mainTop = mainEl ? mainEl.getBoundingClientRect().top + window.scrollY : heroH;
+        // 多滚 4px 避免亚像素导致 1px 空白
+        window.scrollTo(0, mainTop + 4);
         return;
       }
     } else {
