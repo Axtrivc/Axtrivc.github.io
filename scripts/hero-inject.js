@@ -197,7 +197,7 @@ body.hero-released .hero-shell {
   display: none !important;
 }
 
-/* ── v12 导航：始终显示（金棕色），hero 阶段就可见 ── */
+/* ── v12.11 导航：不再用金棕色渐变，hero 阶段 nav 用主题色背景 + 透明文字 ── */
 body.hero-page-active #nav,
 body.hero-page-active #page-header.full_page #nav {
   opacity: 1 !important;
@@ -211,11 +211,28 @@ body.hero-page-active #page-header.full_page #nav {
   right: 0;
   height: 60px;
   z-index: 1200;
-  background: linear-gradient(180deg, #b8860b 0%, #cd9b1d 50%, #daa520 100%) !important;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  /* 透明背景：让 hero 河流画透过来（金棕色已被用户拒绝） */
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
   padding: 0 20px;
   align-items: center;
   transform: translateZ(0);
+}
+/* hero 阶段：nav 文字白色 + 描边阴影，可读性靠 text-shadow */
+body.hero-page-active #nav a,
+body.hero-page-active #nav .site-name,
+body.hero-page-active #nav a.site-page,
+body.hero-page-active #nav .menus a,
+body.hero-page-active #nav .menus_item a {
+  color: rgba(255, 255, 255, 0.92) !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55), 0 0 12px rgba(80, 180, 130, 0.25);
+  transition: color 0.2s ease;
+}
+body.hero-page-active #nav a:hover,
+body.hero-page-active #nav .menus a:hover {
+  color: #07C160 !important;
+  text-shadow: 0 0 14px rgba(7, 193, 96, 0.6);
 }
 
 /* hero 阶段隐藏大 banner 标题（hero 占满屏，标题被挡） */
