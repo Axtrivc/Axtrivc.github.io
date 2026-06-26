@@ -1,0 +1,202 @@
+/* ============================================================
+   Axtrivc's Blog — Music Bar (Spotify 嵌入播放器)
+   从 _config.butterfly.yml 的 inject 段抽离
+   主题适配：所有颜色走 var(--theme-*) 由 theme-system.js 注入
+   ============================================================ */
+
+#music-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 56px;
+  background: var(--theme-nav-current, rgba(255, 255, 255, 0.94));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--theme-border-current, rgba(0, 0, 0, 0.08));
+  color: var(--theme-text-current, #1a1a1a);
+  z-index: 9980;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  transition: background 0.45s ease, border-color 0.45s ease, color 0.45s ease;
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.04);
+}
+
+#music-bar .bar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+#music-bar .bar-cover {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  /* 渐变由 theme-system.js 动态设置 inline style，CSS 这里的 fallback 仅用于首屏 */
+  background: linear-gradient(135deg, var(--theme-accent-current, #07C160) 0%, var(--theme-secondary-current, #7A7A7A) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--theme-accent-current, #07C160) 30%, transparent);
+}
+
+#music-bar .bar-info { display: block; }
+#music-bar .bar-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--theme-heading, #1a1a1a);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 220px;
+}
+#music-bar .bar-sub {
+  font-size: 11px;
+  color: var(--theme-secondary-current, #7A7A7A);
+}
+
+#music-bar .bar-controls {
+  display: flex; align-items: center; gap: 12px;
+}
+
+.bar-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.22s;
+  font-size: 16px;
+  background: transparent;
+  color: var(--theme-accent-current, #07C160);
+}
+.bar-btn:hover {
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 12%, transparent);
+  transform: scale(1.05);
+}
+
+#music-bar .bar-btn-toggle {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--theme-accent-current, #07C160);
+  color: #fff;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.22s;
+}
+#music-bar .bar-btn-toggle:hover {
+  background: var(--theme-heading, #0A3D2A);
+  transform: scale(1.05);
+}
+
+/* 关闭整个音乐栏的按钮（用户在 bar 内主动隐藏 bar 用） */
+#music-bar .bar-btn-close {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.22s;
+  font-size: 14px;
+  background: transparent;
+  color: var(--theme-secondary-current, #7A7A7A);
+}
+#music-bar .bar-btn-close:hover {
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 10%, transparent);
+  color: var(--theme-accent-current, #07C160);
+  transform: scale(1.08);
+}
+
+/* 当 music-bar 被用户关闭后，右下角的迷你 launcher（可恢复音乐栏） */
+#music-launcher {
+  position: fixed;
+  bottom: 18px; right: 18px;
+  z-index: 9979;
+}
+#music-launcher[hidden] { display: none; }
+#music-launcher #btn-launcher {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--theme-accent-current, #07C160);
+  color: #fff;
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--theme-accent-current, #07C160) 40%, transparent);
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), box-shadow 0.25s ease;
+}
+#music-launcher #btn-launcher:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--theme-accent-current, #07C160) 55%, transparent);
+}
+
+#music-panel {
+  position: fixed;
+  bottom: 60px; right: 24px;
+  width: 360px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.15);
+  z-index: 9985;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--theme-card-current, rgba(255, 255, 255, 0.96));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--theme-border-current, rgba(0, 0, 0, 0.08));
+  transform: translateY(16px) scale(0.95);
+}
+#music-panel.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+#music-panel .panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px 10px;
+}
+#music-panel .panel-header span {
+  font-size: 14px; font-weight: 600;
+  color: var(--theme-heading, #1a1a1a);
+}
+#music-panel .panel-header button {
+  background: none; border: none; cursor: pointer;
+  color: var(--theme-secondary-current, #7A7A7A);
+  font-size: 17px; padding: 4px;
+  transition: color 0.2s;
+}
+#music-panel .panel-header button:hover {
+  color: var(--theme-heading, #1a1a1a);
+}
+
+#player-embed-container { width: 100%; }
+#player-embed-container iframe {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 0 0 16px 16px;
+}
+
+body { padding-bottom: 62px !important; }
+
+.vinyl-spin { animation: vinyl-rotate 4s linear infinite paused; }
+.vinyl-spin.playing { animation-play-state: running; }
+@keyframes vinyl-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 手机端适配 */
+@media (max-width: 768px) {
+  #music-bar { height: 50px; padding: 0 16px; }
+  #music-bar .bar-cover { width: 34px; height: 34px; font-size: 17px; }
+  #music-bar .bar-title { max-width: 140px; font-size: 12px; }
+  .bar-btn { width: 32px; height: 32px; font-size: 14px; }
+  #music-bar .bar-btn-toggle { width: 30px; height: 30px; font-size: 11px; }
+  #music-bar .bar-btn-close { width: 26px; height: 26px; font-size: 12px; }
+  #music-panel { right: 12px; bottom: 54px; width: calc(100vw - 24px); }
+  #music-launcher { bottom: 12px; right: 12px; }
+  #music-launcher #btn-launcher { width: 42px; height: 42px; }
+  body { padding-bottom: 56px !important; }
+}

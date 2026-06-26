@@ -215,15 +215,15 @@ layout: false
       <div class="dbg-grid" id="dbgGrid">
         <div class="dbg-row">
           <label>RENDER SCALE</label>
-          <input type="range" id="renderScaleSlider" min="50" max="100" step="5" value="100" />
-          <span class="val" id="renderScaleLabel">1.00</span>
+          <input type="range" id="renderScaleSlider" min="50" max="100" step="5" value="66" />
+          <span class="val" id="renderScaleLabel">0.66</span>
         </div>
         <div class="dbg-row">
           <label>AA MODE</label>
           <select id="aaModeSelect" class="tod-select" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:4px 8px;font-size:12px;">
             <option value="0">off</option>
-            <option value="4">SSAA ×4</option>
-            <option value="8" selected>SSAA ×8</option>
+            <option value="4" selected>SSAA ×4</option>
+            <option value="8">SSAA ×8</option>
             <option value="9">SSAA ×9</option>
             <option value="sdf">SDF 1×</option>
           </select>
@@ -245,8 +245,8 @@ layout: false
         </div>
         <div class="dbg-row">
           <label>FPS CAP</label>
-          <input type="range" id="fpsCapSlider" min="15" max="60" step="5" value="50" />
-          <span class="val" id="fpsCapLabel">50</span>
+          <input type="range" id="fpsCapSlider" min="15" max="60" step="5" value="60" />
+          <span class="val" id="fpsCapLabel">60</span>
         </div>
       </div>
     </div>

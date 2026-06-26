@@ -1,0 +1,1171 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Axtrivc's Blog - 记录生活，分享思考</title><meta name="author" content="ɐ ℒℯℯ"><meta name="copyright" content="ɐ ℒℯℯ"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一个高中生的小角落">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Axtrivc&#39;s Blog">
+<meta property="og:url" content="https://axtrivc.github.io/index.html">
+<meta property="og:site_name" content="Axtrivc&#39;s Blog">
+<meta property="og:description" content="一个高中生的小角落">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="ɐ ℒℯℯ">
+<meta property="article:tag" content="博客, 随笔, 技术, 生活">
+<meta name="twitter:card" content="summary"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Axtrivc's Blog",
+  "alternateName": [
+    "记录生活，分享思考",
+    "axtrivc.github.io"
+  ],
+  "url": "https://axtrivc.github.io/"
+}</script><link rel="shortcut icon" href="/"><link rel="canonical" href="https://axtrivc.github.io/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Axtrivc\'s Blog',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=LXGW+WenKai+Screen&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/theme-system.css?v=47d781e"><link rel="stylesheet" href="/css/publish-button.css?v=47d781e"><link rel="stylesheet" href="/css/hide-rightside.css?v=47d781e"><link rel="stylesheet" href="/css/music-bar.css?v=47d781e"><link rel="stylesheet" href="/css/football-typography.css?v=47d781e"><meta name="generator" content="Hexo 7.3.0"><style id="hero-inline-css">
+
+    :root {
+      --hero-overscan: 0px;
+    }
+
+    /* ── River.ai 的 hero 容器结构 ───────────────────────── */
+    .hero {
+      position: relative;
+      height: 100vh;            /* viewport 高 */
+      height: 100dvh;           /* dynamic viewport，浏览器 chrome 收起时也跟随 */
+      width: 100%;
+      overflow: hidden;
+      background: #0E2F7E;
+    }
+
+    /* 静态兜底：CSS 渐变（WebGL 不可用时显示） */
+    .hero-placeholder {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, #1E6CC4 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 70%, #6DA89F 0%, transparent 60%),
+        radial-gradient(ellipse at 60% 40%, #BCDAD0 0%, transparent 40%),
+        linear-gradient(180deg, #0E2F7E 0%, #15397A 100%);
+      filter: saturate(0.95);
+      z-index: 0;
+    }
+
+    /* WebGL ASCII-river shader 主视觉 */
+    .hero-ascii {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+      opacity: 0.95;
+    }
+
+    /* 静态 fallback（webgl 失败时显示） */
+    .hero-still {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .hero-still.is-shown { opacity: 0.95; }
+
+    /* 顶部暗角：让文字浮在天空上方更易读 */
+    .hero-vignette {
+      position: absolute; inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(180deg,
+          rgba(14, 47, 126, 0.45) 0,
+          rgba(14, 47, 126, 0.30) 30vh,
+          rgba(14, 47, 126, 0.00) 55vh,
+          rgba(14, 47, 126, 0.00) 100%);
+      pointer-events: none;
+    }
+
+    /* 文字层 */
+    .hero-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 3;
+      pointer-events: none;
+      padding: 0 24px;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+    .hero-text-headline {
+      font-size: clamp(28px, 5vw, 56px);
+      font-weight: 600;
+      line-height: 1.1;
+      max-width: 900px;
+      text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
+      /* Live path: river-hero.js writes textContent directly → keep visible.
+       * Static fallback: inline typewriter handles text — start hidden until
+       * it has typed something. The two paths share the DOM but use different
+       * visibility gates below. */
+      opacity: 1;
+      transition: opacity 0.4s ease;
+    }
+    .hero-text-sub {
+      margin-top: 16px;
+      font-size: clamp(14px, 1.5vw, 18px);
+      font-weight: 400;
+      max-width: 600px;
+      line-height: 1.5;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+      opacity: 1;
+      transition: opacity 0.4s ease;
+    }
+    /* Static-fallback gate: when river-hero.js explicitly bails (sets
+     * window.__riverLive=false), body.hero-static is added by the inline
+     * typewriter. Until the typewriter types the first character, hide the
+     * empty container so it can fade in cleanly. */
+    body.hero-static .hero-text-headline:empty,
+    body.hero-static .hero-text-sub:empty {
+      opacity: 0;
+    }
+
+    /* FPS 指示 */
+    .perf-meter {
+      position: fixed;
+      bottom: 16px; right: 16px;
+      z-index: 10;
+      color: rgba(255,255,255,0.4);
+      font-size: 11px;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      pointer-events: none;
+    }
+
+    /* 调试条 */
+    .tod-debug {
+      position: fixed;
+      bottom: 16px; left: 16px;
+      z-index: 10;
+      pointer-events: auto;
+    }
+    .dbg-toggle {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+    }
+    .dbg-toggle:hover { background: rgba(255,255,255,0.16); }
+
+    .dbg-grid {
+      display: none;
+      margin-top: 8px;
+      padding: 14px;
+      background: rgba(8, 18, 40, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      grid-template-columns: repeat(2, minmax(170px, 1fr));
+      gap: 8px 16px;
+      color: rgba(255,255,255,0.85);
+      font-size: 12px;
+      min-width: 360px;
+    }
+    .dbg-grid.expanded { display: grid; }
+    .dbg-row { display: contents; }
+    .dbg-row label { opacity: 0.7; }
+    .dbg-row input[type="range"] {
+      grid-column: span 2;
+      width: 100%;
+    }
+    .dbg-row .val {
+      text-align: right;
+      font-family: ui-monospace, Menlo, monospace;
+      color: #4ade80;
+    }
+
+    /* 隐藏 screen reader only 文本（保留结构以便 river-hero.js 不报 null） */
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+  
+/* ═════════════════════════════════════════════════════════════
+ * v12 「阻力 → 临界爆发 → 直滑到主页」
+ *
+ * Hero stage:
+ *   - nav 固定顶部（金棕色），始终可见
+ *   - hero-shell 全屏（z-index 1000，在 nav 1200 之下）
+ *   - 其他 fixed widget 隐藏（music-bar、rightside、FAB、countdown）
+ *
+ * 转场数学：
+ *   raw ∈ [0, 0.45]  阻力段（damping 0.08）→ hero 几乎不动
+ *   raw ∈ [0.45, 1]  释放段（damping 0.32）→ hero 急速飞出
+ *   fly = easeOutExpo(raw) → 让释放曲线更"急"
+ *
+ * 性能铁律（v3→v12 经验）：
+ *   ❌ 不用 CSS filter（blur/brightness/saturate）
+ *   ❌ 不用 SVG filter / mix-blend-mode
+ *   ❌ 不加 will-change: transform（触发 canvas 降采样）
+ *   ✅ 只用 transform: translate3d + scale + opacity
+ *   ✅ canvas 单独加 translateZ(0) 锁独立 GPU 层
+ *   ✅ 0 transition → hijack 时 100% 跟手
+ * ═════════════════════════════════════════════════════════════ */
+
+:root {
+  --hero-raw: 0;
+  --hero-fly: 0;
+  --hero-pin: 0;
+}
+
+/* ── hero-shell：满屏 fixed（z-index 1000） ── */
+.hero-shell {
+  position: fixed;
+  inset: 0 0 0 0;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #0E2F7E;
+  margin: 0;
+  padding: 0;
+  z-index: 1000;
+  --raw: var(--hero-raw, 0);
+  --fly: var(--hero-fly, 0);
+  --pin: var(--hero-pin, 0);
+
+  /* 阻力段：蓄力向下鼓胀（+0.5vh）、暗化微弱
+   * 释放段：急速向上飞出 -130vh、暗化变深 */
+  transform: translate3d(0, calc(var(--pin) * 0.5vh - var(--fly) * 130vh), 0);
+  opacity: calc(1 - max(0, var(--fly) - 0.55) * 2.2);
+}
+.hero-shell > section.hero {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: #0E2F7E;
+}
+.hero-shell, .hero-shell * {
+  font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* canvas：独立 GPU 层避免降采样 */
+.hero-shell canvas.hero-ascii {
+  transform: translate3d(0, calc(var(--pin, 0) * 1.5vh), 0) translateZ(0);
+  -webkit-transform: translate3d(0, calc(var(--pin, 0) * 1.5vh), 0) translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* 阻力段的 vignette 暗化（伪元素，0 filter 性能安全） */
+.hero-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 30%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+  opacity: calc(var(--pin, 0) * 1.1);
+  z-index: 4;
+}
+
+/* hero 内部文字：阻力段跟着被压（暗化+微弱下压），释放段急速飞散 */
+.hero-text-headline,
+.hero-text-sub {
+  --fly: var(--hero-fly, 0);
+  --pin: var(--hero-pin, 0);
+  transform: translate3d(
+    calc(var(--fly) * -8vh),
+    calc(var(--pin) * -1vh - var(--fly) * 65vh),
+    0
+  );
+  opacity: calc(0.96 - var(--fly) * 1.05);
+}
+.hero-cta,
+.hero-text-label {
+  --fly: var(--hero-fly, 0);
+  --pin: var(--hero-pin, 0);
+  transform: translate3d(
+    calc(var(--fly) * 8vh),
+    calc(var(--pin) * -1vh - var(--fly) * 65vh),
+    0
+  );
+  opacity: calc(0.96 - var(--fly) * 1.05);
+}
+.hero-text-quote {
+  --fly: var(--hero-fly, 0);
+  --pin: var(--hero-pin, 0);
+  transform: translate3d(0, calc(var(--pin) * -1vh - var(--fly) * 70vh), 0);
+  opacity: calc(0.96 - var(--fly) * 1.05);
+}
+
+/* ── 博客主页：紧跟 hero 后面（z-index 1100） ── */
+body.hero-page-active #content-inner,
+body.hero-page-active .layout,
+body.hero-page-active main {
+  position: relative;
+  z-index: 1100;
+  margin-top: 100dvh;
+  background: #faf8f5;
+  transform: translate3d(0, calc((1 - var(--hero-fly, 0)) * 50vh), 0);
+  opacity: clamp(var(--hero-fly, 0), 0, 1);
+  will-change: transform, opacity;
+}
+/* 释放后：清掉 transform/opacity，让原生滚动接管 */
+body.hero-released #content-inner,
+body.hero-released .layout,
+body.hero-released main {
+  transform: none !important;
+  opacity: 1 !important;
+  margin-top: 100dvh !important;
+}
+
+/* v12.2:hero released 后隐藏 hero-shell,消除下方空白
+ * reenter 时由 JS 重新设置 display:'' */
+body.hero-released .hero-shell {
+  display: none !important;
+}
+
+/* ── v12 导航：始终显示（金棕色），hero 阶段就可见 ── */
+body.hero-page-active #nav,
+body.hero-page-active #page-header.full_page #nav {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 1200;
+  background: linear-gradient(180deg, #b8860b 0%, #cd9b1d 50%, #daa520 100%) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  padding: 0 20px;
+  align-items: center;
+  transform: translateZ(0);
+}
+
+/* hero 阶段隐藏大 banner 标题（hero 占满屏，标题被挡） */
+body.hero-page-active #page-header.full_page {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+}
+body.hero-page-active #page-header.full_page #site-info,
+body.hero-page-active #page-header.full_page #scroll-down,
+body.hero-page-active #site-info,
+body.hero-page-active #scroll-down {
+  display: none !important;
+}
+/* 释放后恢复 banner */
+body.hero-released #page-header.full_page {
+  height: auto;
+  overflow: visible;
+}
+body.hero-released #site-info,
+body.hero-released #scroll-down {
+  display: block !important;
+}
+
+/* nav 内 logo */
+body.hero-page-active #blog-info,
+body.hero-page-active #nav #blog-info {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  flex-shrink: 0;
+  margin-right: 20px;
+  position: relative;
+  left: 0;
+}
+body.hero-page-active #blog-info .site-name,
+body.hero-page-active #blog-info a,
+body.hero-page-active #nav .site-name {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+}
+
+/* #menus */
+body.hero-page-active #menus {
+  display: flex !important;
+  align-items: center;
+  background: transparent !important;
+  height: 60px;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* ── v12 首页净化：hero 阶段隐藏 fixed widget，释放后恢复 ── */
+body.hero-page-active:not(.hero-released) #music-bar,
+body.hero-page-active:not(.hero-released) #music-panel,
+body.hero-page-active:not(.hero-released) #rightside,
+body.hero-page-active:not(.hero-released) #go-up,
+body.hero-page-active:not(.hero-released) #rightside-config,
+body.hero-page-active:not(.hero-released) #axtrivc-fab,
+body.hero-page-active:not(.hero-released) .fab-publish,
+body.hero-page-active:not(.hero-released) #announcement-bg,
+body.hero-page-active:not(.hero-released) .announcement,
+body.hero-page-active:not(.hero-released) .card-announcement,
+body.hero-page-active:not(.hero-released) #dbgToggle,
+body.hero-page-active:not(.hero-released) #debugBar {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* 释放后：恢复所有 widget（CSS 默认值即可，但我们明确覆盖） */
+body.hero-released #music-bar,
+body.hero-released #music-panel,
+body.hero-released #rightside,
+body.hero-released #axtrivc-fab {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* 卡片融底（保留以维持视觉风格统一） */
+body.hero-page-active #article-container,
+body.hero-page-active .recent-post-item,
+body.hero-page-active .card-widget,
+body.hero-page-active .card-recent-post,
+body.hero-page-active #recent-posts > .recent-post-item {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+body.hero-page-active .recent-post-item {
+  background: transparent !important;
+}
+body.hero-page-active .card-widget {
+  background: transparent !important;
+}
+body.hero-page-active #recent-posts {
+  background: transparent !important;
+}
+
+/* 全局滚动：hero 阶段我们自己 hijack，释放后浏览器接管 */
+body.hero-page-active {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* ── 右侧滚动进度导轨（PC only） ── */
+.hero-progress-rail {
+  position: fixed;
+  right: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 110px;
+  background: rgba(255, 255, 255, 0.32);
+  border-radius: 1px;
+  z-index: 1500;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: calc(1 - var(--hero-fly, 0) * 1.1);
+}
+.hero-progress-fill {
+  position: absolute;
+  top: 0;
+  left: -1px;
+  width: 4px;
+  height: calc(var(--hero-raw, 0) * 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #ffd970 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(255, 217, 112, 0.6);
+}
+@media (max-width: 768px) {
+  .hero-progress-rail { display: none; }
+}
+
+/* ── 底部 SCROLL 提示 ── */
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.95);
+  pointer-events: none;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  opacity: calc(1 - var(--hero-fly, 0) * 1.4);
+}
+.hero-scroll-label {
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
+}
+.hero-scroll-rail {
+  position: relative;
+  width: 1px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.32);
+  overflow: hidden;
+}
+.hero-scroll-rail-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--hero-raw, 0) * 100%);
+  background: rgba(255, 255, 255, 0.95);
+}
+.hero-scroll-arrow {
+  animation: heroScrollBob 1.8s ease-in-out infinite;
+}
+@keyframes heroScrollBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(5px); }
+}
+@media (max-width: 768px) {
+  .hero-scroll-hint { bottom: 18px; gap: 8px; }
+  .hero-scroll-label { display: none; }
+}
+
+</style>
+</head><body class="hero-page-active"><div class="bg-animation" id="web_bg" style="background-color: #FFFFFF;"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/null" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">167</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/espanol/"><i class="fa-fw fas fa-language"></i><span> 西班牙语</span></a></div><div class="menus_item"><a class="site-page" href="/football/"><i class="fa-fw fas fa-futbol"></i><span> 足球日报</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/guestbook/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 工具箱</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Axtrivc's Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/espanol/"><i class="fa-fw fas fa-language"></i><span> 西班牙语</span></a></div><div class="menus_item"><a class="site-page" href="/football/"><i class="fa-fw fas fa-futbol"></i><span> 足球日报</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/guestbook/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 工具箱</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">Axtrivc's Blog</h1><div id="site-subtitle"><span id="subtitle"></span></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header>
+
+<div class="hero-shell">
+<section class="hero" id="hero">
+    <div class="hero-placeholder" aria-hidden="true"></div>
+    <canvas class="hero-ascii" id="asciiRiver" aria-hidden="true"></canvas>
+    <img class="hero-still" id="heroStill" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/hero/hero-static.jpg" alt="" aria-hidden="true" />
+    <div class="hero-vignette" aria-hidden="true"></div>
+
+    <div class="hero-text" id="heroText" aria-hidden="true">
+      <div class="hero-text-headline" id="heroHeadlineLive"></div>
+      <div class="hero-text-sub" id="heroSublineLive"></div>
+    </div>
+
+    <div class="perf-meter" id="fpsMeter" aria-hidden="true">-- fps</div>
+
+    <h1 class="sr-only">River — Hero</h1>
+    <p class="sr-only">复刻自 river.ai 的 hero ASCII-river WebGL 动画</p>
+
+    <div class="tod-debug minimized" id="debugBar" aria-hidden="true">
+      <button class="dbg-toggle" id="dbgToggle" type="button" aria-label="展开调试面板">+</button>
+      <div class="dbg-grid" id="dbgGrid">
+        <div class="dbg-row">
+          <label>RENDER SCALE</label>
+          <input type="range" id="renderScaleSlider" min="50" max="100" step="5" value="100" />
+          <span class="val" id="renderScaleLabel">1.00</span>
+        </div>
+        <div class="dbg-row">
+          <label>AA MODE</label>
+          <select id="aaModeSelect" class="tod-select" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:4px 8px;font-size:12px;">
+            <option value="0">off</option>
+            <option value="4">SSAA ×4</option>
+            <option value="8" selected>SSAA ×8</option>
+            <option value="9">SSAA ×9</option>
+            <option value="sdf">SDF 1×</option>
+          </select>
+        </div>
+        <div class="dbg-row">
+          <label>MARCH STEPS</label>
+          <input type="range" id="canyonStepsSlider" min="48" max="240" step="4" value="112" />
+          <span class="val" id="canyonStepsLabel">112</span>
+        </div>
+        <div class="dbg-row">
+          <label>STEP SCALE</label>
+          <input type="range" id="canyonStepScaleSlider" min="100" max="260" step="5" value="118" />
+          <span class="val" id="canyonStepScaleLabel">1.18</span>
+        </div>
+        <div class="dbg-row">
+          <label>REFINE</label>
+          <input type="range" id="refineSlider" min="4" max="14" step="1" value="14" />
+          <span class="val" id="refineLabel">14</span>
+        </div>
+        <div class="dbg-row">
+          <label>FPS CAP</label>
+          <input type="range" id="fpsCapSlider" min="15" max="60" step="5" value="50" />
+          <span class="val" id="fpsCapLabel">50</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<div class="hero-scroll-hint" aria-hidden="true">
+  <span class="hero-scroll-label">SCROLL</span>
+  <div class="hero-scroll-rail"><div class="hero-scroll-rail-fill"></div></div>
+  <div class="hero-scroll-arrow">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 9L12 15L18 9"/>
+    </svg>
+  </div>
+</div>
+
+</div>
+<main class="layout" id="content-inner"><div class="recent-posts nc masonry" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/26/hello-world/" title="Hello World">Hello World</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-26T10:32:24.098Z" title="发表于 2026-06-26 18:32:24">2026-06-26</time></span></div><div class="content">Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new &quot;My New Post&quot;  More info: Writing Run server1$ hexo server  More info: Server Generate static files1$ hexo generate  More info: Generating Deploy to remote sites1$ hexo deploy  More info: Deployment </div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/26/football-morning-2026-06-26/" title="足球早报 · 2026年6月26日 星期四｜数据驱动第 2 期">足球早报 · 2026年6月26日 星期四｜数据驱动第 2 期</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-26T00:00:00.000Z" title="发表于 2026-06-26 08:00:00">2026-06-26</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ 🔥 改革版 v2 · 数据驱动｜所有积分、赛程、xG 来自 football-data skill（基于 ESPN API），推演框架来自 football-bayes + worldcup-predictor (Elo 78% 准确率)抓取时间：2026-06-26 17:11 (GMT+8)数据接口：ESPN Core API ｜ OptaJoe ｜ FBref   📅 今日赛程（北京时间）6 场世界杯小组赛——同时段开打。数据来自 football-data.get_daily_schedule：    北京时间 赛事 对阵 场馆    03:00 FIFA World Cup Norway vs France Gillette Stadium (Foxborough, Massachusetts)   03:00 FIFA World Cup Senegal vs Iraq BMO Field (Toronto)   08:00 FIFA World Cup Cape Verde vs Saudi Arabia NRG Stadium (Houston, Tex...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/25/football-evening-2026-06-25/" title="足球晚报 · 2026年6月25日 星期四">足球晚报 · 2026年6月25日 星期四</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-25T12:00:00.000Z" title="发表于 2026-06-25 20:00:00">2026-06-25</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ 🌙 晚报 · 晚间新闻 + 深度资讯 · 数据来源 football-data.org + 懂球帝  足坛新闻📰 足坛头条 足协官方：捂嘴染红、限时离场、5秒界外球等新规7月1日起执行 懂球译站 | 赖因德斯亲笔信：收银员的19岁，国脚和爸爸的27岁 记者：金斯基预计将与热刺签下一份五年新合同 曼联名宿：枪手热刺都想要托纳利，不过感觉我们最终会拿下他 补充后卫吗？记者：黄蜂正在兜售迈尔斯-布里奇斯 斯彭斯谈拒绝和帕尔特伊握手：我有自己的准则，不对此事解释 全市场：贝蒂斯试探接触都灵中场卡萨代伊 Shams：黄蜂没主动兜售三球，但森林狼报价丰厚让他们放手 Shams：三球对加盟森林狼很兴奋，他期待和爱德华兹联手 记者：楚阿梅尼薪资不是阻碍，曼联愿意让他成为队内顶薪之一  西甲新闻 斯彭斯谈拒绝和帕尔特伊握手：我有自己的准则，不对此事解释 全市场：贝蒂斯试探接触都灵中场卡萨代伊 记者：楚阿梅尼薪资不是阻碍，曼联愿意让他成为队内顶薪之一 卫报：国际足联与EFC合资；世俱杯或扩至48队 哈塞尔巴因克：戈登确实发挥不好，斯彭斯也没给他足够的支援 乌奈谈佛得角门将涨粉：若让我突然涨...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/25/football-morning-2026-06-25/" title="足球早报 · 2026年6月25日 星期四">足球早报 · 2026年6月25日 星期四</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-25T00:00:00.000Z" title="发表于 2026-06-25 08:00:00">2026-06-25</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ ☀️ 早报 · 晨间战报 + 赛程速览 · 数据来源 football-data.org + 懂球帝  今日战报 暂无已结束比赛  近期赛程 近两日暂无赛程  我的主队巴萨相关新闻  巴萨官方撰文，向委内瑞拉地震受灾者表达支持  皇马相关新闻  每体：皇马想和维尼修斯续约，但不会不惜一切代价  马竞 暂无近期动态  迈阿密国际 暂无近期动态  西班牙近期战绩    日期 赛事 对阵 比分 结果    6月14日 世界杯 客 vs Qatar 1-1 ➖ 平   6月19日 世界杯 主 vs Bosnia-H. 4-1 ✅ 胜   相关新闻  西媒：此前冒充警察性侵妓女的西班牙裁判，因殴打前伴侣再被捕  足坛新闻📰 足坛头条 足协官方：捂嘴染红、限时离场、5秒界外球等新规7月1日起执行 福斯贝里：我会在世界杯结束后宣布退出瑞典国家队 巴拉格：我认为梅西会参加2030世界杯，在阿根廷本土打揭幕战 3.06，维尼修斯战苏格兰预期进球是世界杯有记录以来单场最高 斯基拉：罗马续约切利克进入最后阶段，3年合同年薪300万欧元  西甲新闻 3.06，维尼修斯战苏格兰预期进球是世界杯有记...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/24/football-evening-2026-06-24/" title="足球晚报 · 2026年6月24日 星期三">足球晚报 · 2026年6月24日 星期三</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-24T12:00:00.000Z" title="发表于 2026-06-24 20:00:00">2026-06-24</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ 🌙 晚报 · 晚间新闻 + 深度资讯 · 数据来源 football-data.org + 懂球帝  足坛新闻📰 足坛头条 C罗6届世界杯全部10进球名场面，看图闯关，你能满分通关吗？ 努涅斯招人嫌的怪异发型，背后还有这么多玄学？ 世界杯第十四日前瞻：巴西血拼苏格兰争头名，韩国不败即出线 米体：拉齐奥女足因怀孕解约格特贝里被判赔偿 全市场：萨索洛不会买断恩佐拉和法代拉 贝拉米正与伯恩利谈判，有望下赛季回归执掌球队 镜报：赖斯和斯彭斯将在英格兰队的大本营接受伤情评估 天空：奥地利对阵阿尔及利亚都不想赢，若赢球大概率碰西班牙 ⭐ 记者：穆里尼奥计划给予皇马右后卫更高进攻自由度 ⭐ 利物浦评队史百大球星第30名：史蒂夫-海威  西甲新闻 天空：奥地利对阵阿尔及利亚都不想赢，若赢球大概率碰西班牙 记者：穆里尼奥计划给予皇马右后卫更高进攻自由度 米体：国米还未和乌迪内斯谈妥索莱，马竞准备介入 全市场：那不勒斯瞄准希拉和维卡里奥，总价约为4000万欧 记者：恩佐皇马谈判重启，切尔西标价1.2亿镑 内维尔：戈登是英格兰队压力最大的球员，世界杯还没亮眼表现  英超新闻 贝拉米正与伯恩利...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/24/football-morning-2026-06-24/" title="足球早报 · 2026年6月24日 星期三">足球早报 · 2026年6月24日 星期三</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-24T00:00:00.000Z" title="发表于 2026-06-24 08:00:00">2026-06-24</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ ☀️ 早报 · 晨间战报 + 赛程速览 · 数据来源 football-data.org + 懂球帝  今日战报 暂无已结束比赛  近期赛程 近两日暂无赛程  我的主队巴萨相关新闻  巴萨球员国家队战报：坎塞洛70场里程碑送助攻，葡萄牙大胜  皇马 暂无近期动态  马竞 暂无近期动态  迈阿密国际 暂无近期动态  西班牙近期战绩    日期 赛事 对阵 比分 结果    6月14日 世界杯 客 vs Qatar 1-1 ➖ 平   6月19日 世界杯 主 vs Bosnia-H. 4-1 ✅ 胜   6月25日 世界杯 主 vs Canada - TIMED   下一场：6月25日 03:00 世界杯 - Switzerland vs Canada 足坛新闻📰 足坛头条 葡萄牙5-0乌兹别克斯坦，C罗双响，莱奥、努诺-门德斯建功 英格兰0-0闷平加纳，奥赖利中框，三狮军团全场仅3射正 安帅：对阵苏格兰会沿用踢海地的战术，球队阵型不会变 巴媒：巴西赛前全队合影的习惯将保持至世界杯结束 马刺将今年35号签+2未来次轮送至掘金，换来26号签并选中里德  西甲新闻 RMC：拉扬预...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/23/football-evening-2026-06-23/" title="足球晚报 · 2026年6月23日 星期二">足球晚报 · 2026年6月23日 星期二</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-23T12:00:00.000Z" title="发表于 2026-06-23 20:00:00">2026-06-23</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ 🌙 晚报 · 晚间新闻 + 深度资讯 · 数据来源 football-data.org + 懂球帝  足坛新闻📰 足坛头条 世界杯第十三比赛日前瞻：葡萄牙力求首胜，英格兰盼锁定头名 官方：马宁担任法国vs挪威第四官员搭档奥利弗，周飞担任候补助理裁判 不补水也不哈哈，从前的世界杯广告个个都经典 法媒：因马赛财政原因奥巴梅扬将离队，他丝毫没有退役的打算 廖三宁：热身赛有很多问题要复盘，我们真正的目标是对日本的比赛 前金靴认证，克洛泽：在我看来，梅西是史上最伟大足球运动员 郭士强：杨瀚森很努力但技术状态一般；做好了八村回归日本队的准备 TA：牛津联准备任命拉姆塞为球队新主帅 记者：勒纳尔世界杯后很难继续执教突尼斯 郭士强：会为日本男篮最强阵容做准备，包括八村垒的回归可能  西甲新闻 法媒：因马赛财政原因奥巴梅扬将离队，他丝毫没有退役的打算 记者：巴萨对小蜘蛛的言论满意，将提交1.2亿欧的第二份报价 阿斯：巴萨担忧拉菲和阿劳霍伤情；亚马尔复发风险已降至最低 记者：皇马希望马竞不会低于1.5亿欧卖小蜘蛛，目前无意加价 马竞名宿：若小蜘蛛想走就让他走，我喜欢真正想留在这的球员 阿斯...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/23/football-morning-2026-06-23/" title="足球早报 · 2026年6月23日 星期二">足球早报 · 2026年6月23日 星期二</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-23T00:00:00.000Z" title="发表于 2026-06-23 08:00:00">2026-06-23</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ ☀️ 早报 · 晨间战报 + 赛程速览 · 数据来源 football-data.org + 懂球帝  今日战报 暂无已结束比赛  近期赛程 近两日暂无赛程  我的主队巴萨 暂无近期动态  皇马 暂无近期动态  马竞相关新闻  失望至极，部分马竞球迷焚烧阿尔瓦雷斯球衣  迈阿密国际 暂无近期动态  西班牙近期战绩    日期 赛事 对阵 比分 结果    6月14日 世界杯 客 vs Qatar 1-1 ➖ 平   6月19日 世界杯 主 vs Bosnia-H. 4-1 ✅ 胜   6月25日 世界杯 主 vs Canada - TIMED   下一场：6月25日 03:00 世界杯 - Switzerland vs Canada 相关新闻  路易斯-阿尔贝托：法国是世界杯热门，但我依然看好西班牙  足坛新闻📰 足坛头条 法国3-0伊拉克，姆巴佩双响，奥利塞双助攻登贝莱传射 阿根廷2-0奥地利两连胜提前出线，梅西梅开二度+失点 挪威3-2塞内加尔提前出线，哈兰德梅开二度+中柱，萨尔双响 谷口彰悟：我们全队都想拿下瑞典，以小组第一晋级 蒂奥：输掉关键之战确实很难受，最后一...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/22/football-morning-2026-06-22/" title="足球早报 · 2026年6月22日 星期一">足球早报 · 2026年6月22日 星期一</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-22T00:00:00.000Z" title="发表于 2026-06-22 08:00:00">2026-06-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ ☀️ 早报 · 晨间战报 + 赛程速览 · 数据来源 football-data.org + 懂球帝  今日战报 暂无已结束比赛  近期赛程 近两日暂无赛程  我的主队巴萨相关新闻  世体：多队有意托尼-费尔南德斯，但他专注于参加巴萨季前赛  皇马相关新闻  库库伴侣：我从小就是皇马球迷，很开心能和他一起分享这一切 西媒：皇马派球探考察了迪奥曼德，并对其表现印象深刻  马竞 暂无近期动态  迈阿密国际 暂无近期动态  西班牙近期战绩    日期 赛事 对阵 比分 结果    6月14日 世界杯 客 vs Qatar 1-1 ➖ 平   6月19日 世界杯 主 vs Bosnia-H. 4-1 ✅ 胜   6月25日 世界杯 主 vs Canada - TIMED   下一场：6月25日 03:00 世界杯 - Switzerland vs Canada 足坛新闻📰 足坛头条 乌拉圭2-2佛得角 ，凯文-皮纳打破僵局，瓦雷拉扳平比分 球员来自欧洲集训也在葡萄牙，佛得角足球的“借壳生蛋” 懂球帝6月22日世界杯之星：奥亚萨瓦尔 比利时国脚德克伊珀：我本该进球的，对手门将太神勇...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/21/football-evening-2026-06-21/" title="足球晚报 · 2026年6月21日 星期日">足球晚报 · 2026年6月21日 星期日</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-21T12:00:00.000Z" title="发表于 2026-06-21 20:00:00">2026-06-21</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ 🌙 晚报 · 晚间新闻 + 深度资讯 · 数据来源 football-data.org + 懂球帝  足坛新闻📰 足坛头条 中国男篮热身赛91-81澳大利亚，王俊杰23+6，崔永熙12分 爱拍纪录片也爱写书，日本足球的自反不只《罗斯托夫的14秒》 尼亚凯特：哈兰德是我交手次数最多的球员之一，见他像老熟人 利物浦评队史百大球星第39名：左后卫阿兰-肯尼迪 意媒：托纳利若转会，米兰可获100万至180万欧元团结贡献金 每体：库库雷利亚伦敦豪宅采用北欧极简风，位处高端社区 放松一下，队报：奥利塞和谢尔基坐园艺车去训练 全市场：伊尔迪兹世界杯之旅即将结束，斯帕莱蒂致电安慰 全市场：国米有意厄斯蒂高，球员无意转会并且热那亚不想放人 阿森纳自媒体：17岁巴蒂什维利将加盟阿森纳  西甲新闻 每体：库库雷利亚伦敦豪宅采用北欧极简风，位处高端社区 对欧洲球队1胜10负，沙特曾在94年美国世界杯战胜比利时 西班牙从未连续3场世界杯不进球，从未遭遇世界杯5场不胜 阿斯：皇马想延续赛后签下世界杯新星的策略，本届是布阿迪 世体：贝蒂斯与瓦斯科达伽马已谈妥德奥萨，转会费约1200万欧 记者：如果皇...</div></div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#content-inner">17</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/null" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">ɐ ℒℯℯ</div><div class="author-info-description">一个高中生的小角落</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">167</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/26/hello-world/" title="Hello World">Hello World</a><time datetime="2026-06-26T10:32:24.098Z" title="发表于 2026-06-26 18:32:24">2026-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/26/football-morning-2026-06-26/" title="足球早报 · 2026年6月26日 星期四｜数据驱动第 2 期">足球早报 · 2026年6月26日 星期四｜数据驱动第 2 期</a><time datetime="2026-06-26T00:00:00.000Z" title="发表于 2026-06-26 08:00:00">2026-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/25/football-evening-2026-06-25/" title="足球晚报 · 2026年6月25日 星期四">足球晚报 · 2026年6月25日 星期四</a><time datetime="2026-06-25T12:00:00.000Z" title="发表于 2026-06-25 20:00:00">2026-06-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/25/football-morning-2026-06-25/" title="足球早报 · 2026年6月25日 星期四">足球早报 · 2026年6月25日 星期四</a><time datetime="2026-06-25T00:00:00.000Z" title="发表于 2026-06-25 08:00:00">2026-06-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/24/football-evening-2026-06-24/" title="足球晚报 · 2026年6月24日 星期三">足球晚报 · 2026年6月24日 星期三</a><time datetime="2026-06-24T12:00:00.000Z" title="发表于 2026-06-24 20:00:00">2026-06-24</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%A5%BF%E7%8F%AD%E7%89%99%E8%AF%AD%E5%AD%A6%E4%B9%A0/"><span class="card-category-list-name">西班牙语学习</span><span class="card-category-list-count">5</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/"><span class="card-category-list-name">足球日报</span><span class="card-category-list-count">161</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/%E8%B6%B3%E7%90%83/" style="font-size: 1.5em; color: #99a9bf">足球</a> <a href="/tags/%E8%AF%AD%E6%B3%95/" style="font-size: 1.23em; color: #999ea6">语法</a> <a href="/tags/B2%E4%B8%AD%E9%AB%98%E7%BA%A7/" style="font-size: 1.1em; color: #999">B2中高级</a> <a href="/tags/%E8%A5%BF%E7%8F%AD%E7%89%99%E8%AF%AD/" style="font-size: 1.3em; color: #99a1ac">西班牙语</a> <a href="/tags/%E6%97%B6%E6%80%81/" style="font-size: 1.1em; color: #999">时态</a> <a href="/tags/%E6%97%A9%E6%8A%A5/" style="font-size: 1.43em; color: #99a6b9">早报</a> <a href="/tags/A1%E5%85%A5%E9%97%A8/" style="font-size: 1.17em; color: #999c9f">A1入门</a> <a href="/tags/%E6%99%9A%E6%8A%A5/" style="font-size: 1.37em; color: #99a4b2">晚报</a> <a href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" style="font-size: 1.1em; color: #999">贝叶斯</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%88%86%E6%9E%90/" style="font-size: 1.1em; color: #999">深度分析</a> <a href="/tags/%E4%B8%96%E7%95%8C%E6%9D%AF/" style="font-size: 1.1em; color: #999">世界杯</a> <a href="/tags/%E5%8F%91%E9%9F%B3/" style="font-size: 1.1em; color: #999">发音</a> <a href="/tags/%E8%99%9A%E6%8B%9F%E5%BC%8F/" style="font-size: 1.1em; color: #999">虚拟式</a> <a href="/tags/A2%E5%9F%BA%E7%A1%80/" style="font-size: 1.1em; color: #999">A2基础</a> <a href="/tags/B1%E8%BF%9B%E9%98%B6/" style="font-size: 1.1em; color: #999">B1进阶</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">49</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/05/">
+            <span class="card-archive-list-date">
+              五月 2026
+            </span>
+            <span class="card-archive-list-count">62</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">56</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">167</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-26T10:32:37.146Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By ɐ ℒℯℯ</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>window.typedJSFn = {
+  init: str => {
+    window.typed = new Typed('#subtitle', Object.assign({
+      strings: str,
+      startDelay: 300,
+      typeSpeed: 150,
+      loop: true,
+      backSpeed: 50,
+    }, null))
+  },
+  run: subtitleType => {
+    if (true) {
+      if (typeof Typed === 'function') {
+        subtitleType()
+      } else {
+        btf.getScript('https://cdn.jsdelivr.net/npm/typed.js@3.0.0/dist/typed.umd.min.js').then(subtitleType)
+      }
+    } else {
+      subtitleType()
+    }
+  },
+  processSubtitle: (content, extraContents = []) => {
+    if (true) {
+      const sub = ["生活不止眼前的代码","还有远方的诗和球场","记录每一个灵光乍现的瞬间"].slice()
+
+      if (extraContents.length > 0) {
+        sub.unshift(...extraContents)
+      }
+
+      if (typeof content === 'string') {
+        sub.unshift(content)
+      } else if (Array.isArray(content)) {
+        sub.unshift(...content)
+      }
+
+      sub.length > 0 && typedJSFn.init(sub)
+    } else {
+      document.getElementById('subtitle').textContent = typeof content === 'string' ? content :
+        (Array.isArray(content) && content.length > 0 ? content[0] : '')
+    }
+  }
+}
+btf.addGlobalFn('pjaxSendOnce', () => { typed.destroy() }, 'typedDestroy')
+</script><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      const from = '出自 ' + data.from
+      typedJSFn.processSubtitle(data.hitokoto, [from])
+    })
+    .catch(err => {
+      console.error('Failed to get the Hitokoto API:', err)
+      typedJSFn.processSubtitle(["生活不止眼前的代码","还有远方的诗和球场","记录每一个灵光乍现的瞬间"])
+    })
+}
+typedJSFn.run(subtitleType)
+</script></div><script>window.AXTRIVC_SITE_CONFIG = {"title":"站点设置","avatar":"/img/eae25271b82f2e3c25516b9100d02874.study20flying-10.jpg"};</script><div id="music-bar">
+  <div class="bar-left">
+    <div class="bar-cover" id="vinyl-icon">🎵</div>
+    <div class="bar-info">
+      <div class="bar-title" id="bar-title">My Playlist</div>
+      <div class="bar-sub">点击右侧按钮播放 ♪</div>
+    </div>
+  </div>
+  <div class="bar-controls">
+    <button class="bar-btn" id="btn-link" title="在 Spotify 中打开">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+    </button>
+    <button class="bar-btn-toggle" id="btn-toggle" title="展开/收起播放器">
+      <svg id="icon-up" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+    </button>
+    <button class="bar-btn-close" id="btn-bar-close" title="隐藏音乐栏（按 🎵 按钮可恢复）">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+</div>
+<div id="music-launcher" hidden>
+  <button id="btn-launcher" title="展开音乐栏">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+  </button>
+</div>
+<div id="music-panel">
+  <div class="panel-header">
+    <span>🎧 Now Playing</span>
+    <button id="btn-close" title="关闭">✕</button>
+  </div>
+  <div id="player-embed-container"></div>
+</div>
+<script src="/js/music-bar.js?v=47d781e"></script><script src="/js/theme-system.js?v=47d781e"></script><script src="/js/publish-button.js?v=47d781e"></script><script src="/js/dynamic-avatar.js?v=47d781e"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/hero/river-hero.js?v=9"></script>
+<script>
+    // 调试面板展开
+    document.getElementById('dbgToggle').addEventListener('click', function() {
+      var grid = document.getElementById('dbgGrid');
+      var expanded = grid.classList.toggle('expanded');
+      this.textContent = expanded ? '−' : '+';
+    });
+    // 在 slider 旁实时显示数值
+    function bindSlider(id, labelId, fmt) {
+      var el = document.getElementById(id);
+      var lab = document.getElementById(labelId);
+      if (!el || !lab) return;
+      el.addEventListener('input', function() {
+        lab.textContent = fmt ? fmt(parseFloat(el.value)) : el.value;
+      });
+    }
+    bindSlider('renderScaleSlider', 'renderScaleLabel', function(v){return (v/100).toFixed(2);});
+    bindSlider('canyonStepsSlider', 'canyonStepsLabel');
+    bindSlider('canyonStepScaleSlider', 'canyonStepScaleLabel', function(v){return (v/100).toFixed(2);});
+    bindSlider('refineSlider', 'refineLabel');
+    bindSlider('fpsCapSlider', 'fpsCapLabel');
+
+    // ── 静态打字机回退 ──
+    // 只在 river-hero.js 没接管文字渲染时才运行（GPU 不可用 / tier<3 / 静态
+    // 兜底场景）。river-hero.js 启动后会立刻把 window.__riverLive 设为 true，
+    // 这里轮询检测到就跳过执行，避免和 rAF 驱动的文字写入打架造成抖字/错乱。
+    (function(){
+      var head = document.getElementById('heroHeadlineLive');
+      var sub  = document.getElementById('heroSublineLive');
+      if (!head || !sub) return;
+      var headline = "Intelligence that flows with you.";
+      var subline  = "River.ai 的 WebGL ASCII-river 峡谷日夜循环动画";
+      var started = false;
+      function startFallback() {
+        if (started) return;
+        started = true;
+        // Mark static-fallback so the CSS knows to hide empty text containers
+        // until the typewriter fills them (the live path never adds this class).
+        document.body.classList.add('hero-static');
+        var i = 0;
+        function type() {
+          if (i <= headline.length) {
+            head.textContent = headline.slice(0, i);
+            i++;
+            setTimeout(type, 36);
+          } else {
+            sub.textContent = subline;
+          }
+        }
+        setTimeout(type, 400);
+      }
+      // 1. 若 river-hero.js 已经在 800ms 内接管 → 退出
+      // 2. 若没接管（GPU 不可用 / static fallback）→ 启动静态打字机
+      var wait = 0;
+      (function poll() {
+        if (window.__riverLive === true) return;          // river-hero.js 接管了
+        if (window.__riverLive === false) return startFallback(); // 明确放弃接管
+        if (wait++ > 80) return startFallback();           // 800ms 内无信号 → fallback
+        setTimeout(poll, 10);
+      })();
+    })();
+  </script>
+<div class="hero-progress-rail" aria-hidden="true">
+  <div class="hero-progress-fill"></div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+  var html = document.documentElement;
+  var body = document.body;
+  var rafId = null;
+  var hijacking = true;
+  var heroH = 0;
+
+  // 内部状态
+  var progress = 0;        // 视觉进度（被 spring 平滑过）0..1
+  var target = 0;          // wheel 累积的目标 0..1
+  var releaseArmed = false;
+
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function easeOutExpo(t) { return t >= 1 ? 1 : (1 - Math.pow(1 - t, 3)); }
+  function easeInQuad(t) { return t * t; }
+
+  function measure() {
+    heroH = window.innerHeight;
+  }
+  measure();
+  window.addEventListener('resize', function() {
+    measure();
+    applyVars(progress);
+  });
+
+  // URL 调试参数：?raw=0.3 直接设定 progress（用于截图测试）
+  function getDebugRaw() {
+    try {
+      var qsRaw = new URLSearchParams(window.location.search).get('raw');
+      if (qsRaw !== null) {
+        var v = parseFloat(qsRaw);
+        if (!isNaN(v)) return clamp01(v);
+      }
+    } catch (e) {}
+    return null;
+  }
+  var debugRaw = getDebugRaw();
+  if (debugRaw !== null) {
+    progress = debugRaw;
+    target = debugRaw;
+    releaseArmed = debugRaw >= 0.45;
+  }
+
+  function applyVars(p) {
+    var pin = p < 0.45 ? easeInQuad(p / 0.45) : 1 - easeOutExpo((p - 0.45) / 0.55) * 0.3;
+    var fly = easeOutExpo(p);
+    html.style.setProperty('--hero-raw', p.toFixed(4));
+    html.style.setProperty('--hero-fly', fly.toFixed(4));
+    html.style.setProperty('--hero-pin', pin.toFixed(4));
+  }
+
+  function tick() {
+    rafId = null;
+    if (!hijacking) return;
+
+    if (releaseArmed) {
+      target = 1;  // 强制冲顶
+      // 释放段：无 inertia，直接同步
+      progress += (target - progress) * 0.32;
+      if (progress > 0.998) {
+        progress = 1;
+        hijacking = false;
+        applyVars(1);
+        // 释放：移除 main 的 transform/opacity，scrollTo 到 hero 底部
+        body.classList.add('hero-released');
+        // scrollTo 让博客内容的自然位置生效（main 顶部 = viewport 顶部）
+        window.scrollTo(0, heroH);
+        return;
+      }
+    } else {
+      // 阻力段：缓慢跟随 target（push-back 感）
+      progress += (target - progress) * 0.08;
+    }
+
+    applyVars(progress);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function schedule() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(tick);
+  }
+
+  // ── Wheel：核心 hijack ──
+  function onWheel(e) {
+    if (!hijacking) return;
+    if (releaseArmed) return;  // 释放阶段不再响应 wheel（让动画完成）
+    if (e.deltaY <= 0) return;  // 向上滚：交给原生（hero 阶段无效果）
+    e.preventDefault();
+    // 阻力：deltaY 缩 40%
+    var dx = (e.deltaY * 0.6) / heroH;
+    target = clamp01(target + dx);
+    if (target >= 0.45) releaseArmed = true;
+    schedule();
+  }
+
+  // ── Touch：移动端 ──
+  var touchY = 0;
+  function onTouchStart(e) {
+    if (!hijacking || releaseArmed) return;
+    if (e.touches.length !== 1) return;
+    touchY = e.touches[0].clientY;
+  }
+  function onTouchMove(e) {
+    if (!hijacking || releaseArmed) return;
+    if (e.touches.length !== 1) return;
+    var y = e.touches[0].clientY;
+    var dy = touchY - y;
+    touchY = y;
+    if (dy <= 0) return;  // 向下 swipe 才算向下滚
+    e.preventDefault();
+    target = clamp01(target + dy * 0.0035);  // 阻力：每像素 0.35%
+    if (target >= 0.45) releaseArmed = true;
+    schedule();
+  }
+
+  // ── Keyboard：可访问性 + 桌面键盘用户 ──
+  function onKey(e) {
+    if (!hijacking || releaseArmed) return;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+      e.preventDefault();
+      target = clamp01(target + 0.18);
+      if (target >= 0.45) releaseArmed = true;
+      schedule();
+    }
+    // ArrowUp / PageUp / Home：released 状态下回到 hero 顶部
+    if (!hijacking && (e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Home')) {
+      e.preventDefault();
+      reEnterHero();
+    }
+  }
+
+  // ── v12.2:released 后从顶部重新进入 hero 的逻辑 ──
+  function reEnterHero() {
+    if (hijacking && !releaseArmed) return;  // 还在 hero 阶段,不响应
+    hijacking = true;
+    progress = 0;
+    target = 0;
+    releaseArmed = false;
+    body.classList.remove('hero-released');
+    applyVars(0);
+    // 重新让 hero-shell 显示
+    var heroShell = document.querySelector('.hero-shell');
+    if (heroShell) heroShell.style.display = '';
+    window.scrollTo(0, 0);
+    schedule();
+  }
+
+  // ── 注册监听 ──
+  window.addEventListener('wheel', onWheel, { passive: false });
+  window.addEventListener('touchstart', onTouchStart, { passive: true });
+  window.addEventListener('touchmove', onTouchMove, { passive: false });
+  window.addEventListener('keydown', onKey, { passive: false });
+
+  // ── v12.2:released 状态下滚到顶部 → 重新进入 hero ──
+  // 用户向上滚到 scrollY < 50 时,重新激活 hero hijack
+  window.addEventListener('scroll', function() {
+    if (hijacking) return;  // 还在 hero 阶段,不需要 reenter
+    // released 状态下,滚到顶部 → 重新进入 hero
+    if (window.scrollY < 50) {
+      reEnterHero();
+    }
+  }, { passive: true });
+
+  // ── visibilitychange：处理后台 tab 累积时间 ──
+  var hiddenAccum = 0;
+  var hiddenStart = 0;
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      hiddenStart = performance.now();
+    } else if (hiddenStart > 0) {
+      hiddenAccum += performance.now() - hiddenStart;
+      hiddenStart = 0;
+    }
+  });
+
+  // ── 初始化 ──
+  applyVars(progress);
+  if (!debugRaw) {
+    rafId = requestAnimationFrame(tick);
+  } else {
+    applyVars(progress);
+  }
+})();
+</script>
+
+
+<script>
+(function () {
+  function bindMobileSidebar() {
+    var toggleMenu = document.getElementById('toggle-menu');
+    var sidebar = document.getElementById('sidebar-menus');
+    var menuMask = document.getElementById('menu-mask');
+    if (!toggleMenu || !sidebar) return;
+    if (toggleMenu.dataset.heroFixed) return;
+    toggleMenu.dataset.heroFixed = '1';
+    toggleMenu.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      sidebar.classList.add('open');
+      if (menuMask) {
+        menuMask.style.cssText = 'display:block;animation:to_show 0.5s';
+      }
+      document.body.style.overflow = 'hidden';
+    });
+    if (menuMask) {
+      menuMask.addEventListener('click', function () {
+        sidebar.classList.remove('open');
+        menuMask.style.cssText = 'animation:to_hide 0.5s';
+        setTimeout(function () { menuMask.style.cssText = ''; }, 500);
+        document.body.style.overflow = '';
+      });
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindMobileSidebar);
+  } else {
+    bindMobileSidebar();
+  }
+  // 兜底:某些主题会延迟注入 nav,500ms 后再试一次
+  setTimeout(bindMobileSidebar, 500);
+})();
+</script>
+
+</body></html>

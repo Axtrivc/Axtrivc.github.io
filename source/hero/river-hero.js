@@ -3767,7 +3767,12 @@
   // ── Silhouette AA tuning state (driven by the right-side debug panel) ──
   // Keep the full frame at 1× for volumetric cloud performance. Silhouette
   // clarity is tested through edge-only supersampling in the shader.
-  const AA = { taps: 8, feather: 0.0, signed: false, renderScale: 1.0 };
+  // PERF v12.5 — browser at 50fps vs preview at 90fps was renderScale + AA cap
+  // running wide-open. 0.66 backbuffer scaled by CSS = 2.3x fewer pixels for a
+  // barely-noticeable quality hit; AA_LADDER starts at 4 (was 8) so we don't
+  // peg the GPU on the very first frame and have to recover. Combine with the
+  // existing adaptive governor — the ladder still climbs if there's headroom.
+  const AA = { taps: 4, feather: 0.0, signed: false, renderScale: 0.66 };
   // FPS-adaptive AA governor: walks the tap count up/down this ladder based on
   // the measured GPU frame time, keeping draw cost inside the frame budget.
   // Touching the AA dropdown switches it off so the manual choice wins.
@@ -3775,7 +3780,7 @@
   let aaGovernor = true;
   let aaLevel = Math.max(0, AA_LADDER.indexOf(AA.taps));   // current rung
   let liveScale = AA.renderScale;
-  let frameCap = 50;   // matches the FPS CAP slider default; wireKnob re-syncs on init
+  let frameCap = 60;   // matches the FPS CAP slider default; wireKnob re-syncs on init
   let frameMin = 1000 / frameCap;
 
   let dpr = 1;
