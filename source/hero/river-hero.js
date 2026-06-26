@@ -3780,7 +3780,7 @@
   let aaGovernor = true;
   let aaLevel = Math.max(0, AA_LADDER.indexOf(AA.taps));   // current rung
   let liveScale = AA.renderScale;
-  let frameCap = 60;   // matches the FPS CAP slider default; wireKnob re-syncs on init
+  let frameCap = 40;   // matches the FPS CAP slider default; wireKnob re-syncs on init
   let frameMin = 1000 / frameCap;
 
   let dpr = 1;
@@ -3793,13 +3793,14 @@
     let h = window.innerHeight || 720;
     if (!(w > 2)) w = 1280;
     if (!(h > 2)) h = 720;
-    // Base dpr capped at 1.5 (sharp on retina without tanking perf on iGPU);
-    // render-scale multiplies it for full-frame supersampling. CAP the result
-    // so the canvas never exceeds the GPU's max buffer — otherwise the browser
-    // silently clamps ONE axis and the whole scene + text stretch off-centre
-    // (worst at wide fullscreen). Scaling both axes by the same factor
-    // preserves the aspect ratio.
-    dpr = Math.min(window.devicePixelRatio || 1, 1.5) * liveScale;
+    // Base dpr capped at 1.0 (matches river.ai original — 2.25x fewer pixels
+    // than 1.5 cap, the single biggest win for iGPU. CSS handles the visual
+    // sharpness; the GPU only does the math). render-scale multiplies it for
+    // full-frame supersampling. CAP the result so the canvas never exceeds
+    // the GPU's max buffer — otherwise the browser silently clamps ONE axis
+    // and the whole scene + text stretch off-centre (worst at wide
+    // fullscreen). Scaling both axes by the same factor preserves aspect.
+    dpr = Math.min(window.devicePixelRatio || 1, 1.0) * liveScale;
     let cw = Math.max(2, Math.round(w * dpr));
     let ch = Math.max(2, Math.round(h * dpr));
     const maxDim = Math.min(gl.getParameter(gl.MAX_RENDERBUFFER_SIZE) || 4096, 8192);
