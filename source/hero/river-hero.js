@@ -4644,16 +4644,10 @@
         // not render speed — one 5s gap averaged in reads as a fake stall.
         if (now >= aaMeasureFrom && frameDelta < 250) { aaFpsSum += fps; aaFpsCount++; }
       }
-      if (fpsMeter && frameDelta > 0) {
-        if (now - fpsUi > 250) {
-          // Show GPU ms (the real throughput metric, ∞ uncapped) when available,
-          // alongside the rAF fps (capped by the cap slider + monitor refresh).
-          fpsMeter.textContent = gpuMsEma > 0
-            ? gpuMsEma.toFixed(2) + " ms · " + Math.round(1000 / gpuMsEma) + " gpu-fps"
-            : Math.round(fpsEma) + " fps";
-          fpsUi = now;
-        }
-      }
+      // v12.14 - 移除右下角 fps/ms 显示 (用户要求) → 不再 textContent, 节省 layout/reflow 开销
+      // 保留 fpsEma / gpuMsEma 内部统计供 AA governor 使用, 仅跳过 DOM 更新
+      // fpsUi 变量保留以免改动其他逻辑
+      // (空块)
 
       // ── Adaptive AA governor (probe → settle → measure → verdict) ──
       // Instead of reacting to the instantaneous fps (twitchy: a scroll or GC

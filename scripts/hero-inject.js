@@ -171,8 +171,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
 }
 
 /* ── 博客主页：紧跟 hero 后面（z-index 1100） ── */
-body.hero-page-active #content-inner,
-body.hero-page-active .layout,
+/* v12.14 性能优化：去掉 will-change,只移动 main 自身,不再带动 #content-inner/.layout */
 body.hero-page-active main {
   position: relative;
   z-index: 1100;
@@ -180,15 +179,15 @@ body.hero-page-active main {
   background: #faf8f5;
   transform: translate3d(0, calc((1 - var(--hero-fly, 0)) * 50vh), 0);
   opacity: clamp(var(--hero-fly, 0), 0, 1);
-  will-change: transform, opacity;
+  /* v12.14: will-change 只在 hero 阶段短时启用,避免常驻 GPU 内存 + 滚动降采样 */
+  will-change: auto;
 }
 /* 释放后：清掉 transform/opacity，让原生滚动接管 */
-body.hero-released #content-inner,
-body.hero-released .layout,
 body.hero-released main {
   transform: none !important;
   opacity: 1 !important;
   margin-top: 100dvh !important;
+  will-change: auto !important;
 }
 
 /* v12.2:hero released 后隐藏 hero-shell,消除下方空白
@@ -628,6 +627,11 @@ body.hero-page-active {
     } else {
       // 阻力段：缓慢跟随 target（push-back 感）
       progress += (target - progress) * 0.08;
+      // v12.14: 当 target 与 progress 差距 <0.001 时不再 RAF 调度，避免空转烧 CPU
+      if (Math.abs(target - progress) < 0.001) {
+        applyVars(progress);
+        return;
+      }
     }
 
     applyVars(progress);
