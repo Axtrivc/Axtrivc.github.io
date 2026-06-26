@@ -403,6 +403,45 @@ body.hero-page-active {
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
   opacity: calc(1 - var(--hero-fly, 0) * 1.4);
 }
+
+/* ── v12.12 左下角 typed 副标题 (取代旧 typewriter) ── */
+.hero-typed-wrap {
+  position: absolute;
+  left: 32px;
+  bottom: 32px;
+  z-index: 5;
+  color: rgba(255, 255, 255, 0.88);
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Serif SC", serif;
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6), 0 0 14px rgba(80, 180, 130, 0.22);
+  opacity: calc(1 - var(--hero-fly, 0) * 1.4);
+  max-width: 56ch;
+}
+.hero-typed-wrap .hero-typed-prefix {
+  color: rgba(7, 193, 96, 0.85);
+  margin-right: 0.4em;
+  font-weight: 400;
+}
+.hero-typed-wrap .hero-typed-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  margin-left: 2px;
+  background: rgba(7, 193, 96, 0.95);
+  vertical-align: -0.15em;
+  animation: heroTypedBlink 1.05s steps(2, start) infinite;
+  box-shadow: 0 0 8px rgba(7, 193, 96, 0.55);
+}
+@keyframes heroTypedBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+@media (max-width: 768px) {
+  .hero-typed-wrap { left: 16px; bottom: 18px; font-size: 13px; max-width: 70vw; }
+}
 .hero-scroll-label {
   font-size: 11px;
   letter-spacing: 0.32em;
@@ -458,6 +497,56 @@ body.hero-page-active {
     </svg>
   </div>
 </div>
+
+<div class="hero-typed-wrap" id="hero-typed-wrap">
+  <span class="hero-typed-prefix">// </span><span class="hero-typed-text" id="hero-typed-text"></span><span class="hero-typed-cursor"></span>
+</div>
+
+<script>
+(function() {
+  // v12.12 typed 副标题 — 在 hero 左下角循环打字
+  // 不依赖 butterfly typed.js,自己实现 (轻量)
+  var lines = [
+    '水满则溢,月盈则亏',
+    '抽刀断水,举杯消愁',
+    '人生若只如初见',
+    '生活不止眼前的代码',
+    '还有远方的诗和球场',
+    '记录每一个灵光乍现的瞬间',
+    '欲穷千里目,更上一层楼',
+    '行到水穷处,坐看云起时'
+  ];
+  var el = document.getElementById('hero-typed-text');
+  if (!el) return;
+  var lineIdx = 0, charIdx = 0, isDeleting = false;
+  var TYPING = 95, DELETING = 35, HOLD = 1800;
+  function tick() {
+    var line = lines[lineIdx % lines.length];
+    if (!isDeleting) {
+      charIdx++;
+      el.textContent = line.slice(0, charIdx);
+      if (charIdx === line.length) {
+        isDeleting = true;
+        setTimeout(tick, HOLD);
+        return;
+      }
+      setTimeout(tick, TYPING);
+    } else {
+      charIdx--;
+      el.textContent = line.slice(0, charIdx);
+      if (charIdx === 0) {
+        isDeleting = false;
+        lineIdx++;
+        setTimeout(tick, 280);
+        return;
+      }
+      setTimeout(tick, DELETING);
+    }
+  }
+  // 启动: 首字符延迟 600ms (等 hero fly in 动画)
+  setTimeout(tick, 600);
+})();
+</script>
 `;
 
   const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${scrollHint}\n</div>`;
