@@ -33,8 +33,8 @@
   // shader, even if we later decide to show the static fallback.
   const DETECT_GPU_URL = "https://esm.sh/@pmndrs/detect-gpu?bundle";
   const DETECT_GPU_MIN_TIER = 3;   // 0..3; only top-tier GPUs run the live hero.
-  const HERO_HEAD_LINE = "Intelligence that flows with you.";
-  const HERO_SUB_LINE  = "River is building a new stack for personal AI.";
+  const HERO_HEAD_LINE = "Axtrivc Blog";
+  const HERO_SUB_LINE  = "WebGL ASCII River · 峡谷日夜循环";
   const HERO_SUB_DELAY = 300;     // ms after headline finishes before sub starts
   const HERO_SUB_RATE  = 30;      // ms per character
   const HERO_TYPEIN_MS = 250 + HERO_HEAD_LINE.length * 36 + HERO_SUB_DELAY + HERO_SUB_LINE.length * HERO_SUB_RATE;

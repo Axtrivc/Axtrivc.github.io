@@ -79,42 +79,40 @@ layout: false
       pointer-events: none;
     }
 
-    /* 文字层 */
+    /* ===== CSS variables — 仿 river.ai ===== */
+    :root {
+      --pad-x: clamp(20px, 4vw, 56px);
+      --type-sans: "Inter Tight", "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* 文字层 — 仿 river.ai 左下角小字，不抢动画 */
     .hero-text {
       position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+      bottom: var(--pad-x);
+      left: var(--pad-x);
+      right: var(--pad-x);
       z-index: 3;
       pointer-events: none;
-      padding: 0 24px;
-      color: #fff;
-      letter-spacing: -0.01em;
+      color: rgba(255, 255, 255, 0.95);
+      font-family: var(--type-sans);
+      letter-spacing: -0.005em;
     }
     .hero-text-headline {
-      font-size: clamp(28px, 5vw, 56px);
-      font-weight: 600;
-      line-height: 1.1;
-      max-width: 900px;
-      text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
-      /* Live path: river-hero.js writes textContent directly → keep visible.
-       * Static fallback: inline typewriter handles text — start hidden until
-       * it has typed something. The two paths share the DOM but use different
-       * visibility gates below. */
+      font-size: clamp(20px, 2.2vw, 28px);
+      font-weight: 500;
+      line-height: 1.2;
+      text-shadow: 0 0 24px rgba(80, 180, 130, 0.22);
       opacity: 1;
       transition: opacity 0.4s ease;
     }
     .hero-text-sub {
-      margin-top: 16px;
-      font-size: clamp(14px, 1.5vw, 18px);
+      margin-top: 10px;
+      font-size: clamp(13px, 1.4vw, 17px);
       font-weight: 400;
-      max-width: 600px;
-      line-height: 1.5;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
-      opacity: 1;
+      line-height: 1.45;
+      text-shadow: 0 0 18px rgba(80, 180, 130, 0.15);
+      opacity: 0.72;
+      min-height: 1.45em;
       transition: opacity 0.4s ease;
     }
     /* Static-fallback gate: when river-hero.js explicitly bails (sets
@@ -283,8 +281,8 @@ layout: false
       var head = document.getElementById('heroHeadlineLive');
       var sub  = document.getElementById('heroSublineLive');
       if (!head || !sub) return;
-      var headline = "Intelligence that flows with you.";
-      var subline  = "River.ai 的 WebGL ASCII-river 峡谷日夜循环动画";
+      var headline = "Axtrivc Blog";
+      var subline  = "WebGL ASCII River · 峡谷日夜循环";
       var started = false;
       function startFallback() {
         if (started) return;
