@@ -24,14 +24,17 @@ categories:
 
 **相关新闻**
 
-- [邮报：曼联、热刺等应尝试截胡巴萨签下奥亚萨瓦尔](https://www.dongqiudi.com/article/5967402)
+- [世体：佩德里公开称赞阿尔瓦雷斯，并欢迎他加盟巴萨](https://www.dongqiudi.com/article/5968122)
+- [世体：巴萨启动离队运作，法蒂接近以1100万欧赴摩纳哥](https://www.dongqiudi.com/article/5967854)
 
 
 ### 皇马
 
 **相关新闻**
 
-- [米体：皇马决定回购尼科-帕斯，国米和多家英超球队保持关注](https://www.dongqiudi.com/article/5967635)
+- [阿斯：劳尔-阿森西奥不愿离开皇马，他更希望留队](https://www.dongqiudi.com/article/5968056)
+- [斯基拉：皇马准备正式向切尔西报价恩佐，已与球员谈妥合同](https://www.dongqiudi.com/article/5967999)
+- [罗马诺：尼科-帕斯未来将在48小时内决定；他不会留在皇马](https://www.dongqiudi.com/article/5967924)
 
 
 ### 马竞
@@ -57,51 +60,59 @@ categories:
 
 **下一场**：7月3日 11:00 世界杯 - Switzerland vs 
 
+**相关新闻**
+
+- [乌拉圭媒体：对西班牙赛前，乌拉圭国脚向贝尔萨表达不满](https://www.dongqiudi.com/article/5968025)
+- [世界杯史话60：西班牙队与“Tiki-Taka”](https://www.dongqiudi.com/article/5962684)
+
 
 ## 足坛新闻
 
 ### 📰 足坛头条
 
-- [日本1-1瑞典以小组第二出线，淘汰赛将战巴西，前田大然破门](https://www.dongqiudi.com/article/5967285)
+- [土耳其3-2读秒绝杀美国1胜2负垫底出局，居莱尔破门，伊尔马兹传射](https://www.dongqiudi.com/article/5967704)
+- [突尼斯世界杯惨败引发国家震荡：总统掀反腐风暴，足协多人或被抓入狱](https://www.dongqiudi.com/article/5960842)
 - [懂球帝海报：日本、巴西决战世界杯32强](https://www.dongqiudi.com/article/5967540)
-- [洪明甫：如果晋级将想办法调整球队；不会轻易改变球队战术](https://www.dongqiudi.com/article/5967634)
-- [因卡皮耶：我们面对的是冠军级别的德国队，我没有受伤](https://www.dongqiudi.com/article/5967637)
-- [范戴克：定位球防守必须重视，好在我们也通过定位球进球了](https://www.dongqiudi.com/article/5967633)
+- [日足协主席：瑞典猛攻时能守平，足以证明日本队实力大幅提升](https://www.dongqiudi.com/article/5968170)
+- [布罗比：摩洛哥非常出色，但对我来说对手是谁并不重要](https://www.dongqiudi.com/article/5968174)
 
 #### 西甲新闻
 
 - [懂球帝海报：日本、巴西决战世界杯32强](https://www.dongqiudi.com/article/5967540)
-- [米体：皇马决定回购尼科-帕斯，国米和多家英超球队保持关注](https://www.dongqiudi.com/article/5967635)
-- [穆帅：梅西让我相信足球之神；本届世界杯有些比赛看了10分钟就关了](https://www.dongqiudi.com/article/5966629)
+- [世体：告别世界杯，土耳其将帅赛后集体直面批评](https://www.dongqiudi.com/article/5968164)
+- [世体：佩德里公开称赞阿尔瓦雷斯，并欢迎他加盟巴萨](https://www.dongqiudi.com/article/5968122)
 
 #### 英超新闻
 
-- [因卡皮耶：我们面对的是冠军级别的德国队，我没有受伤](https://www.dongqiudi.com/article/5967637)
-- [范戴克：定位球防守必须重视，好在我们也通过定位球进球了](https://www.dongqiudi.com/article/5967633)
-- [科特迪瓦主帅：小猪涉非洲足球发言是在用种族主义的方式说话](https://www.dongqiudi.com/article/5967566)
+- [突尼斯世界杯惨败引发国家震荡：总统掀反腐风暴，足协多人或被抓入狱](https://www.dongqiudi.com/article/5960842)
+- [布罗比：摩洛哥非常出色，但对我来说对手是谁并不重要](https://www.dongqiudi.com/article/5968174)
+- [懂球帝6月26日世界杯之星：范赫克](https://www.dongqiudi.com/article/5967918)
 
 #### 意甲新闻
 
-- [米体：皇马决定回购尼科-帕斯，国米和多家英超球队保持关注](https://www.dongqiudi.com/article/5967635)
-- [穆帅：梅西让我相信足球之神；本届世界杯有些比赛看了10分钟就关了](https://www.dongqiudi.com/article/5966629)
-- [铃木彩艳谈踢巴西：淘汰赛是单场定胜负，我们唯有取胜一条路](https://www.dongqiudi.com/article/5967584)
+- [全市场：尤文后防将大洗牌，穆哈雷莫维奇接近加盟](https://www.dongqiudi.com/article/5968023)
+- [罗体：德布劳内世界杯后决定未来，阿莱格里认为他是体系关键](https://www.dongqiudi.com/article/5968011)
+- [意媒：国米小将托帕洛维奇将参加季前赛，随后可能会被外租](https://www.dongqiudi.com/article/5967985)
 
 #### 德甲新闻
 
 - [懂球帝海报：日本、巴西决战世界杯32强](https://www.dongqiudi.com/article/5967540)
-- [因卡皮耶：我们面对的是冠军级别的德国队，我没有受伤](https://www.dongqiudi.com/article/5967637)
-- [科特迪瓦主帅：小猪涉非洲足球发言是在用种族主义的方式说话](https://www.dongqiudi.com/article/5967566)
+- [是假图！因凡蒂诺并未出现在同时开球的两场比赛现场](https://www.dongqiudi.com/article/5968115)
+- [克洛普：德国队的进攻太容易被预判，而且下一场必须提升强度](https://www.dongqiudi.com/article/5968083)
 
 #### 法甲新闻
 
-- [中村敬斗：裁判突然让我调整球袜，我一时有些手足无措](https://www.dongqiudi.com/article/5967568)
-- [科曼：我们必须做好准备对阵摩洛哥，阿什拉夫可以踢多个位置](https://www.dongqiudi.com/article/5967517)
-- [6.26竞足支持率汇总：两场误差最大；冷门和正路交叉](https://www.dongqiudi.com/article/5967530)
+- [突尼斯世界杯惨败引发国家震荡：总统掀反腐风暴，足协多人或被抓入狱](https://www.dongqiudi.com/article/5960842)
+- [11-11送福利//猜比分挪威 vs 法国✍️最...](https://www.dongqiudi.com/article/5968108)
+- [世界杯实时积分榜上线！赛中秒更积分对阵，一眼看透全场战局](https://www.dongqiudi.com/article/5968091)
 
 #### 我的主队动态
 
-- ⭐ [米体：皇马决定回购尼科-帕斯，国米和多家英超球队保持关注](https://www.dongqiudi.com/article/5967635)
-- ⭐ [邮报：曼联、热刺等应尝试截胡巴萨签下奥亚萨瓦尔](https://www.dongqiudi.com/article/5967402)
+- ⭐ [世体：佩德里公开称赞阿尔瓦雷斯，并欢迎他加盟巴萨](https://www.dongqiudi.com/article/5968122)
+- ⭐ [阿斯：劳尔-阿森西奥不愿离开皇马，他更希望留队](https://www.dongqiudi.com/article/5968056)
+- ⭐ [乌拉圭媒体：对西班牙赛前，乌拉圭国脚向贝尔萨表达不满](https://www.dongqiudi.com/article/5968025)
+- ⭐ [斯基拉：皇马准备正式向切尔西报价恩佐，已与球员谈妥合同](https://www.dongqiudi.com/article/5967999)
+- ⭐ [罗马诺：尼科-帕斯未来将在48小时内决定；他不会留在皇马](https://www.dongqiudi.com/article/5967924)
 
 
 ---
