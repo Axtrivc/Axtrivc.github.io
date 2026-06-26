@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /**
  * Hero 注入 v12「阻力 → 临界爆发 → 直滑到主页」(2026-06-23)
  *
@@ -1318,4 +1317,3 @@ body.hero-page-active {
   hexo.log.info('[hero-inject] ✅ v12 「阻力 → 临界爆发 → 直滑到底」: ' + canonical);
   return content;
 });
->>>>>>> 54a7537cadd439fdbfcd08395dbaf5a4207205eb

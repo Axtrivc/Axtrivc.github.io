@@ -1,4 +1,4 @@
-name: Football Daily Update
+name: Football Daily Update v2
 
 on:
   schedule:
@@ -44,21 +44,34 @@ jobs:
         with:
           ref: master
 
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install sports-skills (Football data, News, World Cup)
+        run: |
+          python -m pip install --upgrade pip
+          pip install sports-skills==0.27.1
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install Node dependencies
         run: npm ci
 
-      - name: Run morning generator
+      - name: Generate morning football report (v2)
         env:
-          FOOTBALL_API_KEY: ${{ secrets.FOOTBALL_API_KEY }}
           POSTS_DIR: ${{ github.workspace }}/source/_posts
           EDITION: morning
-        run: node scripts/football-daily.js
+        run: |
+          echo "=== 拉取数据中... ==="
+          python -m sports_skills football get_competitions | head -5
+          echo "=== 生成 v2 早报 ==="
+          python scripts/football_daily_v2.py morning
 
       - name: Commit and push source
         env:
@@ -70,7 +83,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes for morning edition"
           else
-            git commit -m "⚽ 足球早报自动更新 - $(date +%Y-%m-%d)"
+            git commit -m "⚽ 足球早报 v2 自动更新 - $(date +%Y-%m-%d)"
             git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
           fi
 
@@ -101,21 +114,34 @@ jobs:
         with:
           ref: master
 
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install sports-skills
+        run: |
+          python -m pip install --upgrade pip
+          pip install sports-skills==0.27.1
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install Node dependencies
         run: npm ci
 
-      - name: Run evening generator
+      - name: Generate evening football report (v2)
         env:
-          FOOTBALL_API_KEY: ${{ secrets.FOOTBALL_API_KEY }}
           POSTS_DIR: ${{ github.workspace }}/source/_posts
           EDITION: evening
-        run: node scripts/football-daily.js
+        run: |
+          echo "=== 拉取数据中... ==="
+          python -m sports_skills football get_competitions | head -5
+          echo "=== 生成 v2 晚报 ==="
+          python scripts/football_daily_v2.py evening
 
       - name: Commit and push source
         env:
@@ -127,7 +153,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes for evening edition"
           else
-            git commit -m "🌙 足球晚报自动更新 - $(date +%Y-%m-%d)"
+            git commit -m "🌙 足球晚报 v2 自动更新 - $(date +%Y-%m-%d)"
             git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
           fi
 
