@@ -3772,15 +3772,16 @@
   // barely-noticeable quality hit; AA_LADDER starts at 4 (was 8) so we don't
   // peg the GPU on the very first frame and have to recover. Combine with the
   // existing adaptive governor — the ladder still climbs if there's headroom.
-  const AA = { taps: 4, feather: 0.0, signed: false, renderScale: 0.66 };
+  // v12.26 PERF emergency: 更激进的降级 (用户持续反馈卡)
+  const AA = { taps: 0, feather: 0.0, signed: false, renderScale: 0.4 };
   // FPS-adaptive AA governor: walks the tap count up/down this ladder based on
   // the measured GPU frame time, keeping draw cost inside the frame budget.
   // Touching the AA dropdown switches it off so the manual choice wins.
-  const AA_LADDER = [0, 4, 8, 9];
+  const AA_LADDER = [0, 2, 4, 6];
   let aaGovernor = true;
   let aaLevel = Math.max(0, AA_LADDER.indexOf(AA.taps));   // current rung
   let liveScale = AA.renderScale;
-  let frameCap = 40;   // matches the FPS CAP slider default; wireKnob re-syncs on init
+  let frameCap = 24;   // v12.26: 40 → 24 (从 25ms 目标 → 42ms 目标, 减少 GPU 压力)
   let frameMin = 1000 / frameCap;
 
   let dpr = 1;
