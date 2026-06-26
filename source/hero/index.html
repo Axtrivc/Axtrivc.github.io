@@ -98,46 +98,24 @@ layout: false
       letter-spacing: -0.005em;
     }
     .hero-text-headline {
-      font-family: "Noto Serif SC", "STKaiti", "KaiTi", "楷体", "楷体_GB2312", serif;
-      font-size: clamp(22px, 2.6vw, 34px);
-      font-weight: 600;
+      font-family: var(--type-sans);
+      font-size: clamp(20px, 2.2vw, 28px);
+      font-weight: 500;
       line-height: 1.2;
-      letter-spacing: 0.08em;
-      text-shadow:
-        0 0 24px rgba(80, 180, 130, 0.32),
-        0 0 8px rgba(140, 230, 180, 0.18);
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 0 24px rgba(80, 180, 130, 0.22);
       opacity: 1;
       transition: opacity 0.4s ease;
     }
     .hero-text-sub {
-      margin-top: 12px;
-      font-family: "Noto Serif SC", "STKaiti", "KaiTi", "楷体", "楷体_GB2312", serif;
-      font-size: clamp(15px, 1.8vw, 22px);
-      font-weight: 500;
-      line-height: 1.45;
-      letter-spacing: 0.18em;
-      text-shadow:
-        0 0 20px rgba(120, 200, 160, 0.28),
-        0 0 6px rgba(180, 240, 200, 0.14);
-      opacity: 0.86;
-      min-height: 1.45em;
-      transition: opacity 0.4s ease;
-    }
-    /* 艺术字底纹 — 双层渐变描边 */
-    .hero-text-headline {
-      background: linear-gradient(
-        180deg,
-        rgba(220, 255, 230, 0.98) 0%,
-        rgba(170, 230, 195, 0.92) 45%,
-        rgba(80, 180, 130, 0.78) 100%
-      );
-      -webkit-background-clip: text;
-              background-clip: text;
-      -webkit-text-fill-color: transparent;
-              text-fill-color: transparent;
-      filter:
-        drop-shadow(0 0 6px rgba(120, 220, 170, 0.4))
-        drop-shadow(0 0 16px rgba(80, 180, 130, 0.18));
+      margin-top: 0;
+      min-height: 0;
+      height: 0;
+      padding: 0;
+      border: 0;
+      opacity: 0;
+      pointer-events: none;
+      overflow: hidden;
     }
     /* Static-fallback gate: when river-hero.js explicitly bails (sets
      * window.__riverLive=false), body.hero-static is added by the inline
@@ -305,7 +283,7 @@ layout: false
       var head = document.getElementById('heroHeadlineLive');
       var sub  = document.getElementById('heroSublineLive');
       if (!head || !sub) return;
-      var headline = "Axtrivc Blog";
+      var headline = "Axtrivc's Blog";
       var subline  = "流光溢彩 · 如梦如幻";
       var started = false;
       function startFallback() {
