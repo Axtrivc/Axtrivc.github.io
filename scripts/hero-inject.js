@@ -288,14 +288,32 @@ body.hero-page-active:not(.hero-released) #debugBar {
   pointer-events: none !important;
 }
 
-/* 释放后：恢复所有 widget（CSS 默认值即可，但我们明确覆盖） */
+/* 释放后：恢复所有 widget（CSS 默认值即可，但我们明确覆盖）
+ * ⚠️ 2026-06-26 修复：#music-panel 必须用 :not(.show) 排除未展开状态
+ * 否则 hero-released 时即使没点 btnToggle，panel 也会被强制显示（用户反馈"音乐栏自动弹出"） */
 body.hero-released #music-bar,
-body.hero-released #music-panel,
+body.hero-released #music-panel.show,
 body.hero-released #rightside,
 body.hero-released #axtrivc-fab {
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
+}
+
+/* 释放后：nav 恢复主题色（不再用 hero 阶段的 !important 金棕色）
+ * ⚠️ 2026-06-26 修复：之前 nav 一直金棕色是因为只有 hero 阶段的 !important 覆盖
+ * 没有 hero-released 阶段的"恢复主题色"规则。 */
+body.hero-released #nav,
+body.hero-released #page-header.full_page #nav {
+  background: var(--theme-nav-current, rgba(255, 255, 255, 0.94)) !important;
+  background-image: none !important;
+}
+
+/* 释放后：nav 文字色恢复主题色 */
+body.hero-released #nav a,
+body.hero-released #nav .site-name,
+body.hero-released #nav a.site-page {
+  color: var(--theme-text-current, #1a1a1a) !important;
 }
 
 /* 卡片融底（保留以维持视觉风格统一） */
