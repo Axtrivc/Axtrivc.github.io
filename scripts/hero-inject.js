@@ -407,8 +407,8 @@ body.hero-page-active {
 /* ── v12.12 左下角 typed 副标题 (取代旧 typewriter) ── */
 .hero-typed-wrap {
   position: absolute;
-  left: 32px;
-  bottom: 32px;
+  left: clamp(20px, 4vw, 56px);
+  bottom: clamp(8px, 1.6vw, 22px);
   z-index: 5;
   color: rgba(255, 255, 255, 0.88);
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Serif SC", serif;
@@ -419,28 +419,6 @@ body.hero-page-active {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6), 0 0 14px rgba(80, 180, 130, 0.22);
   opacity: calc(1 - var(--hero-fly, 0) * 1.4);
   max-width: 56ch;
-}
-.hero-typed-wrap .hero-typed-prefix {
-  color: rgba(7, 193, 96, 0.85);
-  margin-right: 0.4em;
-  font-weight: 400;
-}
-.hero-typed-wrap .hero-typed-cursor {
-  display: inline-block;
-  width: 2px;
-  height: 1.1em;
-  margin-left: 2px;
-  background: rgba(7, 193, 96, 0.95);
-  vertical-align: -0.15em;
-  animation: heroTypedBlink 1.05s steps(2, start) infinite;
-  box-shadow: 0 0 8px rgba(7, 193, 96, 0.55);
-}
-@keyframes heroTypedBlink {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0; }
-}
-@media (max-width: 768px) {
-  .hero-typed-wrap { left: 16px; bottom: 18px; font-size: 13px; max-width: 70vw; }
 }
 .hero-scroll-label {
   font-size: 11px;
