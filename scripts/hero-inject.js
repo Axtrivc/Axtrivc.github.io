@@ -191,6 +191,12 @@ body.hero-released main {
   margin-top: 100dvh !important;
 }
 
+/* v12.2:hero released 后隐藏 hero-shell,消除下方空白
+ * reenter 时由 JS 重新设置 display:'' */
+body.hero-released .hero-shell {
+  display: none !important;
+}
+
 /* ── v12 导航：始终显示（金棕色），hero 阶段就可见 ── */
 body.hero-page-active #nav,
 body.hero-page-active #page-header.full_page #nav {
@@ -573,6 +579,27 @@ body.hero-page-active {
       if (target >= 0.45) releaseArmed = true;
       schedule();
     }
+    // ArrowUp / PageUp / Home：released 状态下回到 hero 顶部
+    if (!hijacking && (e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Home')) {
+      e.preventDefault();
+      reEnterHero();
+    }
+  }
+
+  // ── v12.2:released 后从顶部重新进入 hero 的逻辑 ──
+  function reEnterHero() {
+    if (hijacking && !releaseArmed) return;  // 还在 hero 阶段,不响应
+    hijacking = true;
+    progress = 0;
+    target = 0;
+    releaseArmed = false;
+    body.classList.remove('hero-released');
+    applyVars(0);
+    // 重新让 hero-shell 显示
+    var heroShell = document.querySelector('.hero-shell');
+    if (heroShell) heroShell.style.display = '';
+    window.scrollTo(0, 0);
+    schedule();
   }
 
   // ── 注册监听 ──
@@ -580,6 +607,16 @@ body.hero-page-active {
   window.addEventListener('touchstart', onTouchStart, { passive: true });
   window.addEventListener('touchmove', onTouchMove, { passive: false });
   window.addEventListener('keydown', onKey, { passive: false });
+
+  // ── v12.2:released 状态下滚到顶部 → 重新进入 hero ──
+  // 用户向上滚到 scrollY < 50 时,重新激活 hero hijack
+  window.addEventListener('scroll', function() {
+    if (hijacking) return;  // 还在 hero 阶段,不需要 reenter
+    // released 状态下,滚到顶部 → 重新进入 hero
+    if (window.scrollY < 50) {
+      reEnterHero();
+    }
+  }, { passive: true });
 
   // ── visibilitychange：处理后台 tab 累积时间 ──
   var hiddenAccum = 0;
