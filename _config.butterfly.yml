@@ -248,7 +248,15 @@ inject:
           <button class="bar-btn-toggle" id="btn-toggle" title="展开/收起播放器">
             <svg id="icon-up" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
           </button>
+          <button class="bar-btn-close" id="btn-bar-close" title="隐藏音乐栏（按 🎵 按钮可恢复）">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
         </div>
+      </div>
+      <div id="music-launcher" hidden>
+        <button id="btn-launcher" title="展开音乐栏">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+        </button>
       </div>
       <div id="music-panel">
         <div class="panel-header">

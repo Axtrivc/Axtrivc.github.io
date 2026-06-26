@@ -104,9 +104,13 @@
     var siteTitle = document.querySelector('#site-title, #site-name, .site-name a');
     if (siteTitle) { siteTitle.style.color = t.heading; }
 
-    // Page header / hero
+    // Page header / hero — 加 inline style 防止 hexo-butterfly 默认棕色盖过
     var pageHeader = document.getElementById('page-header');
-    if (pageHeader) { pageHeader.style.backgroundColor = t.pageHeader; }
+    if (pageHeader) {
+      pageHeader.style.backgroundColor = 'transparent';
+      pageHeader.style.backgroundImage = 'none';
+      var phBefore = pageHeader.querySelector(':scope::before');
+    }
 
     // Article cards
     document.querySelectorAll('.recent-post-item').forEach(function(c) {

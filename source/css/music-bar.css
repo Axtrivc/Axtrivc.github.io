@@ -89,6 +89,47 @@
   transform: scale(1.05);
 }
 
+/* 关闭整个音乐栏的按钮（用户在 bar 内主动隐藏 bar 用） */
+#music-bar .bar-btn-close {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.22s;
+  font-size: 14px;
+  background: transparent;
+  color: var(--theme-secondary-current, #7A7A7A);
+}
+#music-bar .bar-btn-close:hover {
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 10%, transparent);
+  color: var(--theme-accent-current, #07C160);
+  transform: scale(1.08);
+}
+
+/* 当 music-bar 被用户关闭后，右下角的迷你 launcher（可恢复音乐栏） */
+#music-launcher {
+  position: fixed;
+  bottom: 18px; right: 18px;
+  z-index: 9979;
+}
+#music-launcher[hidden] { display: none; }
+#music-launcher #btn-launcher {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--theme-accent-current, #07C160);
+  color: #fff;
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--theme-accent-current, #07C160) 40%, transparent);
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), box-shadow 0.25s ease;
+}
+#music-launcher #btn-launcher:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--theme-accent-current, #07C160) 55%, transparent);
+}
+
 #music-panel {
   position: fixed;
   bottom: 60px; right: 24px;
@@ -153,6 +194,9 @@ body { padding-bottom: 62px !important; }
   #music-bar .bar-title { max-width: 140px; font-size: 12px; }
   .bar-btn { width: 32px; height: 32px; font-size: 14px; }
   #music-bar .bar-btn-toggle { width: 30px; height: 30px; font-size: 11px; }
+  #music-bar .bar-btn-close { width: 26px; height: 26px; font-size: 12px; }
   #music-panel { right: 12px; bottom: 54px; width: calc(100vw - 24px); }
+  #music-launcher { bottom: 12px; right: 12px; }
+  #music-launcher #btn-launcher { width: 42px; height: 42px; }
   body { padding-bottom: 56px !important; }
 }

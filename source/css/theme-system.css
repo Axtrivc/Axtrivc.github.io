@@ -10,18 +10,29 @@
   background-image: none !important;
 }
 
-/* CRITICAL: Override #page-header brown bg + dark overlay (root cause of gray!) */
-#page-header {
+/* CRITICAL: Override #page-header brown bg + dark overlay
+   修复 2026-06-26：hexo-butterfly 5.x 默认 #page-header { background-color: #8b6f47 } (棕色)
+   主题切换后 nav 仍是黄色就是这个没覆盖。
+   加 full_page + post-bg 两个变体（post-bg 是文章页）。 */
+#page-header,
+#page-header.full_page,
+#page-header.post-bg {
   background-color: transparent !important;
   background-image: none !important;
+  background-attachment: scroll !important;
 }
-#page-header::before {
+#page-header::before,
+#page-header.full_page::before,
+#page-header.post-bg::before {
   background-color: transparent !important;
   opacity: 0 !important;
 }
-#page-header.full_page {
-  background-color: transparent !important;
-  background-image: none !important;
+
+/* 2026-06-26 修复：文章页（非主页，无 hero-page-active）默认 post-bg 高度 400px，
+   但没 top_img 时显示成 400px 白色空白。压缩为自适应 + 最小 220px 放标题。 */
+body:not(.hero-page-active) #page-header.post-bg {
+  height: auto !important;
+  min-height: 220px !important;
 }
 
 /* Hide Butterfly dark mode toggle */

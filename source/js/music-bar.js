@@ -19,6 +19,9 @@
     var embedContainer = document.getElementById('player-embed-container');
     var btnToggle = document.getElementById('btn-toggle');
     var btnClose = document.getElementById('btn-close');
+    var btnBarClose = document.getElementById('btn-bar-close');
+    var launcher = document.getElementById('music-launcher');
+    var btnLauncher = document.getElementById('btn-launcher');
     var iconUp = document.getElementById('icon-up');
     var vinyl = document.getElementById('vinyl-icon');
     var barSub = document.querySelector('.bar-sub');
@@ -54,6 +57,34 @@
     if (btnToggle) btnToggle.addEventListener('click', function (e) { e.stopPropagation(); togglePlayer(); });
     // 关闭按钮：始终执行关闭，绝不反向打开
     if (btnClose) btnClose.addEventListener('click', function (e) { e.stopPropagation(); closePlayer(); });
+
+    // 隐藏整个音乐栏（用户主动收起） + 显示右下角迷你 launcher
+    if (btnBarClose) btnBarClose.addEventListener('click', function (e) {
+      e.stopPropagation();
+      closePlayer();
+      bar.style.display = 'none';
+      document.body.style.paddingBottom = '0';
+      if (launcher) launcher.hidden = false;
+      try { sessionStorage.setItem('axtrivc_musicbar_hidden', '1'); } catch (_) {}
+    });
+
+    // launcher 按钮：恢复音乐栏
+    if (btnLauncher) btnLauncher.addEventListener('click', function (e) {
+      e.stopPropagation();
+      bar.style.display = '';
+      document.body.style.paddingBottom = '';
+      launcher.hidden = true;
+      try { sessionStorage.removeItem('axtrivc_musicbar_hidden'); } catch (_) {}
+    });
+
+    // 启动时恢复用户上次的选择（本次会话内有效）
+    try {
+      if (sessionStorage.getItem('axtrivc_musicbar_hidden') === '1') {
+        bar.style.display = 'none';
+        document.body.style.paddingBottom = '0';
+        if (launcher) launcher.hidden = false;
+      }
+    } catch (_) {}
 
     // 外链按钮
     if (btnLink) {
