@@ -1,153 +1,174 @@
 ---
 title: 足球晚报 · 2026年6月27日 星期五
 date: 2026-06-27 20:00:00
-excerpt: 西班牙小胜乌拉圭 · 法国狂屠挪威 · 今日6场世界杯
-description: 西班牙1-0乌拉圭 · 法国4-1挪威 · 塞内加尔5-0伊拉克 · 今日6场
+excerpt: 晚间战报 + 积分榜 + xG + 新闻
+description: 晚间战报 · 积分榜 · xG 数据 · 新闻聚合 · 数据驱动
 cover_color: '#1E3A8A'
 tags:
   - 足球
   - 晚报
-  - 世界杯
   - 数据驱动
 categories:
   - 足球日报
 ---
 
-> ⚽ 🌙 晚报 · 世界杯第14比赛日收官 · 数据来源 ESPN / sports-skills
-> 抓取时间：2026-06-27 11:15 (GMT+8)
+> 🌙 晚报 · 晚间战报 + 积分榜 + xG + 新闻聚合 · 数据来源 ESPN + Understat + RSS
+> 抓取时间：2026-06-27 21:40 (GMT+8)
+
+
+## ⚽ 今日战报
+
+
+> 今日暂无已结束比赛。
+
 
 ---
 
-## ⚽ 昨日战报（6月26日）
+## 🏆 联赛积分榜
 
-| 赛事 | 状态 | 主队 | 比分 | 客队 |
-|:---:|:---:|:---:|:---:|:---:|
-| 🏆 世界杯 G组 | ✅ 已结束 | 🇳🇴 挪威 | **1-4** | 🇫🇷 法国 |
-| 🏆 世界杯 I组 | ✅ 已结束 | 🇸🇳 塞内加尔 | **5-0** | 🇮🇶 伊拉克 |
-| 🏆 世界杯 H组 | ✅ 已结束 | 🇨🇻 佛得角 | **0-0** | 🇸🇦 沙特 |
-| 🏆 世界杯 H组 | ✅ 已结束 | 🇺🇾 乌拉圭 | **0-1** | 🇪🇸 **西班牙** |
-| 🏆 世界杯 G组 | 🔴 进行中 | 🇪🇬 埃及 | **1-1** | 🇮🇷 伊朗 |
-| 🏆 世界杯 G组 | 🔴 进行中 | 🇳🇿 新西兰 | **0-0** | 🇧🇪 比利时 |
 
-### 📊 战报速评
+### 西甲 La Liga
 
-- 🇫🇷 **法国 4-1 挪威** — 法国三战全胜出线，进球数 10 个冠绝小组赛
-- 🇪🇸 **西班牙 1-0 乌拉圭** — 斗牛士军团小组第一出线，乌拉圭两轮不胜濒临出局
-- 🇸🇳 **塞内加尔 5-0 伊拉克** — 非洲雄狮大胜，伊拉克三连败零分出局
-- 🇨🇻 **佛得角 0-0 沙特** — 佛得角三连平，以小组第二出线创造历史
 
-### 📸 昨日精彩瞬间
+| 排名 | 球队 | 赛 | 胜 | 平 | 负 | 进 | 失 | 净 | 分 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | Barcelona | 38 | 31 | 1 | 6 | 95 | 36 | 59 | **94** |
+| 2 | Real Madrid | 38 | 27 | 5 | 6 | 77 | 35 | 42 | **86** |
+| 3 | Villarreal | 38 | 22 | 6 | 10 | 72 | 46 | 26 | **72** |
+| 4 | Atlético Madrid | 38 | 21 | 6 | 11 | 62 | 44 | 18 | **69** |
+| 5 | Real Betis | 38 | 15 | 15 | 8 | 59 | 48 | 11 | **60** |
+| 6 | Celta Vigo | 38 | 14 | 12 | 12 | 53 | 48 | 5 | **54** |
+| 7 | Getafe | 38 | 15 | 6 | 17 | 32 | 38 | -6 | **51** |
+| 8 | Rayo Vallecano | 38 | 12 | 14 | 12 | 41 | 44 | -3 | **50** |
 
-**🇫🇷 法国 4-1 挪威 — 登贝莱帽子戏法**
 
-![登贝莱完成帽子戏法后庆祝](https://e0.365dm.com/26/06/768x432/skysports-france-norway_7283920.jpg?20260626214202)
+### 英超 Premier League
 
-![登贝莱打进首球](https://e0.365dm.com/26/06/768x432/skysports-france-norway_7283905.jpg?20260626201455)
 
-![登贝莱庆祝首开记录](https://e0.365dm.com/26/06/768x432/skysports-ousmane-dembele-france_7283904.jpg?20260626201258)
+| 排名 | 球队 | 赛 | 胜 | 平 | 负 | 进 | 失 | 净 | 分 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | AFC Bournemouth | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **0** |
+| 2 | Arsenal | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **0** |
+| 3 | Aston Villa | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **0** |
+| 4 | Brentford | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **0** |
+| 5 | Brighton & Hove Albion | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **0** |
 
-> 登贝莱 25 分钟内完成世界杯帽子戏法，成为 1994 年萨连科之后首位上半场戴帽的球员。图片来源：Sky Sports
 
-**🇪🇸 西班牙 1-0 乌拉圭 — 巴埃纳破门，乌拉圭出局**
+### 意甲 Serie A
 
-![巴埃纳进球后与罗德里庆祝](https://e0.365dm.com/26/06/768x432/skysports-alex-baena-spain_7283990.jpg?20260627020716)
 
-![穆斯莱拉扑救失误，巴埃纳破门](https://e0.365dm.com/26/06/768x432/skysports-fernando-muslera_7283989.jpg?20260627020543)
+| 排名 | 球队 | 赛 | 胜 | 平 | 负 | 进 | 失 | 净 | 分 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | AC Milan | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **0** |
+| 2 | Atalanta | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **0** |
+| 3 | Bologna | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **0** |
+| 4 | Cagliari | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **0** |
+| 5 | Como | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **0** |
 
-![贝尔萨坐在冷却箱上，世界杯噩梦](https://e0.365dm.com/26/06/768x432/skysports-marcelo-bielsa-uruguay_7283986.jpg?20260627011841)
-
-> 巴埃纳 42 分钟抽射破门，穆斯莱拉扑救失误送大礼。贝尔萨半场换下门将，乌拉圭两连平出局。图片来源：Sky Sports
-
----
-
-## 📆 今日赛程（6月27日 · 北京时间）
-
-| 赛事 | 开球 (BJ) | 对阵 | 看点 |
-|:---:|:---:|:---:|:---|
-| 🏆 世界杯 L组 | 05:00 | 🇭🇷 克罗地亚 vs 🇬🇭 加纳 | 克罗地亚生死战 |
-| 🏆 世界杯 L组 | 05:00 | 🇵🇦 巴拿马 vs 🏴󠁧󠁢󠁥󠁮󠁧󠁿 英格兰 | 英格兰锁定出线？ |
-| 🏆 世界杯 K组 | 07:30 | 🇨🇴 哥伦比亚 vs 🇵🇹 葡萄牙 | 小组头名之争 |
-| 🏆 世界杯 K组 | 07:30 | 🇨🇩 刚果(金) vs 🇺🇿 乌兹别克斯坦 | 出局之战 |
-| 🏆 世界杯 J组 | 10:00 | 🇩🇿 阿尔及利亚 vs 🇦🇹 奥地利 | 生死战 |
-| 🏆 世界杯 J组 | 10:00 | 🇯🇴 约旦 vs 🇦🇷 阿根廷 | 阿根廷冲三连胜 |
 
 ---
 
-## 📊 小组赛积分榜（第14比赛日）
+## ⭐ 关注球队近况
 
-### 🅰️ A组（已完赛）
-| # | 球队 | 赛 | 胜 | 平 | 负 | 净胜球 | 积分 |
-|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | 🇲🇽 墨西哥 | 3 | 3 | 0 | 0 | +6 | **9** ✅ |
-| 2 | 🇿🇦 南非 | 3 | 1 | 1 | 1 | -1 | **4** ✅ |
-| 3 | 🇰🇷 韩国 | 3 | 1 | 0 | 2 | -1 | 3 |
-| 4 | 🇨🇿 捷克 | 3 | 0 | 1 | 2 | -4 | 1 |
 
-### 🇫 F组（已完赛）
-| # | 球队 | 赛 | 胜 | 平 | 负 | 净胜球 | 积分 |
-|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | 🇳🇱 荷兰 | 3 | 2 | 1 | 0 | +6 | **7** ✅ |
-| 2 | 🇯🇵 日本 | 3 | 1 | 2 | 0 | +4 | **5** ✅ |
-| 3 | 🇸🇪 瑞典 | 3 | 1 | 1 | 1 | 0 | 4 |
-| 4 | 🇹🇳 突尼斯 | 3 | 0 | 0 | 3 | -10 | 0 |
+**巴萨 (Barcelona) 近 5 场：**
 
-### 🇪 H组（已完赛）
-| # | 球队 | 赛 | 胜 | 平 | 负 | 净胜球 | 积分 |
-|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | 🇪🇸 **西班牙** | 3 | 2 | 1 | 0 | +5 | **7** ✅ |
-| 2 | 🇨🇻 佛得角 | 3 | 0 | 3 | 0 | 0 | **3** ✅ |
-| 3 | 🇺🇾 乌拉圭 | 3 | 0 | 2 | 1 | -1 | 2 |
-| 4 | 🇸🇦 沙特 | 3 | 0 | 2 | 1 | -4 | 2 |
 
-### 🇮 I组（已完赛）
-| # | 球队 | 赛 | 胜 | 平 | 负 | 净胜球 | 积分 |
-|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | 🇫🇷 法国 | 3 | 3 | 0 | 0 | +8 | **9** ✅ |
-| 2 | 🇳🇴 挪威 | 3 | 2 | 0 | 1 | +1 | **6** ✅ |
-| 3 | 🇸🇳 塞内加尔 | 3 | 1 | 0 | 2 | +2 | 3 |
-| 4 | 🇮🇶 伊拉克 | 3 | 0 | 0 | 3 | -11 | 0 |
+> 巴萨 近期暂无比赛数据。
 
-### 🇬 G组（进行中）
-| # | 球队 | 赛 | 胜 | 平 | 负 | 净胜球 | 积分 |
-|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | 🇪🇬 埃及 | 2 | 1 | 1 | 0 | +2 | **4** |
-| 2 | 🇮🇷 伊朗 | 2 | 0 | 2 | 0 | 0 | 2 |
-| 3 | 🇧🇪 比利时 | 2 | 0 | 2 | 0 | 0 | 2 |
-| 4 | 🇳🇿 新西兰 | 2 | 0 | 1 | 1 | -2 | 1 |
 
-### 🇯 J组（今日开打）
-| # | 球队 | 赛 | 胜 | 平 | 负 | 净胜球 | 积分 |
-|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | 🇦🇷 阿根廷 | 2 | 2 | 0 | 0 | +5 | **6** |
-| 2 | 🇦🇹 奥地利 | 2 | 1 | 0 | 1 | 0 | 3 |
-| 3 | 🇩🇿 阿尔及利亚 | 2 | 1 | 0 | 1 | -2 | 3 |
-| 4 | 🇯🇴 约旦 | 2 | 0 | 0 | 2 | -3 | 0 |
+**皇马 (Real Madrid) 近 5 场：**
 
-### 🇰 K组（今日开打）
-| # | 球队 | 赛 | 胜 | 平 | 负 | 净胜球 | 积分 |
-|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | 🇨🇴 哥伦比亚 | 2 | 2 | 0 | 0 | +3 | **6** |
-| 2 | 🇵🇹 葡萄牙 | 2 | 1 | 1 | 0 | +5 | **4** |
-| 3 | 🇨🇩 刚果(金) | 2 | 0 | 1 | 1 | -1 | 1 |
-| 4 | 🇺🇿 乌兹别克 | 2 | 0 | 0 | 2 | -7 | 0 |
 
-### 🇱 L组（今日开打）
-| # | 球队 | 赛 | 胜 | 平 | 负 | 净胜球 | 积分 |
-|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | 🏴󠁧󠁢󠁥󠁮󠁧󠁿 英格兰 | 2 | 1 | 1 | 0 | +2 | **4** |
-| 2 | 🇬🇭 加纳 | 2 | 1 | 1 | 0 | +1 | **4** |
-| 3 | 🇭🇷 克罗地亚 | 2 | 1 | 0 | 1 | -1 | 3 |
-| 4 | 🇵🇦 巴拿马 | 2 | 0 | 0 | 2 | -2 | 0 |
+> 皇马 近期暂无比赛数据。
+
+
+**马竞 (Atletico Madrid) 近 5 场：**
+
+
+> 马竞 近期暂无比赛数据。
+
 
 ---
 
-## 🔍 今日看点
+## 📆 明日预告
 
-1. 🇦🇷 **阿根廷 vs 约旦** — 梅西带队冲三连胜，约旦两连败已濒临出局
-2. 🇨🇴 **哥伦比亚 vs 葡萄牙** — K组头名之争，葡萄牙需赢才能反超
-3. 🏴󠁧󠁢󠁥󠁮󠁧󠁿 **英格兰 vs 巴拿马** — 英格兰不败即出线，巴拿马背水一战
-4. 🇭🇷 **克罗地亚 vs 加纳** — 莫德里奇最后一舞？克罗地亚必须赢
+
+| 赛事 | 开球 | 对阵 |
+|:---:|:---:|:---:|
+
+| FIFA World Cup | 05:00 | Croatia vs Ghana |
+
+| FIFA World Cup | 05:00 | Panama vs England |
+
+| FIFA World Cup | 07:30 | Colombia vs Portugal |
+
+| FIFA World Cup | 07:30 | Congo DR vs Uzbekistan |
+
+| FIFA World Cup | 10:00 | Algeria vs Austria |
+
+| FIFA World Cup | 10:00 | Jordan vs Argentina |
+
 
 ---
 
-*本文为「足球日报」自动生成 (v3 改革版 · 数据驱动)。数据来源：ESPN API · sports-skills CLI。*
+## 🗞️ 新闻聚合 (完整版)
+
+
+### Google News
+
+
+- [Julian Alvarez makes transfer admission amid Arsenal and Barcelona links - The Football Faithful](https://news.google.com/rss/articles/CBMif0FVX3lxTE90SWxVaVFXRW1hSW5TSGp6UXRLY201S3c4R2pEbnFDUm1HSTdVMUJJWkFscldYT19tY3kxMkxHV3JJUHRhNVAzTFk3NXBKWlBqMGJfLWFsUVZya3R4SjVoTTl0UnZYZ2pSdXNsVm0xTXNWRzd5NFZZRVhIX1lDQ00?oc=5) `Mon, 22 Jun 2026 22:56:30 GMT`
+
+- [Marcus Rashford still only wants Barcelona despite Gordon arrival - The Football Faithful](https://news.google.com/rss/articles/CBMilgFBVV95cUxPNDJmd0JJZUR6N1I4TXpJUUM1c0RWQk1pX2NMTkhSQ3BhNEYyWmJlMnVWV280XzBXZTZBYjA2eTgtTmhHWkFWTTBGY0V0RGtKNTZXSlBSSWJjR3ZxY2E0bnRMdVZGS1NFRHV0WVZVT21hWURtT3I5RERId2h2aGtoWG0tODg5c25VRnVkcjVQcGcwYUJ4OHc?oc=5) `Fri, 19 Jun 2026 10:07:40 GMT`
+
+- [Barcelona transfer news: La Liga champions facing Premier League 'competition' for summer target - Sports Mole](https://news.google.com/rss/articles/CBMi3gFBVV95cUxNZUhXUGxVX0Z4ckV5VEh4QnhCcEZqVU9uUkpZeW1sQjRPTWI2a2tWeEVkTElXR0dkelFUb2syeDYyU09UTVBYWGpuNVdFTnpZcmx4MTZFalgzdEQwNXFLVUk1dlpqT2Y4enZUaTFZcGpndVJrZzFxQUwwSklTOS03VUkxeUR1NThHS2N1WVVCbVI5OENvbTYzVTJESkVSVmVhVXZJS2dnUVJmZ3p6VW9OS0E4Z19sdVkwTFZzNG9CYjN1SFQ0TDhPWWR6QTdxVDRpSEJGYnlzc3lualkwcnc?oc=5) `Thu, 18 Jun 2026 17:54:40 GMT`
+
+- [News | Jose Mourinho dismisses Real Madrid clear-out talk and backs star-studded squad - Vodacom Soccer](https://news.google.com/rss/articles/CBMisgFBVV95cUxNN1dTbnBva05Jc3ExRFd2cndULVVlUjZ5aVlzRmRnMmd1TEZZcXQwb0ZxUElkT3cwelgtb0RZdXM4NTNEdVM3UnMxMlhxemVlRW5NRFYxQno4cFY5S2FSM2xwUWJpOGVvWDJQS3k3S0RWREphTXlHM2w5RXRxc0ZnNzc2emFaZWEyVUxncFdOdTlHVkc0emJpTHRMa3E2N0M1emdkRzhxNjJuOXV1bnl2Z1dB?oc=5) `Fri, 26 Jun 2026 21:32:38 GMT`
+
+- [Former Real Madrid Boss Planning to Raid Club's Academy Players - roundtable.io](https://news.google.com/rss/articles/CBMiwAFBVV95cUxOVUx0TFMzQXZTcTVuNFFHQWhiSk5iU3ZJWjJJMGFaLW1oWjBYY2oxdnZaX3hHcnptUHhWTDc4OTg1c3lHQW9oc2g2dHhCVTZmdWtOUXg2ZkdZRzVocmotWjBQQnYtaGlFdlB1T2hHdXJTejVSZUktN19mQ3BQYTMyU0hEYzRUNVpjZ2JtZmNqQmFuQTA4bzVET3hxZkVBcjl5NDl5ZWFkampBYmtjVUxfOGFZc0J5czVfV0lnc1hmckg?oc=5) `Fri, 26 Jun 2026 10:54:26 GMT`
+
+- [Mourinho: No bad feelings for Barça, but I love Real Madrid - ESPN](https://news.google.com/rss/articles/CBMipwFBVV95cUxQYkJEeUtpUHBiNnZLeTQ2czV5RHNVSTNuYXFoTklBRUNVYVp0N3pnZ3duYXo2czkyOEpHNkR3NVZ5MDhObVNwTUFBSzZOdGpTWjNGSDRDRTVMYkN4WjdFbTExWG9SY193Z3ZjZUJPNFVXZFg3ZjNLT0JRWHd3LTllLUYzRjFTSV8wWXF2T2E0Q04wWERESnZBVHRIU3R1NFliLVcxVFNjUQ?oc=5) `Wed, 24 Jun 2026 14:59:00 GMT`
+
+- [Lee Kang-in Transfer to Atlético Madrid: 35M Euros - 조선일보](https://news.google.com/rss/articles/CBMihgFBVV95cUxQRzdVaHczMzcwcjR5WVBFRVVkMmRfcy1uUTJ2T0V5TU4zbENUUFZHaFhZcmN2M2Vad3YyRW9CMTlfaDhLUFRIZ2wzclRzSllDOWdMbzgyQVkyWDFCUE9paE14MTd0SzNrckRpMndxZEpmZnhETTE3a1M5OG8xMnEwZzg4dUxrdw?oc=5) `Sat, 27 Jun 2026 10:55:04 GMT`
+
+- [Barcelona forward target still pushing for Camp Nou switch despite pressure from current club - Yahoo Sports Canada](https://news.google.com/rss/articles/CBMijwFBVV95cUxOdTBCenVrcWN3ZUNXVG5uLW42bm9uV0YwcmhpRE9GLW5fUzhLVmVjYTlmWFVNRFE1clBxcFNXYXpPRjNjaU1SWFJVYjdhUklhNGNiMkh3aWQwNHlLRkkyRGhaNmR2ak1Ha1RJSXhQWTloV3loTkQ0MmVMekhHQ0FSbzBSSUVRa1IwRUVrb2R0RQ?oc=5) `Sat, 27 Jun 2026 06:40:00 GMT`
+
+- [Atlético Madrid’s best performer at each of the last three World Cups - Yahoo Sports](https://news.google.com/rss/articles/CBMihgFBVV95cUxNSGxEUVlSazJBNEhNMDdnS0xWNkFYOGlyckJyeTVyUmw4NHZvTWN3bnNBSlF4ZkxTOXpPUVJuNVVfLXJCT2xJUlFadVBySHFhLTdfZjNpQ3ZYQjVvU0ZkQ1ZtUGFMS09lLWgyMkJJTnJNQ0V3WHJVd2ZMbXAtUjBtMVZhQjJwUQ?oc=5) `Fri, 26 Jun 2026 22:13:29 GMT`
+
+- [Spain Must Rediscover Attacking Formula or World Cup Ghosts Seem Destined to Return - Sports Illustrated](https://news.google.com/rss/articles/CBMinwFBVV95cUxPb05SSWpScjVScEZ0dFBtM0xSXzVnSU44YTF5OXBGTTdyOTFkOVZwQ1JVNGtHUGkzQTJfSHVnOXpSclo4Y0ZLN2FuTnlFdWxJQVBSTWJwNGM3MmZFOExsRWVPUlRtUUIxZVlNZHE0dW1ZeGhHWWwtcFRlUlJZT1Bka1oyYWk2aTJKTGFjYzZrVXF1SUltWlBwbWFaNFlfVFU?oc=5) `Sat, 27 Jun 2026 12:45:00 GMT`
+
+- [World Cup 2026 bracket and knockout fixtures - who's facing who in the last 32 and route to final - Sky Sports](https://news.google.com/rss/articles/CBMi4wFBVV95cUxPZE4zaGFZYWpHX2k3ZWFkUS1icTIzeVJ4WTV4bGFJd09VRHZPNG1aYlhEa3dITVM3cE4yUVQ4TFRsa2plZEhhSENib18ySHhhVzctaTBxUkU2VGt3blJlV2JMQVc2aldrWUQ0am9CeEdzM2ZuajRIeHhpaEVmWk9JVXUtRUVQcm83REZWX0hZVE9adC1YeXZmdWNWcnVoMXFTcjFrazNmYVdXTzBrT2JJQWVPZGdmS1hOSFZSbC1tNGdOcUs1eElCWkdmTG9tR1YwbUpTbFdwbTVVVEtiUWxSMHdtQQ?oc=5) `Sat, 27 Jun 2026 12:32:06 GMT`
+
+- [The Best Photos of Royals at the 2026 World Cup - AOL.com](https://news.google.com/rss/articles/CBMifkFVX3lxTE1PY0dYMXhqcERrSS12b3Mxb1c5Y1JMME8yVl9CRXgwUmxaYWEwOHJ4WWMxZUlQdkhUeEh5eC1CMnZ4Nm5wbFBNMld6aVdqV3RSb3BraE1IdUoyamk4WFBWTGg3cmtreXJVSEFDaWEtaUFsb1NxdU0xeEdRVDJXQQ?oc=5) `Sat, 27 Jun 2026 12:20:37 GMT`
+
+
+### RSS 精选 (BBC + Sky + ESPN)
+
+
+- [Who could England face in last 32 after qualifying for next round?](https://www.bbc.co.uk/sport/football/articles/c1wylljn12xo?at_medium=RSS&at_campaign=rss) *(BBC Sport)* `Sat, 27 Jun 2026 02:47:52 GMT`
+
+- [Scotland's World Cup hopes at 0.07% - these are results they need](https://www.bbc.co.uk/sport/football/articles/cx23rx038w1o?at_medium=RSS&at_campaign=rss) *(BBC Sport)* `Sat, 27 Jun 2026 05:38:01 GMT`
+
+- [Who are the Panama players England need to look out for?](https://www.bbc.co.uk/sport/articles/cr47wd2d3ero?at_medium=RSS&at_campaign=rss) *(BBC Sport)* `Sat, 27 Jun 2026 13:37:22 GMT`
+
+- ['Nothing is impossible' - Cape Verde make history to set up Argentina tie](https://www.bbc.co.uk/sport/football/articles/c0mypzl7v2xo?at_medium=RSS&at_campaign=rss) *(BBC Sport)* `Sat, 27 Jun 2026 03:41:58 GMT`
+
+- [One night in Miami: The Scotsmen of the apocalypse](https://www.bbc.co.uk/sport/football/articles/c872lpl4e0do?at_medium=RSS&at_campaign=rss) *(BBC Sport)* `Sat, 27 Jun 2026 08:34:12 GMT`
+
+- [Austrian GP: Hamilton looks to spoil Antonelli, Russell battle in Qualifying LIVE!](https://www.skysports.com/f1/live-blog/12040/13557412/f1-austrian-gp-live-final-practice-and-qualifying-updates-results-stream-highlights-from-f1-race-weekend-at-red-bull-ring) *(Sky Sports)* `Sat, 27 Jun 2026 14:13:00 BST`
+
+- [Russell finds late pace to top Antonelli, Hamilton in final Austria practice](https://www.skysports.com/f1/news/12040/13558224/austrian-gp-george-russell-tops-practice-three-from-kimi-antonelli-and-lewis-hamilton-to-set-up-thrilling-qualifying) *(Sky Sports)* `Sat, 27 Jun 2026 12:40:00 BST`
+
+- [Osaka retires from Bad Homburg final to spark Wimbledon concern](https://www.skysports.com/tennis/news/12040/13558249/bad-homburg-naomi-osaka-retires-during-final-with-foot-issue-vs-karolina-muchova-prompting-wimbledon-concern) *(Sky Sports)* `Sat, 27 Jun 2026 10:45:00 BST`
+
+- [Raducanu first up on No 1 Court on Wimbledon opening day](https://www.skysports.com/tennis/news/12040/13557578/wimbledon-2026-order-of-play-and-match-schedule-for-centre-court-no-1-court-no-2-court-and-more) *(Sky Sports)* `Fri, 26 Jun 2026 22:00:00 BST`
+
+- [Brook bowled by Foulkes as England seven down vs New Zealand LIVE!](https://www.skysports.com/cricket/live-blog/12040/13558157/england-vs-new-zealand-third-test-day-three-live-score-updates-video-and-analysis-as-ben-stokes-returns-as-captain-at-trent-bridge) *(Sky Sports)* `Sat, 27 Jun 2026 11:25:00 BST`
+
+
+
+---
+
+*本文为「足球日报」自动生成 (v4 增强版)。数据来源：ESPN · Understat · BBC Sport · Sky Sports · ESPN FC · Google News。*
+*生成时间：2026-06-27 21:40 GMT+8*
