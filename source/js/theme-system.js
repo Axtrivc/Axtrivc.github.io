@@ -194,6 +194,10 @@
     document.documentElement.style.setProperty('--theme-border-current', t.border);
     document.documentElement.style.setProperty('--theme-card-current', t.card);
     document.documentElement.style.setProperty('--theme-body-current', t.body);
+    if (t.footerBg)          document.documentElement.style.setProperty('--footer-bg', t.footerBg);
+    if (t.footerRiverTop)    document.documentElement.style.setProperty('--footer-river-top', t.footerRiverTop);
+    if (t.footerRiverMid)    document.documentElement.style.setProperty('--footer-river-mid', t.footerRiverMid);
+    if (t.footerRiverBottom) document.documentElement.style.setProperty('--footer-river-bottom', t.footerRiverBottom);
     window.dispatchEvent(new CustomEvent('themechange', { detail: { id: themeId, theme: t } }));
 
     // Music bar theme adaptation
