@@ -31,7 +31,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
 /* ① footer 白底 → 米色暖棕, padding-bottom=0 让 river 紧贴底边 */
 #footer {
-  background-color: #faf8f5 !important;
+  background-color: var(--footer-bg, #faf8f5) !important;
   background-image: none !important;
   padding-bottom: 0 !important;
 }
@@ -50,7 +50,10 @@ hexo.extend.filter.register('after_render:html', function (data) {
   margin-top: 0;
   margin-bottom: 0;
   padding-top: 0;
-  background: linear-gradient(180deg, #efe8dc 0%, #e8d9c0 40%, #d4bc96 100%);
+  background: linear-gradient(180deg,
+    var(--footer-river-top, #efe8dc) 0%,
+    var(--footer-river-mid, #e8d9c0) 40%,
+    var(--footer-river-bottom, #d4bc96) 100%);
   overflow: hidden;
   cursor: crosshair;
 }
@@ -114,10 +117,10 @@ body .footer-other > .footer-copyright { display: none !important; }
 
 /* ② 防止上滑白屏: html/body 底部也用米色兜底 */
 html {
-  background-color: #faf8f5 !important;
+  background-color: var(--footer-bg, #faf8f5) !important;
 }
 body {
-  background-color: #faf8f5 !important;
+  background-color: var(--footer-bg, #faf8f5) !important;
 }
 </style>
 `;
