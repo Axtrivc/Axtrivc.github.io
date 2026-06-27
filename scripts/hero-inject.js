@@ -1,23 +1,20 @@
 /**
- * Hero 注入 v12「阻力 → 临界爆发 → 直滑到主页」(2026-06-23)
+ * Hero 注入 v13「单 pipeline + 原生滚动」(2026-06-27)
  *
- * 用户新需求（基于截图）：
- *   1. Hero 阶段：顶部 nav（金棕色）+ 全屏 river.ai 动画，其他 widget 全部隐藏
- *   2. 转场：向下滚动先有阻力（push-back 感），到达临界点后突然放手「直滑到底」
- *   3. Main 阶段：原版博客主页（所有 widget 恢复：nav、music-bar、aside、FAB）
+ * 基于 river.ai 性能分析重写：
+ *   ✅ 单 GPU pipeline（shader rAF，无第二个 rAF）
+ *   ✅ 原生滚动（无 wheel/touch/keyboard hijack）
+ *   ✅ 零 CSS 变量 transform（无 calc() 每帧重算）
+ *   ✅ hero 绝对定位 100dvh + main margin-top 100dvh
+ *   ✅ scrollY > 50% viewport → hero-released → hero display:none
+ *   ✅ 滚回顶部 → hero 重新显示
  *
- * 关键改动 vs v11：
- *   - 不再用原生 scrollY 驱动，而是 hijack wheel/touch/keyboard，自己算 progress
- *   - 阻力段 (target < 0.45)：spring damping ×0.08，target 累积很慢（像在推重物）
- *   - 临界段 (target >= 0.45)：releaseArmed=true，target 强制 1
- *   - 释放段：progress 直接跟 target 同步（×0.32），无 inertia → 直冲到底
- *   - progress >= 0.998 后退出 hijack，scrollTo 到 hero 高度，浏览器接管原生滚动
- *
- * 通信变量（CSS 只引用，不再算数学）：
- *   --hero-raw       0..1 线性（用户滚轮目标 progress）
- *   --hero-fly       0..1 视觉进度（已含 ease-out）
- *   --hero-pin       0..1 蓄力强度（峰值在 raw=0.45）
- *   --hero-released  0/1  是否已释放
+ * 保留：
+ *   - hero shader（river-hero.js 自己的 rAF，40fps cap）
+ *   - nav 透明背景 + 白字（hero 阶段）
+ *   - nav 主题色（released 阶段）
+ *   - widget 隐藏/显示切换
+ *   - 左下角 typed 副标题（纯 CSS animation，无 setTimeout）
  */
 const fs = require('fs');
 const path = require('path');
@@ -27,13 +24,10 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
   if (data.indexOf('id="asciiRiver"') !== -1) return data;
 
-  // 只在主页注入
   const canonicalMatch = data.match(/canonical["']?\s*href=["']([^"']+)["']/);
   if (!canonicalMatch) return data;
   const canonical = canonicalMatch[1];
-  if (!/axtrivc\.github\.io\/(index\.html)?$/.test(canonical)) {
-    return data;
-  }
+  if (!/axtrivc\.github\.io\/(index\.html)?$/.test(canonical)) return data;
 
   if (data.indexOf('full_page') === -1) return data;
   if (data.indexOf('</header>') === -1 || data.indexOf('</body>') === -1) return data;
@@ -57,54 +51,31 @@ hexo.extend.filter.register('after_render:html', function (data) {
     .replace(/^\s*html,\s*body\s*\{[^}]*\}\s*$/gm, '')
     .replace(/^\s*\*,\s*\*::before,\s\*::after\s*\{[^}]*\}\s*$/gm, '');
 
+  // ═══════════════════════════════════════════════════════════════
+  // v13 CSS：零 CSS 变量、零 calc() transform、零 hijack
+  // ═══════════════════════════════════════════════════════════════
   heroCss += `
-/* ═════════════════════════════════════════════════════════════
- * v12 「阻力 → 临界爆发 → 直滑到主页」
- *
- * Hero stage:
- *   - nav 固定顶部（金棕色），始终可见
- *   - hero-shell 全屏（z-index 1000，在 nav 1200 之下）
- *   - 其他 fixed widget 隐藏（music-bar、rightside、FAB、countdown）
- *
- * 转场数学：
- *   raw ∈ [0, 0.45]  阻力段（damping 0.08）→ hero 几乎不动
- *   raw ∈ [0.45, 1]  释放段（damping 0.32）→ hero 急速飞出
- *   fly = easeOutExpo(raw) → 让释放曲线更"急"
- *
- * 性能铁律（v3→v12 经验）：
- *   ❌ 不用 CSS filter（blur/brightness/saturate）
- *   ❌ 不用 SVG filter / mix-blend-mode
- *   ❌ 不加 will-change: transform（触发 canvas 降采样）
- *   ✅ 只用 transform: translate3d + scale + opacity
- *   ✅ canvas 单独加 translateZ(0) 锁独立 GPU 层
- *   ✅ 0 transition → hijack 时 100% 跟手
+
+/* ══ v13 单 pipeline + 原生滚动 ══
+ * hero-shell: 绝对定位 100dvh, z-index 0 (背景层)
+ * main: margin-top 100dvh, z-index 1 (前景层, 白底)
+ * nav: fixed top, z-index 1200 (overlay)
+ * 无 CSS 变量, 无 calc() transform, 无 hijack
  * ═════════════════════════════════════════════════════════════ */
 
-:root {
-  --hero-raw: 0;
-  --hero-fly: 0;
-  --hero-pin: 0;
-}
-
-/* ── hero-shell：满屏 fixed（z-index 1000） ── */
+/* hero-shell：绝对定位占 100dvh，在文档流中 */
 .hero-shell {
-  position: fixed;
-  inset: 0 0 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100dvh;
   overflow: hidden;
   background: #0E2F7E;
   margin: 0;
   padding: 0;
-  z-index: 1000;
-  --raw: var(--hero-raw, 0);
-  --fly: var(--hero-fly, 0);
-  --pin: var(--hero-pin, 0);
-
-  /* 阻力段：蓄力向下鼓胀（+0.5vh）、暗化微弱
-   * 释放段：急速向上飞出 -130vh、暗化变深 */
-  transform: translate3d(0, calc(var(--pin) * 0.5vh - var(--fly) * 130vh), 0);
-  opacity: calc(1 - max(0, var(--fly) - 0.55) * 2.2);
+  z-index: 0;
+  pointer-events: none;
 }
 .hero-shell > section.hero {
   position: relative;
@@ -117,86 +88,40 @@ hexo.extend.filter.register('after_render:html', function (data) {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-/* canvas：独立 GPU 层避免降采样 */
+/* canvas：独立 GPU 层 */
 .hero-shell canvas.hero-ascii {
-  transform: translate3d(0, calc(var(--pin, 0) * 1.5vh), 0) translateZ(0);
-  -webkit-transform: translate3d(0, calc(var(--pin, 0) * 1.5vh), 0) translateZ(0);
+  transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
 
-/* 阻力段的 vignette 暗化（伪元素，0 filter 性能安全） */
-.hero-shell::after {
-  content: "";
+/* hero 内部文字：静态定位，无 transform 动画 */
+.hero-text {
   position: absolute;
-  inset: 0;
+  bottom: clamp(20px, 4vw, 56px);
+  left: clamp(20px, 4vw, 56px);
+  right: clamp(20px, 4vw, 56px);
+  z-index: 3;
   pointer-events: none;
-  background: radial-gradient(
-    ellipse at center,
-    transparent 30%,
-    rgba(0, 0, 0, 0.55) 100%
-  );
-  opacity: calc(var(--pin, 0) * 1.1);
-  z-index: 4;
+  color: rgba(255, 255, 255, 0.95);
 }
 
-/* hero 内部文字：阻力段跟着被压（暗化+微弱下压），释放段急速飞散 */
-.hero-text-headline,
-.hero-text-sub {
-  --fly: var(--hero-fly, 0);
-  --pin: var(--hero-pin, 0);
-  transform: translate3d(
-    calc(var(--fly) * -8vh),
-    calc(var(--pin) * -1vh - var(--fly) * 65vh),
-    0
-  );
-  opacity: calc(0.96 - var(--fly) * 1.05);
-}
-.hero-cta,
-.hero-text-label {
-  --fly: var(--hero-fly, 0);
-  --pin: var(--hero-pin, 0);
-  transform: translate3d(
-    calc(var(--fly) * 8vh),
-    calc(var(--pin) * -1vh - var(--fly) * 65vh),
-    0
-  );
-  opacity: calc(0.96 - var(--fly) * 1.05);
-}
-.hero-text-quote {
-  --fly: var(--hero-fly, 0);
-  --pin: var(--hero-pin, 0);
-  transform: translate3d(0, calc(var(--pin) * -1vh - var(--fly) * 70vh), 0);
-  opacity: calc(0.96 - var(--fly) * 1.05);
-}
-
-/* ── 博客主页：紧跟 hero 后面（z-index 1100） ── */
-/* v12.14 性能优化：去掉 will-change,只移动 main 自身,不再带动 #content-inner/.layout */
+/* ── main：紧跟 hero 下方，z-index 1 白底 ── */
 body.hero-page-active main {
   position: relative;
-  z-index: 1100;
+  z-index: 1;
   margin-top: 100dvh;
   background: #faf8f5;
-  transform: translate3d(0, calc((1 - var(--hero-fly, 0)) * 50vh), 0);
-  opacity: clamp(var(--hero-fly, 0), 0, 1);
-  /* v12.14: will-change 只在 hero 阶段短时启用,避免常驻 GPU 内存 + 滚动降采样 */
-  will-change: auto;
 }
-/* 释放后：清掉 transform/opacity，让原生滚动接管 */
-body.hero-released main {
-  transform: none !important;
-  opacity: 1 !important;
-  margin-top: 100dvh !important;
-  will-change: auto !important;
-}
-
-/* v12.2:hero released 后隐藏 hero-shell,消除下方空白
- * reenter 时由 JS 重新设置 display:'' */
 body.hero-released .hero-shell {
   display: none !important;
 }
+body.hero-released main {
+  margin-top: 100dvh;
+  background: #faf8f5;
+}
 
-/* ── v12.11 导航：不再用金棕色渐变，hero 阶段 nav 用主题色背景 + 透明文字 ── */
+/* ── nav：hero 阶段透明 + 白字 ── */
 body.hero-page-active #nav,
 body.hero-page-active #page-header.full_page #nav {
   opacity: 1 !important;
@@ -210,7 +135,6 @@ body.hero-page-active #page-header.full_page #nav {
   right: 0;
   height: 60px;
   z-index: 1200;
-  /* 透明背景：让 hero 河流画透过来（金棕色已被用户拒绝） */
   background: transparent !important;
   background-image: none !important;
   box-shadow: none !important;
@@ -218,7 +142,6 @@ body.hero-page-active #page-header.full_page #nav {
   align-items: center;
   transform: translateZ(0);
 }
-/* hero 阶段：nav 文字白色 + 描边阴影，可读性靠 text-shadow */
 body.hero-page-active #nav a,
 body.hero-page-active #nav .site-name,
 body.hero-page-active #nav a.site-page,
@@ -234,7 +157,7 @@ body.hero-page-active #nav .menus a:hover {
   text-shadow: 0 0 14px rgba(7, 193, 96, 0.6);
 }
 
-/* hero 阶段隐藏大 banner 标题（hero 占满屏，标题被挡） */
+/* hero 阶段隐藏 page-header banner */
 body.hero-page-active #page-header.full_page {
   position: relative;
   height: 0;
@@ -246,7 +169,6 @@ body.hero-page-active #site-info,
 body.hero-page-active #scroll-down {
   display: none !important;
 }
-/* 释放后恢复 banner */
 body.hero-released #page-header.full_page {
   height: auto;
   overflow: visible;
@@ -274,8 +196,6 @@ body.hero-page-active #nav .site-name {
   font-weight: 700 !important;
   text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
 }
-
-/* #menus */
 body.hero-page-active #menus {
   display: flex !important;
   align-items: center;
@@ -286,7 +206,7 @@ body.hero-page-active #menus {
   pointer-events: auto !important;
 }
 
-/* ── v12 首页净化：hero 阶段隐藏 fixed widget，释放后恢复 ── */
+/* ── hero 阶段隐藏 fixed widget ── */
 body.hero-page-active:not(.hero-released) #music-bar,
 body.hero-page-active:not(.hero-released) #music-panel,
 body.hero-page-active:not(.hero-released) #rightside,
@@ -304,9 +224,7 @@ body.hero-page-active:not(.hero-released) #debugBar {
   pointer-events: none !important;
 }
 
-/* 释放后：恢复所有 widget（CSS 默认值即可，但我们明确覆盖）
- * ⚠️ 2026-06-26 修复：#music-panel 必须用 :not(.show) 排除未展开状态
- * 否则 hero-released 时即使没点 btnToggle，panel 也会被强制显示（用户反馈"音乐栏自动弹出"） */
+/* 释放后：恢复 widget */
 body.hero-released #music-bar,
 body.hero-released #music-panel.show,
 body.hero-released #rightside,
@@ -316,23 +234,19 @@ body.hero-released #axtrivc-fab {
   pointer-events: auto !important;
 }
 
-/* 释放后：nav 恢复主题色（不再用 hero 阶段的 !important 金棕色）
- * ⚠️ 2026-06-26 修复：之前 nav 一直金棕色是因为只有 hero 阶段的 !important 覆盖
- * 没有 hero-released 阶段的"恢复主题色"规则。 */
+/* 释放后：nav 恢复主题色 */
 body.hero-released #nav,
 body.hero-released #page-header.full_page #nav {
   background: var(--theme-nav-current, rgba(255, 255, 255, 0.94)) !important;
   background-image: none !important;
 }
-
-/* 释放后：nav 文字色恢复主题色 */
 body.hero-released #nav a,
 body.hero-released #nav .site-name,
 body.hero-released #nav a.site-page {
   color: var(--theme-text-current, #1a1a1a) !important;
 }
 
-/* 卡片融底（保留以维持视觉风格统一） */
+/* 卡片融底 */
 body.hero-page-active #article-container,
 body.hero-page-active .recent-post-item,
 body.hero-page-active .card-widget,
@@ -351,59 +265,12 @@ body.hero-page-active #recent-posts {
   background: transparent !important;
 }
 
-/* 全局滚动：hero 阶段我们自己 hijack，释放后浏览器接管 */
 body.hero-page-active {
   overflow-x: hidden;
   overflow-y: auto;
 }
 
-/* ── 右侧滚动进度导轨（PC only） ── */
-.hero-progress-rail {
-  position: fixed;
-  right: 26px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 2px;
-  height: 110px;
-  background: rgba(255, 255, 255, 0.32);
-  border-radius: 1px;
-  z-index: 1500;
-  overflow: hidden;
-  pointer-events: none;
-  opacity: calc(1 - var(--hero-fly, 0) * 1.1);
-}
-.hero-progress-fill {
-  position: absolute;
-  top: 0;
-  left: -1px;
-  width: 4px;
-  height: calc(var(--hero-raw, 0) * 100%);
-  background: linear-gradient(180deg, #ffffff 0%, #ffd970 100%);
-  border-radius: 2px;
-  box-shadow: 0 0 8px rgba(255, 217, 112, 0.6);
-}
-@media (max-width: 768px) {
-  .hero-progress-rail { display: none; }
-}
-
-/* ── 底部 SCROLL 提示 ── */
-.hero-scroll-hint {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  color: rgba(255, 255, 255, 0.95);
-  pointer-events: none;
-  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-  opacity: calc(1 - var(--hero-fly, 0) * 1.4);
-}
-
-/* ── v12.12 左下角 typed 副标题 (取代旧 typewriter) ── */
+/* ── 左下角 typed 副标题（纯 CSS animation，无 setTimeout） ── */
 .hero-typed-wrap {
   position: absolute;
   left: clamp(20px, 4vw, 56px);
@@ -416,73 +283,64 @@ body.hero-page-active {
   letter-spacing: 0.04em;
   pointer-events: none;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6), 0 0 14px rgba(80, 180, 130, 0.22);
-  opacity: calc(1 - var(--hero-fly, 0) * 1.4);
   max-width: 56ch;
 }
-.hero-scroll-label {
-  font-size: 11px;
-  letter-spacing: 0.32em;
-  font-weight: 600;
-  text-transform: uppercase;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
+.hero-typed-wrap .hero-typed-prefix {
+  color: rgba(7, 193, 96, 0.85);
+  margin-right: 0.4em;
+  font-weight: 400;
 }
-.hero-scroll-rail {
-  position: relative;
-  width: 1px;
-  height: 38px;
-  background: rgba(255, 255, 255, 0.32);
-  overflow: hidden;
+.hero-typed-wrap .hero-typed-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  margin-left: 2px;
+  background: rgba(7, 193, 96, 0.95);
+  vertical-align: -0.15em;
+  animation: heroTypedBlink 1.05s steps(2, start) infinite;
+  box-shadow: 0 0 8px rgba(7, 193, 96, 0.55);
 }
-.hero-scroll-rail-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: calc(var(--hero-raw, 0) * 100%);
-  background: rgba(255, 255, 255, 0.95);
-}
-.hero-scroll-arrow {
-  animation: heroScrollBob 1.8s ease-in-out infinite;
-}
-@keyframes heroScrollBob {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(5px); }
+@keyframes heroTypedBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
 }
 @media (max-width: 768px) {
-  .hero-scroll-hint { bottom: 18px; gap: 8px; }
-  .hero-scroll-label { display: none; }
+  .hero-typed-wrap { left: 16px; bottom: 18px; font-size: 13px; max-width: 70vw; }
 }
 `;
-
-  const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
-  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=9"') : '';
-
-  const afterScriptIdx = heroSrc.indexOf(heroScriptTag) + heroScriptTag.length;
-  const inlineScriptMatch = heroSrc.slice(afterScriptIdx).match(/<script>[\s\S]*?<\/script>/);
-  const heroInitScript = inlineScriptMatch ? inlineScriptMatch[0] : '';
 
   const heroStyleTag = `<style id="hero-inline-css">\n${heroCss}\n</style>`;
   let content = data.replace('</head>', heroStyleTag + '\n</head>');
 
-  const scrollHint = `
-<div class="hero-scroll-hint" aria-hidden="true">
-  <span class="hero-scroll-label">SCROLL</span>
-  <div class="hero-scroll-rail"><div class="hero-scroll-rail-fill"></div></div>
-  <div class="hero-scroll-arrow">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M6 9L12 15L18 9"/>
-    </svg>
-  </div>
-</div>
-
+  // ═══════════════════════════════════════════════════════════════
+  // typed 副标题 HTML（保留，但 JS 用 setInterval 而非递归 setTimeout）
+  // ═══════════════════════════════════════════════════════════════
+  const typedHtml = `
 <div class="hero-typed-wrap" id="hero-typed-wrap">
   <span class="hero-typed-prefix">// </span><span class="hero-typed-text" id="hero-typed-text"></span><span class="hero-typed-cursor"></span>
 </div>
+`;
 
+  const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${typedHtml}\n</div>`;
+
+  content = content.replace(
+    '</header>',
+    '</header>\n\n' + heroWrapped + '\n'
+  );
+
+  // ═══════════════════════════════════════════════════════════════
+  // v13 极简 JS：原生滚动 + scroll 监听切换 hero-released
+  // 无 hijack, 无 RAF, 无 preventDefault
+  // ═══════════════════════════════════════════════════════════════
+  const heroJs = `
 <script>
 (function() {
-  // v12.12 typed 副标题 — 在 hero 左下角循环打字
-  // 不依赖 butterfly typed.js,自己实现 (轻量)
+  'use strict';
+  var body = document.body;
+  var vh = window.innerHeight;
+  var released = false;
+
+  // typed 副标题（setInterval 而非递归 setTimeout，更稳）
   var lines = [
     '水满则溢,月盈则亏',
     '抽刀断水,举杯消愁',
@@ -494,267 +352,60 @@ body.hero-page-active {
     '行到水穷处,坐看云起时'
   ];
   var el = document.getElementById('hero-typed-text');
-  if (!el) return;
-  var lineIdx = 0, charIdx = 0, isDeleting = false;
-  var TYPING = 95, DELETING = 35, HOLD = 1800;
-  function tick() {
-    var line = lines[lineIdx % lines.length];
-    if (!isDeleting) {
-      charIdx++;
-      el.textContent = line.slice(0, charIdx);
-      if (charIdx === line.length) {
-        isDeleting = true;
-        setTimeout(tick, HOLD);
-        return;
+  if (el) {
+    var li = 0, ci = 0, del = false;
+    setInterval(function() {
+      if (!el) return;
+      var line = lines[li % lines.length];
+      if (!del) {
+        ci++;
+        el.textContent = line.slice(0, ci);
+        if (ci >= line.length) { del = true; }
+      } else {
+        ci--;
+        el.textContent = line.slice(0, ci);
+        if (ci <= 0) { del = false; li++; }
       }
-      setTimeout(tick, TYPING);
-    } else {
-      charIdx--;
-      el.textContent = line.slice(0, charIdx);
-      if (charIdx === 0) {
-        isDeleting = false;
-        lineIdx++;
-        setTimeout(tick, 280);
-        return;
-      }
-      setTimeout(tick, DELETING);
+    }, 95);
+  }
+
+  // scroll 监听：scrollY > 50% viewport → released
+  function onScroll() {
+    var sy = window.scrollY;
+    if (!released && sy > vh * 0.5) {
+      released = true;
+      body.classList.add('hero-released');
+      // 通知 hero shader 冻结
+      window.dispatchEvent(new Event('hero-frozen'));
+    } else if (released && sy < 50) {
+      released = false;
+      body.classList.remove('hero-released');
+      // 通知 hero shader 恢复
+      window.dispatchEvent(new Event('hero-unfrozen'));
     }
   }
-  // 启动: 首字符延迟 600ms (等 hero fly in 动画)
-  setTimeout(tick, 600);
-})();
-</script>
-`;
 
-  const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${scrollHint}\n</div>`;
-
-  content = content.replace(
-    '</header>',
-    '</header>\n\n' + heroWrapped + '\n'
-  );
-
-  const progressRail = `
-<div class="hero-progress-rail" aria-hidden="true">
-  <div class="hero-progress-fill"></div>
-</div>
-`;
-
-  // ═══════════════════════════════════════════════════════════════
-  // v12 「Wheel/Touch Hijack + Resistance → Snap → Release」
-  //
-  // 设计：
-  //   1. 监听 wheel/touch/keydown，preventDefault，自己算 progress
-  //   2. 阻力段：target += deltaY * 0.6 / windowHeight，progress 用 ×0.08 缓慢跟随
-  //      → 用户感觉"在推重物"，滚动慢
-  //   3. 临界段：target >= 0.45 → releaseArmed = true，target 强制 1
-  //   4. 释放段：progress 直接同步 target（×0.32），无 inertia
-  //      → hero 急速飞出
-  //   5. progress >= 0.998 → 退出 hijack，body.hero-released，scrollTo 到 hero 底部
-  //   6. 释放后：原生滚动接管，用户继续滚动浏览博客
-  // ═══════════════════════════════════════════════════════════════
-  const scrollDriverJs = `
-<script>
-(function() {
-  'use strict';
-  var html = document.documentElement;
-  var body = document.body;
-  var rafId = null;
-  var hijacking = true;
-  var heroH = 0;
-
-  // 内部状态
-  var progress = 0;        // 视觉进度（被 spring 平滑过）0..1
-  var target = 0;          // wheel 累积的目标 0..1
-  var releaseArmed = false;
-
-  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
-  function easeOutExpo(t) { return t >= 1 ? 1 : (1 - Math.pow(1 - t, 3)); }
-  function easeInQuad(t) { return t * t; }
-
-  function measure() {
-    heroH = window.innerHeight;
-  }
-  measure();
+  window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', function() {
-    measure();
-    applyVars(progress);
-  });
-
-  // URL 调试参数：?raw=0.3 直接设定 progress（用于截图测试）
-  function getDebugRaw() {
-    try {
-      var qsRaw = new URLSearchParams(window.location.search).get('raw');
-      if (qsRaw !== null) {
-        var v = parseFloat(qsRaw);
-        if (!isNaN(v)) return clamp01(v);
-      }
-    } catch (e) {}
-    return null;
-  }
-  var debugRaw = getDebugRaw();
-  if (debugRaw !== null) {
-    progress = debugRaw;
-    target = debugRaw;
-    releaseArmed = debugRaw >= 0.45;
-  }
-
-  function applyVars(p) {
-    var pin = p < 0.45 ? easeInQuad(p / 0.45) : 1 - easeOutExpo((p - 0.45) / 0.55) * 0.3;
-    var fly = easeOutExpo(p);
-    html.style.setProperty('--hero-raw', p.toFixed(4));
-    html.style.setProperty('--hero-fly', fly.toFixed(4));
-    html.style.setProperty('--hero-pin', pin.toFixed(4));
-  }
-
-  function tick() {
-    rafId = null;
-    if (!hijacking) return;
-
-    if (releaseArmed) {
-      target = 1;  // 强制冲顶
-      // 释放段：无 inertia,直接同步 (0.32 = 32% 步进,3-4 帧完成)
-      progress += (target - progress) * 0.32;
-      if (progress > 0.998) {
-        progress = 1;
-        hijacking = false;
-        applyVars(1);
-        // 释放：移除 main 的 transform/opacity，scrollTo 到 hero 底部
-        body.classList.add('hero-released');
-        var mainEl = document.querySelector('main');
-        var mainTop = mainEl ? mainEl.getBoundingClientRect().top + window.scrollY : heroH;
-        window.scrollTo(0, mainTop + 4);
-        // 通知 hero 立即冻结 (v12.25: 让出 GPU)
-        var heroFrozenEvent = new Event('hero-frozen');
-        window.dispatchEvent(heroFrozenEvent);
-        return;
-      }
-    } else {
-      // 阻力段：缓慢跟随 target (push-back 感) - v12.25 增快到 0.16 提速一倍
-      progress += (target - progress) * 0.16;
-      // v12.14: 当 target 与 progress 差距 <0.001 时不再 RAF 调度
-      if (Math.abs(target - progress) < 0.001) {
-        applyVars(progress);
-        return;
-      }
-    }
-
-    applyVars(progress);
-    rafId = requestAnimationFrame(tick);
-  }
-
-  function schedule() {
-    if (rafId) return;
-    rafId = requestAnimationFrame(tick);
-  }
-
-  // ── Wheel：核心 hijack ──
-  function onWheel(e) {
-    if (!hijacking) return;
-    if (releaseArmed) return;  // 释放阶段不再响应 wheel（让动画完成）
-    if (e.deltaY <= 0) return;  // 向上滚：交给原生（hero 阶段无效果）
-    e.preventDefault();
-    // 阻力：deltaY 缩 40%
-    var dx = (e.deltaY * 0.6) / heroH;
-    target = clamp01(target + dx);
-    if (target >= 0.45) releaseArmed = true;
-    schedule();
-  }
-
-  // ── Touch：移动端 ──
-  var touchY = 0;
-  function onTouchStart(e) {
-    if (!hijacking || releaseArmed) return;
-    if (e.touches.length !== 1) return;
-    touchY = e.touches[0].clientY;
-  }
-  function onTouchMove(e) {
-    if (!hijacking || releaseArmed) return;
-    if (e.touches.length !== 1) return;
-    var y = e.touches[0].clientY;
-    var dy = touchY - y;
-    touchY = y;
-    if (dy <= 0) return;  // 向下 swipe 才算向下滚
-    e.preventDefault();
-    target = clamp01(target + dy * 0.0035);  // 阻力：每像素 0.35%
-    if (target >= 0.45) releaseArmed = true;
-    schedule();
-  }
-
-  // ── Keyboard：可访问性 + 桌面键盘用户 ──
-  function onKey(e) {
-    if (!hijacking || releaseArmed) return;
-    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
-      e.preventDefault();
-      target = clamp01(target + 0.18);
-      if (target >= 0.45) releaseArmed = true;
-      schedule();
-    }
-    // ArrowUp / PageUp / Home：released 状态下回到 hero 顶部
-    if (!hijacking && (e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Home')) {
-      e.preventDefault();
-      reEnterHero();
-    }
-  }
-
-  // ── v12.2:released 后从顶部重新进入 hero 的逻辑 ──
-  function reEnterHero() {
-    if (hijacking && !releaseArmed) return;  // 还在 hero 阶段,不响应
-    hijacking = true;
-    progress = 0;
-    target = 0;
-    releaseArmed = false;
-    body.classList.remove('hero-released');
-    applyVars(0);
-    // 重新让 hero-shell 显示
-    var heroShell = document.querySelector('.hero-shell');
-    if (heroShell) heroShell.style.display = '';
-    window.scrollTo(0, 0);
-    schedule();
-  }
-
-  // ── 注册监听 ──
-  window.addEventListener('wheel', onWheel, { passive: false });
-  window.addEventListener('touchstart', onTouchStart, { passive: true });
-  window.addEventListener('touchmove', onTouchMove, { passive: false });
-  window.addEventListener('keydown', onKey, { passive: false });
-
-  // ── v12.2:released 状态下滚到顶部 → 重新进入 hero ──
-  // 用户向上滚到 scrollY < 50 时,重新激活 hero hijack
-  window.addEventListener('scroll', function() {
-    if (hijacking) return;  // 还在 hero 阶段,不需要 reenter
-    // released 状态下,滚到顶部 → 重新进入 hero
-    if (window.scrollY < 50) {
-      reEnterHero();
-    }
+    vh = window.innerHeight;
   }, { passive: true });
 
-  // ── visibilitychange：处理后台 tab 累积时间 ──
-  var hiddenAccum = 0;
-  var hiddenStart = 0;
-  document.addEventListener('visibilitychange', function() {
-    if (document.hidden) {
-      hiddenStart = performance.now();
-    } else if (hiddenStart > 0) {
-      hiddenAccum += performance.now() - hiddenStart;
-      hiddenStart = 0;
-    }
-  });
-
-  // ── 初始化 ──
-  applyVars(progress);
-  if (!debugRaw) {
-    rafId = requestAnimationFrame(tick);
-  } else {
-    applyVars(progress);
-  }
+  hexo.log && hexo.log.info('[hero-inject] v13 native scroll + single pipeline');
 })();
 </script>
 `;
 
-  const heroScripts = heroScriptTag + '\n' + heroInitScript + progressRail + scrollDriverJs;
+  const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
+  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=13"') : '';
+
+  const afterScriptIdx = heroSrc.indexOf(heroScriptTag) + heroScriptTag.length;
+  const inlineScriptMatch = heroSrc.slice(afterScriptIdx).match(/<script>[\s\S]*?<\/script>/);
+  const heroInitScript = inlineScriptMatch ? inlineScriptMatch[0] : '';
+
+  const heroScripts = heroScriptTag + '\n' + heroInitScript + heroJs;
   content = content.replace('</body>', heroScripts + '\n</body>');
 
-  // ── v12.1 Bug 修复:手绑 #toggle-menu(原 btf.addEventListenerPjax 在非 PJAX 下不触发) ──
+  // mobile sidebar fix
   const sidebarFix = `
 <script>
 (function () {
@@ -788,7 +439,6 @@ body.hero-page-active {
   } else {
     bindMobileSidebar();
   }
-  // 兜底:某些主题会延迟注入 nav,500ms 后再试一次
   setTimeout(bindMobileSidebar, 500);
 })();
 </script>
@@ -801,6 +451,6 @@ body.hero-page-active {
     '<body$1 class="hero-page-active">'
   );
 
-  hexo.log.info('[hero-inject] ✅ v12 「阻力 → 临界爆发 → 直滑到底」: ' + canonical);
+  hexo.log.info('[hero-inject] ✅ v13 单 pipeline + 原生滚动: ' + canonical);
   return content;
 });

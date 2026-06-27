@@ -3772,16 +3772,13 @@
   // barely-noticeable quality hit; AA_LADDER starts at 4 (was 8) so we don't
   // peg the GPU on the very first frame and have to recover. Combine with the
   // existing adaptive governor — the ladder still climbs if there's headroom.
-  // v12.26 PERF emergency: 更激进的降级 (用户持续反馈卡)
-  const AA = { taps: 0, feather: 0.0, signed: false, renderScale: 0.4 };
-  // FPS-adaptive AA governor: walks the tap count up/down this ladder based on
-  // the measured GPU frame time, keeping draw cost inside the frame budget.
-  // Touching the AA dropdown switches it off so the manual choice wins.
-  const AA_LADDER = [0, 2, 4, 6];
+  // v13: 恢复 river.ai 原版值（hijack 已砍, shader 是唯一 pipeline）
+  const AA = { taps: 4, feather: 0.0, signed: false, renderScale: 0.66 };
+  const AA_LADDER = [0, 4, 8, 9];
   let aaGovernor = true;
-  let aaLevel = Math.max(0, AA_LADDER.indexOf(AA.taps));   // current rung
+  let aaLevel = Math.max(0, AA_LADDER.indexOf(AA.taps));
   let liveScale = AA.renderScale;
-  let frameCap = 24;   // v12.26: 40 → 24 (从 25ms 目标 → 42ms 目标, 减少 GPU 压力)
+  let frameCap = 40;   // river.ai 原版默认值
   let frameMin = 1000 / frameCap;
 
   let dpr = 1;
