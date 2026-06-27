@@ -180,6 +180,19 @@
 
 body { padding-bottom: 62px !important; }
 
+/* ── 避让 #music-bar 的 fixed 56px 占位 ──
+ * #rightside 默认 bottom:40px 会落在 music-bar 0-56px 范围内被遮挡
+ * 提升到 70px 让其浮在 music-bar 上方
+ */
+#rightside { bottom: 70px !important; }
+#rightside.rightside-show { transform: translate(-58px, 0) !important; }
+
+/* ── footer 整体上移避让 music-bar ──
+ * river-stage 在 footer 最底部, 原本被 music-bar 盖住 56px
+ * 给 footer 加 padding-bottom: 62px, 让 river 完整显示在 music-bar 上方
+ */
+#footer { padding-bottom: 62px !important; }
+
 .vinyl-spin { animation: vinyl-rotate 4s linear infinite paused; }
 .vinyl-spin.playing { animation-play-state: running; }
 @keyframes vinyl-rotate {
@@ -199,4 +212,7 @@ body { padding-bottom: 62px !important; }
   #music-launcher { bottom: 12px; right: 12px; }
   #music-launcher #btn-launcher { width: 42px; height: 42px; }
   body { padding-bottom: 56px !important; }
+  /* 手机端 footer/rightside 同步避让 music-bar 50px */
+  #footer { padding-bottom: 56px !important; }
+  #rightside { bottom: 64px !important; }
 }
