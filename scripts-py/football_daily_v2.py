@@ -390,9 +390,21 @@ def main():
     # 2. 生成封面图 (可选)
     cover_filename = f'football-{edition}-cover-{today_str}.png'
     cover_path = D / cover_filename  # 备份目录
+    cover_blog_path = ''  # 博客内的相对路径
     if not args.no_cover:
         print(f"🎨 生成封面图 ({edition})...")
         gen_cover_image(edition, cover_path)
+        # v3 fix: 复制到博客 source/img/ 让 front-matter cover 字段能找到
+        img_dir = BLOG_ROOT / 'source' / 'img'
+        img_dir.mkdir(parents=True, exist_ok=True)
+        blog_img = img_dir / cover_filename
+        if cover_path.exists():
+            import shutil
+            shutil.copy2(cover_path, blog_img)
+            cover_blog_path = f'/img/{cover_filename}'
+            print(f'  ✅ 复制到博客: {blog_img}')
+            # 把 cover 字段注入到 md front-matter
+            md = md.replace('cover_color:', f'cover: {cover_blog_path}\ncover_color:', 1)
     else:
         print("⏭️ 跳过封面图生成 (--no-cover)")
 
