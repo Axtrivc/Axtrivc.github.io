@@ -210,7 +210,7 @@ const TEAM_NAMES = {
   'Real Oviedo': '奥维耶多', 'Levante UD': '莱万特',
   'Union Berlin': '柏林联合', 'FC St. Pauli': '圣保利', 'St. Pauli': '圣保利',
   'Eintracht Frankfurt': '法兰克福', 'Frankfurt': '法兰克福',
-  '1. FC Köln': '科隆', 'FC Bayern München': '拜仁',
+  '1. FC Köln': '科隆',
   'AC Pisa': '比萨', 'Torino FC': '都灵', 'Udinese Calcio': '乌迪内斯',
   'Como 1907': '科莫', 'US Lecce': '莱切', 'Genoa CFC': '热那亚',
   'ACF Fiorentina': '佛罗伦萨', 'Bologna FC 1909': '博洛尼亚',
@@ -247,25 +247,24 @@ const TEAM_NAMES = {
   'Cagliari Calcio': '卡利亚里', 'Cagliari': '卡利亚里',
   'Parma Calcio 1913': '帕尔马', 'Parma': '帕尔马',
   'US Salernitana 1919': '萨勒尼塔纳',
-  'US Lecce': '莱切', 'Lecce': '莱切',
-  'Genoa CFC': '热那亚', 'Genoa': '热那亚',
-  'Torino FC': '都灵', 'Torino': '都灵',
-  'US Cremonese': '克雷莫纳', 'Cremonese': '克雷莫纳',
+  'Lecce': '莱切',
+  'Genoa': '热那亚',
+  'Torino': '都灵',
+  'Cremonese': '克雷莫纳',
   'AC Monza': '蒙扎', 'Monza': '蒙扎',
   'Empoli FC': '恩波利', 'Empoli': '恩波利',
   'Cosenza Calcio': '科森扎',
   // 法甲补充
   'RC Strasbourg': '斯特拉斯堡', 'Strasbourg': '斯特拉斯堡',
   'Stade Brestois 29': '布雷斯特', 'Brest': '布雷斯特',
-  'Stade Rennais FC': '雷恩', 'Stade Rennais': '雷恩', 'Rennes': '雷恩',
-  'LOSC Lille': '里尔', 'Lille': '里尔',
+  'Stade Rennais': '雷恩', 'Rennes': '雷恩',
+  'Lille': '里尔',
   // 西甲补充
-  'Atleti': '马竞', 'RCD Espanyol': '西班牙人', 'Espanyol': '西班牙人',
-  'Levante UD': '莱万特', 'Levante': '莱万特',
-  'CD Leganés': '莱加内斯', 'Leganes': '莱加内斯',
+  'Atleti': '马竞', 'Espanyol': '西班牙人',
+  'Levante': '莱万特',
+  'Leganes': '莱加内斯',
   // 其他
   'LA Galaxy': '洛杉矶银河', 'LAFC': '洛杉矶FC',
-  'Inter Miami CF': '迈阿密国际', 'Inter Miami': '迈阿密国际',
 };
 
 function getCompName(comp) {
