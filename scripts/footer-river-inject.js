@@ -31,7 +31,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
 /* ① footer 白底 → 米色暖棕, padding-bottom=0 让 river 紧贴底边 */
 #footer {
-  background-color: var(--footer-bg, #faf8f5) !important;
+  background-color: #faf8f5 !important;
   background-image: none !important;
   padding-bottom: 0 !important;
 }
@@ -117,10 +117,10 @@ body .footer-other > .footer-copyright { display: none !important; }
 
 /* ② 防止上滑白屏: html/body 底部也用米色兜底 */
 html {
-  background-color: var(--footer-bg, #faf8f5) !important;
+  background-color: #faf8f5 !important;
 }
 body {
-  background-color: var(--footer-bg, #faf8f5) !important;
+  background-color: #faf8f5 !important;
 }
 </style>
 `;
