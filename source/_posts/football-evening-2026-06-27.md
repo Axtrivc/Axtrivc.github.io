@@ -3,7 +3,6 @@ title: 足球晚报 · 2026年6月27日 星期五
 date: 2026-06-27 20:00:00
 excerpt: 西班牙小胜乌拉圭 · 法国狂屠挪威 · 今日6场世界杯
 description: 西班牙1-0乌拉圭 · 法国4-1挪威 · 塞内加尔5-0伊拉克 · 今日6场
-cover: /img/football-evening-cover-2026-06-27.png
 cover_color: '#1E3A8A'
 tags:
   - 足球
