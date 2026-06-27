@@ -266,11 +266,17 @@ footer {
 
 /* ══ v3.1 修复: 上一篇/下一篇 + 相关推荐 背景色 ══
  * butterfly 默认 .pagination-related 用 $dark-black (#000000) 纯黑底
- * 没有封面图时显示丑黑/棕灰底,用户反馈"很丑"
+ * 内部 .cover div 用 var(--default-bg-color) = #8b6f47 棕灰色 (主题色)
+ * 没有封面图时两层叠加 → 丑棕灰底
  * 改为白底 + 主题色文字,跟文章卡片风格一致 */
 .pagination-related,
 #pagination .pagination-related {
   background: var(--theme-card-current, #FFFFFF) !important;
+}
+/* 关键: 覆盖 .cover div 的棕灰背景 */
+.pagination-related .cover {
+  background: var(--theme-card-current, #FFFFFF) !important;
+  opacity: 0 !important;
 }
 .pagination-related .info,
 .pagination-related .info-1,
@@ -287,6 +293,10 @@ footer {
 .relatedPosts-list > a {
   background: var(--theme-card-current, #FFFFFF) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+.relatedPosts-list > a .cover {
+  background: var(--theme-card-current, #FFFFFF) !important;
+  opacity: 0 !important;
 }
 .relatedPosts-list > a .info,
 .relatedPosts-list > a .info-1,
