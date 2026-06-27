@@ -330,6 +330,7 @@
     uniform float u_foam;    // foam flicker intensity
     uniform float u_contOn;  // 1 = render continents, 0 = hidden
     uniform vec3  u_contColor; // continent glyph colour (RGB)
+    uniform vec3  u_waterTint;   // theme-driven river tint (RGB 0..1)
     uniform float u_crtOn;   // 1 = CRT scanlines on, 0 = off
     uniform float u_pixelText; // 1 = chunky pixel text, 0 = sharp
     uniform float u_sun;     // sun disk + glow brightness (0 = none)
@@ -1067,9 +1068,13 @@
       float cellSpark = step(0.22, hash(cell + floor(flowY * 30.0)));
       float pixelInk = clamp(dotCore * (0.70 + 0.40 * cellSpark + 0.42 * strm), 0.0, 1.0);
       float waterInk = max(pixelInk, waterCore * 0.30);
-      vec3 waterBase = vec3(0.790, 0.910, 0.900);
-      vec3 waterWhite = vec3(1.000, 0.990, 0.940);
-      vec3 waterCol = mix(waterBase, waterWhite, clamp(0.56 + 0.36 * waterCore + 0.32 * strm + 0.18 * foam, 0.0, 1.0));
+      vec3 waterBase0  = vec3(0.790, 0.910, 0.900);
+      vec3 waterWhite0 = vec3(1.000, 0.990, 0.940);
+      vec3 tintBase    = u_waterTint * 0.85 + vec3(0.10, 0.10, 0.10);
+      vec3 tintHigh    = u_waterTint + vec3(0.15, 0.15, 0.15);
+      vec3 waterBase   = mix(waterBase0, tintBase,  0.55);
+      vec3 waterWhite  = mix(waterWhite0, tintHigh, 0.45);
+      vec3 waterCol    = mix(waterBase, waterWhite, clamp(0.56 + 0.36 * waterCore + 0.32 * strm + 0.18 * foam, 0.0, 1.0));
       float waterA = 0.0;
 
       float terrainA = clamp(fillA + lineA, 0.0, 0.58);
@@ -2911,6 +2916,7 @@
     foam:    gl.getUniformLocation(prog, "u_foam"),
     contOn:  gl.getUniformLocation(prog, "u_contOn"),
     contColor: gl.getUniformLocation(prog, "u_contColor"),
+    waterTint: gl.getUniformLocation(prog, "u_waterTint"),
     crtOn:   gl.getUniformLocation(prog, "u_crtOn"),
     pixelText: gl.getUniformLocation(prog, "u_pixelText"),
     sun:     gl.getUniformLocation(prog, "u_sun"),
@@ -3206,6 +3212,7 @@
   gl.uniform1f(U.hoist, 1.0);                         // PERF: cache frame-constant canyon values once (was recompute-per-step)
   gl.uniform1f(U.cityOn,  0.0);                       // starts without legacy cities
   gl.uniform3f(U.contColor, 0.36, 0.50, 0.28);        // forest green (hue ≈ 110°)
+    gl.uniform3f(U.waterTint, 0.45, 0.80, 0.70);  // 默认青绿水色（hex #73CCA3 近似）
   gl.uniform1f(U.crtOn,   0.0);                        // CRT scanlines off by default
   gl.uniform1f(U.pixelText, 0.0);                      // sharp text by default
   gl.uniform1f(U.sun, 0.64);                           // sun brightness — set by SUN slider
@@ -4303,6 +4310,33 @@
            (_) => pushContColor());
   wireKnob("contSatSlider", "contSatLabel", 1, (v) => Math.round(v) + "%",
            (_) => pushContColor());
+
+  // ── Theme-driven river tint ── reads --theme-accent-current from the blog
+  // theme system and pushes it to the shader's u_waterTint uniform. The
+  // mix weight is softened (0.55 base / 0.45 highlight) inside the shader
+  // so the river keeps water-like luminance instead of becoming flat paint.
+  function hexToRgb01(hex){
+    if (!hex) return null;
+    hex = hex.trim().replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    if (hex.length !== 6) return null;
+    const n = parseInt(hex, 16);
+    if (isNaN(n)) return null;
+    return [
+      Math.max(0, Math.min(1, ((n >> 16) & 255) / 255)),
+      Math.max(0, Math.min(1, ((n >> 8)  & 255) / 255)),
+      Math.max(0, Math.min(1, ( n        & 255) / 255))
+    ];
+  }
+  function pushWaterTint(){
+    const css = getComputedStyle(document.documentElement)
+                 .getPropertyValue('--theme-accent-current');
+    const rgb = hexToRgb01(css);
+    if (!rgb) return;  // 解析失败保持默认
+    gl.uniform3f(U.waterTint, rgb[0], rgb[1], rgb[2]);
+  }
+  pushWaterTint();                                    // 立即同步当前主题
+  window.addEventListener('themechange', pushWaterTint);  // 监听主题切换
 
   // Gradient recolour — two vivid hue stops (top → bottom)
   function pushGradColors() {

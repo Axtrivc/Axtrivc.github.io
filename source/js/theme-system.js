@@ -184,6 +184,7 @@
     document.documentElement.style.setProperty('--theme-border-current', t.border);
     document.documentElement.style.setProperty('--theme-card-current', t.card);
     document.documentElement.style.setProperty('--theme-body-current', t.body);
+    window.dispatchEvent(new CustomEvent('themechange', { detail: { id: themeId, theme: t } }));
 
     // Music bar theme adaptation
     var musicBar = document.getElementById('music-bar');
