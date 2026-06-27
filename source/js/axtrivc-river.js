@@ -34,17 +34,82 @@
   resize();
   window.addEventListener('resize', resize);
 
-  // Layered waves — 暖棕主题适配, 线条加深
-  // 从博客 #8B6F47(主色) / #faf8f5(背景) / #C4A96A(按钮hover) 提取
-  // 后层淡金 → 中层暖棕 → 前层米白(与 river.ai 层次逻辑一致)
+  // Layered waves — 5 主题适配, 每主题 4 层专属 palette
+  // 配色逻辑: 后层深饱和(主色暗版) → 中层主色 → 近层主色亮版 → 前景高光(暖白,保持水感)
   // alpha 提升: 0.20→0.42 / 0.24→0.55 / 0.32→0.68 / 0.55→0.85
   // stroke 加粗: 1.0→1.4 / 1.2→1.6, 让线条更清晰可见
-  var layers = [
-    { amp: 14, freq: 0.0042, speed: 0.012, yOff: 0.62, alpha: 0.42, stroke: 1.4, color: '180, 145, 80' },    // 深金
-    { amp: 10, freq: 0.0068, speed: 0.020, yOff: 0.70, alpha: 0.55, stroke: 1.4, color: '120, 92, 55' },     // 深暖棕
-    { amp: 6,  freq: 0.0110, speed: 0.034, yOff: 0.78, alpha: 0.68, stroke: 1.6, color: '180, 150, 100' },  // 深浅驼
-    { amp: 3,  freq: 0.0200, speed: 0.052, yOff: 0.86, alpha: 0.85, stroke: 1.2, color: '250, 248, 245' }   // 米白(前景最亮)
+  //
+  // 配色选取规则:
+  //   L1 远景(最深饱和)  — 主题 accent 的深暗版, 约暗 35%
+  //   L2 中景(主色)      — 主题 accent 直接用
+  //   L3 近景(主色亮版)  — 主题 accent 亮 30%
+  //   L4 前景高光(暖白)  — 跟主题背景 bg 一致, 保持水的高光感
+  var THEME_WAVES = {
+    'wechat-classic': [        // 绿茵足球风, accent=#07C160
+      { alpha: 0.42, stroke: 1.4, color: '7, 140, 90' },       // 深绿(暗 35%)
+      { alpha: 0.55, stroke: 1.4, color: '45, 170, 110' },     // 草绿
+      { alpha: 0.68, stroke: 1.6, color: '130, 210, 170' },    // 浅薄荷
+      { alpha: 0.85, stroke: 1.2, color: '245, 252, 248' }     // 暖白高光
+    ],
+    'lake-blue': [             // 清晨湖蓝, accent=#10AEFF
+      { alpha: 0.42, stroke: 1.4, color: '16, 110, 180' },     // 深蓝
+      { alpha: 0.55, stroke: 1.4, color: '60, 160, 220' },     // 湖青
+      { alpha: 0.68, stroke: 1.6, color: '150, 205, 235' },    // 浅水蓝
+      { alpha: 0.85, stroke: 1.2, color: '244, 251, 255' }     // 暖白(bg)
+    ],
+    'haze-blue': [             // 雾霾蓝灰, accent=#4A5568
+      { alpha: 0.42, stroke: 1.4, color: '60, 70, 90' },       // 深灰蓝
+      { alpha: 0.55, stroke: 1.4, color: '100, 115, 135' },    // 雾紫
+      { alpha: 0.68, stroke: 1.6, color: '160, 175, 195' },    // 浅雾
+      { alpha: 0.85, stroke: 1.2, color: '250, 251, 252' }     // 暖白(bg)
+    ],
+    'beige-lite': [            // 暖棕米色, accent=#8B6F47
+      { alpha: 0.42, stroke: 1.4, color: '120, 92, 55' },      // 深棕(原配色保留)
+      { alpha: 0.55, stroke: 1.4, color: '180, 145, 80' },     // 暖驼
+      { alpha: 0.68, stroke: 1.6, color: '210, 180, 130' },    // 浅米
+      { alpha: 0.85, stroke: 1.2, color: '255, 252, 245' }     // 暖白(bg)
+    ],
+    'lemon-indigo': [          // 柠檬+深靛撞色, accent=#F5C518
+      { alpha: 0.42, stroke: 1.4, color: '30, 58, 138' },      // 深靛(heading色)
+      { alpha: 0.55, stroke: 1.4, color: '180, 130, 20' },     // 深琥珀(accent 暗版)
+      { alpha: 0.68, stroke: 1.6, color: '240, 200, 80' },     // 浅柠檬
+      { alpha: 0.85, stroke: 1.2, color: '255, 253, 240' }     // 暖白
+    ]
+  };
+
+  // 默认用 beige-lite (博客初始色) 的 palette, 等 themechange 事件覆盖
+  var currentWavePalette = THEME_WAVES['beige-lite'];
+
+  // 从 layers 模板 + 当前 palette 合成最终 layers (amp/freq/speed 固定, color 动态)
+  var LAYER_TEMPLATE = [
+    { amp: 14, freq: 0.0042, speed: 0.012, yOff: 0.62 },
+    { amp: 10, freq: 0.0068, speed: 0.020, yOff: 0.70 },
+    { amp: 6,  freq: 0.0110, speed: 0.034, yOff: 0.78 },
+    { amp: 3,  freq: 0.0200, speed: 0.052, yOff: 0.86 }
   ];
+  var layers = LAYER_TEMPLATE.map(function (tpl, i) {
+    return Object.assign({}, tpl, currentWavePalette[i]);
+  });
+
+  // 监听主题切换事件 — 实时换色, 无需重启动画
+  function applyWaveTheme(themeId) {
+    var palette = THEME_WAVES[themeId];
+    if (!palette) return;
+    currentWavePalette = palette;
+    for (var i = 0; i < layers.length && i < palette.length; i++) {
+      layers[i].color = palette[i].color;
+      layers[i].alpha = palette[i].alpha;
+      layers[i].stroke = palette[i].stroke;
+    }
+  }
+  window.addEventListener('themechange', function (ev) {
+    if (ev && ev.detail && ev.detail.id) applyWaveTheme(ev.detail.id);
+  });
+  // 启动时也立即同步一次 localStorage 里的主题
+  try {
+    var savedTheme = localStorage.getItem('axtrivc_theme_v2');
+    if (savedTheme) applyWaveTheme(savedTheme);
+  } catch (e) { /* localStorage 不可用就保持默认 */ }
 
   function drawLayer(layer, time) {
     ctx.beginPath();
