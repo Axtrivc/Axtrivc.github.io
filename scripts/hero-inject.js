@@ -154,8 +154,8 @@ body.hero-page-active #nav .menus_item a {
 }
 body.hero-page-active #nav a:hover,
 body.hero-page-active #nav .menus a:hover {
-  color: #07C160 !important;
-  text-shadow: 0 0 14px rgba(7, 193, 96, 0.6);
+  color: var(--theme-accent-current, #07C160) !important;
+  text-shadow: 0 0 14px color-mix(in srgb, var(--theme-accent-current, #07C160) 60%, transparent);
 }
 
 /* hero 阶段隐藏 page-header banner */
@@ -291,7 +291,7 @@ body.hero-released {
   max-width: 56ch;
 }
 .hero-typed-wrap .hero-typed-prefix {
-  color: rgba(7, 193, 96, 0.85);
+  color: color-mix(in srgb, var(--theme-accent-current, #07C160) 85%, transparent);
   margin-right: 0.4em;
   font-weight: 400;
 }
@@ -300,10 +300,10 @@ body.hero-released {
   width: 2px;
   height: 1.1em;
   margin-left: 2px;
-  background: rgba(7, 193, 96, 0.95);
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 95%, transparent);
   vertical-align: -0.15em;
   animation: heroTypedBlink 1.05s steps(2, start) infinite;
-  box-shadow: 0 0 8px rgba(7, 193, 96, 0.55);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--theme-accent-current, #07C160) 55%, transparent);
 }
 @keyframes heroTypedBlink {
   0%, 100% { opacity: 1; }
