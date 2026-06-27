@@ -16,7 +16,9 @@
       colors: ['#FFFFFF', '#07C160', '#FA5151', '#F7F7F7', '#191919', '#7A7A7A'],
       bg: '#FFFFFF', body: '#FFFFFF', nav: 'rgba(255,255,255,0.96)', card: '#FFFFFF',
       text: '#191919', heading: '#0A3D2A', secondary: '#7A7A7A', accent: '#07C160',
-      border: '#EDEDED', pageHeader: '#FFFFFF', navText: '#191919', navTextHover: '#07C160'
+      border: '#EDEDED', pageHeader: '#FFFFFF', navText: '#191919', navTextHover: '#07C160',
+      footerBg: '#F2FBF5',
+      footerRiverTop: '#E8F5EC', footerRiverMid: '#C8E8D3', footerRiverBottom: '#9CD8B2'
     },
     // === 新增方案 B：清晨湖蓝（年轻活力） ===
     'lake-blue': {
@@ -24,7 +26,9 @@
       colors: ['#F4FBFF', '#10AEFF', '#FF976A', '#FFFFFF', '#0C447C', '#5A9EC9'],
       bg: '#F4FBFF', body: '#F4FBFF', nav: 'rgba(244,251,255,0.95)', card: '#FFFFFF',
       text: '#191919', heading: '#0C447C', secondary: '#5A9EC9', accent: '#10AEFF',
-      border: 'rgba(16,174,255,0.18)', pageHeader: '#E6F5FF', navText: '#0C447C', navTextHover: '#10AEFF'
+      border: 'rgba(16,174,255,0.18)', pageHeader: '#E6F5FF', navText: '#0C447C', navTextHover: '#10AEFF',
+      footerBg: '#E6F5FF',
+      footerRiverTop: '#D4EBFB', footerRiverMid: '#A8D8F5', footerRiverBottom: '#76BFEB'
     },
     // === 新增方案 C：雾霾蓝灰（沉稳） ===
     'haze-blue': {
@@ -32,7 +36,9 @@
       colors: ['#FAFBFC', '#4A5568', '#B85C5C', '#FFFFFF', '#2D3748', '#718096'],
       bg: '#FAFBFC', body: '#FAFBFC', nav: 'rgba(250,251,252,0.95)', card: '#FFFFFF',
       text: '#2D3748', heading: '#2D3748', secondary: '#718096', accent: '#4A5568',
-      border: '#EAECEF', pageHeader: '#F0F2F5', navText: '#2D3748', navTextHover: '#4A5568'
+      border: '#EAECEF', pageHeader: '#F0F2F5', navText: '#2D3748', navTextHover: '#4A5568',
+      footerBg: '#F0F2F5',
+      footerRiverTop: '#E2E6EC', footerRiverMid: '#C8D0DA', footerRiverBottom: '#A5B0BF'
     },
     // === 新增方案 D：米色升级版（扁平化米色） ===
     'beige-lite': {
@@ -40,7 +46,9 @@
       colors: ['#FFFCF5', '#8B6F47', '#C4A96A', '#FFFFFF', '#3A2A1A', '#9A8866'],
       bg: '#FFFCF5', body: '#FFFCF5', nav: 'rgba(255,252,245,0.96)', card: '#FFFFFF',
       text: '#3A2A1A', heading: '#3A2A1A', secondary: '#9A8866', accent: '#8B6F47',
-      border: '#EFE8DA', pageHeader: '#FFFCF5', navText: '#3A2A1A', navTextHover: '#8B6F47'
+      border: '#EFE8DA', pageHeader: '#FFFCF5', navText: '#3A2A1A', navTextHover: '#8B6F47',
+      footerBg: '#FAF8F5',
+      footerRiverTop: '#EFE8DC', footerRiverMid: '#E8D9C0', footerRiverBottom: '#D4BC96'
     },
     // === 新增方案 E：柠檬黄 + 深靛蓝（极简时尚撞色） ===
     'lemon-indigo': {
@@ -48,7 +56,9 @@
       colors: ['#FFFFFF', '#1E3A8A', '#F5C518', '#FAFAFA', '#1E3A8A', '#4A5568'],
       bg: '#FAFAFA', body: '#FAFAFA', nav: 'rgba(255,255,255,0.97)', card: '#FFFFFF',
       text: '#1E3A8A', heading: '#1E3A8A', secondary: '#4A5568', accent: '#F5C518',
-      border: '#C7D2FE', pageHeader: '#FFFFFF', navText: '#1E3A8A', navTextHover: '#B45309'
+      border: '#C7D2FE', pageHeader: '#FFFFFF', navText: '#1E3A8A', navTextHover: '#B45309',
+      footerBg: '#F6F8FE',
+      footerRiverTop: '#E8EEFD', footerRiverMid: '#C7D2FE', footerRiverBottom: '#A5B8F0'
     }
   };
 
