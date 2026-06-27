@@ -29,17 +29,15 @@ hexo.extend.filter.register('after_render:html', function (data) {
  * river-stage 无圆角, 直接衔接 footer 底部, 形成一体感
  */
 
-/* ① footer 白底 → 米色暖棕 */
+/* ① footer 白底 → 米色暖棕, padding-bottom=0 让 river 紧贴底边 */
 #footer {
   background-color: #faf8f5 !important;
   background-image: none !important;
-  /* 覆盖 music-bar.css 里的 padding-bottom:56px, 改为 0
-     river-stage 通过负 margin-bottom 溢出到底部紧贴 music-bar */
   padding-bottom: 0 !important;
 }
 /* ── Footer River Stage ──
  * 无圆角, 与 footer 融为一体, 暖棕渐变水面
- * 压缩 footer-other 的 padding + 负 margin 让 river 溢出到底部 */
+ * river 在 footer 内部紧贴底边, 由 body padding-bottom 把 footer 抬到 music-bar 顶部 */
 .footer-other {
   background-color: transparent !important;
   padding-top: 16px !important;
@@ -50,7 +48,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
   width: 100%;
   height: 120px;
   margin-top: 0;
-  margin-bottom: -56px;
+  margin-bottom: 0;
   padding-top: 0;
   background: linear-gradient(180deg, #efe8dc 0%, #e8d9c0 40%, #d4bc96 100%);
   overflow: hidden;
@@ -102,7 +100,7 @@ body .footer-other > .footer-copyright { display: none !important; }
   .axtrivc-river-stage {
     height: 90px;
     padding-top: 0;
-    margin-bottom: -50px; /* 手机 music-bar 50px */
+    margin-bottom: 0;
   }
   .axtrivc-river-hint {
     font-size: 11px;

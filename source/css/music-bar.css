@@ -178,7 +178,8 @@
   border-radius: 0 0 16px 16px;
 }
 
-body { padding-bottom: 62px !important; }
+/* body padding-bottom = music-bar 56px, 精确匹配让 footer 底部接触 music-bar 顶部 */
+body { padding-bottom: 56px !important; }
 
 /* ── 避让 #music-bar 的 fixed 56px 占位 ──
  * #rightside 默认 bottom:40px 会落在 music-bar 0-56px 范围内被遮挡
@@ -210,7 +211,7 @@ body { padding-bottom: 62px !important; }
   #music-panel { right: 12px; bottom: 54px; width: calc(100vw - 24px); }
   #music-launcher { bottom: 12px; right: 12px; }
   #music-launcher #btn-launcher { width: 42px; height: 42px; }
-  body { padding-bottom: 56px !important; }
+  body { padding-bottom: 50px !important; }
   /* 手机端 footer 由 river inject 脚本控制 */
   #rightside { bottom: 64px !important; }
 }
