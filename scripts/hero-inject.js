@@ -6,7 +6,8 @@
  *   ✅ 原生滚动（无 wheel/touch/keyboard hijack）
  *   ✅ 零 CSS 变量 transform（无 calc() 每帧重算）
  *   ✅ hero 绝对定位 100dvh + main margin-top 100dvh
- *   ✅ scrollY > 50% viewport → hero-released → hero display:none
+ *   ✅ scrollY >= vh（hero 完全滚出视口）→ hero-released → hero display:none
+ *   ✅ body 深蓝兜底，防止下滑过程中露出白色背景
  *   ✅ 滚回顶部 → hero 重新显示
  *
  * 保留：
@@ -266,8 +267,12 @@ body.hero-page-active #recent-posts {
 }
 
 body.hero-page-active {
+  background: #0E2F7E;
   overflow-x: hidden;
   overflow-y: auto;
+}
+body.hero-released {
+  background: #faf8f5;
 }
 
 /* ── 左下角 typed 副标题（纯 CSS animation，无 setTimeout） ── */
@@ -369,10 +374,12 @@ body.hero-page-active {
     }, 95);
   }
 
-  // scroll 监听：scrollY > 50% viewport → released
+  // scroll 监听：scrollY >= vh（hero 完全滚出视口）→ released
+  // 修复：原 0.5vh 触发太早，hero display:none 后 main 还没到 viewport 顶部，
+  // 中间露出 body 白色背景。改为 hero 完全滚出才释放，并用 body 深蓝兜底。
   function onScroll() {
     var sy = window.scrollY;
-    if (!released && sy > vh * 0.5) {
+    if (!released && sy >= vh) {
       released = true;
       body.classList.add('hero-released');
       // 通知 hero shader 冻结
