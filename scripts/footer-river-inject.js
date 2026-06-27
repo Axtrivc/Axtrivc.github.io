@@ -34,18 +34,20 @@ hexo.extend.filter.register('after_render:html', function (data) {
   background-color: #faf8f5 !important;
   background-image: none !important;
 }
+/* ── Footer River Stage ──
+ * 无圆角, 与 footer 融为一体, 暖棕渐变水面
+ * 压缩 footer-other 的 padding, 让 river 紧贴 music-bar */
 .footer-other {
   background-color: transparent !important;
+  padding-top: 16px !important;
+  padding-bottom: 0 !important;
 }
-
-/* ── Footer River Stage ──
- * 无圆角, 与 footer 融为一体, 暖棕渐变水面 */
 .axtrivc-river-stage {
   position: relative;
   width: 100%;
   height: 120px;
   margin-top: 0;
-  padding-top: 20px;
+  padding-top: 0;
   background: linear-gradient(180deg, #efe8dc 0%, #e8d9c0 40%, #d4bc96 100%);
   overflow: hidden;
   cursor: crosshair;
@@ -95,7 +97,7 @@ body .footer-other > .footer-copyright { display: none !important; }
 @media (max-width: 768px) {
   .axtrivc-river-stage {
     height: 90px;
-    padding-top: 14px;
+    padding-top: 0;
   }
   .axtrivc-river-hint {
     font-size: 11px;
