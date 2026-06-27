@@ -45,35 +45,35 @@
   //   L3 近景(主色亮版)  — 主题 accent 亮 30%
   //   L4 前景高光(暖白)  — 跟主题背景 bg 一致, 保持水的高光感
   var THEME_WAVES = {
-    'wechat-classic': [        // 绿茵足球风, accent=#07C160
-      { alpha: 0.42, stroke: 1.4, color: '7, 140, 90' },       // 深绿(暗 35%)
-      { alpha: 0.55, stroke: 1.4, color: '45, 170, 110' },     // 草绿
-      { alpha: 0.68, stroke: 1.6, color: '130, 210, 170' },    // 浅薄荷
-      { alpha: 0.85, stroke: 1.2, color: '245, 252, 248' }     // 暖白高光
+    'wechat-classic': [
+      { alpha: 0.42, stroke: 1.4, color: '100, 160, 110' },
+      { alpha: 0.55, stroke: 1.4, color: '140, 195, 155' },
+      { alpha: 0.68, stroke: 1.6, color: '180, 220, 190' },
+      { alpha: 0.85, stroke: 1.2, color: '240, 248, 240' }
     ],
-    'lake-blue': [             // 清晨湖蓝, accent=#10AEFF
-      { alpha: 0.42, stroke: 1.4, color: '16, 110, 180' },     // 深蓝
-      { alpha: 0.55, stroke: 1.4, color: '60, 160, 220' },     // 湖青
-      { alpha: 0.68, stroke: 1.6, color: '150, 205, 235' },    // 浅水蓝
-      { alpha: 0.85, stroke: 1.2, color: '244, 251, 255' }     // 暖白(bg)
+    'lake-blue': [
+      { alpha: 0.42, stroke: 1.4, color: '110, 150, 185' },
+      { alpha: 0.55, stroke: 1.4, color: '150, 185, 215' },
+      { alpha: 0.68, stroke: 1.6, color: '190, 215, 235' },
+      { alpha: 0.85, stroke: 1.2, color: '240, 248, 252' }
     ],
-    'haze-blue': [             // 雾霾蓝灰, accent=#4A5568
-      { alpha: 0.42, stroke: 1.4, color: '60, 70, 90' },       // 深灰蓝
-      { alpha: 0.55, stroke: 1.4, color: '100, 115, 135' },    // 雾紫
-      { alpha: 0.68, stroke: 1.6, color: '160, 175, 195' },    // 浅雾
-      { alpha: 0.85, stroke: 1.2, color: '250, 251, 252' }     // 暖白(bg)
+    'haze-blue': [
+      { alpha: 0.42, stroke: 1.4, color: '130, 140, 155' },
+      { alpha: 0.55, stroke: 1.4, color: '165, 175, 190' },
+      { alpha: 0.68, stroke: 1.6, color: '200, 208, 218' },
+      { alpha: 0.85, stroke: 1.2, color: '248, 249, 251' }
     ],
-    'beige-lite': [            // 暖棕米色, accent=#8B6F47
-      { alpha: 0.42, stroke: 1.4, color: '120, 92, 55' },      // 深棕(原配色保留)
-      { alpha: 0.55, stroke: 1.4, color: '180, 145, 80' },     // 暖驼
-      { alpha: 0.68, stroke: 1.6, color: '210, 180, 130' },    // 浅米
-      { alpha: 0.85, stroke: 1.2, color: '255, 252, 245' }     // 暖白(bg)
+    'beige-lite': [
+      { alpha: 0.42, stroke: 1.4, color: '120, 92, 55' },
+      { alpha: 0.55, stroke: 1.4, color: '180, 145, 80' },
+      { alpha: 0.68, stroke: 1.6, color: '210, 180, 130' },
+      { alpha: 0.85, stroke: 1.2, color: '250, 248, 245' }
     ],
-    'lemon-indigo': [          // 柠檬+深靛撞色, accent=#F5C518
-      { alpha: 0.42, stroke: 1.4, color: '30, 58, 138' },      // 深靛(heading色)
-      { alpha: 0.55, stroke: 1.4, color: '180, 130, 20' },     // 深琥珀(accent 暗版)
-      { alpha: 0.68, stroke: 1.6, color: '240, 200, 80' },     // 浅柠檬
-      { alpha: 0.85, stroke: 1.2, color: '255, 253, 240' }     // 暖白
+    'lemon-indigo': [
+      { alpha: 0.42, stroke: 1.4, color: '90, 110, 165' },
+      { alpha: 0.55, stroke: 1.4, color: '135, 150, 195' },
+      { alpha: 0.68, stroke: 1.6, color: '180, 190, 225' },
+      { alpha: 0.85, stroke: 1.2, color: '245, 246, 252' }
     ]
   };
 
