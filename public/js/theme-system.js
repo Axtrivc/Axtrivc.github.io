@@ -225,6 +225,20 @@
       applyTheme(currentTheme);
       return true;
     }
+    // 修复：早期 Apply 失败时，直接在 #nav 存在时 fallback 设置 nav 背景
+    // 避免 hero 阶段 !important 规则在释放后不生效（v12.10 修复）
+    var navEl = document.getElementById('nav');
+    if (navEl) {
+      var t = THEME_STYLES[currentTheme];
+      if (t) {
+        navEl.style.background = t.nav;
+        navEl.style.backgroundImage = 'none';
+        var links = navEl.querySelectorAll('a, .site-name, a.site-page');
+        for (var k = 0; k < links.length; k++) {
+          links[k].style.color = t.text;
+        }
+      }
+    }
     return false;
   }
 
@@ -357,6 +371,19 @@
 
   function selectTheme(id) {
     currentTheme=id; localStorage.setItem(STORAGE_KEY_THEME,id); applyTheme(id);
+    // 立即同步 nav 背景（v12.10 修复 — 主题切换时 nav 立刻更新）
+    var navEl = document.getElementById('nav');
+    if (navEl) {
+      var t = THEME_STYLES[id];
+      if (t) {
+        navEl.style.background = t.nav;
+        navEl.style.backgroundImage = 'none';
+        var links = navEl.querySelectorAll('a, .site-name, a.site-page');
+        for (var k = 0; k < links.length; k++) {
+          links[k].style.color = t.text;
+        }
+      }
+    }
     document.querySelectorAll('.theme-option[data-theme]').forEach(function(o){o.classList.toggle('active',o.getAttribute('data-theme')===id)});
   }
 

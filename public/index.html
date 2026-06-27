@@ -149,7 +149,7 @@
   isHighlightShrink: false,
   isToc: false,
   pageType: 'home'
-}</script><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=LXGW+WenKai+Screen&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/theme-system.css?v=47d781ea"><link rel="stylesheet" href="/css/publish-button.css?v=47d781ea"><link rel="stylesheet" href="/css/hide-rightside.css?v=47d781ea"><link rel="stylesheet" href="/css/music-bar.css?v=47d781ea"><link rel="stylesheet" href="/css/football-typography.css?v=47d781ea"><meta name="generator" content="Hexo 7.3.0"><style id="hero-inline-css">
+}</script><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=LXGW+WenKai+Screen&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/theme-system.css?v=c34ebfcd"><link rel="stylesheet" href="/css/publish-button.css?v=c34ebfcd"><link rel="stylesheet" href="/css/hide-rightside.css?v=c34ebfcd"><link rel="stylesheet" href="/css/music-bar.css?v=c34ebfcd"><link rel="stylesheet" href="/css/football-typography.css?v=c34ebfcd"><meta name="generator" content="Hexo 7.3.0"><style id="hero-inline-css">
 
     :root {
       --hero-overscan: 0px;
@@ -212,43 +212,43 @@
       pointer-events: none;
     }
 
-    /* 文字层 */
+    /* ===== CSS variables — 仿 river.ai ===== */
+    :root {
+      --pad-x: clamp(20px, 4vw, 56px);
+      --type-sans: "Inter Tight", "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* 文字层 — 仿 river.ai 左下角小字，不抢动画 */
     .hero-text {
       position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+      bottom: var(--pad-x);
+      left: var(--pad-x);
+      right: var(--pad-x);
       z-index: 3;
       pointer-events: none;
-      padding: 0 24px;
-      color: #fff;
-      letter-spacing: -0.01em;
+      color: rgba(255, 255, 255, 0.95);
+      font-family: var(--type-sans);
+      letter-spacing: -0.005em;
     }
     .hero-text-headline {
-      font-size: clamp(28px, 5vw, 56px);
-      font-weight: 600;
-      line-height: 1.1;
-      max-width: 900px;
-      text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
-      /* Live path: river-hero.js writes textContent directly → keep visible.
-       * Static fallback: inline typewriter handles text — start hidden until
-       * it has typed something. The two paths share the DOM but use different
-       * visibility gates below. */
+      font-family: var(--type-sans);
+      font-size: clamp(20px, 2.2vw, 28px);
+      font-weight: 500;
+      line-height: 1.2;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 0 24px rgba(80, 180, 130, 0.22);
       opacity: 1;
       transition: opacity 0.4s ease;
     }
     .hero-text-sub {
-      margin-top: 16px;
-      font-size: clamp(14px, 1.5vw, 18px);
-      font-weight: 400;
-      max-width: 600px;
-      line-height: 1.5;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
-      opacity: 1;
-      transition: opacity 0.4s ease;
+      margin-top: 0;
+      min-height: 0;
+      height: 0;
+      padding: 0;
+      border: 0;
+      opacity: 0;
+      pointer-events: none;
+      overflow: hidden;
     }
     /* Static-fallback gate: when river-hero.js explicitly bails (sets
      * window.__riverLive=false), body.hero-static is added by the inline
@@ -259,16 +259,8 @@
       opacity: 0;
     }
 
-    /* FPS 指示 */
-    .perf-meter {
-      position: fixed;
-      bottom: 16px; right: 16px;
-      z-index: 10;
-      color: rgba(255,255,255,0.4);
-      font-size: 11px;
-      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-      pointer-events: none;
-    }
+    /* FPS 指示 — v12.14 用户要求移除右下角 fps/ms 显示 */
+    .perf-meter { display: none !important; }
 
     /* 调试条 */
     .tod-debug {
@@ -438,8 +430,7 @@
 }
 
 /* ── 博客主页：紧跟 hero 后面（z-index 1100） ── */
-body.hero-page-active #content-inner,
-body.hero-page-active .layout,
+/* v12.14 性能优化：去掉 will-change,只移动 main 自身,不再带动 #content-inner/.layout */
 body.hero-page-active main {
   position: relative;
   z-index: 1100;
@@ -447,15 +438,15 @@ body.hero-page-active main {
   background: #faf8f5;
   transform: translate3d(0, calc((1 - var(--hero-fly, 0)) * 50vh), 0);
   opacity: clamp(var(--hero-fly, 0), 0, 1);
-  will-change: transform, opacity;
+  /* v12.14: will-change 只在 hero 阶段短时启用,避免常驻 GPU 内存 + 滚动降采样 */
+  will-change: auto;
 }
 /* 释放后：清掉 transform/opacity，让原生滚动接管 */
-body.hero-released #content-inner,
-body.hero-released .layout,
 body.hero-released main {
   transform: none !important;
   opacity: 1 !important;
   margin-top: 100dvh !important;
+  will-change: auto !important;
 }
 
 /* v12.2:hero released 后隐藏 hero-shell,消除下方空白
@@ -464,7 +455,7 @@ body.hero-released .hero-shell {
   display: none !important;
 }
 
-/* ── v12 导航：始终显示（金棕色），hero 阶段就可见 ── */
+/* ── v12.11 导航：不再用金棕色渐变，hero 阶段 nav 用主题色背景 + 透明文字 ── */
 body.hero-page-active #nav,
 body.hero-page-active #page-header.full_page #nav {
   opacity: 1 !important;
@@ -478,11 +469,28 @@ body.hero-page-active #page-header.full_page #nav {
   right: 0;
   height: 60px;
   z-index: 1200;
-  background: linear-gradient(180deg, #b8860b 0%, #cd9b1d 50%, #daa520 100%) !important;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  /* 透明背景：让 hero 河流画透过来（金棕色已被用户拒绝） */
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
   padding: 0 20px;
   align-items: center;
   transform: translateZ(0);
+}
+/* hero 阶段：nav 文字白色 + 描边阴影，可读性靠 text-shadow */
+body.hero-page-active #nav a,
+body.hero-page-active #nav .site-name,
+body.hero-page-active #nav a.site-page,
+body.hero-page-active #nav .menus a,
+body.hero-page-active #nav .menus_item a {
+  color: rgba(255, 255, 255, 0.92) !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55), 0 0 12px rgba(80, 180, 130, 0.25);
+  transition: color 0.2s ease;
+}
+body.hero-page-active #nav a:hover,
+body.hero-page-active #nav .menus a:hover {
+  color: #07C160 !important;
+  text-shadow: 0 0 14px rgba(7, 193, 96, 0.6);
 }
 
 /* hero 阶段隐藏大 banner 标题（hero 占满屏，标题被挡） */
@@ -653,6 +661,23 @@ body.hero-page-active {
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
   opacity: calc(1 - var(--hero-fly, 0) * 1.4);
 }
+
+/* ── v12.12 左下角 typed 副标题 (取代旧 typewriter) ── */
+.hero-typed-wrap {
+  position: absolute;
+  left: clamp(20px, 4vw, 56px);
+  bottom: clamp(8px, 1.6vw, 22px);
+  z-index: 5;
+  color: rgba(255, 255, 255, 0.88);
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Serif SC", serif;
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6), 0 0 14px rgba(80, 180, 130, 0.22);
+  opacity: calc(1 - var(--hero-fly, 0) * 1.4);
+  max-width: 56ch;
+}
 .hero-scroll-label {
   font-size: 11px;
   letter-spacing: 0.32em;
@@ -702,7 +727,7 @@ body.hero-page-active {
       <div class="hero-text-sub" id="heroSublineLive"></div>
     </div>
 
-    <div class="perf-meter" id="fpsMeter" aria-hidden="true">-- fps</div>
+    <div class="perf-meter" id="fpsMeter" aria-hidden="true" style="display:none;">-- fps</div>
 
     <h1 class="sr-only">River — Hero</h1>
     <p class="sr-only">复刻自 river.ai 的 hero ASCII-river WebGL 动画</p>
@@ -712,15 +737,15 @@ body.hero-page-active {
       <div class="dbg-grid" id="dbgGrid">
         <div class="dbg-row">
           <label>RENDER SCALE</label>
-          <input type="range" id="renderScaleSlider" min="50" max="100" step="5" value="100" />
-          <span class="val" id="renderScaleLabel">1.00</span>
+          <input type="range" id="renderScaleSlider" min="50" max="100" step="5" value="66" />
+          <span class="val" id="renderScaleLabel">0.66</span>
         </div>
         <div class="dbg-row">
           <label>AA MODE</label>
           <select id="aaModeSelect" class="tod-select" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:4px 8px;font-size:12px;">
             <option value="0">off</option>
-            <option value="4">SSAA ×4</option>
-            <option value="8" selected>SSAA ×8</option>
+            <option value="4" selected>SSAA ×4</option>
+            <option value="8">SSAA ×8</option>
             <option value="9">SSAA ×9</option>
             <option value="sdf">SDF 1×</option>
           </select>
@@ -742,8 +767,8 @@ body.hero-page-active {
         </div>
         <div class="dbg-row">
           <label>FPS CAP</label>
-          <input type="range" id="fpsCapSlider" min="15" max="60" step="5" value="50" />
-          <span class="val" id="fpsCapLabel">50</span>
+          <input type="range" id="fpsCapSlider" min="15" max="60" step="5" value="40" />
+          <span class="val" id="fpsCapLabel">40</span>
         </div>
       </div>
     </div>
@@ -759,6 +784,56 @@ body.hero-page-active {
   </div>
 </div>
 
+<div class="hero-typed-wrap" id="hero-typed-wrap">
+  <span class="hero-typed-prefix">// </span><span class="hero-typed-text" id="hero-typed-text"></span><span class="hero-typed-cursor"></span>
+</div>
+
+<script>
+(function() {
+  // v12.12 typed 副标题 — 在 hero 左下角循环打字
+  // 不依赖 butterfly typed.js,自己实现 (轻量)
+  var lines = [
+    '水满则溢,月盈则亏',
+    '抽刀断水,举杯消愁',
+    '人生若只如初见',
+    '生活不止眼前的代码',
+    '还有远方的诗和球场',
+    '记录每一个灵光乍现的瞬间',
+    '欲穷千里目,更上一层楼',
+    '行到水穷处,坐看云起时'
+  ];
+  var el = document.getElementById('hero-typed-text');
+  if (!el) return;
+  var lineIdx = 0, charIdx = 0, isDeleting = false;
+  var TYPING = 95, DELETING = 35, HOLD = 1800;
+  function tick() {
+    var line = lines[lineIdx % lines.length];
+    if (!isDeleting) {
+      charIdx++;
+      el.textContent = line.slice(0, charIdx);
+      if (charIdx === line.length) {
+        isDeleting = true;
+        setTimeout(tick, HOLD);
+        return;
+      }
+      setTimeout(tick, TYPING);
+    } else {
+      charIdx--;
+      el.textContent = line.slice(0, charIdx);
+      if (charIdx === 0) {
+        isDeleting = false;
+        lineIdx++;
+        setTimeout(tick, 280);
+        return;
+      }
+      setTimeout(tick, DELETING);
+    }
+  }
+  // 启动: 首字符延迟 600ms (等 hero fly in 动画)
+  setTimeout(tick, 600);
+})();
+</script>
+
 </div>
 <main class="layout" id="content-inner"><div class="recent-posts nc masonry" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/26/football-morning-2026-06-26/" title="足球早报 · 2026年6月26日 星期四｜数据驱动第 2 期">足球早报 · 2026年6月26日 星期四｜数据驱动第 2 期</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-26T00:00:00.000Z" title="发表于 2026-06-26 08:00:00">2026-06-26</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ 🔥 改革版 v2 · 数据驱动｜所有积分、赛程、xG 来自 football-data skill（基于 ESPN API），推演框架来自 football-bayes + worldcup-predictor (Elo 78% 准确率)抓取时间：2026-06-26 17:11 (GMT+8)数据接口：ESPN Core API ｜ OptaJoe ｜ FBref   📅 今日赛程（北京时间）6 场世界杯小组赛——同时段开打。数据来自 football-data.get_daily_schedule：    北京时间 赛事 对阵 场馆    03:00 FIFA World Cup Norway vs France Gillette Stadium (Foxborough, Massachusetts)   03:00 FIFA World Cup Senegal vs Iraq BMO Field (Toronto)   08:00 FIFA World Cup Cape Verde vs Saudi Arabia NRG Stadium (Houston, Tex...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/25/football-evening-2026-06-25/" title="足球晚报 · 2026年6月25日 星期四">足球晚报 · 2026年6月25日 星期四</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-25T12:00:00.000Z" title="发表于 2026-06-25 20:00:00">2026-06-25</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ 🌙 晚报 · 晚间新闻 + 深度资讯 · 数据来源 football-data.org + 懂球帝  足坛新闻📰 足坛头条 足协官方：捂嘴染红、限时离场、5秒界外球等新规7月1日起执行 懂球译站 | 赖因德斯亲笔信：收银员的19岁，国脚和爸爸的27岁 记者：金斯基预计将与热刺签下一份五年新合同 曼联名宿：枪手热刺都想要托纳利，不过感觉我们最终会拿下他 补充后卫吗？记者：黄蜂正在兜售迈尔斯-布里奇斯 斯彭斯谈拒绝和帕尔特伊握手：我有自己的准则，不对此事解释 全市场：贝蒂斯试探接触都灵中场卡萨代伊 Shams：黄蜂没主动兜售三球，但森林狼报价丰厚让他们放手 Shams：三球对加盟森林狼很兴奋，他期待和爱德华兹联手 记者：楚阿梅尼薪资不是阻碍，曼联愿意让他成为队内顶薪之一  西甲新闻 斯彭斯谈拒绝和帕尔特伊握手：我有自己的准则，不对此事解释 全市场：贝蒂斯试探接触都灵中场卡萨代伊 记者：楚阿梅尼薪资不是阻碍，曼联愿意让他成为队内顶薪之一 卫报：国际足联与EFC合资；世俱杯或扩至48队 哈塞尔巴因克：戈登确实发挥不好，斯彭斯也没给他足够的支援 乌奈谈佛得角门将涨粉：若让我突然涨...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/25/football-morning-2026-06-25/" title="足球早报 · 2026年6月25日 星期四">足球早报 · 2026年6月25日 星期四</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-25T00:00:00.000Z" title="发表于 2026-06-25 08:00:00">2026-06-25</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ ☀️ 早报 · 晨间战报 + 赛程速览 · 数据来源 football-data.org + 懂球帝  今日战报 暂无已结束比赛  近期赛程 近两日暂无赛程  我的主队巴萨相关新闻  巴萨官方撰文，向委内瑞拉地震受灾者表达支持  皇马相关新闻  每体：皇马想和维尼修斯续约，但不会不惜一切代价  马竞 暂无近期动态  迈阿密国际 暂无近期动态  西班牙近期战绩    日期 赛事 对阵 比分 结果    6月14日 世界杯 客 vs Qatar 1-1 ➖ 平   6月19日 世界杯 主 vs Bosnia-H. 4-1 ✅ 胜   相关新闻  西媒：此前冒充警察性侵妓女的西班牙裁判，因殴打前伴侣再被捕  足坛新闻📰 足坛头条 足协官方：捂嘴染红、限时离场、5秒界外球等新规7月1日起执行 福斯贝里：我会在世界杯结束后宣布退出瑞典国家队 巴拉格：我认为梅西会参加2030世界杯，在阿根廷本土打揭幕战 3.06，维尼修斯战苏格兰预期进球是世界杯有记录以来单场最高 斯基拉：罗马续约切利克进入最后阶段，3年合同年薪300万欧元  西甲新闻 3.06，维尼修斯战苏格兰预期进球是世界杯有记...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/24/football-evening-2026-06-24/" title="足球晚报 · 2026年6月24日 星期三">足球晚报 · 2026年6月24日 星期三</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-24T12:00:00.000Z" title="发表于 2026-06-24 20:00:00">2026-06-24</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ 🌙 晚报 · 晚间新闻 + 深度资讯 · 数据来源 football-data.org + 懂球帝  足坛新闻📰 足坛头条 C罗6届世界杯全部10进球名场面，看图闯关，你能满分通关吗？ 努涅斯招人嫌的怪异发型，背后还有这么多玄学？ 世界杯第十四日前瞻：巴西血拼苏格兰争头名，韩国不败即出线 米体：拉齐奥女足因怀孕解约格特贝里被判赔偿 全市场：萨索洛不会买断恩佐拉和法代拉 贝拉米正与伯恩利谈判，有望下赛季回归执掌球队 镜报：赖斯和斯彭斯将在英格兰队的大本营接受伤情评估 天空：奥地利对阵阿尔及利亚都不想赢，若赢球大概率碰西班牙 ⭐ 记者：穆里尼奥计划给予皇马右后卫更高进攻自由度 ⭐ 利物浦评队史百大球星第30名：史蒂夫-海威  西甲新闻 天空：奥地利对阵阿尔及利亚都不想赢，若赢球大概率碰西班牙 记者：穆里尼奥计划给予皇马右后卫更高进攻自由度 米体：国米还未和乌迪内斯谈妥索莱，马竞准备介入 全市场：那不勒斯瞄准希拉和维卡里奥，总价约为4000万欧 记者：恩佐皇马谈判重启，切尔西标价1.2亿镑 内维尔：戈登是英格兰队压力最大的球员，世界杯还没亮眼表现  英超新闻 贝拉米正与伯恩利...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/24/football-morning-2026-06-24/" title="足球早报 · 2026年6月24日 星期三">足球早报 · 2026年6月24日 星期三</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-24T00:00:00.000Z" title="发表于 2026-06-24 08:00:00">2026-06-24</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ ☀️ 早报 · 晨间战报 + 赛程速览 · 数据来源 football-data.org + 懂球帝  今日战报 暂无已结束比赛  近期赛程 近两日暂无赛程  我的主队巴萨相关新闻  巴萨球员国家队战报：坎塞洛70场里程碑送助攻，葡萄牙大胜  皇马 暂无近期动态  马竞 暂无近期动态  迈阿密国际 暂无近期动态  西班牙近期战绩    日期 赛事 对阵 比分 结果    6月14日 世界杯 客 vs Qatar 1-1 ➖ 平   6月19日 世界杯 主 vs Bosnia-H. 4-1 ✅ 胜   6月25日 世界杯 主 vs Canada - TIMED   下一场：6月25日 03:00 世界杯 - Switzerland vs Canada 足坛新闻📰 足坛头条 葡萄牙5-0乌兹别克斯坦，C罗双响，莱奥、努诺-门德斯建功 英格兰0-0闷平加纳，奥赖利中框，三狮军团全场仅3射正 安帅：对阵苏格兰会沿用踢海地的战术，球队阵型不会变 巴媒：巴西赛前全队合影的习惯将保持至世界杯结束 马刺将今年35号签+2未来次轮送至掘金，换来26号签并选中里德  西甲新闻 RMC：拉扬预...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/23/football-evening-2026-06-23/" title="足球晚报 · 2026年6月23日 星期二">足球晚报 · 2026年6月23日 星期二</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-23T12:00:00.000Z" title="发表于 2026-06-23 20:00:00">2026-06-23</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ 🌙 晚报 · 晚间新闻 + 深度资讯 · 数据来源 football-data.org + 懂球帝  足坛新闻📰 足坛头条 世界杯第十三比赛日前瞻：葡萄牙力求首胜，英格兰盼锁定头名 官方：马宁担任法国vs挪威第四官员搭档奥利弗，周飞担任候补助理裁判 不补水也不哈哈，从前的世界杯广告个个都经典 法媒：因马赛财政原因奥巴梅扬将离队，他丝毫没有退役的打算 廖三宁：热身赛有很多问题要复盘，我们真正的目标是对日本的比赛 前金靴认证，克洛泽：在我看来，梅西是史上最伟大足球运动员 郭士强：杨瀚森很努力但技术状态一般；做好了八村回归日本队的准备 TA：牛津联准备任命拉姆塞为球队新主帅 记者：勒纳尔世界杯后很难继续执教突尼斯 郭士强：会为日本男篮最强阵容做准备，包括八村垒的回归可能  西甲新闻 法媒：因马赛财政原因奥巴梅扬将离队，他丝毫没有退役的打算 记者：巴萨对小蜘蛛的言论满意，将提交1.2亿欧的第二份报价 阿斯：巴萨担忧拉菲和阿劳霍伤情；亚马尔复发风险已降至最低 记者：皇马希望马竞不会低于1.5亿欧卖小蜘蛛，目前无意加价 马竞名宿：若小蜘蛛想走就让他走，我喜欢真正想留在这的球员 阿斯...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/23/football-morning-2026-06-23/" title="足球早报 · 2026年6月23日 星期二">足球早报 · 2026年6月23日 星期二</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-23T00:00:00.000Z" title="发表于 2026-06-23 08:00:00">2026-06-23</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ ☀️ 早报 · 晨间战报 + 赛程速览 · 数据来源 football-data.org + 懂球帝  今日战报 暂无已结束比赛  近期赛程 近两日暂无赛程  我的主队巴萨 暂无近期动态  皇马 暂无近期动态  马竞相关新闻  失望至极，部分马竞球迷焚烧阿尔瓦雷斯球衣  迈阿密国际 暂无近期动态  西班牙近期战绩    日期 赛事 对阵 比分 结果    6月14日 世界杯 客 vs Qatar 1-1 ➖ 平   6月19日 世界杯 主 vs Bosnia-H. 4-1 ✅ 胜   6月25日 世界杯 主 vs Canada - TIMED   下一场：6月25日 03:00 世界杯 - Switzerland vs Canada 相关新闻  路易斯-阿尔贝托：法国是世界杯热门，但我依然看好西班牙  足坛新闻📰 足坛头条 法国3-0伊拉克，姆巴佩双响，奥利塞双助攻登贝莱传射 阿根廷2-0奥地利两连胜提前出线，梅西梅开二度+失点 挪威3-2塞内加尔提前出线，哈兰德梅开二度+中柱，萨尔双响 谷口彰悟：我们全队都想拿下瑞典，以小组第一晋级 蒂奥：输掉关键之战确实很难受，最后一...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/22/football-morning-2026-06-22/" title="足球早报 · 2026年6月22日 星期一">足球早报 · 2026年6月22日 星期一</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-22T00:00:00.000Z" title="发表于 2026-06-22 08:00:00">2026-06-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ ☀️ 早报 · 晨间战报 + 赛程速览 · 数据来源 football-data.org + 懂球帝  今日战报 暂无已结束比赛  近期赛程 近两日暂无赛程  我的主队巴萨相关新闻  世体：多队有意托尼-费尔南德斯，但他专注于参加巴萨季前赛  皇马相关新闻  库库伴侣：我从小就是皇马球迷，很开心能和他一起分享这一切 西媒：皇马派球探考察了迪奥曼德，并对其表现印象深刻  马竞 暂无近期动态  迈阿密国际 暂无近期动态  西班牙近期战绩    日期 赛事 对阵 比分 结果    6月14日 世界杯 客 vs Qatar 1-1 ➖ 平   6月19日 世界杯 主 vs Bosnia-H. 4-1 ✅ 胜   6月25日 世界杯 主 vs Canada - TIMED   下一场：6月25日 03:00 世界杯 - Switzerland vs Canada 足坛新闻📰 足坛头条 乌拉圭2-2佛得角 ，凯文-皮纳打破僵局，瓦雷拉扳平比分 球员来自欧洲集训也在葡萄牙，佛得角足球的“借壳生蛋” 懂球帝6月22日世界杯之星：奥亚萨瓦尔 比利时国脚德克伊珀：我本该进球的，对手门将太神勇...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/21/football-evening-2026-06-21/" title="足球晚报 · 2026年6月21日 星期日">足球晚报 · 2026年6月21日 星期日</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-21T12:00:00.000Z" title="发表于 2026-06-21 20:00:00">2026-06-21</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ 🌙 晚报 · 晚间新闻 + 深度资讯 · 数据来源 football-data.org + 懂球帝  足坛新闻📰 足坛头条 中国男篮热身赛91-81澳大利亚，王俊杰23+6，崔永熙12分 爱拍纪录片也爱写书，日本足球的自反不只《罗斯托夫的14秒》 尼亚凯特：哈兰德是我交手次数最多的球员之一，见他像老熟人 利物浦评队史百大球星第39名：左后卫阿兰-肯尼迪 意媒：托纳利若转会，米兰可获100万至180万欧元团结贡献金 每体：库库雷利亚伦敦豪宅采用北欧极简风，位处高端社区 放松一下，队报：奥利塞和谢尔基坐园艺车去训练 全市场：伊尔迪兹世界杯之旅即将结束，斯帕莱蒂致电安慰 全市场：国米有意厄斯蒂高，球员无意转会并且热那亚不想放人 阿森纳自媒体：17岁巴蒂什维利将加盟阿森纳  西甲新闻 每体：库库雷利亚伦敦豪宅采用北欧极简风，位处高端社区 对欧洲球队1胜10负，沙特曾在94年美国世界杯战胜比利时 西班牙从未连续3场世界杯不进球，从未遭遇世界杯5场不胜 阿斯：皇马想延续赛后签下世界杯新星的策略，本届是布阿迪 世体：贝蒂斯与瓦斯科达伽马已谈妥德奥萨，转会费约1200万欧 记者：如果皇...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/06/21/football-morning-2026-06-21/" title="足球早报 · 2026年6月21日 星期日">足球早报 · 2026年6月21日 星期日</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-06-21T00:00:00.000Z" title="发表于 2026-06-21 08:00:00">2026-06-21</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/">足球日报</a></span></div><div class="content"> ⚽ ☀️ 早报 · 晨间战报 + 赛程速览 · 数据来源 football-data.org + 懂球帝  今日战报 暂无已结束比赛  近期赛程 近两日暂无赛程  我的主队巴萨 暂无近期动态  皇马相关新闻  何塞普：皇马买邓弗里斯完全选对了人；期待入选西班牙国家队  马竞 暂无近期动态  迈阿密国际 暂无近期动态  西班牙近期战绩    日期 赛事 对阵 比分 结果    6月14日 世界杯 客 vs Qatar 1-1 ➖ 平   6月19日 世界杯 主 vs Bosnia-H. 4-1 ✅ 胜   6月25日 世界杯 主 vs Canada - TIMED   下一场：6月25日 03:00 世界杯 - Switzerland vs Canada 相关新闻  阿斯：我们被西班牙高标准惯坏了，如今该相信亚马尔 何塞普：皇马买邓弗里斯完全选对了人；期待入选西班牙国家队  足坛新闻📰 足坛头条 库拉索0-0逼平厄瓜多尔，鲁姆15次扑救破纪录，马宁出示6黄 我走了很远的路，才来到你的面前！ 橙色海浪，荷兰球迷在德克萨斯巡游场面震撼 伊朗主帅：伊朗第3战终于可提前两天抵达赛地 中...</div></div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#content-inner">17</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/null" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">ɐ ℒℯℯ</div><div class="author-info-description">一个高中生的小角落</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">167</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/26/football-morning-2026-06-26/" title="足球早报 · 2026年6月26日 星期四｜数据驱动第 2 期">足球早报 · 2026年6月26日 星期四｜数据驱动第 2 期</a><time datetime="2026-06-26T00:00:00.000Z" title="发表于 2026-06-26 08:00:00">2026-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/25/football-evening-2026-06-25/" title="足球晚报 · 2026年6月25日 星期四">足球晚报 · 2026年6月25日 星期四</a><time datetime="2026-06-25T12:00:00.000Z" title="发表于 2026-06-25 20:00:00">2026-06-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/25/football-morning-2026-06-25/" title="足球早报 · 2026年6月25日 星期四">足球早报 · 2026年6月25日 星期四</a><time datetime="2026-06-25T00:00:00.000Z" title="发表于 2026-06-25 08:00:00">2026-06-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/24/football-evening-2026-06-24/" title="足球晚报 · 2026年6月24日 星期三">足球晚报 · 2026年6月24日 星期三</a><time datetime="2026-06-24T12:00:00.000Z" title="发表于 2026-06-24 20:00:00">2026-06-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/24/football-morning-2026-06-24/" title="足球早报 · 2026年6月24日 星期三">足球早报 · 2026年6月24日 星期三</a><time datetime="2026-06-24T00:00:00.000Z" title="发表于 2026-06-24 08:00:00">2026-06-24</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
             <i class="fas fa-folder-open"></i>
@@ -767,7 +842,7 @@ body.hero-page-active {
           </div>
           <ul class="card-category-list" id="aside-cat-list">
             <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%A5%BF%E7%8F%AD%E7%89%99%E8%AF%AD%E5%AD%A6%E4%B9%A0/"><span class="card-category-list-name">西班牙语学习</span><span class="card-category-list-count">5</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%B6%B3%E7%90%83%E6%97%A5%E6%8A%A5/"><span class="card-category-list-name">足球日报</span><span class="card-category-list-count">161</span></a></li>
-          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/%E6%99%9A%E6%8A%A5/" style="font-size: 1.37em; color: #99a4b2">晚报</a> <a href="/tags/A1%E5%85%A5%E9%97%A8/" style="font-size: 1.17em; color: #999c9f">A1入门</a> <a href="/tags/%E8%A5%BF%E7%8F%AD%E7%89%99%E8%AF%AD/" style="font-size: 1.3em; color: #99a1ac">西班牙语</a> <a href="/tags/%E8%AF%AD%E6%B3%95/" style="font-size: 1.23em; color: #999ea6">语法</a> <a href="/tags/%E8%B6%B3%E7%90%83/" style="font-size: 1.5em; color: #99a9bf">足球</a> <a href="/tags/%E6%97%B6%E6%80%81/" style="font-size: 1.1em; color: #999">时态</a> <a href="/tags/%E8%99%9A%E6%8B%9F%E5%BC%8F/" style="font-size: 1.1em; color: #999">虚拟式</a> <a href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" style="font-size: 1.1em; color: #999">贝叶斯</a> <a href="/tags/%E6%97%A9%E6%8A%A5/" style="font-size: 1.43em; color: #99a6b9">早报</a> <a href="/tags/%E4%B8%96%E7%95%8C%E6%9D%AF/" style="font-size: 1.1em; color: #999">世界杯</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%88%86%E6%9E%90/" style="font-size: 1.1em; color: #999">深度分析</a> <a href="/tags/%E5%8F%91%E9%9F%B3/" style="font-size: 1.1em; color: #999">发音</a> <a href="/tags/B1%E8%BF%9B%E9%98%B6/" style="font-size: 1.1em; color: #999">B1进阶</a> <a href="/tags/B2%E4%B8%AD%E9%AB%98%E7%BA%A7/" style="font-size: 1.1em; color: #999">B2中高级</a> <a href="/tags/A2%E5%9F%BA%E7%A1%80/" style="font-size: 1.1em; color: #999">A2基础</a></div></div><div class="card-widget card-archives">
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/%E6%99%9A%E6%8A%A5/" style="font-size: 1.37em; color: #99a4b2">晚报</a> <a href="/tags/%E6%97%A9%E6%8A%A5/" style="font-size: 1.43em; color: #99a6b9">早报</a> <a href="/tags/%E8%AF%AD%E6%B3%95/" style="font-size: 1.23em; color: #999ea6">语法</a> <a href="/tags/%E5%8F%91%E9%9F%B3/" style="font-size: 1.1em; color: #999">发音</a> <a href="/tags/B2%E4%B8%AD%E9%AB%98%E7%BA%A7/" style="font-size: 1.1em; color: #999">B2中高级</a> <a href="/tags/%E8%B6%B3%E7%90%83/" style="font-size: 1.5em; color: #99a9bf">足球</a> <a href="/tags/B1%E8%BF%9B%E9%98%B6/" style="font-size: 1.1em; color: #999">B1进阶</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%88%86%E6%9E%90/" style="font-size: 1.1em; color: #999">深度分析</a> <a href="/tags/%E8%A5%BF%E7%8F%AD%E7%89%99%E8%AF%AD/" style="font-size: 1.3em; color: #99a1ac">西班牙语</a> <a href="/tags/%E8%99%9A%E6%8B%9F%E5%BC%8F/" style="font-size: 1.1em; color: #999">虚拟式</a> <a href="/tags/A1%E5%85%A5%E9%97%A8/" style="font-size: 1.17em; color: #999c9f">A1入门</a> <a href="/tags/%E4%B8%96%E7%95%8C%E6%9D%AF/" style="font-size: 1.1em; color: #999">世界杯</a> <a href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" style="font-size: 1.1em; color: #999">贝叶斯</a> <a href="/tags/A2%E5%9F%BA%E7%A1%80/" style="font-size: 1.1em; color: #999">A2基础</a> <a href="/tags/%E6%97%B6%E6%80%81/" style="font-size: 1.1em; color: #999">时态</a></div></div><div class="card-widget card-archives">
     <div class="item-headline">
       <i class="fas fa-archive"></i>
       <span>归档</span>
@@ -804,7 +879,7 @@ body.hero-page-active {
         </li>
       
     </ul>
-  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">167</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-26T10:52:22.869Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By ɐ ℒℯℯ</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>window.typedJSFn = {
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">167</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-27T02:39:20.822Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By ɐ ℒℯℯ</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>window.typedJSFn = {
   init: str => {
     window.typed = new Typed('#subtitle', Object.assign({
       strings: str,
@@ -892,7 +967,7 @@ typedJSFn.run(subtitleType)
   </div>
   <div id="player-embed-container"></div>
 </div>
-<script src="/js/music-bar.js?v=47d781ea"></script><script src="/js/theme-system.js?v=47d781ea"></script><script src="/js/publish-button.js?v=47d781ea"></script><script src="/js/dynamic-avatar.js?v=47d781ea"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/hero/river-hero.js?v=9"></script>
+<script src="/js/music-bar.js?v=c34ebfcd"></script><script src="/js/theme-system.js?v=c34ebfcd"></script><script src="/js/publish-button.js?v=c34ebfcd"></script><script src="/js/dynamic-avatar.js?v=c34ebfcd"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/hero/river-hero.js?v=9"></script>
 <script>
     // 调试面板展开
     document.getElementById('dbgToggle').addEventListener('click', function() {
@@ -923,8 +998,8 @@ typedJSFn.run(subtitleType)
       var head = document.getElementById('heroHeadlineLive');
       var sub  = document.getElementById('heroSublineLive');
       if (!head || !sub) return;
-      var headline = "Intelligence that flows with you.";
-      var subline  = "River.ai 的 WebGL ASCII-river 峡谷日夜循环动画";
+      var headline = "Axtrivc's Blog";
+      var subline  = "流光溢彩 · 如梦如幻";
       var started = false;
       function startFallback() {
         if (started) return;
@@ -1018,7 +1093,7 @@ typedJSFn.run(subtitleType)
 
     if (releaseArmed) {
       target = 1;  // 强制冲顶
-      // 释放段：无 inertia，直接同步
+      // 释放段：无 inertia,直接同步 (0.32 = 32% 步进,3-4 帧完成)
       progress += (target - progress) * 0.32;
       if (progress > 0.998) {
         progress = 1;
@@ -1026,13 +1101,22 @@ typedJSFn.run(subtitleType)
         applyVars(1);
         // 释放：移除 main 的 transform/opacity，scrollTo 到 hero 底部
         body.classList.add('hero-released');
-        // scrollTo 让博客内容的自然位置生效（main 顶部 = viewport 顶部）
-        window.scrollTo(0, heroH);
+        var mainEl = document.querySelector('main');
+        var mainTop = mainEl ? mainEl.getBoundingClientRect().top + window.scrollY : heroH;
+        window.scrollTo(0, mainTop + 4);
+        // 通知 hero 立即冻结 (v12.25: 让出 GPU)
+        var heroFrozenEvent = new Event('hero-frozen');
+        window.dispatchEvent(heroFrozenEvent);
         return;
       }
     } else {
-      // 阻力段：缓慢跟随 target（push-back 感）
-      progress += (target - progress) * 0.08;
+      // 阻力段：缓慢跟随 target (push-back 感) - v12.25 增快到 0.16 提速一倍
+      progress += (target - progress) * 0.16;
+      // v12.14: 当 target 与 progress 差距 <0.001 时不再 RAF 调度
+      if (Math.abs(target - progress) < 0.001) {
+        applyVars(progress);
+        return;
+      }
     }
 
     applyVars(progress);

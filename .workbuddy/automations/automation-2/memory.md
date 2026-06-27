@@ -127,6 +127,14 @@
 
 **方法**: 复用 git-credential-manager.exe + Node.js REST API 方案，API 返回 HTTP 204，x-ratelimit-remaining=4999，触发成功。
 
+## 2026-06-27 08:18
+**任务**: 触发 football-daily.yml workflow（edition=morning）
+**仓库**: Axtrivc/Axtrivc.github.io
+
+**执行结果**: ✅ 成功
+
+**方法**: `git credential fill`（stdio 输入）提取 token → Node.js REST API。API 返回 HTTP 204，x-ratelimit-remaining=4999。gh CLI 仍未安装，继续复用成熟方案。
+
 ## 2026-06-23 07:55
 **任务**: 触发 football-daily.yml workflow（edition=morning）
 **仓库**: Axtrivc/Axtrivc.github.io
