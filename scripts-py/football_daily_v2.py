@@ -85,16 +85,28 @@ def bj_monthday_str(utc_str):
 
 # ==================== 数据采集 (通过 sports-skills CLI) ====================
 def call_skill(*args):
-    """调用 sports-skills CLI 并解析 JSON"""
-    cmd = [sys.executable, '-m', 'sports_skills', *args]
-    try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
-        if result.returncode != 0:
-            return None
-        return json.loads(result.stdout)
-    except Exception as e:
-        print(f"  ⚠️ call_skill error: {args[:2]}... -> {e}", file=sys.stderr)
-        return None
+    """调用 sports-skills CLI 并解析 JSON (v3 fix: 用正确的 python 路径)"""
+    # v3 fix: sys.executable 在 WorkBuddy 环境下可能指向错误的 python
+    # 优先使用系统安装了 sports-skills 的 python
+    python_candidates = [
+        r'C:\Users\leecl\AppData\Local\Python\pythoncore-3.14-64\python.exe',
+        'python3',
+        'python',
+        sys.executable,
+    ]
+    for py in python_candidates:
+        cmd = [py, '-m', 'sports_skills', *args]
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            if result.returncode == 0 and result.stdout.strip():
+                return json.loads(result.stdout)
+        except (FileNotFoundError, json.JSONDecodeError, subprocess.TimeoutExpired):
+            continue
+        except Exception as e:
+            print(f"  ⚠️ call_skill error ({py}): {args[:2]}... -> {e}", file=sys.stderr)
+            continue
+    print(f"  ⚠️ call_skill 全部失败: {args[:2]}...", file=sys.stderr)
+    return None
 
 def safe(d, *keys, default=None):
     """安全取值"""
