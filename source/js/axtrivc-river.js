@@ -34,14 +34,16 @@
   resize();
   window.addEventListener('resize', resize);
 
-  // Layered waves — 暖棕主题适配
+  // Layered waves — 暖棕主题适配, 线条加深
   // 从博客 #8B6F47(主色) / #faf8f5(背景) / #C4A96A(按钮hover) 提取
   // 后层淡金 → 中层暖棕 → 前层米白(与 river.ai 层次逻辑一致)
+  // alpha 提升: 0.20→0.42 / 0.24→0.55 / 0.32→0.68 / 0.55→0.85
+  // stroke 加粗: 1.0→1.4 / 1.2→1.6, 让线条更清晰可见
   var layers = [
-    { amp: 14, freq: 0.0042, speed: 0.012, yOff: 0.62, alpha: 0.20, stroke: 1.0, color: '196, 169, 106' },   // 淡金
-    { amp: 10, freq: 0.0068, speed: 0.020, yOff: 0.70, alpha: 0.24, stroke: 1.0, color: '139, 111, 71' },     // 暖棕(#8B6F47)
-    { amp: 6,  freq: 0.0110, speed: 0.034, yOff: 0.78, alpha: 0.32, stroke: 1.2, color: '212, 185, 138' },   // 浅驼
-    { amp: 3,  freq: 0.0200, speed: 0.052, yOff: 0.86, alpha: 0.55, stroke: 1.0, color: '250, 248, 245' }    // 米白(#faf8f5)
+    { amp: 14, freq: 0.0042, speed: 0.012, yOff: 0.62, alpha: 0.42, stroke: 1.4, color: '180, 145, 80' },    // 深金
+    { amp: 10, freq: 0.0068, speed: 0.020, yOff: 0.70, alpha: 0.55, stroke: 1.4, color: '120, 92, 55' },     // 深暖棕
+    { amp: 6,  freq: 0.0110, speed: 0.034, yOff: 0.78, alpha: 0.68, stroke: 1.6, color: '180, 150, 100' },  // 深浅驼
+    { amp: 3,  freq: 0.0200, speed: 0.052, yOff: 0.86, alpha: 0.85, stroke: 1.2, color: '250, 248, 245' }   // 米白(前景最亮)
   ];
 
   function drawLayer(layer, time) {
@@ -92,10 +94,10 @@
     t += 1;
     ctx.clearRect(0, 0, W, H);
 
-    // 暖棕深水渐变背景(与博客 #8B6F47 呼应)
+    // 暖棕深水渐变背景(加深, 让线条对比更强)
     var g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, 'rgba(139, 111, 71, 0)');
-    g.addColorStop(1, 'rgba(120, 90, 55, 0.35)');
+    g.addColorStop(0, 'rgba(139, 111, 71, 0.15)');
+    g.addColorStop(1, 'rgba(100, 75, 40, 0.55)');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
 

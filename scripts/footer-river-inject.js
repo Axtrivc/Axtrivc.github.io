@@ -67,21 +67,25 @@ hexo.extend.filter.register('after_render:html', function (data) {
   pointer-events: none;
   transition: opacity 0.6s ease;
 }
-/* ── Copyright 浮在水面中央 ── */
+/* ── Copyright 跟波纹线条融合 ──
+ * 位置从中央 50% 下移到 72%, 跟中前层波纹(yOff 0.70/0.78)重叠
+ * 文字穿插在波纹中, 像漂浮在水里, 不再孤立在上方
+ * 颜色淡化: 0.75 → 0.5, 让波纹成为视觉主角
+ */
 .axtrivc-copyright {
   position: absolute;
-  top: 50%;
+  top: 72%;
   left: 0;
   right: 0;
   transform: translateY(-50%);
   z-index: 10;
   text-align: center;
   font-family: "Noto Serif SC", "PingFang SC", "Microsoft YaHei", serif;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0.06em;
-  color: rgba(80, 55, 30, 0.75);
-  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: rgba(70, 50, 25, 0.5);
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.4);
   pointer-events: none;
   user-select: none;
 }
