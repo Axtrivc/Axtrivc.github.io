@@ -52,7 +52,7 @@ jobs:
       - name: Install sports-skills (Football data, News, World Cup)
         run: |
           python -m pip install --upgrade pip
-          pip install sports-skills==0.27.1
+          pip install sports-skills==0.27.1 feedparser
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -71,7 +71,7 @@ jobs:
           echo "=== 拉取数据中... ==="
           python -m sports_skills football get_competitions | head -5
           echo "=== 生成 v2 早报 ==="
-          python scripts/football_daily_v2.py morning
+          python scripts-py/football_daily_v2.py morning
 
       - name: Commit and push source
         env:
@@ -122,7 +122,7 @@ jobs:
       - name: Install sports-skills
         run: |
           python -m pip install --upgrade pip
-          pip install sports-skills==0.27.1
+          pip install sports-skills==0.27.1 feedparser
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -141,7 +141,7 @@ jobs:
           echo "=== 拉取数据中... ==="
           python -m sports_skills football get_competitions | head -5
           echo "=== 生成 v2 晚报 ==="
-          python scripts/football_daily_v2.py evening
+          python scripts-py/football_daily_v2.py evening
 
       - name: Commit and push source
         env:

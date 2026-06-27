@@ -168,7 +168,7 @@ def get_event_xg(event_id):
 
 def get_news_google(query, limit=5):
     """Google News 搜索"""
-    data = call_skill('news', 'fetch_items', '--google_news=True', f'--query={query}', f'--limit={limit}', '--sort_by_date=True')
+    data = call_skill('news', 'fetch_items', '--google_news', f'--query={query}', f'--limit={limit}', '--sort_by_date')
     return safe(data, 'data', 'items', default=[]) or safe(data, 'items', default=[]) or []
 
 def get_news_rss(feed_url, limit=5):
