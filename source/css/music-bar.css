@@ -189,10 +189,9 @@ body { padding-bottom: 62px !important; }
 
 /* ── footer 整体上移避让 music-bar ──
  * river-stage 在 footer 最底部, 原本被 music-bar 盖住 56px
- * 给 footer 加 padding-bottom: 57px (music-bar 56px + 1px 间隙)
- * 让 river 底部紧贴 music-bar 顶部, 视觉上融为一体
+ * padding-bottom: 56px (= music-bar 高度), river 完全紧贴 music-bar, 无间隙
  */
-#footer { padding-bottom: 57px !important; }
+#footer { padding-bottom: 56px !important; }
 
 .vinyl-spin { animation: vinyl-rotate 4s linear infinite paused; }
 .vinyl-spin.playing { animation-play-state: running; }
@@ -213,7 +212,7 @@ body { padding-bottom: 62px !important; }
   #music-launcher { bottom: 12px; right: 12px; }
   #music-launcher #btn-launcher { width: 42px; height: 42px; }
   body { padding-bottom: 56px !important; }
-  /* 手机端 footer 同步紧贴 music-bar 50px + 1px 间隙 */
-  #footer { padding-bottom: 51px !important; }
+  /* 手机端 footer 紧贴 music-bar 50px, 无间隙 */
+  #footer { padding-bottom: 50px !important; }
   #rightside { bottom: 64px !important; }
 }
