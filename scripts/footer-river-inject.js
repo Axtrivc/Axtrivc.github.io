@@ -24,20 +24,31 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
   var css = `
 <style id="axtrivc-river-css">
-/* ── Footer River Stage ──
- * 暖棕主题水面带, 高度 120px, 圆角顶部
- * copyright 文字浮在水面上(z-index 10)
+/* ── Footer 整体改造: 去白底, 暖棕无缝融合 ──
+ * #footer 默认白色背景($light-blue), 改为米色与页面主体一致
+ * river-stage 无圆角, 直接衔接 footer 底部, 形成一体感
  */
+
+/* ① footer 白底 → 米色暖棕 */
+#footer {
+  background-color: #faf8f5 !important;
+  background-image: none !important;
+}
+.footer-other {
+  background-color: transparent !important;
+}
+
+/* ── Footer River Stage ──
+ * 无圆角, 与 footer 融为一体, 暖棕渐变水面 */
 .axtrivc-river-stage {
   position: relative;
   width: 100%;
   height: 120px;
-  margin-top: 24px;
-  background: linear-gradient(180deg, #f5efe6 0%, #e8d9c0 60%, #d4bc96 100%);
+  margin-top: 0;
+  padding-top: 20px;
+  background: linear-gradient(180deg, #efe8dc 0%, #e8d9c0 40%, #d4bc96 100%);
   overflow: hidden;
   cursor: crosshair;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
 }
 .axtrivc-river-stage canvas {
   display: block;
@@ -80,8 +91,7 @@ body .footer-other > .footer-copyright { display: none !important; }
 @media (max-width: 768px) {
   .axtrivc-river-stage {
     height: 90px;
-    margin-top: 16px;
-    border-radius: 8px;
+    padding-top: 14px;
   }
   .axtrivc-river-hint {
     font-size: 11px;
@@ -91,6 +101,14 @@ body .footer-other > .footer-copyright { display: none !important; }
   .axtrivc-copyright {
     font-size: 12px;
   }
+}
+
+/* ② 防止上滑白屏: html/body 底部也用米色兜底 */
+html {
+  background-color: #faf8f5 !important;
+}
+body {
+  background-color: #faf8f5 !important;
 }
 </style>
 `;
