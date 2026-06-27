@@ -396,8 +396,6 @@ body.hero-released {
   window.addEventListener('resize', function() {
     vh = window.innerHeight;
   }, { passive: true });
-
-  hexo.log && hexo.log.info('[hero-inject] v13 native scroll + single pipeline');
 })();
 </script>
 `;
