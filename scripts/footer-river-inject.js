@@ -24,19 +24,20 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
   var css = `
 <style id="axtrivc-river-css">
-/* ── Footer 整体改造: 去白底, 暖棕无缝融合 ──
- * #footer 默认白色背景($light-blue), 改为米色与页面主体一致
+/* ── Footer 整体改造: 主题色无缝融合 ──
+ * #footer 默认白色背景($light-blue), 改为 var(--footer-bg, 米色 fallback)
  * river-stage 无圆角, 直接衔接 footer 底部, 形成一体感
+ * 5 主题各自的 --footer-* CSS 变量由 theme-system.js applyTheme 设置
  */
 
-/* ① footer 白底 → 米色暖棕, padding-bottom=0 让 river 紧贴底边 */
+/* ① footer 背景跟随主题, padding-bottom=0 让 river 紧贴底边 */
 #footer {
-  background-color: #faf8f5 !important;
+  background-color: var(--footer-bg, #faf8f5) !important;
   background-image: none !important;
   padding-bottom: 0 !important;
 }
 /* ── Footer River Stage ──
- * 无圆角, 与 footer 融为一体, 暖棕渐变水面
+ * 无圆角, 与 footer 融为一体, 主题色渐变水面
  * river 在 footer 内部紧贴底边, 由 body padding-bottom 把 footer 抬到 music-bar 顶部 */
 .footer-other {
   background-color: transparent !important;
@@ -50,7 +51,10 @@ hexo.extend.filter.register('after_render:html', function (data) {
   margin-top: 0;
   margin-bottom: 0;
   padding-top: 0;
-  background: linear-gradient(180deg, #efe8dc 0%, #e8d9c0 40%, #d4bc96 100%);
+  background: linear-gradient(180deg,
+    var(--footer-river-top, #efe8dc) 0%,
+    var(--footer-river-mid, #e8d9c0) 40%,
+    var(--footer-river-bottom, #d4bc96) 100%);
   overflow: hidden;
   cursor: crosshair;
 }
@@ -64,7 +68,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
   top: 12px;
   right: 18px;
   z-index: 2;
-  color: rgba(120, 90, 55, 0.65);
+  color: var(--footer-hint, rgba(120, 90, 55, 0.65));
   font-size: 12px;
   font-weight: 300;
   letter-spacing: 0.05em;
@@ -88,7 +92,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
   font-size: 13px;
   font-weight: 300;
   letter-spacing: 0.08em;
-  color: rgba(70, 50, 25, 0.5);
+  color: var(--footer-text, rgba(70, 50, 25, 0.5));
   text-shadow: 0 1px 3px rgba(255, 255, 255, 0.4);
   pointer-events: none;
   user-select: none;
@@ -112,12 +116,12 @@ body .footer-other > .footer-copyright { display: none !important; }
   }
 }
 
-/* ② 防止上滑白屏: html/body 底部也用米色兜底 */
+/* ② 防止上滑白屏: html/body 底部也用主题色兜底 */
 html {
-  background-color: #faf8f5 !important;
+  background-color: var(--footer-bg, #faf8f5) !important;
 }
 body {
-  background-color: #faf8f5 !important;
+  background-color: var(--footer-bg, #faf8f5) !important;
 }
 </style>
 `;
