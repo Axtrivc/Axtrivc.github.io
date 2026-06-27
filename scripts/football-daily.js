@@ -716,7 +716,8 @@ async function main() {
   console.log('正在抓取懂球帝新闻...');
   const allNews = {};
   const tabEntries = Object.entries(NEWS_TABS);
-  for (const [tabName, tabId] of tabEntries) {
+  for (let i = 0; i < tabEntries.length; i++) {
+    const [tabName, tabId] = tabEntries[i];
     try {
       const articles = await fetchDongqiudiNews(tabId, 15);
       allNews[tabName] = articles;
@@ -725,7 +726,7 @@ async function main() {
       console.error(`  ${tabName} 获取失败:`, e.message);
       allNews[tabName] = [];
     }
-    if (tabEntries.indexOf([tabName, tabId]) < tabEntries.length - 1) {
+    if (i < tabEntries.length - 1) {
       await new Promise(r => setTimeout(r, 1000));
     }
   }
