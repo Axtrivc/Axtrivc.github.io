@@ -115,7 +115,6 @@ body.hero-page-active main {
   background: #faf8f5;
 }
 body.hero-released .hero-shell {
-  visibility: hidden !important;
   pointer-events: none !important;
 }
 body.hero-released main {
