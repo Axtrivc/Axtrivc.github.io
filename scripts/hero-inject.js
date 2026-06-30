@@ -123,6 +123,17 @@ body.hero-released main {
   background: #faf8f5;
 }
 
+/* ── 2026-06-30 修复：覆盖 butterfly 的 #web_bg 白底 ──
+   真因：butterfly 主题注入 <div id="web_bg" style="background:#FFFFFF; position:fixed; z-index:-1">，
+   它在 body 和内容之间，遮住 body 的深蓝色。任何 hero ↔ main 过渡缝隙、亚像素间隙都暴露 #FFFFFF。
+   修复：hero 阶段把 #web_bg 改成深蓝，与 body 同色；离开 hero 阶段恢复白色（正常浏览）。 */
+body.hero-page-active #web_bg {
+  background-color: #0E2F7E !important;
+}
+body.hero-released #web_bg {
+  background-color: #FFFFFF !important;
+}
+
 /* ── nav：hero 阶段透明 + 白字 ── */
 body.hero-page-active #nav,
 body.hero-page-active #page-header.full_page #nav {
