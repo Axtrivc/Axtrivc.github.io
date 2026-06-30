@@ -66,9 +66,9 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
 /* hero-shell：绝对定位占 100dvh，在文档流中 */
 .hero-shell {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
+  top: auto;
+  left: auto;
   width: 100%;
   height: 100dvh;
   overflow: hidden;
@@ -111,14 +111,15 @@ hexo.extend.filter.register('after_render:html', function (data) {
 body.hero-page-active main {
   position: relative;
   z-index: 1;
-  margin-top: 100dvh;
+  margin-top: 0;
   background: #faf8f5;
 }
 body.hero-released .hero-shell {
-  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 body.hero-released main {
-  margin-top: 100dvh;
+  margin-top: 0;
   background: #faf8f5;
 }
 
