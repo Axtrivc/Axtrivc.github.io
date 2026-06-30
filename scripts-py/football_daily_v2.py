@@ -43,6 +43,36 @@ D.mkdir(parents=True, exist_ok=True)
 # 北京时间
 BJ = timezone(timedelta(hours=8))
 
+# ==================== 模式开关 ====================
+# True  = 世界杯模式（联赛休赛期）
+# False = 联赛模式（默认，原始逻辑）
+WORLD_CUP_MODE = True
+
+# 世界杯赛季（ESPN）
+WC_COMPETITION = 'fifa.world'
+WC_SEASON_ID = 'world-cup-2026'
+
+# 世界杯关注国家队（ESPN team IDs）
+WC_FOLLOWED_TEAMS = {
+    '164': '西班牙',
+    '202': '阿根廷',
+    '478': '法国',
+    '464': '挪威',
+    '448': '英格兰',
+}
+
+# 世界杯新闻关键词（Google News）
+WC_NEWS_QUERIES = [
+    'FIFA World Cup 2026 results',
+    'World Cup highlights goals',
+    'Spain World Cup squad',
+    'Argentina World Cup Messi',
+    'France World Cup team news',
+    'Norway World Cup Haaland',
+    'England World Cup',
+    'World Cup shock upset',
+]
+
 # ==================== 关注的球队 / 联赛 ====================
 # ESPN team IDs
 FOLLOWED_TEAMS = {
@@ -177,6 +207,73 @@ def get_news_rss(feed_url, limit=5):
     entries = safe(data, 'data', 'entries', default=[]) or safe(data, 'entries', default=[]) or []
     return entries[:limit]
 
+# ==================== 世界杯数据采集 ====================
+def get_wc_standings():
+    """世界杯小组赛积分榜（所有组）"""
+    data = call_skill('football', 'get_season_standings', f'--season_id={WC_SEASON_ID}')
+    return safe(data, 'data', 'standings', default=[]) or []
+
+def get_wc_season_schedule():
+    """世界杯赛季全部赛程（76 场）"""
+    data = call_skill('football', 'get_season_schedule', f'--season_id={WC_SEASON_ID}')
+    return safe(data, 'data', 'schedules', default=[]) or []
+
+def get_wc_team_matches(team_id, limit=5):
+    """国家队在世界杯的全部比赛（从赛季赛程过滤）"""
+    schedules = get_wc_season_schedule()
+    team_matches = []
+    for s in schedules:
+        comps = s.get('competitors', [])
+        for c in comps:
+            tid = safe(c, 'team', 'id', default='')
+            if str(tid) == str(team_id):
+                team_matches.append(s)
+                break
+    team_matches.sort(key=lambda x: x.get('start_time', ''), reverse=True)
+    return team_matches[:limit]
+
+def get_wc_event_goals(event_id):
+    """单场比赛的进球列表（从 timeline 提取）"""
+    data = call_skill('football', 'get_event_timeline', f'--event_id={event_id}')
+    timeline = safe(data, 'data', 'timeline', default=[]) or []
+    goals = []
+    for t in timeline:
+        if t.get('type') == 'goal':
+            minute = t.get('minute', '?')
+            team_name = safe(t, 'team', 'name', default='')
+            player_name = safe(t, 'player', 'name', default='')
+            if player_name:
+                goals.append({
+                    'minute': minute,
+                    'team': team_name,
+                    'player': player_name,
+                })
+    return goals
+
+def get_wc_top_scorers(limit=10):
+    """世界杯全程射手榜（遍历已结束比赛的 timeline 聚合）
+    遍历 74 场已结束比赛，每场调 get_event_timeline，提取 goal 事件聚合。
+    耗时约 3-5 分钟（每场约 2-3 秒），GitHub Actions 不会超时。
+    """
+    schedules = get_wc_season_schedule()
+    finished = [s for s in schedules if s.get('status') == 'closed']
+    scorer_map = {}
+    total = len(finished)
+    for i, match in enumerate(finished):
+        eid = match.get('id')
+        if not eid:
+            continue
+        if (i + 1) % 10 == 0:
+            print(f"  射手榜进度: {i+1}/{total}")
+        goals = get_wc_event_goals(str(eid))
+        for g in goals:
+            pname = g['player']
+            if pname not in scorer_map:
+                scorer_map[pname] = {'goals': 0, 'team': g['team']}
+            scorer_map[pname]['goals'] += 1
+    sorted_scorers = sorted(scorer_map.items(), key=lambda x: -x[1]['goals'])
+    return [(name, info['goals'], info['team']) for name, info in sorted_scorers[:limit]]
+
 # ==================== 格式化函数 ====================
 def get_team_names(m: dict):
     """从 events[].competitors[].team 提取两队名"""
@@ -232,6 +329,20 @@ def format_news_item(item: dict) -> str:
         suffix += f' `{pub}`'
     return f"- [{title}]({link}){suffix}"
 
+def is_standings_empty(standings_list):
+    """检测积分榜是否全 0（休赛期新赛季空数据）"""
+    if not standings_list:
+        return True
+    for s in standings_list:
+        entries = s.get('entries', []) if isinstance(s, dict) else []
+        if isinstance(s, dict) and 'team' in s:
+            entries = [s]
+        for e in entries:
+            played = e.get('played', 0)
+            if played and played > 0:
+                return False
+    return True
+
 def format_standings_table(standings_list, league_name, top_n=5):
     """从 standings 数据提取积分榜 top N"""
     if not standings_list:
@@ -281,6 +392,8 @@ def format_team_recent(team_name, results, limit=5):
 
 # ==================== 早报 (morning) ====================
 def generate_morning_md() -> str:
+    if WORLD_CUP_MODE:
+        return generate_morning_wc_md()
     today_cn = bj_date_cn()
     today_str = bj_date_str()
 
@@ -389,6 +502,8 @@ categories:
 
 # ==================== 晚报 (evening) ====================
 def generate_evening_md() -> str:
+    if WORLD_CUP_MODE:
+        return generate_evening_wc_md()
     today_cn = bj_date_cn()
     today_str = bj_date_str()
 
@@ -533,6 +648,327 @@ categories:
 
 *本文为「足球日报」自动生成 (v4 增强版)。数据来源：ESPN · Understat · BBC Sport · Sky Sports · ESPN FC · Google News。*
 *生成时间：{now_bj().strftime('%Y-%m-%d %H:%M')} GMT+8*
+""")
+    return '\n'.join(md)
+
+
+# ==================== 世界杯早报 ====================
+def generate_morning_wc_md() -> str:
+    today_cn = bj_date_cn()
+    today_str = bj_date_str()
+
+    print("📅 拉取今日赛程...")
+    events = get_today_matches()
+    wc_events = [e for e in events if 'World Cup' in get_comp_name(e)]
+    other_events = [e for e in events if 'World Cup' not in get_comp_name(e)]
+    events_sorted = wc_events + other_events
+
+    print("🏆 拉取世界杯小组积分榜...")
+    wc_standings = get_wc_standings()
+
+    print("⚽ 拉取世界杯全程射手榜（可能需要 3-5 分钟）...")
+    top_scorers = get_wc_top_scorers(limit=10)
+
+    print("🏆 拉取关注国家队近况...")
+
+    print("🗞️ 拉取新闻 (Google News)...")
+    news = []
+    for q in WC_NEWS_QUERIES[:5]:
+        items = get_news_google(q, limit=3)
+        news.extend(items)
+    print("📡 拉取 RSS 新闻...")
+    rss_items = []
+    for name, url in RSS_FEEDS[:2]:
+        entries = get_news_rss(url, limit=4)
+        for e in entries:
+            e['source'] = e.get('source', name)
+        rss_items.extend(entries)
+
+    md = []
+    md.append(f"""---
+title: 足球早报 · {today_cn}
+date: {today_str} 08:00:00
+excerpt: 世界杯晨间赛程 + 小组积分榜 + 射手榜
+description: 世界杯晨间赛程 · 小组积分榜 · 射手榜 · 数据驱动
+cover_color: '#07C160'
+tags:
+  - 足球
+  - 早报
+  - 世界杯
+  - 数据驱动
+categories:
+  - 足球日报
+---
+
+🏟️ 世界杯早报 · 赛程速览 + 小组形势 + 射手榜 · 数据来源 ESPN + RSS
+抓取时间：{now_bj().strftime('%Y-%m-%d %H:%M')} (GMT+8)
+
+""")
+
+    md.append("## 📅 今日赛程\n\n")
+    if events_sorted:
+        md.append("| 赛事 | 开球 | 对阵 | 状态 |\n|:---:|:---:|:---:|:---:|\n")
+        for e in events_sorted[:12]:
+            md.append(format_match_row(e) + "\n")
+    else:
+        md.append("> 今日暂无比赛。\n")
+
+    md.append("\n---\n\n## 🏆 小组积分榜\n\n")
+    if wc_standings:
+        followed_ids = set(WC_FOLLOWED_TEAMS.keys())
+        priority_groups = []
+        other_groups = []
+        for s in wc_standings:
+            entries = s.get('entries', [])
+            has_followed = any(safe(e, 'team', 'id', default='') in followed_ids for e in entries)
+            if has_followed:
+                priority_groups.append(s)
+            else:
+                other_groups.append(s)
+        for s in priority_groups + other_groups:
+            group_name = s.get('name', '')
+            entries = s.get('entries', [])
+            if entries:
+                md.append(f"### {group_name}\n\n")
+                md.append(format_standings_table([s], group_name, top_n=4))
+                md.append("\n")
+    else:
+        md.append("> 世界杯积分榜暂不可用。\n")
+
+    md.append("\n---\n\n## ⚽ 世界杯射手榜\n\n")
+    if top_scorers:
+        md.append("| 排名 | 球员 | 球队 | 进球 |\n|:---:|:---:|:---:|:---:|\n")
+        for i, (name, goals, team) in enumerate(top_scorers, 1):
+            md.append(f"| {i} | {name} | {team} | **{goals}** |\n")
+    else:
+        md.append("> 射手榜暂无数据。\n")
+
+    md.append("\n---\n\n## ⭐ 关注国家队\n\n")
+    for tid, tname in WC_FOLLOWED_TEAMS.items():
+        recent = get_wc_team_matches(tid, limit=3)
+        md.append(f"**{tname}** 近 3 场：\n\n")
+        if recent:
+            for r in recent:
+                home, away = get_team_names(r)
+                comps = r.get('competitors', [])
+                sh = sa = '?'
+                if len(comps) >= 2:
+                    sh = comps[0].get('score', '?')
+                    sa = comps[1].get('score', '?')
+                st = get_status_cn(r)
+                md.append(f"  - {home} {sh}-{sa} {away} ({st})\n")
+        else:
+            md.append(f"  > {tname} 暂无比赛数据。\n")
+        md.append("\n")
+
+    md.append("\n---\n\n## 🗞️ 新闻速递\n\n")
+    md.append("### Google News\n\n")
+    if news:
+        seen = set()
+        for n in news:
+            title = n.get('title', '')
+            if title and title not in seen:
+                seen.add(title)
+                md.append(format_news_item(n) + "\n")
+            if len(seen) >= 8:
+                break
+    else:
+        md.append("> 暂无相关新闻。\n")
+    md.append("\n### RSS 精选\n\n")
+    if rss_items:
+        seen_rss = set()
+        for n in rss_items:
+            title = n.get('title', '')
+            if title and title not in seen_rss:
+                seen_rss.add(title)
+                md.append(format_news_item(n) + "\n")
+            if len(seen_rss) >= 6:
+                break
+    else:
+        md.append("> RSS 源暂无返回。\n")
+
+    md.append(f"""
+
+本文为「足球日报」自动生成 (世界杯模式)。数据来源：ESPN · BBC Sport · Sky Sports · Google News。
+生成时间：{now_bj().strftime('%Y-%m-%d %H:%M')} GMT+8
+""")
+    return '\n'.join(md)
+
+
+# ==================== 世界杯晚报 ====================
+def generate_evening_wc_md() -> str:
+    today_cn = bj_date_cn()
+    today_str = bj_date_str()
+
+    print("📅 拉取今日赛程...")
+    events = get_today_matches()
+    wc_events = [e for e in events if 'World Cup' in get_comp_name(e)]
+    other_events = [e for e in events if 'World Cup' not in get_comp_name(e)]
+    events_sorted = wc_events + other_events
+    finished_events = [e for e in events if get_status_cn(e) == '已结束']
+    finished_wc = [e for e in finished_events if 'World Cup' in get_comp_name(e)]
+
+    print("🏆 拉取世界杯小组积分榜...")
+    wc_standings = get_wc_standings()
+
+    print("⚽ 拉取世界杯全程射手榜（可能需要 3-5 分钟）...")
+    top_scorers = get_wc_top_scorers(limit=15)
+
+    print("📈 拉取今日进球详情...")
+    match_goals = {}
+    for e in finished_wc[:8]:
+        eid = e.get('id')
+        if eid:
+            match_goals[eid] = get_wc_event_goals(str(eid))
+
+    print("🏆 拉取关注国家队近况...")
+
+    print("🗞️ 拉取新闻 (Google News + RSS)...")
+    news = []
+    for q in WC_NEWS_QUERIES:
+        items = get_news_google(q, limit=3)
+        news.extend(items)
+    rss_items = []
+    for name, url in RSS_FEEDS:
+        entries = get_news_rss(url, limit=5)
+        for e in entries:
+            e['source'] = e.get('source', name)
+        rss_items.extend(entries)
+
+    md = []
+    md.append(f"""---
+title: 足球晚报 · {today_cn}
+date: {today_str} 20:00:00
+excerpt: 世界杯战报 + 小组积分榜 + 射手榜 + 进球详情
+description: 世界杯晚间战报 · 小组积分榜 · 射手榜 · 进球详情 · 数据驱动
+cover_color: '#1E3A8A'
+tags:
+  - 足球
+  - 晚报
+  - 世界杯
+  - 数据驱动
+categories:
+  - 足球日报
+---
+
+🌙 世界杯晚报 · 战报 + 积分榜 + 射手榜 + 进球详情 · 数据来源 ESPN + RSS
+抓取时间：{now_bj().strftime('%Y-%m-%d %H:%M')} (GMT+8)
+
+""")
+
+    md.append("## ⚽ 今日战报\n\n")
+    if finished_events:
+        md.append("| 赛事 | 主队 | 比分 | 客队 |\n|:---:|:---:|:---:|:---:|\n")
+        for e in finished_events[:12]:
+            md.append(format_finished_row(e) + "\n")
+    else:
+        md.append("> 今日暂无已结束比赛。\n")
+
+    if match_goals:
+        md.append("\n### ⚽ 进球详情\n\n")
+        for eid, goals in match_goals.items():
+            if not goals:
+                continue
+            match_name = ""
+            for e in finished_wc:
+                if str(e.get('id', '')) == str(eid):
+                    home, away = get_team_names(e)
+                    match_name = f"{home} vs {away}"
+                    break
+            if match_name:
+                md.append(f"**{match_name}**\n\n")
+                for g in goals:
+                    md.append(f"- ⚽ {g['minute']}' {g['player']} ({g['team']})\n")
+                md.append("\n")
+
+    md.append("\n---\n\n## 🏆 小组积分榜\n\n")
+    if wc_standings:
+        followed_ids = set(WC_FOLLOWED_TEAMS.keys())
+        priority_groups = []
+        other_groups = []
+        for s in wc_standings:
+            entries = s.get('entries', [])
+            has_followed = any(safe(e, 'team', 'id', default='') in followed_ids for e in entries)
+            if has_followed:
+                priority_groups.append(s)
+            else:
+                other_groups.append(s)
+        for s in priority_groups + other_groups:
+            group_name = s.get('name', '')
+            entries = s.get('entries', [])
+            if entries:
+                md.append(f"### {group_name}\n\n")
+                md.append(format_standings_table([s], group_name, top_n=4))
+                md.append("\n")
+    else:
+        md.append("> 世界杯积分榜暂不可用。\n")
+
+    md.append("\n---\n\n## ⚽ 世界杯射手榜\n\n")
+    if top_scorers:
+        md.append("| 排名 | 球员 | 球队 | 进球 |\n|:---:|:---:|:---:|:---:|\n")
+        for i, (name, goals, team) in enumerate(top_scorers, 1):
+            md.append(f"| {i} | {name} | {team} | **{goals}** |\n")
+    else:
+        md.append("> 射手榜暂无数据。\n")
+
+    md.append("\n---\n\n## ⭐ 关注国家队\n\n")
+    for tid, tname in WC_FOLLOWED_TEAMS.items():
+        recent = get_wc_team_matches(tid, limit=3)
+        md.append(f"**{tname}** 近 3 场：\n\n")
+        if recent:
+            for r in recent:
+                home, away = get_team_names(r)
+                comps = r.get('competitors', [])
+                sh = sa = '?'
+                if len(comps) >= 2:
+                    sh = comps[0].get('score', '?')
+                    sa = comps[1].get('score', '?')
+                st = get_status_cn(r)
+                md.append(f"  - {home} {sh}-{sa} {away} ({st})\n")
+        else:
+            md.append(f"  > {tname} 暂无比赛数据。\n")
+        md.append("\n")
+
+    md.append("\n---\n\n## 📆 明日预告\n\n")
+    upcoming = [e for e in events if get_status_cn(e) == '未开始']
+    if upcoming:
+        md.append("| 赛事 | 开球 | 对阵 |\n|:---:|:---:|:---:|\n")
+        for e in upcoming[:8]:
+            home, away = get_team_names(e)
+            md.append(f"| {get_comp_name(e)} | {get_match_time(e)} | {home} vs {away} |\n")
+    else:
+        md.append("> 明日暂无已公布赛程。\n")
+
+    md.append("\n---\n\n## 🗞️ 新闻聚合\n\n")
+    md.append("### Google News\n\n")
+    if news:
+        seen = set()
+        for n in news:
+            title = n.get('title', '')
+            if title and title not in seen:
+                seen.add(title)
+                md.append(format_news_item(n) + "\n")
+            if len(seen) >= 12:
+                break
+    else:
+        md.append("> 暂无相关新闻。\n")
+    md.append("\n### RSS 精选\n\n")
+    if rss_items:
+        seen_rss = set()
+        for n in rss_items:
+            title = n.get('title', '')
+            if title and title not in seen_rss:
+                seen_rss.add(title)
+                md.append(format_news_item(n) + "\n")
+            if len(seen_rss) >= 10:
+                break
+    else:
+        md.append("> RSS 源暂无返回。\n")
+
+    md.append(f"""
+
+本文为「足球日报」自动生成 (世界杯模式)。数据来源：ESPN · BBC Sport · Sky Sports · ESPN FC · Google News。
+生成时间：{now_bj().strftime('%Y-%m-%d %H:%M')} GMT+8
 """)
     return '\n'.join(md)
 
