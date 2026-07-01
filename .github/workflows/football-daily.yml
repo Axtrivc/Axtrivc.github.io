@@ -2,10 +2,10 @@ name: Football Daily Update v2
 
 on:
   schedule:
-    # 早报：UTC 0:00（北京时间 8:00）
-    - cron: '0 0 * * *'
-    # 晚报：UTC 12:00（北京时间 20:00）
-    - cron: '0 12 * * *'
+    # 早报：UTC 22:00（北京 06:00，预留 2h GitHub Actions 延迟 → 实际 ~08:00 产出）
+    - cron: '0 22 * * *'
+    # 晚报：UTC 10:00（北京 18:00，预留 2h 延迟 → 实际 ~20:00 产出）
+    - cron: '0 10 * * *'
   workflow_dispatch:
     inputs:
       edition:
@@ -34,7 +34,7 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     # 定时早报只在 UTC 0:00 触发；手动触发根据选择
     if: |
-      (github.event.schedule == '0 0 * * *') ||
+      (github.event.schedule == '0 22 * * *') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.edition == 'morning') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.edition == '')
 
@@ -105,7 +105,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     if: |
-      (github.event.schedule == '0 12 * * *') ||
+      (github.event.schedule == '0 10 * * *') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.edition == 'evening')
 
     steps:
