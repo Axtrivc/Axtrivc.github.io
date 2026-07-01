@@ -43,6 +43,46 @@ D.mkdir(parents=True, exist_ok=True)
 # 北京时间
 BJ = timezone(timedelta(hours=8))
 
+# ==================== 国旗 CDN ====================
+# ESPN abbr -> flagcdn ISO alpha-2
+# GLM 已实测全部 48 队 200 OK（2026-06-30）
+FLAG_MAP = {
+    'ALG': 'dz', 'ARG': 'ar', 'AUS': 'au', 'AUT': 'at',
+    'BEL': 'be', 'BIH': 'ba', 'BRA': 'br', 'CAN': 'ca',
+    'CIV': 'ci', 'COD': 'cd', 'COL': 'co', 'CPV': 'cv',
+    'CRO': 'hr', 'CUW': 'cw', 'CZE': 'cz', 'ECU': 'ec',
+    'EGY': 'eg', 'ENG': 'gb-eng', 'ESP': 'es', 'FRA': 'fr',
+    'GER': 'de', 'GHA': 'gh', 'HAI': 'ht', 'IRN': 'ir',
+    'IRQ': 'iq', 'JOR': 'jo', 'JPN': 'jp', 'KOR': 'kr',
+    'KSA': 'sa', 'MAR': 'ma', 'MEX': 'mx', 'NED': 'nl',
+    'NOR': 'no', 'NZL': 'nz', 'PAN': 'pa', 'PAR': 'py',
+    'POR': 'pt', 'QAT': 'qa', 'RSA': 'za', 'SCO': 'gb-sct',
+    'SEN': 'sn', 'SUI': 'ch', 'SWE': 'se', 'TUN': 'tn',
+    'TUR': 'tr', 'URU': 'uy', 'USA': 'us', 'UZB': 'uz',
+}
+FLAG_CDN = 'https://flagcdn.com/w80'
+
+def team_flag(team_abbr_or_name, fallback_name=''):
+    """从 ESPN abbreviation 或 team name 生成国旗 markdown img"""
+    abbr = ''
+    if team_abbr_or_name and team_abbr_or_name in FLAG_MAP:
+        abbr = team_abbr_or_name
+    iso = FLAG_MAP.get(abbr, '')
+    if iso:
+        alt = fallback_name or abbr
+        return f'![{alt}]({FLAG_CDN}/{iso}.png)'
+    return ''
+
+def team_flag_from_match(m: dict, side: str = 'home'):
+    """从比赛 dict 里提取对应 side 的国旗"""
+    competitors = m.get('competitors', [])
+    idx = 0 if side == 'home' else 1
+    if len(competitors) > idx:
+        abbr = safe(competitors[idx], 'team', 'abbreviation', default='')
+        name = safe(competitors[idx], 'team', 'name', default='')
+        return team_flag(abbr, name)
+    return ''
+
 # ==================== 模式开关 ====================
 # True  = 世界杯模式（联赛休赛期）
 # False = 联赛模式（默认，原始逻辑）
@@ -302,6 +342,101 @@ def get_status_cn(m: dict) -> str:
         'postponed': '延期',
     }
     return mapping.get(s, s or '')
+
+# ==================== 世界杯富文本卡片 ====================
+def wc_match_card(m: dict) -> str:
+    """世界杯比赛卡片（带国旗 + 交互折叠）"""
+    home_flag = team_flag_from_match(m, 'home')
+    away_flag = team_flag_from_match(m, 'away')
+    home_name, away_name = get_team_names(m)
+    comp = get_comp_name(m)
+    st = get_status_cn(m)
+    mt = get_match_time(m)
+
+    # 比赛链接（ESPN 官网）
+    eid = m.get('id', '')
+    match_link = f'https://www.espn.com/soccer/match/_/gameId/{eid}' if eid else '#'
+
+    competitors = m.get('competitors', [])
+    home_score = away_score = ''
+    if len(competitors) >= 2:
+        hs = competitors[0].get('score')
+        as_ = competitors[1].get('score')
+        if hs is not None:
+            home_score = str(hs)
+        if as_ is not None:
+            away_score = str(as_)
+
+    # 状态颜色 emoji
+    if st == '已结束':
+        status_emoji = '✅'
+        score_str = f'**{home_score} - {away_score}**' if home_score else 'VS'
+    elif st == '进行中':
+        status_emoji = '🔴'
+        score_str = f'**{home_score} - {away_score}**' if home_score else 'VS'
+    else:
+        status_emoji = '⏰'
+        score_str = 'VS'
+
+    card = f"""{home_flag} {home_name} {score_str} {away_name} {away_flag} {status_emoji} {comp} · {mt} · {st}
+
+🏟️ [📺 查看比赛详情]({match_link})
+"""
+    return card
+
+def wc_match_card_compact(m: dict) -> str:
+    """紧凑版比赛卡片（一行，用于预告列表）"""
+    home_flag = team_flag_from_match(m, 'home')
+    away_flag = team_flag_from_match(m, 'away')
+    home_name, away_name = get_team_names(m)
+    comp = get_comp_name(m)
+    mt = get_match_time(m)
+    return f'{home_flag} **{home_name}** vs **{away_name}** {away_flag} · {mt} · {comp}'
+
+def wc_group_standings_card(group_data: dict) -> str:
+    """世界杯小组积分榜卡片（带国旗 + 折叠交互）"""
+    group_name = group_data.get('name', '')
+    entries = group_data.get('entries', [])
+    if not entries:
+        return ''
+
+    header = f"""<details open>
+
+🏆 {group_name}
+
+| # | 标记 | 球队 | 赛 | 胜 | 平 | 负 | 进 | 失 | 净 | 分 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+"""
+    rows = []
+    for e in sorted(entries, key=lambda x: x.get('position', 999)):
+        pos = e.get('position', '?')
+        team = safe(e, 'team', 'name', default='?')
+        abbr = safe(e, 'team', 'abbreviation', default='')
+        flag = team_flag(abbr, team)
+        played = e.get('played', 0)
+        won = e.get('won', 0)
+        drawn = e.get('drawn', 0)
+        lost = e.get('lost', 0)
+        gf = e.get('goals_for', 0)
+        ga = e.get('goals_against', 0)
+        gd = e.get('goal_difference', 0)
+        pts = e.get('points', 0)
+        # 出线标记（小组前 2 名 = 出线，3-4 名 = 淘汰）
+        marker = '🟢' if pos <= 2 else '⚪'
+        rows.append(f'| {pos} | {marker} | {flag} {team} | {played} | {won} | {drawn} | {lost} | {gf} | {ga} | {gd} | {pts} |')
+
+    footer = """
+
+🟢 = 出线区 · ⚪ = 淘汰区
+</details>
+"""
+    return header + '\n'.join(rows) + footer
+
+def wc_scorer_card(rank, name, goals, team) -> str:
+    """射手榜单行卡片（带交互按钮）"""
+    medal = '🥇' if rank == 1 else '🥈' if rank == 2 else '🥉' if rank == 3 else f'{rank}.'
+    search_link = f'https://www.google.com/search?q={name}+{team}+World+Cup+2026+goal'
+    return f'| {medal} | {name} | {team} | **{goals}** | [🔍]({search_link}) |'
 
 def format_match_row(m: dict) -> str:
     home, away = get_team_names(m)
@@ -669,8 +804,6 @@ def generate_morning_wc_md() -> str:
     print("⚽ 拉取世界杯全程射手榜（可能需要 3-5 分钟）...")
     top_scorers = get_wc_top_scorers(limit=10)
 
-    print("🏆 拉取关注国家队近况...")
-
     print("🗞️ 拉取新闻 (Google News)...")
     news = []
     for q in WC_NEWS_QUERIES[:5]:
@@ -705,14 +838,20 @@ categories:
 
 """)
 
+    # ========== 快速导航 ==========
+    md.append("## 🧭 今日导航\n")
+    md.append("- [📅 今日赛程](#-今日赛程) · [🏆 小组积分榜](#-小组积分榜) · [⚽ 射手榜](#-世界杯射手榜) · [⭐ 关注国家队](#-关注国家队) · [🗞️ 新闻](#-新闻速递)\n\n")
+
+    # ========== 1. 今日赛程（卡片版） ==========
     md.append("## 📅 今日赛程\n\n")
     if events_sorted:
-        md.append("| 赛事 | 开球 | 对阵 | 状态 |\n|:---:|:---:|:---:|:---:|\n")
+        md.append(f"> 今日共 {len(events_sorted)} 场比赛（世界杯 {len(wc_events)} 场）\n\n")
         for e in events_sorted[:12]:
-            md.append(format_match_row(e) + "\n")
+            md.append(wc_match_card(e))
     else:
-        md.append("> 今日暂无比赛。\n")
+        md.append("> 今日暂无比赛安排。\n")
 
+    # ========== 2. 小组积分榜（折叠卡片） ==========
     md.append("\n---\n\n## 🏆 小组积分榜\n\n")
     if wc_standings:
         followed_ids = set(WC_FOLLOWED_TEAMS.keys())
@@ -725,44 +864,46 @@ categories:
                 priority_groups.append(s)
             else:
                 other_groups.append(s)
-        for s in priority_groups + other_groups:
-            group_name = s.get('name', '')
-            entries = s.get('entries', [])
-            if entries:
-                md.append(f"### {group_name}\n\n")
-                md.append(format_standings_table([s], group_name, top_n=4))
-                md.append("\n")
+
+        if priority_groups:
+            md.append("### ⭐ 关注队所在组\n\n")
+            for s in priority_groups:
+                md.append(wc_group_standings_card(s))
+
+        if other_groups:
+            md.append("\n<details>\n<summary>📁 其他小组（点击展开）</summary>\n\n")
+            for s in other_groups:
+                md.append(wc_group_standings_card(s))
+            md.append("\n</details>\n")
     else:
         md.append("> 世界杯积分榜暂不可用。\n")
 
+    # ========== 3. 射手榜 ==========
     md.append("\n---\n\n## ⚽ 世界杯射手榜\n\n")
     if top_scorers:
-        md.append("| 排名 | 球员 | 球队 | 进球 |\n|:---:|:---:|:---:|:---:|\n")
+        md.append("| 奖牌 | 球员 | 球队 | 进球 | 详情 |\n|:---:|:---:|:---:|:---:|:---:|\n")
         for i, (name, goals, team) in enumerate(top_scorers, 1):
-            md.append(f"| {i} | {name} | {team} | **{goals}** |\n")
+            md.append(wc_scorer_card(i, name, goals, team) + "\n")
     else:
         md.append("> 射手榜暂无数据。\n")
 
+    # ========== 4. 关注国家队（折叠交互） ==========
     md.append("\n---\n\n## ⭐ 关注国家队\n\n")
+    md.append("<details open>\n<summary><b>关注国家队近况（点击折叠）</b></summary>\n\n")
     for tid, tname in WC_FOLLOWED_TEAMS.items():
         recent = get_wc_team_matches(tid, limit=3)
-        md.append(f"**{tname}** 近 3 场：\n\n")
+        md.append(f"### {tname}\n\n")
         if recent:
             for r in recent:
-                home, away = get_team_names(r)
-                comps = r.get('competitors', [])
-                sh = sa = '?'
-                if len(comps) >= 2:
-                    sh = comps[0].get('score', '?')
-                    sa = comps[1].get('score', '?')
-                st = get_status_cn(r)
-                md.append(f"  - {home} {sh}-{sa} {away} ({st})\n")
+                md.append(wc_match_card_compact(r) + "\n")
         else:
-            md.append(f"  > {tname} 暂无比赛数据。\n")
+            md.append(f"> {tname} 暂无比赛数据。\n")
         md.append("\n")
+    md.append("</details>\n")
 
+    # ========== 5. 新闻 ==========
     md.append("\n---\n\n## 🗞️ 新闻速递\n\n")
-    md.append("### Google News\n\n")
+    md.append("<details open>\n<summary><b>Google News</b></summary>\n\n")
     if news:
         seen = set()
         for n in news:
@@ -774,7 +915,9 @@ categories:
                 break
     else:
         md.append("> 暂无相关新闻。\n")
-    md.append("\n### RSS 精选\n\n")
+    md.append("</details>\n\n")
+
+    md.append("<details>\n<summary><b>RSS 精选</b></summary>\n\n")
     if rss_items:
         seen_rss = set()
         for n in rss_items:
@@ -786,6 +929,7 @@ categories:
                 break
     else:
         md.append("> RSS 源暂无返回。\n")
+    md.append("</details>\n")
 
     md.append(f"""
 
@@ -807,6 +951,7 @@ def generate_evening_wc_md() -> str:
     events_sorted = wc_events + other_events
     finished_events = [e for e in events if get_status_cn(e) == '已结束']
     finished_wc = [e for e in finished_events if 'World Cup' in get_comp_name(e)]
+    upcoming = [e for e in events if get_status_cn(e) == '未开始']
 
     print("🏆 拉取世界杯小组积分榜...")
     wc_standings = get_wc_standings()
@@ -820,8 +965,6 @@ def generate_evening_wc_md() -> str:
         eid = e.get('id')
         if eid:
             match_goals[eid] = get_wc_event_goals(str(eid))
-
-    print("🏆 拉取关注国家队近况...")
 
     print("🗞️ 拉取新闻 (Google News + RSS)...")
     news = []
@@ -856,16 +999,22 @@ categories:
 
 """)
 
+    # ========== 快速导航 ==========
+    md.append("## 🧭 今日导航\n")
+    md.append("- [⚽ 今日战报](#-今日战报) · [🏆 小组积分榜](#-小组积分榜) · [⚽ 射手榜](#-世界杯射手榜) · [⭐ 关注国家队](#-关注国家队) · [📆 明日预告](#-明日预告) · [🗞️ 新闻](#-新闻聚合)\n\n")
+
+    # ========== 1. 今日战报（卡片版） ==========
     md.append("## ⚽ 今日战报\n\n")
     if finished_events:
-        md.append("| 赛事 | 主队 | 比分 | 客队 |\n|:---:|:---:|:---:|:---:|\n")
+        md.append(f"> 今日已结束 {len(finished_events)} 场（世界杯 {len(finished_wc)} 场）\n\n")
         for e in finished_events[:12]:
-            md.append(format_finished_row(e) + "\n")
+            md.append(wc_match_card(e))
     else:
         md.append("> 今日暂无已结束比赛。\n")
 
+    # ========== 2. 进球详情（折叠交互） ==========
     if match_goals:
-        md.append("\n### ⚽ 进球详情\n\n")
+        md.append("\n<details open>\n<summary><b>⚽ 进球详情（点击折叠）</b></summary>\n\n")
         for eid, goals in match_goals.items():
             if not goals:
                 continue
@@ -876,11 +1025,21 @@ categories:
                     match_name = f"{home} vs {away}"
                     break
             if match_name:
-                md.append(f"**{match_name}**\n\n")
+                md.append(f"### {match_name}\n\n")
                 for g in goals:
-                    md.append(f"- ⚽ {g['minute']}' {g['player']} ({g['team']})\n")
+                    g_team_flag = ''
+                    if g['team']:
+                        for e in finished_wc:
+                            for c in e.get('competitors', []):
+                                if safe(c, 'team', 'name', default='') == g['team']:
+                                    abbr = safe(c, 'team', 'abbreviation', default='')
+                                    g_team_flag = team_flag(abbr, g['team']) + ' '
+                                    break
+                    md.append(f"- ⚽ {g_team_flag}{g['minute']}' {g['player']} ({g['team']})\n")
                 md.append("\n")
+        md.append("</details>\n")
 
+    # ========== 3. 小组积分榜 ==========
     md.append("\n---\n\n## 🏆 小组积分榜\n\n")
     if wc_standings:
         followed_ids = set(WC_FOLLOWED_TEAMS.keys())
@@ -893,54 +1052,55 @@ categories:
                 priority_groups.append(s)
             else:
                 other_groups.append(s)
-        for s in priority_groups + other_groups:
-            group_name = s.get('name', '')
-            entries = s.get('entries', [])
-            if entries:
-                md.append(f"### {group_name}\n\n")
-                md.append(format_standings_table([s], group_name, top_n=4))
-                md.append("\n")
+
+        if priority_groups:
+            md.append("### ⭐ 关注队所在组\n\n")
+            for s in priority_groups:
+                md.append(wc_group_standings_card(s))
+
+        if other_groups:
+            md.append("\n<details>\n<summary>📁 其他小组（点击展开）</summary>\n\n")
+            for s in other_groups:
+                md.append(wc_group_standings_card(s))
+            md.append("\n</details>\n")
     else:
         md.append("> 世界杯积分榜暂不可用。\n")
 
+    # ========== 4. 射手榜 ==========
     md.append("\n---\n\n## ⚽ 世界杯射手榜\n\n")
     if top_scorers:
-        md.append("| 排名 | 球员 | 球队 | 进球 |\n|:---:|:---:|:---:|:---:|\n")
+        md.append("| 奖牌 | 球员 | 球队 | 进球 | 详情 |\n|:---:|:---:|:---:|:---:|:---:|\n")
         for i, (name, goals, team) in enumerate(top_scorers, 1):
-            md.append(f"| {i} | {name} | {team} | **{goals}** |\n")
+            md.append(wc_scorer_card(i, name, goals, team) + "\n")
     else:
         md.append("> 射手榜暂无数据。\n")
 
+    # ========== 5. 关注国家队（折叠交互） ==========
     md.append("\n---\n\n## ⭐ 关注国家队\n\n")
+    md.append("<details open>\n<summary><b>关注国家队近况（点击折叠）</b></summary>\n\n")
     for tid, tname in WC_FOLLOWED_TEAMS.items():
         recent = get_wc_team_matches(tid, limit=3)
-        md.append(f"**{tname}** 近 3 场：\n\n")
+        md.append(f"### {tname}\n\n")
         if recent:
             for r in recent:
-                home, away = get_team_names(r)
-                comps = r.get('competitors', [])
-                sh = sa = '?'
-                if len(comps) >= 2:
-                    sh = comps[0].get('score', '?')
-                    sa = comps[1].get('score', '?')
-                st = get_status_cn(r)
-                md.append(f"  - {home} {sh}-{sa} {away} ({st})\n")
+                md.append(wc_match_card_compact(r) + "\n")
         else:
-            md.append(f"  > {tname} 暂无比赛数据。\n")
+            md.append(f"> {tname} 暂无比赛数据。\n")
         md.append("\n")
+    md.append("</details>\n")
 
+    # ========== 6. 明日预告 ==========
     md.append("\n---\n\n## 📆 明日预告\n\n")
-    upcoming = [e for e in events if get_status_cn(e) == '未开始']
     if upcoming:
-        md.append("| 赛事 | 开球 | 对阵 |\n|:---:|:---:|:---:|\n")
+        md.append(f"> 明日共 {len(upcoming)} 场比赛\n\n")
         for e in upcoming[:8]:
-            home, away = get_team_names(e)
-            md.append(f"| {get_comp_name(e)} | {get_match_time(e)} | {home} vs {away} |\n")
+            md.append(wc_match_card_compact(e) + "\n")
     else:
         md.append("> 明日暂无已公布赛程。\n")
 
+    # ========== 7. 新闻 ==========
     md.append("\n---\n\n## 🗞️ 新闻聚合\n\n")
-    md.append("### Google News\n\n")
+    md.append("<details open>\n<summary><b>Google News</b></summary>\n\n")
     if news:
         seen = set()
         for n in news:
@@ -952,7 +1112,9 @@ categories:
                 break
     else:
         md.append("> 暂无相关新闻。\n")
-    md.append("\n### RSS 精选\n\n")
+    md.append("</details>\n\n")
+
+    md.append("<details>\n<summary><b>RSS 精选</b></summary>\n\n")
     if rss_items:
         seen_rss = set()
         for n in rss_items:
@@ -964,6 +1126,7 @@ categories:
                 break
     else:
         md.append("> RSS 源暂无返回。\n")
+    md.append("</details>\n")
 
     md.append(f"""
 
