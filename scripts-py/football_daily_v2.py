@@ -88,10 +88,12 @@ body { margin:0; background:var(--bg-page); font-family:-apple-system,BlinkMacSy
 .wc-header .flag-circle { width:36px; height:36px; border-radius:50%; vertical-align:middle; margin-right:8px; }
 .wc-section { background:var(--bg-card); border-radius:var(--radius-card); margin:12px 0; overflow:hidden; }
 .wc-section-title { padding:12px 16px 8px; font-size:16px; font-weight:600; color:var(--color-title); border-bottom:1px solid #EEE; }
-.wc-match-row { display:flex; align-items:center; padding:10px 16px; border-bottom:1px solid #F5F5F5; min-height:48px; }
+.wc-match-row { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:10px 16px; border-bottom:1px solid #F5F5F5; min-height:48px; gap:8px; }
 .wc-match-row:last-child { border-bottom:none; }
-.wc-match-team { flex:1; display:flex; align-items:center; gap:6px; font-size:14px; color:var(--color-body); }
-.wc-match-team.right { justify-content:flex-end; text-align:right; }
+.wc-match-team { display:flex; align-items:center; gap:6px; font-size:14px; color:var(--color-body); min-width:0; }
+.wc-match-team.right { justify-content:flex-end; flex-direction:row-reverse; text-align:right; }
+.wc-match-team span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.wc-score, .wc-time { justify-self:center; }
 .wc-flag { width:20px; height:20px; border-radius:50%; object-fit:cover; flex-shrink:0; }
 .wc-score { background:var(--color-score); color:#fff; padding:4px 12px; border-radius:var(--radius-score); font-weight:700; font-size:15px; min-width:50px; text-align:center; }
 .wc-score.live { animation:pulse 2s infinite; }
@@ -107,11 +109,11 @@ body { margin:0; background:var(--bg-page); font-family:-apple-system,BlinkMacSy
 .wc-rank-bar.qualify { background:var(--color-qualify); }
 .wc-rank-bar.playoff { background:var(--color-playoff); }
 .wc-rank-bar.eliminated { background:var(--color-eliminated); }
-.wc-scorer-row { display:flex; align-items:center; padding:8px 16px; border-bottom:1px solid #F5F5F5; gap:8px; }
+.wc-scorer-row { display:grid; grid-template-columns:24px 1fr auto auto 24px; align-items:center; padding:8px 16px; border-bottom:1px solid #F5F5F5; gap:8px; }
 .wc-scorer-rank { width:24px; font-weight:700; color:var(--color-muted); font-size:13px; }
 .wc-scorer-name { flex:1; font-size:14px; }
 .wc-scorer-team { font-size:12px; color:var(--color-muted); }
-.wc-scorer-bar { height:8px; border-radius:4px; background:var(--color-score); min-width:20px; }
+.wc-scorer-bar { height:8px; border-radius:4px; background:var(--color-score); min-width:20px; max-width:120px; justify-self:end; }
 .wc-scorer-goals { font-weight:700; font-size:15px; min-width:24px; text-align:right; }
 .wc-news-card { display:flex; gap:12px; padding:12px 16px; border-bottom:1px solid #F5F5F5; }
 .wc-news-thumb { width:60px; height:60px; border-radius:8px; object-fit:cover; flex-shrink:0; background:#EEE; }
@@ -120,6 +122,7 @@ body { margin:0; background:var(--bg-page); font-family:-apple-system,BlinkMacSy
 .wc-news-meta { font-size:12px; color:var(--color-muted); }
 .wc-news-source { color:var(--color-score); font-weight:500; }
 .wc-badge { display:inline-block; padding:2px 8px; border-radius:var(--radius-pill); font-size:11px; font-weight:500; background:rgba(255,255,255,0.2); color:#fff; }
+.wc-header-badge-row { margin-bottom:8px; }
 .wc-followed-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:12px 16px; }
 .wc-followed-card { border-radius:16px; padding:16px; color:#fff; text-align:center; }
 .wc-followed-card .flag-lg { width:48px; height:48px; border-radius:50%; margin:0 auto 8px; display:block; }
@@ -412,7 +415,7 @@ def wc_header_hero(title='足球早报', subtitle='') -> str:
     """FotMob 风格品牌色 Header Hero"""
     today_cn = bj_date_cn()
     sub = subtitle or f'{today_cn} · 世界杯淘汰赛'
-    return f"""<div class="wc-header"><span class="wc-badge">世界杯</span><h1>⚽ {title}</h1><div class="sub">{sub}</div></div>"""
+    return f"""<div class="wc-header"><div class="wc-header-badge-row"><span class="wc-badge">世界杯</span></div><h1>⚽ {title}</h1><div class="sub">{sub}</div></div>"""
 
 
 def wc_match_row(m: dict) -> str:
