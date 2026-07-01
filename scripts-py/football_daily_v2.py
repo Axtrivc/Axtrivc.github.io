@@ -60,17 +60,81 @@ FLAG_MAP = {
     'SEN': 'sn', 'SUI': 'ch', 'SWE': 'se', 'TUN': 'tn',
     'TUR': 'tr', 'URU': 'uy', 'USA': 'us', 'UZB': 'uz',
 }
-FLAG_CDN = 'https://flagcdn.com/w80'
+FLAG_CDN = 'https://flagcdn.com/w40'
 
-def team_flag(team_abbr_or_name, fallback_name=''):
-    """从 ESPN abbreviation 或 team name 生成国旗 markdown img"""
+# ==================== FotMob 风格 CSS ====================
+# 配色 + 组件样式。Task 2 会插入到最终 HTML <style> 块
+WC_CSS = """:root {
+  --bg-page: #F5F5F5;
+  --bg-card: #FFFFFF;
+  --color-score: #00C853;
+  --color-time: #FF6D00;
+  --color-title: #1A1A1A;
+  --color-body: #333333;
+  --color-muted: #999999;
+  --color-qualify: #4CAF50;
+  --color-playoff: #FFC107;
+  --color-eliminated: #E0E0E0;
+  --header-bg: #0E2F7E;
+  --radius-card: 12px;
+  --radius-score: 6px;
+  --radius-pill: 20px;
+}
+body { margin:0; background:var(--bg-page); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:var(--color-body); font-size:14px; }
+.wc-container { max-width:680px; margin:0 auto; padding:0; }
+.wc-header { background:var(--header-bg); color:#fff; padding:24px 20px; text-align:center; }
+.wc-header h1 { margin:0; font-size:22px; font-weight:700; }
+.wc-header .sub { margin-top:4px; font-size:12px; opacity:0.8; }
+.wc-header .flag-circle { width:36px; height:36px; border-radius:50%; vertical-align:middle; margin-right:8px; }
+.wc-section { background:var(--bg-card); border-radius:var(--radius-card); margin:12px 0; overflow:hidden; }
+.wc-section-title { padding:12px 16px 8px; font-size:16px; font-weight:600; color:var(--color-title); border-bottom:1px solid #EEE; }
+.wc-match-row { display:flex; align-items:center; padding:10px 16px; border-bottom:1px solid #F5F5F5; min-height:48px; }
+.wc-match-row:last-child { border-bottom:none; }
+.wc-match-team { flex:1; display:flex; align-items:center; gap:6px; font-size:14px; color:var(--color-body); }
+.wc-match-team.right { justify-content:flex-end; text-align:right; }
+.wc-flag { width:20px; height:20px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+.wc-score { background:var(--color-score); color:#fff; padding:4px 12px; border-radius:var(--radius-score); font-weight:700; font-size:15px; min-width:50px; text-align:center; }
+.wc-score.live { animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.85} }
+.wc-time { color:var(--color-time); font-weight:600; font-size:14px; min-width:50px; text-align:center; }
+.wc-status { font-size:11px; color:var(--color-muted); margin-left:6px; }
+.wc-standings { width:100%; border-collapse:collapse; font-size:13px; }
+.wc-standings th { color:var(--color-muted); font-weight:400; padding:8px 6px; text-align:right; font-size:11px; }
+.wc-standings th:first-child, .wc-standings td:first-child { text-align:left; padding-left:16px; }
+.wc-standings td { padding:6px; text-align:right; }
+.wc-standings td.team-cell { text-align:left; }
+.wc-rank-bar { display:inline-block; width:4px; height:20px; border-radius:2px; margin-right:8px; vertical-align:middle; }
+.wc-rank-bar.qualify { background:var(--color-qualify); }
+.wc-rank-bar.playoff { background:var(--color-playoff); }
+.wc-rank-bar.eliminated { background:var(--color-eliminated); }
+.wc-scorer-row { display:flex; align-items:center; padding:8px 16px; border-bottom:1px solid #F5F5F5; gap:8px; }
+.wc-scorer-rank { width:24px; font-weight:700; color:var(--color-muted); font-size:13px; }
+.wc-scorer-name { flex:1; font-size:14px; }
+.wc-scorer-team { font-size:12px; color:var(--color-muted); }
+.wc-scorer-bar { height:8px; border-radius:4px; background:var(--color-score); min-width:20px; }
+.wc-scorer-goals { font-weight:700; font-size:15px; min-width:24px; text-align:right; }
+.wc-news-card { display:flex; gap:12px; padding:12px 16px; border-bottom:1px solid #F5F5F5; }
+.wc-news-thumb { width:60px; height:60px; border-radius:8px; object-fit:cover; flex-shrink:0; background:#EEE; }
+.wc-news-body { flex:1; }
+.wc-news-title { font-size:15px; font-weight:500; color:var(--color-title); margin:0 0 4px; line-height:1.3; }
+.wc-news-meta { font-size:12px; color:var(--color-muted); }
+.wc-news-source { color:var(--color-score); font-weight:500; }
+.wc-badge { display:inline-block; padding:2px 8px; border-radius:var(--radius-pill); font-size:11px; font-weight:500; background:rgba(255,255,255,0.2); color:#fff; }
+.wc-followed-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:12px 16px; }
+.wc-followed-card { border-radius:16px; padding:16px; color:#fff; text-align:center; }
+.wc-followed-card .flag-lg { width:48px; height:48px; border-radius:50%; margin:0 auto 8px; display:block; }
+.wc-followed-card .team-name { font-size:15px; font-weight:700; }
+.wc-followed-card .next-match { font-size:12px; opacity:0.85; margin-top:4px; }"""
+
+def team_flag(team_abbr_or_name, fallback_name='', size=20):
+    """从 ESPN abbreviation 生成圆形国旗 HTML img"""
     abbr = ''
     if team_abbr_or_name and team_abbr_or_name in FLAG_MAP:
         abbr = team_abbr_or_name
     iso = FLAG_MAP.get(abbr, '')
     if iso:
         alt = fallback_name or abbr
-        return f'![{alt}]({FLAG_CDN}/{iso}.png)'
+        return f'<img class="wc-flag" src="{FLAG_CDN}/{iso}.png" alt="{alt}" width="{size}" height="{size}">'
     return ''
 
 def team_flag_from_match(m: dict, side: str = 'home'):
@@ -343,20 +407,23 @@ def get_status_cn(m: dict) -> str:
     }
     return mapping.get(s, s or '')
 
-# ==================== 世界杯富文本卡片 ====================
-def wc_match_card(m: dict) -> str:
-    """世界杯比赛卡片（带国旗 + 交互折叠）"""
+# ==================== 世界杯富文本卡片（HTML FotMob 风格）====================
+def wc_header_hero(title='足球早报', subtitle='') -> str:
+    """FotMob 风格品牌色 Header Hero"""
+    today_cn = bj_date_cn()
+    sub = subtitle or f'{today_cn} · 世界杯淘汰赛'
+    return f"""<div class="wc-header"><span class="wc-badge">世界杯</span><h1>⚽ {title}</h1><div class="sub">{sub}</div></div>"""
+
+
+def wc_match_row(m: dict) -> str:
+    """FotMob 风格单行比赛组件（HTML）"""
+    home_name, away_name = get_team_names(m)
     home_flag = team_flag_from_match(m, 'home')
     away_flag = team_flag_from_match(m, 'away')
-    home_name, away_name = get_team_names(m)
-    comp = get_comp_name(m)
     st = get_status_cn(m)
     mt = get_match_time(m)
-
-    # 比赛链接（ESPN 官网）
     eid = m.get('id', '')
     match_link = f'https://www.espn.com/soccer/match/_/gameId/{eid}' if eid else '#'
-
     competitors = m.get('competitors', [])
     home_score = away_score = ''
     if len(competitors) >= 2:
@@ -367,76 +434,77 @@ def wc_match_card(m: dict) -> str:
         if as_ is not None:
             away_score = str(as_)
 
-    # 状态颜色 emoji
+    # 中间区域：比分框 or 时间
     if st == '已结束':
-        status_emoji = '✅'
-        score_str = f'**{home_score} - {away_score}**' if home_score else 'VS'
+        center = f'<a href="{match_link}" class="wc-score">{home_score}-{away_score}</a>'
+        status_str = ''
     elif st == '进行中':
-        status_emoji = '🔴'
-        score_str = f'**{home_score} - {away_score}**' if home_score else 'VS'
+        center = f'<a href="{match_link}" class="wc-score live">{home_score}-{away_score}</a>'
+        status_str = '<span class="wc-status">进行中</span>'
     else:
-        status_emoji = '⏰'
-        score_str = 'VS'
+        center = f'<span class="wc-time">{mt}</span>'
+        status_str = ''
 
-    card = f"""{home_flag} {home_name} {score_str} {away_name} {away_flag} {status_emoji} {comp} · {mt} · {st}
+    return f"""<div class="wc-match-row"><div class="wc-match-team">{home_flag}<span>{home_name}</span></div>{center}{status_str}<div class="wc-match-team right"><span>{away_name}</span>{away_flag}</div></div>"""
 
-🏟️ [📺 查看比赛详情]({match_link})
-"""
-    return card
 
 def wc_match_card_compact(m: dict) -> str:
-    """紧凑版比赛卡片（一行，用于预告列表）"""
+    """紧凑版比赛行（HTML，用于预告/关注队列表，无比分框只有时间）"""
+    home_name, away_name = get_team_names(m)
     home_flag = team_flag_from_match(m, 'home')
     away_flag = team_flag_from_match(m, 'away')
-    home_name, away_name = get_team_names(m)
-    comp = get_comp_name(m)
     mt = get_match_time(m)
-    return f'{home_flag} **{home_name}** vs **{away_name}** {away_flag} · {mt} · {comp}'
+    return f"""<div class="wc-match-row"><div class="wc-match-team">{home_flag}<span>{home_name}</span></div><span class="wc-time">{mt}</span><div class="wc-match-team right"><span>{away_name}</span>{away_flag}</div></div>"""
+
 
 def wc_group_standings_card(group_data: dict) -> str:
-    """世界杯小组积分榜卡片（带国旗 + 折叠交互）"""
+    """FotMob 风格积分榜（HTML 紧凑表 + 彩色排名条带）"""
     group_name = group_data.get('name', '')
     entries = group_data.get('entries', [])
     if not entries:
         return ''
 
-    header = f"""<details open>
-
-🏆 {group_name}
-
-| # | 标记 | 球队 | 赛 | 胜 | 平 | 负 | 进 | 失 | 净 | 分 |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-"""
-    rows = []
+    rows_html = []
     for e in sorted(entries, key=lambda x: x.get('position', 999)):
         pos = e.get('position', '?')
         team = safe(e, 'team', 'name', default='?')
         abbr = safe(e, 'team', 'abbreviation', default='')
-        flag = team_flag(abbr, team)
+        flag = team_flag(abbr, team, size=16)
         played = e.get('played', 0)
-        won = e.get('won', 0)
-        drawn = e.get('drawn', 0)
-        lost = e.get('lost', 0)
-        gf = e.get('goals_for', 0)
-        ga = e.get('goals_against', 0)
         gd = e.get('goal_difference', 0)
         pts = e.get('points', 0)
-        # 出线标记（小组前 2 名 = 出线，3-4 名 = 淘汰）
-        marker = '🟢' if pos <= 2 else '⚪'
-        rows.append(f'| {pos} | {marker} | {flag} {team} | {played} | {won} | {drawn} | {lost} | {gf} | {ga} | {gd} | {pts} |')
+        # 排名条带颜色
+        if pos <= 2:
+            bar_class = 'qualify'
+        elif pos == 3:
+            bar_class = 'playoff'
+        else:
+            bar_class = 'eliminated'
+        gd_str = f'+{gd}' if gd > 0 else str(gd)
+        rows_html.append(f"""<tr><td class="team-cell"><span class="wc-rank-bar {bar_class}"></span>{pos} {flag} {team}</td><td>{played}</td><td>{gd_str}</td><td><b>{pts}</b></td></tr>""")
 
-    footer = """
+    return f"""<div class="wc-section"><div class="wc-section-title">🏆 {group_name}</div><table class="wc-standings"><tr><th>球队</th><th>场</th><th>净</th><th>分</th></tr>{''.join(rows_html)}</table></div>"""
 
-🟢 = 出线区 · ⚪ = 淘汰区
-</details>
-"""
-    return header + '\n'.join(rows) + footer
 
-def wc_scorer_card(rank, name, goals, team) -> str:
-    """射手榜单行卡片（带交互按钮）"""
-    medal = '🥇' if rank == 1 else '🥈' if rank == 2 else '🥉' if rank == 3 else f'{rank}.'
-    search_link = f'https://www.google.com/search?q={name}+{team}+World+Cup+2026+goal'
-    return f'| {medal} | {name} | {team} | **{goals}** | [🔍]({search_link}) |'
+def wc_scorer_card(rank, name, goals, team, max_goals=None) -> str:
+    """FotMob 风格射手榜行（HTML 条形图）"""
+    medal = '🥇' if rank == 1 else '🥈' if rank == 2 else '🥉' if rank == 3 else str(rank)
+    max_g = max_goals or goals or 1
+    bar_width = int((goals / max_g) * 120) if max_g > 0 else 0
+    search_link = f'https://www.google.com/search?q={name}+{team}+World+Cup+2026'
+    return f"""<div class="wc-scorer-row"><span class="wc-scorer-rank">{medal}</span><div class="wc-scorer-name">{name}<div class="wc-scorer-team">{team}</div></div><div class="wc-scorer-bar" style="width:{bar_width}px"></div><span class="wc-scorer-goals">{goals}</span><a href="{search_link}" style="color:var(--color-muted);text-decoration:none;font-size:12px;">🔍</a></div>"""
+
+
+def wc_news_card(item: dict) -> str:
+    """FotMob 风格新闻卡片（HTML）"""
+    title = item.get('title', '')
+    link = item.get('link', '#')
+    source = item.get('source', '')
+    pub_date = item.get('pub_date', '')
+    thumb = item.get('image', '')
+    source_color = '#00C853'  # 默认绿色
+    thumb_html = f'<img class="wc-news-thumb" src="{thumb}" alt="">' if thumb else '<div class="wc-news-thumb"></div>'
+    return f"""<div class="wc-news-card">{thumb_html}<div class="wc-news-body"><a href="{link}" style="text-decoration:none;"><p class="wc-news-title">{title}</p></a><div class="wc-news-meta"><span class="wc-news-source">{source}</span> • {pub_date}</div></div></div>"""
 
 def format_match_row(m: dict) -> str:
     home, away = get_team_names(m)
@@ -847,7 +915,7 @@ categories:
     if events_sorted:
         md.append(f"> 今日共 {len(events_sorted)} 场比赛（世界杯 {len(wc_events)} 场）\n\n")
         for e in events_sorted[:12]:
-            md.append(wc_match_card(e))
+            md.append(wc_match_row(e))
     else:
         md.append("> 今日暂无比赛安排。\n")
 
@@ -1008,7 +1076,7 @@ categories:
     if finished_events:
         md.append(f"> 今日已结束 {len(finished_events)} 场（世界杯 {len(finished_wc)} 场）\n\n")
         for e in finished_events[:12]:
-            md.append(wc_match_card(e))
+            md.append(wc_match_row(e))
     else:
         md.append("> 今日暂无已结束比赛。\n")
 
