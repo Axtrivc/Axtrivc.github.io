@@ -1,0 +1,99 @@
+---
+title: 足球早报 · 2026年7月14日 星期一
+date: 2026-07-14 08:00:00
+excerpt: 世界杯淘汰赛晨间赛程 + 射手榜
+description: 世界杯淘汰赛晨间赛程 · 射手榜 · 数据驱动
+cover_color: '#0E2F7E'
+tags:
+  - 足球
+  - 早报
+  - 世界杯
+  - 数据驱动
+categories:
+  - 足球日报
+---
+<style>:root {
+  --bg-page: #F5F5F5;
+  --bg-card: #FFFFFF;
+  --color-score: #00C853;
+  --color-time: #FF6D00;
+  --color-title: #1A1A1A;
+  --color-body: #333333;
+  --color-muted: #999999;
+  --color-qualify: #4CAF50;
+  --color-playoff: #FFC107;
+  --color-eliminated: #E0E0E0;
+  --header-bg: #0E2F7E;
+  --radius-card: 12px;
+  --radius-score: 6px;
+  --radius-pill: 20px;
+}
+body { margin:0; background:var(--bg-page); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:var(--color-body); font-size:14px; }
+.wc-container { max-width:680px; margin:0 auto; padding:0; }
+.wc-header { background:var(--header-bg); color:#fff; padding:24px 20px; text-align:center; }
+.wc-header h1 { margin:0; font-size:22px; font-weight:700; }
+.wc-header .sub { margin-top:4px; font-size:12px; opacity:0.8; }
+.wc-header .flag-circle { width:36px; height:36px; border-radius:50%; vertical-align:middle; margin-right:8px; }
+.wc-section { background:var(--bg-card); border-radius:var(--radius-card); margin:12px 0; overflow:hidden; }
+.wc-section-title { padding:12px 16px 8px; font-size:16px; font-weight:600; color:var(--color-title); border-bottom:1px solid #EEE; }
+.wc-match-row { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:10px 16px; border-bottom:1px solid #F5F5F5; min-height:48px; gap:8px; }
+.wc-match-row:last-child { border-bottom:none; }
+.wc-match-team { display:flex; align-items:center; gap:6px; font-size:14px; color:var(--color-body); min-width:0; }
+.wc-match-team.right { justify-content:flex-end; flex-direction:row-reverse; text-align:right; }
+.wc-match-team span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.wc-score, .wc-time { justify-self:center; }
+.wc-flag { width:20px; height:20px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+.wc-score { background:var(--color-score); color:#fff; padding:4px 12px; border-radius:var(--radius-score); font-weight:700; font-size:15px; min-width:50px; text-align:center; }
+.wc-score.live { animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.85} }
+.wc-time { color:var(--color-time); font-weight:600; font-size:14px; min-width:50px; text-align:center; }
+.wc-status { font-size:11px; color:var(--color-muted); margin-left:6px; }
+.wc-standings { width:100%; border-collapse:collapse; font-size:13px; }
+.wc-standings th { color:var(--color-muted); font-weight:400; padding:8px 6px; text-align:right; font-size:11px; }
+.wc-standings th:first-child, .wc-standings td:first-child { text-align:left; padding-left:16px; }
+.wc-standings td { padding:6px; text-align:right; }
+.wc-standings td.team-cell { text-align:left; }
+.wc-rank-bar { display:inline-block; width:4px; height:20px; border-radius:2px; margin-right:8px; vertical-align:middle; }
+.wc-rank-bar.qualify { background:var(--color-qualify); }
+.wc-rank-bar.playoff { background:var(--color-playoff); }
+.wc-rank-bar.eliminated { background:var(--color-eliminated); }
+.wc-scorer-row { display:grid; grid-template-columns:24px 1fr auto auto 24px; align-items:center; padding:8px 16px; border-bottom:1px solid #F5F5F5; gap:8px; }
+.wc-scorer-rank { width:24px; font-weight:700; color:var(--color-muted); font-size:13px; }
+.wc-scorer-name { flex:1; font-size:14px; }
+.wc-scorer-team { font-size:12px; color:var(--color-muted); }
+.wc-scorer-bar { height:8px; border-radius:4px; background:var(--color-score); min-width:20px; max-width:120px; justify-self:end; }
+.wc-scorer-goals { font-weight:700; font-size:15px; min-width:24px; text-align:right; }
+.wc-news-card { display:flex; gap:12px; padding:12px 16px; border-bottom:1px solid #F5F5F5; }
+.wc-news-thumb { width:60px; height:60px; border-radius:8px; object-fit:cover; flex-shrink:0; background:#EEE; }
+.wc-news-body { flex:1; }
+.wc-news-title { font-size:15px; font-weight:500; color:var(--color-title); margin:0 0 4px; line-height:1.3; }
+.wc-news-meta { font-size:12px; color:var(--color-muted); }
+.wc-news-source { color:var(--color-score); font-weight:500; }
+.wc-badge { display:inline-block; padding:2px 8px; border-radius:var(--radius-pill); font-size:11px; font-weight:500; background:rgba(255,255,255,0.2); color:#fff; }
+.wc-header-badge-row { margin-bottom:8px; }
+.wc-followed-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:12px 16px; }
+.wc-followed-card { border-radius:16px; padding:16px; color:#fff; text-align:center; }
+.wc-followed-card .flag-lg { width:48px; height:48px; border-radius:50%; margin:0 auto 8px; display:block; }
+.wc-followed-card .team-name { font-size:15px; font-weight:700; }
+.wc-followed-card .next-match { font-size:12px; opacity:0.85; margin-top:4px; }</style>
+<div class="wc-container">
+<div class="wc-header"><div class="wc-header-badge-row"><span class="wc-badge">世界杯</span></div><h1>⚽ 足球早报</h1><div class="sub">2026年7月14日 星期一 · 世界杯淘汰赛</div></div>
+<div class="wc-section">
+<div class="wc-section-title">⭐ 今日焦点</div>
+<div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/fr.png" alt="France" width="20" height="20"><span>France</span></div><span class="wc-time">03:00</span><div class="wc-match-team right"><span>Spain</span><img class="wc-flag" src="https://flagcdn.com/w40/es.png" alt="Spain" width="20" height="20"></div></div>
+</div>
+<div class="wc-section">
+<div class="wc-section-title">⚽ 世界杯射手榜</div>
+<div class="wc-scorer-row"><span class="wc-scorer-rank">🥇</span><div class="wc-scorer-name">Kylian Mbappé<div class="wc-scorer-team">France</div></div><div class="wc-scorer-bar" style="width:120px"></div><span class="wc-scorer-goals">7</span><a href="https://www.google.com/search?q=Kylian Mbappé+France+World+Cup+2026" style="color:var(--color-muted);text-decoration:none;font-size:12px;">🔍</a></div><div class="wc-scorer-row"><span class="wc-scorer-rank">🥈</span><div class="wc-scorer-name">Erling Haaland<div class="wc-scorer-team">Norway</div></div><div class="wc-scorer-bar" style="width:120px"></div><span class="wc-scorer-goals">7</span><a href="https://www.google.com/search?q=Erling Haaland+Norway+World+Cup+2026" style="color:var(--color-muted);text-decoration:none;font-size:12px;">🔍</a></div><div class="wc-scorer-row"><span class="wc-scorer-rank">🥉</span><div class="wc-scorer-name">Lionel Messi<div class="wc-scorer-team">Argentina</div></div><div class="wc-scorer-bar" style="width:120px"></div><span class="wc-scorer-goals">7</span><a href="https://www.google.com/search?q=Lionel Messi+Argentina+World+Cup+2026" style="color:var(--color-muted);text-decoration:none;font-size:12px;">🔍</a></div><div class="wc-scorer-row"><span class="wc-scorer-rank">4</span><div class="wc-scorer-name">Ousmane Dembélé<div class="wc-scorer-team">France</div></div><div class="wc-scorer-bar" style="width:85px"></div><span class="wc-scorer-goals">5</span><a href="https://www.google.com/search?q=Ousmane Dembélé+France+World+Cup+2026" style="color:var(--color-muted);text-decoration:none;font-size:12px;">🔍</a></div><div class="wc-scorer-row"><span class="wc-scorer-rank">5</span><div class="wc-scorer-name">Julián Quiñones<div class="wc-scorer-team">Mexico</div></div><div class="wc-scorer-bar" style="width:68px"></div><span class="wc-scorer-goals">4</span><a href="https://www.google.com/search?q=Julián Quiñones+Mexico+World+Cup+2026" style="color:var(--color-muted);text-decoration:none;font-size:12px;">🔍</a></div><div class="wc-scorer-row"><span class="wc-scorer-rank">6</span><div class="wc-scorer-name">Vinícius Júnior<div class="wc-scorer-team">Brazil</div></div><div class="wc-scorer-bar" style="width:68px"></div><span class="wc-scorer-goals">4</span><a href="https://www.google.com/search?q=Vinícius Júnior+Brazil+World+Cup+2026" style="color:var(--color-muted);text-decoration:none;font-size:12px;">🔍</a></div><div class="wc-scorer-row"><span class="wc-scorer-rank">7</span><div class="wc-scorer-name">Harry Kane<div class="wc-scorer-team">England</div></div><div class="wc-scorer-bar" style="width:68px"></div><span class="wc-scorer-goals">4</span><a href="https://www.google.com/search?q=Harry Kane+England+World+Cup+2026" style="color:var(--color-muted);text-decoration:none;font-size:12px;">🔍</a></div><div class="wc-scorer-row"><span class="wc-scorer-rank">8</span><div class="wc-scorer-name">Jude Bellingham<div class="wc-scorer-team">England</div></div><div class="wc-scorer-bar" style="width:68px"></div><span class="wc-scorer-goals">4</span><a href="https://www.google.com/search?q=Jude Bellingham+England+World+Cup+2026" style="color:var(--color-muted);text-decoration:none;font-size:12px;">🔍</a></div><div class="wc-scorer-row"><span class="wc-scorer-rank">9</span><div class="wc-scorer-name">Mikel Oyarzabal<div class="wc-scorer-team">Spain</div></div><div class="wc-scorer-bar" style="width:68px"></div><span class="wc-scorer-goals">4</span><a href="https://www.google.com/search?q=Mikel Oyarzabal+Spain+World+Cup+2026" style="color:var(--color-muted);text-decoration:none;font-size:12px;">🔍</a></div><div class="wc-scorer-row"><span class="wc-scorer-rank">10</span><div class="wc-scorer-name">Folarin Balogun<div class="wc-scorer-team">United States</div></div><div class="wc-scorer-bar" style="width:51px"></div><span class="wc-scorer-goals">3</span><a href="https://www.google.com/search?q=Folarin Balogun+United States+World+Cup+2026" style="color:var(--color-muted);text-decoration:none;font-size:12px;">🔍</a></div>
+</div>
+<div class="wc-section">
+<div class="wc-section-title">⭐ 关注国家队</div>
+<div style="padding:4px 16px;font-size:12px;color:#999;font-weight:600;">西班牙</div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/es.png" alt="Spain" width="20" height="20"><span>Spain</span></div><span class="wc-time">03:00</span><div class="wc-match-team right"><span>Belgium</span><img class="wc-flag" src="https://flagcdn.com/w40/be.png" alt="Belgium" width="20" height="20"></div></div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/pt.png" alt="Portugal" width="20" height="20"><span>Portugal</span></div><span class="wc-time">03:00</span><div class="wc-match-team right"><span>Spain</span><img class="wc-flag" src="https://flagcdn.com/w40/es.png" alt="Spain" width="20" height="20"></div></div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/es.png" alt="Spain" width="20" height="20"><span>Spain</span></div><span class="wc-time">03:00</span><div class="wc-match-team right"><span>Austria</span><img class="wc-flag" src="https://flagcdn.com/w40/at.png" alt="Austria" width="20" height="20"></div></div><div style="padding:4px 16px;font-size:12px;color:#999;font-weight:600;">阿根廷</div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/ar.png" alt="Argentina" width="20" height="20"><span>Argentina</span></div><span class="wc-time">09:00</span><div class="wc-match-team right"><span>Switzerland</span><img class="wc-flag" src="https://flagcdn.com/w40/ch.png" alt="Switzerland" width="20" height="20"></div></div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/ar.png" alt="Argentina" width="20" height="20"><span>Argentina</span></div><span class="wc-time">00:00</span><div class="wc-match-team right"><span>Egypt</span><img class="wc-flag" src="https://flagcdn.com/w40/eg.png" alt="Egypt" width="20" height="20"></div></div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/ar.png" alt="Argentina" width="20" height="20"><span>Argentina</span></div><span class="wc-time">06:00</span><div class="wc-match-team right"><span>Cape Verde</span><img class="wc-flag" src="https://flagcdn.com/w40/cv.png" alt="Cape Verde" width="20" height="20"></div></div><div style="padding:4px 16px;font-size:12px;color:#999;font-weight:600;">法国</div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/fr.png" alt="France" width="20" height="20"><span>France</span></div><span class="wc-time">04:00</span><div class="wc-match-team right"><span>Morocco</span><img class="wc-flag" src="https://flagcdn.com/w40/ma.png" alt="Morocco" width="20" height="20"></div></div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/py.png" alt="Paraguay" width="20" height="20"><span>Paraguay</span></div><span class="wc-time">05:00</span><div class="wc-match-team right"><span>France</span><img class="wc-flag" src="https://flagcdn.com/w40/fr.png" alt="France" width="20" height="20"></div></div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/fr.png" alt="France" width="20" height="20"><span>France</span></div><span class="wc-time">05:00</span><div class="wc-match-team right"><span>Sweden</span><img class="wc-flag" src="https://flagcdn.com/w40/se.png" alt="Sweden" width="20" height="20"></div></div><div style="padding:4px 16px;font-size:12px;color:#999;font-weight:600;">挪威</div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/no.png" alt="Norway" width="20" height="20"><span>Norway</span></div><span class="wc-time">05:00</span><div class="wc-match-team right"><span>England</span><img class="wc-flag" src="https://flagcdn.com/w40/gb-eng.png" alt="England" width="20" height="20"></div></div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/br.png" alt="Brazil" width="20" height="20"><span>Brazil</span></div><span class="wc-time">04:00</span><div class="wc-match-team right"><span>Norway</span><img class="wc-flag" src="https://flagcdn.com/w40/no.png" alt="Norway" width="20" height="20"></div></div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/ci.png" alt="Ivory Coast" width="20" height="20"><span>Ivory Coast</span></div><span class="wc-time">01:00</span><div class="wc-match-team right"><span>Norway</span><img class="wc-flag" src="https://flagcdn.com/w40/no.png" alt="Norway" width="20" height="20"></div></div><div style="padding:4px 16px;font-size:12px;color:#999;font-weight:600;">英格兰</div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/no.png" alt="Norway" width="20" height="20"><span>Norway</span></div><span class="wc-time">05:00</span><div class="wc-match-team right"><span>England</span><img class="wc-flag" src="https://flagcdn.com/w40/gb-eng.png" alt="England" width="20" height="20"></div></div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/mx.png" alt="Mexico" width="20" height="20"><span>Mexico</span></div><span class="wc-time">09:00</span><div class="wc-match-team right"><span>England</span><img class="wc-flag" src="https://flagcdn.com/w40/gb-eng.png" alt="England" width="20" height="20"></div></div><div class="wc-match-row"><div class="wc-match-team"><img class="wc-flag" src="https://flagcdn.com/w40/gb-eng.png" alt="England" width="20" height="20"><span>England</span></div><span class="wc-time">00:00</span><div class="wc-match-team right"><span>Congo DR</span><img class="wc-flag" src="https://flagcdn.com/w40/cd.png" alt="Congo DR" width="20" height="20"></div></div>
+</div>
+<details><summary style="padding:12px 16px;font-weight:600;">📡 RSS 精选</summary><div class="wc-news-card"><div class="wc-news-thumb"></div><div class="wc-news-body"><a href="https://www.bbc.co.uk/sport/football/articles/ce8m996g9g1o?at_medium=RSS&at_campaign=rss" style="text-decoration:none;"><p class="wc-news-title">England to make late call on Rice for World Cup semi-final</p></a><div class="wc-news-meta"><span class="wc-news-source">BBC Sport</span> • </div></div></div><div class="wc-news-card"><div class="wc-news-thumb"></div><div class="wc-news-body"><a href="https://www.bbc.co.uk/sport/football/articles/c8924433kjyo?at_medium=RSS&at_campaign=rss" style="text-decoration:none;"><p class="wc-news-title">'Easy to create divisions' - Kane says England are 'completely together'</p></a><div class="wc-news-meta"><span class="wc-news-source">BBC Sport</span> • </div></div></div><div class="wc-news-card"><div class="wc-news-thumb"></div><div class="wc-news-body"><a href="https://www.bbc.co.uk/sport/football/articles/cn07dpgkj4eo?at_medium=RSS&at_campaign=rss" style="text-decoration:none;"><p class="wc-news-title">Man Utd sign £48m Santos and close in on Tielemans</p></a><div class="wc-news-meta"><span class="wc-news-source">BBC Sport</span> • </div></div></div><div class="wc-news-card"><div class="wc-news-thumb"></div><div class="wc-news-body"><a href="https://www.bbc.co.uk/sport/football/articles/cx2k9qj2nyvo?at_medium=RSS&at_campaign=rss" style="text-decoration:none;"><p class="wc-news-title">Most clinical? Least creative? Best in the air? Comparing the last four</p></a><div class="wc-news-meta"><span class="wc-news-source">BBC Sport</span> • </div></div></div><div class="wc-news-card"><div class="wc-news-thumb"></div><div class="wc-news-body"><a href="https://www.skysports.com/football/news/12040/13548430/transfer-news-summer-transfer-window-2026-scottish-premiership-deals-ins-and-outs" style="text-decoration:none;"><p class="wc-news-title">Scottish Premiership ins and outs - the confirmed deals so far...</p></a><div class="wc-news-meta"><span class="wc-news-source">Sky Sports</span> • </div></div></div><div class="wc-news-card"><div class="wc-news-thumb"></div><div class="wc-news-body"><a href="https://www.skysports.com/football/news/12040/13546618/transfer-news-summer-transfer-window-2026-premier-league-deals-ins-and-outs" style="text-decoration:none;"><p class="wc-news-title">Premier League ins and outs - the confirmed deals so far...</p></a><div class="wc-news-meta"><span class="wc-news-source">Sky Sports</span> • </div></div></div></details>
+<div style="padding:16px;text-align:center;font-size:12px;color:#999;">
+本文为「足球日报」自动生成（世界杯模式 · 世界杯淘汰赛）<br>
+数据来源：ESPN · BBC Sport · Sky Sports · Google News<br>
+生成时间：2026-07-14 06:57 GMT+8
+</div>
+</div>
