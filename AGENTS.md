@@ -17,7 +17,7 @@ Hexo 7 + Butterfly 主题的个人博客,部署到 GitHub Pages(Axtrivc.github.i
 ## 自定义结构
 
 - `scripts/`:Hexo 7 手动注册的注入脚本(`_config.yml` 的 `scripts:` 列表)
-  - `hero-inject.js`:首页 hero(ASCII 河流 shader + 左下角 typed 副标题 + 底部 `::after` 渐变遮罩,透明 → `--page-bg`,消除 hero 与白色内容区的硬切边)
+  - `hero-inject.js`:首页 hero(ASCII 河流 shader + 左下角 typed 副标题 + 动画层 `mask-image` 向下渐隐入 `--page-bg`,消除 hero 与白色内容区的硬切边)
   - `footer-river-inject.js`:footer 水流动画注入(canvas 在 `source/js/axtrivc-river.js`)
   - `cache-bust.js` / `inject-site-config.js`:资源版本号 / 站点配置注入
   - `post-desc-fix.js`:首页摘要修复(剔除正文内联 `<style>/<script>` 块,防止足球日报卡片预览漏 CSS)

@@ -89,25 +89,33 @@ hexo.extend.filter.register('after_render:html', function (data) {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-/* ── hero 底部 → 页面内容 渐进过渡（2026-07-22）──
- * hero 深色 shader 与下方 --page-bg 内容区之间原来是一条硬切边。
- * 在 hero-shell 底部叠一层透明 → --page-bg 的渐变遮罩, 视觉上柔和融入。
- * 用 color-mix 保持色相恒定只渐变 alpha, 避免 transparent(黑) 中段发灰。
- * z-index 2: canvas 在下, hero-text(3)/typed(5) 文字在上不受影响。 */
-.hero-shell::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: clamp(120px, 22vh, 260px);
-  background: linear-gradient(180deg,
-    color-mix(in srgb, var(--page-bg, #ffffff) 0%, transparent) 0%,
-    color-mix(in srgb, var(--page-bg, #ffffff) 45%, transparent) 42%,
-    color-mix(in srgb, var(--page-bg, #ffffff) 80%, transparent) 72%,
-    var(--page-bg, #ffffff) 100%);
-  pointer-events: none;
-  z-index: 2;
+/* ── hero 底部 → 页面内容 渐进过渡 v2（2026-07-22）──
+ * v1 用 ::after 白色渐变盖在动画上方(用户反馈: 像一块白布遮住动画)。
+ * v2: 让动画本身向下渐隐 — shell 底色换成 --page-bg,
+ * 动画三层(placeholder/canvas/still)用 mask-image 从 55% 渐隐到 96% 全透明,
+ * 动画"消散"进页面色, 与 main 的 --page-bg 无缝衔接。
+ * hero-text(z3)/typed-wrap(z5) 不加 mask, 左下角文字不受影响。
+ * 但渐隐后文字落在浅色区, 白字会看不清 → 文字改深色。 */
+.hero-shell {
+  background: var(--page-bg, #ffffff);
+}
+.hero-shell > section.hero {
+  background: transparent;
+}
+.hero-shell .hero-placeholder,
+.hero-shell canvas.hero-ascii,
+.hero-shell .hero-still {
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 96%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 96%);
+}
+.hero-shell .hero-text,
+.hero-shell .hero-text-headline {
+  color: rgba(23, 32, 51, 0.82) !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+}
+.hero-shell .hero-typed-wrap {
+  color: rgba(23, 32, 51, 0.78);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.45);
 }
 
 /* canvas：独立 GPU 层 */

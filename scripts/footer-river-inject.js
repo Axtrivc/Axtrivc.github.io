@@ -51,16 +51,16 @@ hexo.extend.filter.register('after_render:html', function (data) {
 .axtrivc-river-stage {
   position: relative;
   width: 100%;
-  height: 120px;
+  height: 140px;
   margin-top: 0;
   margin-bottom: 0;
   padding-top: 0;
-  /* 四段渐进: footer 底色先稳一段(0→30%), 再缓慢过渡到 mid/bottom 水色,
-   * 消除 footer → river 衔接处的色带感(2026-07-22 由三段改为四段) */
+  /* 四段渐进: footer 底色先稳一段, 再缓慢过渡到 mid/bottom 水色,
+   * 消除 footer → river 衔接处的色带感 */
   background: linear-gradient(180deg,
     var(--footer-bg, #faf8f5) 0%,
-    var(--footer-river-top, #efe8dc) 30%,
-    var(--footer-river-mid, #e8d9c0) 65%,
+    var(--footer-river-top, #efe8dc) 28%,
+    var(--footer-river-mid, #e8d9c0) 62%,
     var(--footer-river-bottom, #d4bc96) 100%);
   overflow: hidden;
   cursor: crosshair;
@@ -69,6 +69,10 @@ hexo.extend.filter.register('after_render:html', function (data) {
   display: block;
   width: 100%;
   height: 100%;
+  /* 水色与波纹从上方"浮现": canvas 顶部 38% 渐隐,
+   * 与 stage 背景渐变叠加, footer → river 无可见分界线(2026-07-22 v2) */
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 38%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 38%);
 }
 .axtrivc-river-hint {
   position: absolute;
@@ -109,7 +113,7 @@ body .footer-other > .footer-copyright { display: none !important; }
 /* 移动端缩小 */
 @media (max-width: 768px) {
   .axtrivc-river-stage {
-    height: 90px;
+    height: 105px;
     padding-top: 0;
     margin-bottom: 0;
   }
