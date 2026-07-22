@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>river theme preview</title>
+<style>
+  body { margin: 0; background: #fff; font-family: "Noto Serif SC", serif; }
+  .label { padding: 8px 18px; font-size: 14px; color: #333; }
+  /* ↓ 与 footer-river-inject.js 注入的 CSS 保持一致 */
+  /* 模拟 #footer: 页面色 → footer 色连续渐变(对应 inject 里 #footer 的规则) */
+  .footer-sim {
+    height: 220px;
+    background: linear-gradient(180deg,
+      var(--page-bg, #ffffff) 0%,
+      var(--footer-bg, #faf8f5) 100%);
+  }
+  .axtrivc-river-stage {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(180deg,
+      var(--footer-bg, #faf8f5) 0%,
+      var(--footer-river-mid, #e8d9c0) 45%,
+      var(--footer-river-bottom, #d4bc96) 100%);
+    overflow: hidden;
+  }
+  .axtrivc-river-stage canvas { display: block; width: 100%; height: 100%; }
+  .axtrivc-river-hint {
+    position: absolute; top: 12px; right: 18px; z-index: 2;
+    color: var(--footer-river-hint, rgba(120, 90, 55, 0.65));
+    font-size: 12px; font-weight: 300; letter-spacing: 0.05em; pointer-events: none;
+  }
+  .axtrivc-copyright {
+    position: absolute; top: 72%; left: 0; right: 0; transform: translateY(-50%);
+    z-index: 10; text-align: center; font-size: 13px; font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--footer-river-text, rgba(70, 50, 25, 0.5));
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.4); pointer-events: none; user-select: none;
+  }
+</style>
+</head>
+<body>
+<div class="label" id="label"></div>
+<div class="footer-sim"></div>
+<div class="axtrivc-river-stage" id="axtrivcRiverStage">
+  <span class="axtrivc-river-hint">点击水面 →</span>
+  <canvas id="axtrivcRiverCanvas"></canvas>
+  <span class="axtrivc-copyright">&copy; 2026 By &nbsp;ɐ&thinsp;ℒℯℯ</span>
+</div>
+<script>
+  // 模拟 theme-system.js: 按 ?theme= 设置 --page-bg / --footer-* 变量
+  var THEMES = {
+    'wechat-classic': { pageBg:'#FFFFFF', footerBg:'#F2FBF5', mid:'#D8E8C8', bottom:'#A8D4A0', heading:'#0A3D2A' },
+    'lake-blue':      { pageBg:'#F4FBFF', footerBg:'#E6F5FF', mid:'#B8D8EE', bottom:'#88B8D8', heading:'#0C447C' },
+    'haze-blue':      { pageBg:'#FAFBFC', footerBg:'#F0F2F5', mid:'#D2D6DE', bottom:'#AEB4C0', heading:'#2D3748' },
+    'beige-lite':     { pageBg:'#FFFCF5', footerBg:'#FAF8F5', mid:'#E8D9C0', bottom:'#D4BC96', heading:'#3A2A1A' },
+    'lemon-indigo':   { pageBg:'#FAFAFA', footerBg:'#F6F8FE', mid:'#D2D8EE', bottom:'#A8B4D8', heading:'#1E3A8A' }
+  };
+  var themeId = new URLSearchParams(location.search).get('theme') || 'beige-lite';
+  var t = THEMES[themeId];
+  document.getElementById('label').textContent = 'theme: ' + themeId;
+  var rs = document.documentElement.style;
+  rs.setProperty('--page-bg', t.pageBg);
+  rs.setProperty('--footer-bg', t.footerBg);
+  rs.setProperty('--footer-river-mid', t.mid);
+  rs.setProperty('--footer-river-bottom', t.bottom);
+  var hm = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(t.heading);
+  var hrgb = parseInt(hm[1],16) + ', ' + parseInt(hm[2],16) + ', ' + parseInt(hm[3],16);
+  rs.setProperty('--footer-river-text', 'rgba(' + hrgb + ', 0.5)');
+  rs.setProperty('--footer-river-hint', 'rgba(' + hrgb + ', 0.6)');
+  try { localStorage.setItem('axtrivc_theme_v2', themeId); } catch (e) {}
+</script>
+<script src="/js/axtrivc-river.js?v=3"></script>
+<script>
+  window.dispatchEvent(new CustomEvent('themechange', { detail: { id: themeId } }));
+</script>
+</body>
+</html>

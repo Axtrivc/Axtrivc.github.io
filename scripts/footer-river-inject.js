@@ -120,12 +120,14 @@ body .footer-other > .footer-copyright { display: none !important; }
   }
 }
 
-/* ② 防止上滑白屏: html/body 底部用主题 footer 色兜底, 与 river 无缝衔接 */
+/* ② 防止上滑白屏: html 底部用主题 footer 色兜底(overscroll 时与 river 衔接);
+ *    body 用页面色 --page-bg — 内容列两侧边距与页面同色,
+ *    避免 footer 顶部交界处出现 边距/footer/内容列/river 四色拼接 */
 html {
   background-color: var(--footer-bg, #faf8f5) !important;
 }
 body {
-  background-color: var(--footer-bg, #faf8f5) !important;
+  background-color: var(--page-bg, #ffffff) !important;
 }
 </style>
 `;

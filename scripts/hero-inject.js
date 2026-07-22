@@ -107,19 +107,19 @@ hexo.extend.filter.register('after_render:html', function (data) {
   color: rgba(255, 255, 255, 0.95);
 }
 
-/* ── main：紧跟 hero 下方，z-index 1 白底 ── */
+/* ── main：紧跟 hero 下方，z-index 1，底色跟随主题页面色 --page-bg ── */
 body.hero-page-active main {
   position: relative;
   z-index: 1;
   margin-top: 0;
-  background: #faf8f5;
+  background: var(--page-bg, #faf8f5);
 }
 body.hero-released .hero-shell {
   pointer-events: none !important;
 }
 body.hero-released main {
   margin-top: 0;
-  background: #faf8f5;
+  background: var(--page-bg, #faf8f5);
 }
 
 /* ── 2026-06-30 修复：覆盖 butterfly 的 #web_bg 白底 ──
@@ -283,7 +283,7 @@ body.hero-page-active {
   overflow-y: auto;
 }
 body.hero-released {
-  background: #faf8f5;
+  background: var(--page-bg, #faf8f5);
 }
 
 /* ── 左下角 typed 副标题（纯 CSS animation，无 setTimeout） ── */
