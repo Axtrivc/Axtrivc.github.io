@@ -441,3 +441,31 @@ a[id="card-info-btn"] {
   transform: scale(1.08) !important;
   filter: brightness(1.05) !important;
 }
+
+/* ============================================================
+   2026-07-22: 首页文章列表 masonry → 对齐双列网格
+   Butterfly index_layout:6 用 MasonryInfiniteGrid 绝对定位、逐列堆叠,
+   左右两列高度各自累计 → 同一视觉行的卡片顶边错位(如 7-21 早报/晚报)。
+   覆盖为 CSS grid: 行内卡片顶边对齐, 行高取该行最高卡片。
+   !important 压过 InfiniteGrid 写入的内联 width/transform/position/height。
+   gap 与 masonry 配置一致(horizontal 10 / vertical 20)。
+   ============================================================ */
+#recent-posts.masonry .recent-post-items {
+  display: grid !important;
+  grid-template-columns: 1fr;
+  gap: 20px 10px;
+  height: auto !important;
+}
+#recent-posts.masonry .recent-post-item {
+  position: static !important;
+  transform: none !important;
+  width: auto !important;
+  left: auto !important;
+  top: auto !important;
+  margin-bottom: 0 !important;
+}
+@media (min-width: 768px) {
+  #recent-posts.masonry .recent-post-items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

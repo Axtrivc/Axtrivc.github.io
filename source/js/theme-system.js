@@ -18,7 +18,7 @@
       text: '#191919', heading: '#0A3D2A', secondary: '#7A7A7A', accent: '#07C160',
       border: '#EDEDED', pageHeader: '#FFFFFF', navText: '#191919', navTextHover: '#07C160',
       footerBg: '#F2FBF5',
-      footerRiverTop: '#F0F5E8', footerRiverMid: '#D8E8C8', footerRiverBottom: '#A8D4A0'
+      footerRiverTop: '#E8F5EC', footerRiverMid: '#C8E8D3', footerRiverBottom: '#9CD8B2'
     },
     // === 新增方案 B：清晨湖蓝（年轻活力） ===
     'lake-blue': {

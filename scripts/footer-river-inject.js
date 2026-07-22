@@ -55,9 +55,12 @@ hexo.extend.filter.register('after_render:html', function (data) {
   margin-top: 0;
   margin-bottom: 0;
   padding-top: 0;
+  /* 四段渐进: footer 底色先稳一段(0→30%), 再缓慢过渡到 mid/bottom 水色,
+   * 消除 footer → river 衔接处的色带感(2026-07-22 由三段改为四段) */
   background: linear-gradient(180deg,
     var(--footer-bg, #faf8f5) 0%,
-    var(--footer-river-mid, #e8d9c0) 45%,
+    var(--footer-river-top, #efe8dc) 30%,
+    var(--footer-river-mid, #e8d9c0) 65%,
     var(--footer-river-bottom, #d4bc96) 100%);
   overflow: hidden;
   cursor: crosshair;

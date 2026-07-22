@@ -89,6 +89,27 @@ hexo.extend.filter.register('after_render:html', function (data) {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
+/* ── hero 底部 → 页面内容 渐进过渡（2026-07-22）──
+ * hero 深色 shader 与下方 --page-bg 内容区之间原来是一条硬切边。
+ * 在 hero-shell 底部叠一层透明 → --page-bg 的渐变遮罩, 视觉上柔和融入。
+ * 用 color-mix 保持色相恒定只渐变 alpha, 避免 transparent(黑) 中段发灰。
+ * z-index 2: canvas 在下, hero-text(3)/typed(5) 文字在上不受影响。 */
+.hero-shell::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(120px, 22vh, 260px);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--page-bg, #ffffff) 0%, transparent) 0%,
+    color-mix(in srgb, var(--page-bg, #ffffff) 45%, transparent) 42%,
+    color-mix(in srgb, var(--page-bg, #ffffff) 80%, transparent) 72%,
+    var(--page-bg, #ffffff) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
 /* canvas：独立 GPU 层 */
 .hero-shell canvas.hero-ascii {
   transform: translateZ(0);

@@ -46,11 +46,11 @@
   //   L4 前景高光        — 主题 footer 亮色, 保持水的高光感
   var THEME_WAVES = {
     'wechat-classic': {
-      bg: ['rgba(7, 193, 96, 0.06)', 'rgba(21, 110, 66, 0.30)'],
+      bg: ['rgba(7, 193, 96, 0.05)', 'rgba(13, 110, 64, 0.26)'],
       waves: [
-        { alpha: 0.42, stroke: 1.4, color: '21, 110, 66' },
+        { alpha: 0.40, stroke: 1.4, color: '13, 102, 61' },
         { alpha: 0.55, stroke: 1.4, color: '7, 193, 96' },
-        { alpha: 0.68, stroke: 1.6, color: '96, 214, 150' },
+        { alpha: 0.68, stroke: 1.6, color: '108, 218, 156' },
         { alpha: 0.85, stroke: 1.2, color: '242, 251, 245' }
       ]
     },

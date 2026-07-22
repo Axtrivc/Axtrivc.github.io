@@ -20,7 +20,8 @@
     height: 160px;
     background: linear-gradient(180deg,
       var(--footer-bg, #faf8f5) 0%,
-      var(--footer-river-mid, #e8d9c0) 45%,
+      var(--footer-river-top, #efe8dc) 30%,
+      var(--footer-river-mid, #e8d9c0) 65%,
       var(--footer-river-bottom, #d4bc96) 100%);
     overflow: hidden;
   }
@@ -50,11 +51,11 @@
 <script>
   // 模拟 theme-system.js: 按 ?theme= 设置 --page-bg / --footer-* 变量
   var THEMES = {
-    'wechat-classic': { pageBg:'#FFFFFF', footerBg:'#F2FBF5', mid:'#D8E8C8', bottom:'#A8D4A0', heading:'#0A3D2A' },
-    'lake-blue':      { pageBg:'#F4FBFF', footerBg:'#E6F5FF', mid:'#B8D8EE', bottom:'#88B8D8', heading:'#0C447C' },
-    'haze-blue':      { pageBg:'#FAFBFC', footerBg:'#F0F2F5', mid:'#D2D6DE', bottom:'#AEB4C0', heading:'#2D3748' },
-    'beige-lite':     { pageBg:'#FFFCF5', footerBg:'#FAF8F5', mid:'#E8D9C0', bottom:'#D4BC96', heading:'#3A2A1A' },
-    'lemon-indigo':   { pageBg:'#FAFAFA', footerBg:'#F6F8FE', mid:'#D2D8EE', bottom:'#A8B4D8', heading:'#1E3A8A' }
+    'wechat-classic': { pageBg:'#FFFFFF', footerBg:'#F2FBF5', top:'#E8F5EC', mid:'#C8E8D3', bottom:'#9CD8B2', heading:'#0A3D2A' },
+    'lake-blue':      { pageBg:'#F4FBFF', footerBg:'#E6F5FF', top:'#E8F2FA', mid:'#B8D8EE', bottom:'#88B8D8', heading:'#0C447C' },
+    'haze-blue':      { pageBg:'#FAFBFC', footerBg:'#F0F2F5', top:'#ECEEF2', mid:'#D2D6DE', bottom:'#AEB4C0', heading:'#2D3748' },
+    'beige-lite':     { pageBg:'#FFFCF5', footerBg:'#FAF8F5', top:'#EFE8DC', mid:'#E8D9C0', bottom:'#D4BC96', heading:'#3A2A1A' },
+    'lemon-indigo':   { pageBg:'#FAFAFA', footerBg:'#F6F8FE', top:'#EEF0F8', mid:'#D2D8EE', bottom:'#A8B4D8', heading:'#1E3A8A' }
   };
   var themeId = new URLSearchParams(location.search).get('theme') || 'beige-lite';
   var t = THEMES[themeId];
@@ -62,6 +63,7 @@
   var rs = document.documentElement.style;
   rs.setProperty('--page-bg', t.pageBg);
   rs.setProperty('--footer-bg', t.footerBg);
+  rs.setProperty('--footer-river-top', t.top);
   rs.setProperty('--footer-river-mid', t.mid);
   rs.setProperty('--footer-river-bottom', t.bottom);
   var hm = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(t.heading);
