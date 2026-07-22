@@ -23,6 +23,9 @@ Desktop.ini
 ### 日志 ###
 *.log
 
+### Python ###
+__pycache__/
+
 ### WorkBuddy 临时文件 ###
 .workbuddy/test-avatar.jpg
 
