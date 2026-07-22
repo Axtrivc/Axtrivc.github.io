@@ -5,7 +5,8 @@
  * 保留核心: 多层正弦波 + 点击涟漪 + 鼠标扰动 + IntersectionObserver 视口暂停
  * 简化: 去掉 koi/shark 彩蛋(博客不需要)
  *
- * 颜色: 暖棕主题适配(与博客 #8B6F47/#faf8f5 呼应) + 金/棕/米色波层
+ * 颜色: 全主题适配 — 波浪 palette + 画布渐变按主题切换(themechange 事件驱动),
+ * footer 背景/文字色由 theme-system.js 的 --footer-* CSS 变量控制
  */
 (function () {
   'use strict';
@@ -34,51 +35,66 @@
   resize();
   window.addEventListener('resize', resize);
 
-  // Layered waves — 5 主题适配, 每主题 4 层专属 palette
-  // 配色逻辑: 后层深饱和(主色暗版) → 中层主色 → 近层主色亮版 → 前景高光(暖白,保持水感)
-  // alpha 提升: 0.20→0.42 / 0.24→0.55 / 0.32→0.68 / 0.55→0.85
-  // stroke 加粗: 1.0→1.4 / 1.2→1.6, 让线条更清晰可见
+  // Layered waves — 5 主题适配, 每主题 4 层专属 palette + 专属画布渐变
+  // 配色逻辑: 后层深饱和(主题 heading/暗版 accent) → 中层主色(accent) → 近层亮版 → 前景高光(主题 footer 亮色)
+  // bg: 画布底部渐变, 从 accent 极淡雾化 → heading 深色沉淀, 让线条有"水深"的对比
   //
   // 配色选取规则:
-  //   L1 远景(最深饱和)  — 主题 accent 的深暗版, 约暗 35%
+  //   L1 远景(最深饱和)  — 主题 heading / accent 暗版
   //   L2 中景(主色)      — 主题 accent 直接用
-  //   L3 近景(主色亮版)  — 主题 accent 亮 30%
-  //   L4 前景高光(暖白)  — 跟主题背景 bg 一致, 保持水的高光感
+  //   L3 近景(主色亮版)  — 主题 accent 亮版; lemon-indigo 用柠檬黄做撞色
+  //   L4 前景高光        — 主题 footer 亮色, 保持水的高光感
   var THEME_WAVES = {
-    'wechat-classic': [
-      { alpha: 0.42, stroke: 1.4, color: '100, 160, 110' },
-      { alpha: 0.55, stroke: 1.4, color: '140, 195, 155' },
-      { alpha: 0.68, stroke: 1.6, color: '180, 220, 190' },
-      { alpha: 0.85, stroke: 1.2, color: '240, 248, 240' }
-    ],
-    'lake-blue': [
-      { alpha: 0.42, stroke: 1.4, color: '110, 150, 185' },
-      { alpha: 0.55, stroke: 1.4, color: '150, 185, 215' },
-      { alpha: 0.68, stroke: 1.6, color: '190, 215, 235' },
-      { alpha: 0.85, stroke: 1.2, color: '240, 248, 252' }
-    ],
-    'haze-blue': [
-      { alpha: 0.42, stroke: 1.4, color: '130, 140, 155' },
-      { alpha: 0.55, stroke: 1.4, color: '165, 175, 190' },
-      { alpha: 0.68, stroke: 1.6, color: '200, 208, 218' },
-      { alpha: 0.85, stroke: 1.2, color: '248, 249, 251' }
-    ],
-    'beige-lite': [
-      { alpha: 0.42, stroke: 1.4, color: '120, 92, 55' },
-      { alpha: 0.55, stroke: 1.4, color: '180, 145, 80' },
-      { alpha: 0.68, stroke: 1.6, color: '210, 180, 130' },
-      { alpha: 0.85, stroke: 1.2, color: '250, 248, 245' }
-    ],
-    'lemon-indigo': [
-      { alpha: 0.42, stroke: 1.4, color: '90, 110, 165' },
-      { alpha: 0.55, stroke: 1.4, color: '135, 150, 195' },
-      { alpha: 0.68, stroke: 1.6, color: '180, 190, 225' },
-      { alpha: 0.85, stroke: 1.2, color: '245, 246, 252' }
-    ]
+    'wechat-classic': {
+      bg: ['rgba(7, 193, 96, 0.06)', 'rgba(21, 110, 66, 0.30)'],
+      waves: [
+        { alpha: 0.42, stroke: 1.4, color: '21, 110, 66' },
+        { alpha: 0.55, stroke: 1.4, color: '7, 193, 96' },
+        { alpha: 0.68, stroke: 1.6, color: '96, 214, 150' },
+        { alpha: 0.85, stroke: 1.2, color: '242, 251, 245' }
+      ]
+    },
+    'lake-blue': {
+      bg: ['rgba(16, 174, 255, 0.06)', 'rgba(12, 68, 124, 0.28)'],
+      waves: [
+        { alpha: 0.42, stroke: 1.4, color: '12, 68, 124' },
+        { alpha: 0.55, stroke: 1.4, color: '16, 174, 255' },
+        { alpha: 0.68, stroke: 1.6, color: '110, 200, 248' },
+        { alpha: 0.85, stroke: 1.2, color: '240, 250, 255' }
+      ]
+    },
+    'haze-blue': {
+      bg: ['rgba(74, 85, 104, 0.05)', 'rgba(45, 55, 72, 0.24)'],
+      waves: [
+        { alpha: 0.42, stroke: 1.4, color: '45, 55, 72' },
+        { alpha: 0.55, stroke: 1.4, color: '74, 85, 104' },
+        { alpha: 0.68, stroke: 1.6, color: '140, 150, 168' },
+        { alpha: 0.85, stroke: 1.2, color: '247, 248, 250' }
+      ]
+    },
+    'beige-lite': {
+      bg: ['rgba(139, 111, 71, 0.08)', 'rgba(120, 92, 55, 0.30)'],
+      waves: [
+        { alpha: 0.42, stroke: 1.4, color: '120, 92, 55' },
+        { alpha: 0.55, stroke: 1.4, color: '139, 111, 71' },
+        { alpha: 0.68, stroke: 1.6, color: '196, 169, 106' },
+        { alpha: 0.85, stroke: 1.2, color: '255, 252, 245' }
+      ]
+    },
+    'lemon-indigo': {
+      bg: ['rgba(67, 86, 170, 0.06)', 'rgba(30, 58, 138, 0.26)'],
+      waves: [
+        { alpha: 0.42, stroke: 1.4, color: '30, 58, 138' },
+        { alpha: 0.55, stroke: 1.4, color: '67, 86, 170' },
+        { alpha: 0.50, stroke: 1.6, color: '245, 197, 24' },
+        { alpha: 0.85, stroke: 1.2, color: '246, 248, 254' }
+      ]
+    }
   };
 
   // 默认用 beige-lite (博客初始色) 的 palette, 等 themechange 事件覆盖
-  var currentWavePalette = THEME_WAVES['beige-lite'];
+  var currentWavePalette = THEME_WAVES['beige-lite'].waves;
+  var currentBg = THEME_WAVES['beige-lite'].bg;
 
   // 从 layers 模板 + 当前 palette 合成最终 layers (amp/freq/speed 固定, color 动态)
   var LAYER_TEMPLATE = [
@@ -93,9 +109,11 @@
 
   // 监听主题切换事件 — 实时换色, 无需重启动画
   function applyWaveTheme(themeId) {
-    var palette = THEME_WAVES[themeId];
-    if (!palette) return;
+    var themeWaves = THEME_WAVES[themeId];
+    if (!themeWaves) return;
+    var palette = themeWaves.waves;
     currentWavePalette = palette;
+    currentBg = themeWaves.bg;
     for (var i = 0; i < layers.length && i < palette.length; i++) {
       layers[i].color = palette[i].color;
       layers[i].alpha = palette[i].alpha;
@@ -159,10 +177,10 @@
     t += 1;
     ctx.clearRect(0, 0, W, H);
 
-    // 暖棕深水渐变背景(加深, 让线条对比更强)
+    // 主题适配的水深渐变背景(上淡下深, 让波纹线条有对比)
     var g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, 'rgba(139, 111, 71, 0.15)');
-    g.addColorStop(1, 'rgba(100, 75, 40, 0.55)');
+    g.addColorStop(0, currentBg[0]);
+    g.addColorStop(1, currentBg[1]);
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
 

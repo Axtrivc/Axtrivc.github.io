@@ -5,7 +5,8 @@
  * "© 2026 By ɐ ℒℯℯ" copyright 文字浮在水面上。
  *
  * - canvas: 多层正弦波 + 点击涟漪 + 鼠标扰动
- * - 颜色: 暖棕主题适配(与 #8B6F47/#faf8f5 呼应)
+ * - 颜色: 全主题适配(footer/提示文字/copyright 均跟随 --footer-* CSS 变量,
+ *   波浪与画布渐变色在 axtrivc-river.js 内按主题切换)
  * - IntersectionObserver: 只在视口内才动画
  * - 不修改 butterfly 模板,纯 after_render:html 注入
  */
@@ -24,19 +25,20 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
   var css = `
 <style id="axtrivc-river-css">
-/* ── Footer 整体改造: 去白底, 暖棕无缝融合 ──
- * #footer 默认白色背景($light-blue), 改为米色与页面主体一致
+/* ── Footer 整体改造: 背景跟随主题, river 无缝融合 ──
+ * #footer 默认白色背景($light-blue), 改为主题 footer 色(--footer-bg)
  * river-stage 无圆角, 直接衔接 footer 底部, 形成一体感
  */
 
-/* ① footer 白底 → 米色暖棕, padding-bottom=0 让 river 紧贴底边 */
+/* ① footer 背景跟随主题(--footer-bg 由 theme-system.js 按主题设置),
+ *    padding-bottom=0 让 river 紧贴底边 */
 #footer {
-  background-color: #faf8f5 !important;
+  background-color: var(--footer-bg, #faf8f5) !important;
   background-image: none !important;
   padding-bottom: 0 !important;
 }
 /* ── Footer River Stage ──
- * 无圆角, 与 footer 融为一体, 暖棕渐变水面
+ * 无圆角, 与 footer 融为一体, 水面渐变跟随主题(--footer-river-top/mid/bottom)
  * river 在 footer 内部紧贴底边, 由 body padding-bottom 把 footer 抬到 music-bar 顶部 */
 .footer-other {
   background-color: transparent !important;
@@ -67,7 +69,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
   top: 12px;
   right: 18px;
   z-index: 2;
-  color: rgba(120, 90, 55, 0.65);
+  color: var(--footer-river-hint, rgba(120, 90, 55, 0.65));
   font-size: 12px;
   font-weight: 300;
   letter-spacing: 0.05em;
@@ -91,7 +93,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
   font-size: 13px;
   font-weight: 300;
   letter-spacing: 0.08em;
-  color: rgba(70, 50, 25, 0.5);
+  color: var(--footer-river-text, rgba(70, 50, 25, 0.5));
   text-shadow: 0 1px 3px rgba(255, 255, 255, 0.4);
   pointer-events: none;
   user-select: none;
@@ -115,12 +117,12 @@ body .footer-other > .footer-copyright { display: none !important; }
   }
 }
 
-/* ② 防止上滑白屏: html/body 底部也用米色兜底 */
+/* ② 防止上滑白屏: html/body 底部用主题 footer 色兜底, 与 river 无缝衔接 */
 html {
-  background-color: #faf8f5 !important;
+  background-color: var(--footer-bg, #faf8f5) !important;
 }
 body {
-  background-color: #faf8f5 !important;
+  background-color: var(--footer-bg, #faf8f5) !important;
 }
 </style>
 `;
@@ -134,7 +136,7 @@ body {
 `;
 
   var js = `
-<script src="/js/axtrivc-river.js?v=1"></script>
+<script src="/js/axtrivc-river.js?v=2"></script>
 `;
 
   // CSS 注入到 </head> 前

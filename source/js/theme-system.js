@@ -198,6 +198,15 @@
     if (t.footerRiverTop)    document.documentElement.style.setProperty('--footer-river-top', t.footerRiverTop);
     if (t.footerRiverMid)    document.documentElement.style.setProperty('--footer-river-mid', t.footerRiverMid);
     if (t.footerRiverBottom) document.documentElement.style.setProperty('--footer-river-bottom', t.footerRiverBottom);
+    // footer river 提示文字 / copyright 颜色: 跟随主题 heading 色(hex → rgba)
+    if (t.heading) {
+      var hm = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(t.heading);
+      if (hm) {
+        var hrgb = parseInt(hm[1], 16) + ', ' + parseInt(hm[2], 16) + ', ' + parseInt(hm[3], 16);
+        document.documentElement.style.setProperty('--footer-river-text', 'rgba(' + hrgb + ', 0.5)');
+        document.documentElement.style.setProperty('--footer-river-hint', 'rgba(' + hrgb + ', 0.6)');
+      }
+    }
     window.dispatchEvent(new CustomEvent('themechange', { detail: { id: themeId, theme: t } }));
 
     // Music bar theme adaptation
