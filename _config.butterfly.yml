@@ -14,11 +14,11 @@ menu:
   Archives: /archives/ || fas fa-archive
   Tags: /tags/ || fas fa-tags
   Categories: /categories/ || fas fa-folder-open
-  西班牙语: /espanol/ || fas fa-language
-  足球日报: /football/ || fas fa-futbol
-  歌单: /music/ || fas fa-music
-  留言板: /guestbook/ || fas fa-comment-dots
-  工具箱: /tools/ || fas fa-tools
+  Español: /espanol/ || fas fa-language
+  Football: /football/ || fas fa-futbol
+  Music: /music/ || fas fa-music
+  Guestbook: /guestbook/ || fas fa-comment-dots
+  Tools: /tools/ || fas fa-tools
 
 # Code Blocks
 code_blocks:
