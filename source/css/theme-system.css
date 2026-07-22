@@ -35,6 +35,25 @@ body:not(.hero-page-active) #page-header.post-bg {
   min-height: 220px !important;
 }
 
+/* 2026-07-22 修复：文章页标题/meta 隐形
+   header 背景已在上方改透明，但 Butterfly 的 #post-info 仍是为深色 top_img
+   设计的白字标题(#FFFFFF) + 浅灰 meta(#EEEEEE)，白底页面上完全/几乎看不见。
+   改为跟随主题的深色系（标题 --theme-heading，meta --theme-secondary-current）。 */
+#page-header.post-bg #post-info .post-title {
+  color: var(--theme-heading, #1a1a1a) !important;
+  text-shadow: none !important;
+}
+#page-header.post-bg #post-info #post-meta,
+#page-header.post-bg #post-info #post-meta span,
+#page-header.post-bg #post-info #post-meta time,
+#page-header.post-bg #post-info #post-meta i {
+  color: var(--theme-secondary-current, #7A7A7A) !important;
+  text-shadow: none !important;
+}
+#page-header.post-bg #post-info #post-meta a {
+  color: var(--theme-accent-current, #07C160) !important;
+}
+
 /* Hide Butterfly dark mode toggle */
 #toggle-sidebar,
 #darkmode_button,

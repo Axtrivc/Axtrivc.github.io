@@ -83,7 +83,7 @@ WC_CSS = """:root {
 body { margin:0; background:var(--bg-page); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:var(--color-body); font-size:14px; }
 .wc-container { max-width:680px; margin:0 auto; padding:0; }
 .wc-header { background:var(--header-bg); color:#fff; padding:24px 20px; text-align:center; }
-.wc-header h1 { margin:0; font-size:22px; font-weight:700; }
+.wc-header h1 { margin:0; font-size:22px; font-weight:700; color:#fff; }
 .wc-header .sub { margin-top:4px; font-size:12px; opacity:0.8; }
 .wc-header .flag-circle { width:36px; height:36px; border-radius:50%; vertical-align:middle; margin-right:8px; }
 .wc-section { background:var(--bg-card); border-radius:var(--radius-card); margin:12px 0; overflow:hidden; }
@@ -506,8 +506,16 @@ def wc_news_card(item: dict) -> str:
     pub_date = item.get('pub_date', '')
     thumb = item.get('image', '')
     source_color = '#00C853'  # 默认绿色
-    thumb_html = f'<img class="wc-news-thumb" src="{thumb}" alt="">' if thumb else '<div class="wc-news-thumb"></div>'
-    return f"""<div class="wc-news-card">{thumb_html}<div class="wc-news-body"><a href="{link}" style="text-decoration:none;"><p class="wc-news-title">{title}</p></a><div class="wc-news-meta"><span class="wc-news-source">{source}</span> • {pub_date}</div></div></div>"""
+    thumb_html = f'<img class="wc-news-thumb" src="{thumb}" alt="">' if thumb else ''
+    # 来源/日期都可能为空，只拼接非空部分，避免出现孤立的 "•"
+    if source and pub_date:
+        meta_inner = f'<span class="wc-news-source">{source}</span> • {pub_date}'
+    elif source:
+        meta_inner = f'<span class="wc-news-source">{source}</span>'
+    else:
+        meta_inner = pub_date
+    meta_html = f'<div class="wc-news-meta">{meta_inner}</div>' if meta_inner else ''
+    return f"""<div class="wc-news-card">{thumb_html}<div class="wc-news-body"><a href="{link}" style="text-decoration:none;"><p class="wc-news-title">{title}</p></a>{meta_html}</div></div>"""
 
 def format_match_row(m: dict) -> str:
     home, away = get_team_names(m)
