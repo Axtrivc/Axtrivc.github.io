@@ -51,13 +51,16 @@ body:not(.hero-page-active) #page-header.post-bg {
   bottom: -2px; left: 50% !important;
   transform: translateX(-50%) !important;
   width: 0; height: 2px;
-  background: var(--theme-accent, #07C160) !important;
+  background: var(--theme-accent-current, #07C160) !important;
   border-radius: 1px;
   transition: width 0.25s ease, background 0.45s ease;
 }
 #nav-theme-trigger:hover::after { width: 80% !important; }
 
-/* 全局导航菜单下划线 - 跟随主题主色，但排除 Theme 按钮（避免覆盖其居中定位） */
+/* 全局导航菜单下划线 - 跟随主题主色，但排除 Theme 按钮（避免覆盖其居中定位）
+   注：使用 --theme-accent-current（不是 --theme-accent legacy），
+   保证 CSS 解析初期 JS 尚未 setProperty 时 fallback 到 #07C160 也至少等于
+   旧 var 的语义；JS 跑完后会平滑切换到当前主题色。 */
 #menus .menus_item a:not(#nav-theme-trigger),
 #nav a.site-page:not(#nav-theme-trigger),
 .menus_items a:not(#nav-theme-trigger) {
@@ -66,13 +69,50 @@ body:not(.hero-page-active) #page-header.post-bg {
 #menus .menus_item a:not(#nav-theme-trigger)::after,
 #nav a.site-page:not(#nav-theme-trigger)::after,
 .menus_items a:not(#nav-theme-trigger)::after {
-  background: var(--theme-accent, #07C160) !important;
+  background: var(--theme-accent-current, #07C160) !important;
   transition: background 0.45s ease;
 }
 /* Butterfly 原生下划线选择器兼容 */
 #menus .menus_item:hover > a:not(#nav-theme-trigger)::after,
 .menus_item:hover > a.site-page:not(#nav-theme-trigger)::after {
-  background: var(--theme-accent, #07C160) !important;
+  background: var(--theme-accent-current, #07C160) !important;
+}
+
+/* ═══ 2026-06-27 修复：active menu 下划线不跟主题 ═══
+   根因 1：上面 --theme-accent → --theme-accent-current 改完，JS 未跑时 underline
+            颜色 fallback 到 #07C160，但 JS 一跑就 OK，理论上不应持久绿。
+   根因 2（真正的）：Butterfly 默认 underline 是 hover 触发 + 渐变色 brown，
+            theme-system.css 之前的覆盖虽然 specificty 够，但用了 legacy --theme-accent
+            （仅在 applyTheme 内设置），CSS 解析初期变量未定义 → fallback #07C160。
+            如果 JS 异步加载慢或 theme 切换瞬态，underline 会"卡"在绿色。
+   修复：
+     a) 上面已把 --theme-accent 改 --theme-accent-current（更早 setProperty）
+     b) 这里加 body 前缀的更高优先级兜底，覆盖所有可能的 active/select 类
+     c) 用 ID 选择器升一级 specificity，确保压过 Butterfly 原生规则 */
+body #page-header #nav #menus .menus_item a::after,
+body #page-header #nav #menus .menus_items a::after,
+body #page-header #nav a.site-page::after,
+body #nav .menus_item a::after,
+body #nav a.site-page::after {
+  background-color: var(--theme-accent-current, #07C160) !important;
+  transition: background-color 0.45s ease !important;
+}
+body #page-header #nav #menus .menus_item:hover a::after,
+body #page-header #nav #menus .menus_items a:hover::after,
+body #page-header #nav a.site-page:hover::after,
+body #nav .menus_item:hover a::after,
+body #nav a.site-page:hover::after {
+  background-color: var(--theme-accent-current, #07C160) !important;
+}
+/* 防御：覆盖 Butterfly 未来版本可能引入的 .select_parent / .select-child / .menus_item.select
+   即使本仓库 5.5.4 没有这些类，提前兜底避免升级后回归 */
+body #nav .select_parent > a::after,
+body #nav .select-child a::after,
+body #nav .menus_item.select a::after,
+body #nav .menus_item.select > a::after {
+  background: var(--theme-accent-current, #07C160) !important;
+  background-color: var(--theme-accent-current, #07C160) !important;
+  border-color: var(--theme-accent-current, #07C160) !important;
 }
 
 /* Panel overlay */
@@ -261,6 +301,53 @@ footer {
 .pagination a.extend {
   background-color: var(--theme-card-current, #FFFFFF) !important;
   border-color: var(--theme-border-current, #E5E7EB) !important;
+  color: var(--theme-text-current, #222222) !important;
+}
+
+/* ══ v3.1 修复: 上一篇/下一篇 + 相关推荐 背景色 ══
+ * butterfly 默认 .pagination-related 用 $dark-black (#000000) 纯黑底
+ * 内部 .cover div 用 var(--default-bg-color) = #8b6f47 棕灰色 (主题色)
+ * 没有封面图时两层叠加 → 丑棕灰底
+ * 改为白底 + 主题色文字,跟文章卡片风格一致 */
+.pagination-related,
+#pagination .pagination-related {
+  background: var(--theme-card-current, #FFFFFF) !important;
+}
+/* 关键: 覆盖 .cover div 的棕灰背景 */
+.pagination-related .cover {
+  background: var(--theme-card-current, #FFFFFF) !important;
+  opacity: 0 !important;
+}
+.pagination-related .info,
+.pagination-related .info-1,
+.pagination-related .info-2 {
+  color: var(--theme-text-current, #222222) !important;
+}
+.pagination-related .info-1 .info-item-1 {
+  color: var(--theme-secondary-current, #7A7A7A) !important;
+}
+.pagination-related .info-1 .info-item-2 {
+  color: var(--theme-text-current, #222222) !important;
+}
+/* 相关推荐卡片: 白底 + 主题色文字 */
+.relatedPosts-list > a {
+  background: var(--theme-card-current, #FFFFFF) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+.relatedPosts-list > a .cover {
+  background: var(--theme-card-current, #FFFFFF) !important;
+  opacity: 0 !important;
+}
+.relatedPosts-list > a .info,
+.relatedPosts-list > a .info-1,
+.relatedPosts-list > a .info-2 {
+  color: var(--theme-text-current, #222222) !important;
+}
+.relatedPosts-list > a .info-1 .info-item-1 {
+  color: var(--theme-secondary-current, #7A7A7A) !important;
+}
+/* 相关推荐标题 */
+.relatedPosts > .headline {
   color: var(--theme-text-current, #222222) !important;
 }
 

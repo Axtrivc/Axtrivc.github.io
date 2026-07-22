@@ -16,7 +16,9 @@
       colors: ['#FFFFFF', '#07C160', '#FA5151', '#F7F7F7', '#191919', '#7A7A7A'],
       bg: '#FFFFFF', body: '#FFFFFF', nav: 'rgba(255,255,255,0.96)', card: '#FFFFFF',
       text: '#191919', heading: '#0A3D2A', secondary: '#7A7A7A', accent: '#07C160',
-      border: '#EDEDED', pageHeader: '#FFFFFF', navText: '#191919', navTextHover: '#07C160'
+      border: '#EDEDED', pageHeader: '#FFFFFF', navText: '#191919', navTextHover: '#07C160',
+      footerBg: '#F2FBF5',
+      footerRiverTop: '#F0F5E8', footerRiverMid: '#D8E8C8', footerRiverBottom: '#A8D4A0'
     },
     // === 新增方案 B：清晨湖蓝（年轻活力） ===
     'lake-blue': {
@@ -24,7 +26,9 @@
       colors: ['#F4FBFF', '#10AEFF', '#FF976A', '#FFFFFF', '#0C447C', '#5A9EC9'],
       bg: '#F4FBFF', body: '#F4FBFF', nav: 'rgba(244,251,255,0.95)', card: '#FFFFFF',
       text: '#191919', heading: '#0C447C', secondary: '#5A9EC9', accent: '#10AEFF',
-      border: 'rgba(16,174,255,0.18)', pageHeader: '#E6F5FF', navText: '#0C447C', navTextHover: '#10AEFF'
+      border: 'rgba(16,174,255,0.18)', pageHeader: '#E6F5FF', navText: '#0C447C', navTextHover: '#10AEFF',
+      footerBg: '#E6F5FF',
+      footerRiverTop: '#E8F2FA', footerRiverMid: '#B8D8EE', footerRiverBottom: '#88B8D8'
     },
     // === 新增方案 C：雾霾蓝灰（沉稳） ===
     'haze-blue': {
@@ -32,7 +36,9 @@
       colors: ['#FAFBFC', '#4A5568', '#B85C5C', '#FFFFFF', '#2D3748', '#718096'],
       bg: '#FAFBFC', body: '#FAFBFC', nav: 'rgba(250,251,252,0.95)', card: '#FFFFFF',
       text: '#2D3748', heading: '#2D3748', secondary: '#718096', accent: '#4A5568',
-      border: '#EAECEF', pageHeader: '#F0F2F5', navText: '#2D3748', navTextHover: '#4A5568'
+      border: '#EAECEF', pageHeader: '#F0F2F5', navText: '#2D3748', navTextHover: '#4A5568',
+      footerBg: '#F0F2F5',
+      footerRiverTop: '#ECEEF2', footerRiverMid: '#D2D6DE', footerRiverBottom: '#AEB4C0'
     },
     // === 新增方案 D：米色升级版（扁平化米色） ===
     'beige-lite': {
@@ -40,7 +46,9 @@
       colors: ['#FFFCF5', '#8B6F47', '#C4A96A', '#FFFFFF', '#3A2A1A', '#9A8866'],
       bg: '#FFFCF5', body: '#FFFCF5', nav: 'rgba(255,252,245,0.96)', card: '#FFFFFF',
       text: '#3A2A1A', heading: '#3A2A1A', secondary: '#9A8866', accent: '#8B6F47',
-      border: '#EFE8DA', pageHeader: '#FFFCF5', navText: '#3A2A1A', navTextHover: '#8B6F47'
+      border: '#EFE8DA', pageHeader: '#FFFCF5', navText: '#3A2A1A', navTextHover: '#8B6F47',
+      footerBg: '#FAF8F5',
+      footerRiverTop: '#EFE8DC', footerRiverMid: '#E8D9C0', footerRiverBottom: '#D4BC96'
     },
     // === 新增方案 E：柠檬黄 + 深靛蓝（极简时尚撞色） ===
     'lemon-indigo': {
@@ -48,7 +56,9 @@
       colors: ['#FFFFFF', '#1E3A8A', '#F5C518', '#FAFAFA', '#1E3A8A', '#4A5568'],
       bg: '#FAFAFA', body: '#FAFAFA', nav: 'rgba(255,255,255,0.97)', card: '#FFFFFF',
       text: '#1E3A8A', heading: '#1E3A8A', secondary: '#4A5568', accent: '#F5C518',
-      border: '#C7D2FE', pageHeader: '#FFFFFF', navText: '#1E3A8A', navTextHover: '#B45309'
+      border: '#C7D2FE', pageHeader: '#FFFFFF', navText: '#1E3A8A', navTextHover: '#B45309',
+      footerBg: '#F6F8FE',
+      footerRiverTop: '#EEF0F8', footerRiverMid: '#D2D8EE', footerRiverBottom: '#A8B4D8'
     }
   };
 
@@ -184,6 +194,11 @@
     document.documentElement.style.setProperty('--theme-border-current', t.border);
     document.documentElement.style.setProperty('--theme-card-current', t.card);
     document.documentElement.style.setProperty('--theme-body-current', t.body);
+    if (t.footerBg)          document.documentElement.style.setProperty('--footer-bg', t.footerBg);
+    if (t.footerRiverTop)    document.documentElement.style.setProperty('--footer-river-top', t.footerRiverTop);
+    if (t.footerRiverMid)    document.documentElement.style.setProperty('--footer-river-mid', t.footerRiverMid);
+    if (t.footerRiverBottom) document.documentElement.style.setProperty('--footer-river-bottom', t.footerRiverBottom);
+    window.dispatchEvent(new CustomEvent('themechange', { detail: { id: themeId, theme: t } }));
 
     // Music bar theme adaptation
     var musicBar = document.getElementById('music-bar');
