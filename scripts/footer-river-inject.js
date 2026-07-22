@@ -30,15 +30,18 @@ hexo.extend.filter.register('after_render:html', function (data) {
  * river-stage 无圆角, 直接衔接 footer 底部, 形成一体感
  */
 
-/* ① footer 背景跟随主题(--footer-bg 由 theme-system.js 按主题设置),
+/* ① footer 背景 = 页面色 → footer 色的连续渐变(--page-bg/--footer-bg 由
+ *    theme-system.js 按主题设置), 与上方内容区和下方 river 都无色阶断点;
  *    padding-bottom=0 让 river 紧贴底边 */
 #footer {
-  background-color: var(--footer-bg, #faf8f5) !important;
-  background-image: none !important;
+  background: linear-gradient(180deg,
+    var(--page-bg, #ffffff) 0%,
+    var(--footer-bg, #faf8f5) 100%) !important;
   padding-bottom: 0 !important;
 }
 /* ── Footer River Stage ──
- * 无圆角, 与 footer 融为一体, 水面渐变跟随主题(--footer-river-top/mid/bottom)
+ * 无圆角, 与 footer 融为一体: 渐变起点直接用 --footer-bg(= footer 底部颜色),
+ * 保证 footer → river 衔接处零色差, 再向下过渡到 mid/bottom 水色。
  * river 在 footer 内部紧贴底边, 由 body padding-bottom 把 footer 抬到 music-bar 顶部 */
 .footer-other {
   background-color: transparent !important;
@@ -53,8 +56,8 @@ hexo.extend.filter.register('after_render:html', function (data) {
   margin-bottom: 0;
   padding-top: 0;
   background: linear-gradient(180deg,
-    var(--footer-river-top, #efe8dc) 0%,
-    var(--footer-river-mid, #e8d9c0) 40%,
+    var(--footer-bg, #faf8f5) 0%,
+    var(--footer-river-mid, #e8d9c0) 45%,
     var(--footer-river-bottom, #d4bc96) 100%);
   overflow: hidden;
   cursor: crosshair;
@@ -136,7 +139,7 @@ body {
 `;
 
   var js = `
-<script src="/js/axtrivc-river.js?v=2"></script>
+<script src="/js/axtrivc-river.js?v=3"></script>
 `;
 
   // CSS 注入到 </head> 前

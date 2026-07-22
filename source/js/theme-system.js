@@ -194,6 +194,7 @@
     document.documentElement.style.setProperty('--theme-border-current', t.border);
     document.documentElement.style.setProperty('--theme-card-current', t.card);
     document.documentElement.style.setProperty('--theme-body-current', t.body);
+    if (t.bg)                document.documentElement.style.setProperty('--page-bg', t.bg);
     if (t.footerBg)          document.documentElement.style.setProperty('--footer-bg', t.footerBg);
     if (t.footerRiverTop)    document.documentElement.style.setProperty('--footer-river-top', t.footerRiverTop);
     if (t.footerRiverMid)    document.documentElement.style.setProperty('--footer-river-mid', t.footerRiverMid);

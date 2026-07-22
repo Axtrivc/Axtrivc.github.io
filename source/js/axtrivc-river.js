@@ -178,8 +178,10 @@
     ctx.clearRect(0, 0, W, H);
 
     // 主题适配的水深渐变背景(上淡下深, 让波纹线条有对比)
+    // 顶部先透明淡入(0 → 35%), 避免与 footer 背景衔接处出现色阶断线
     var g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, currentBg[0]);
+    g.addColorStop(0, currentBg[0].replace(/[\d.]+\s*\)$/, '0)'));
+    g.addColorStop(0.35, currentBg[0]);
     g.addColorStop(1, currentBg[1]);
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
