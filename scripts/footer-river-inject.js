@@ -30,13 +30,17 @@ hexo.extend.filter.register('after_render:html', function (data) {
  * river-stage 无圆角, 直接衔接 footer 底部, 形成一体感
  */
 
-/* ① footer 背景 = 页面色 → footer 色的连续渐变(--page-bg/--footer-bg 由
- *    theme-system.js 按主题设置), 与上方内容区和下方 river 都无色阶断点;
+/* ① footer 整体 = 一块连续渐变(仿 river.ai 页脚的一体色块):
+ *    从页面色 --page-bg 一路渐到水色 --footer-river-bottom,
+ *    footer 内容与 river 泡在同一块渐变里, 不存在"白色板块 vs 河流"的分界线。
+ *    river-stage 自身背景透明, 不再单独渐变(2026-07-22 v3);
  *    padding-bottom=0 让 river 紧贴底边 */
 #footer {
   background: linear-gradient(180deg,
     var(--page-bg, #ffffff) 0%,
-    var(--footer-bg, #faf8f5) 100%) !important;
+    var(--footer-river-top, #efe8dc) 55%,
+    var(--footer-river-mid, #e8d9c0) 82%,
+    var(--footer-river-bottom, #d4bc96) 100%) !important;
   padding-bottom: 0 !important;
 }
 /* ── Footer River Stage ──
@@ -55,13 +59,9 @@ hexo.extend.filter.register('after_render:html', function (data) {
   margin-top: 0;
   margin-bottom: 0;
   padding-top: 0;
-  /* 四段渐进: footer 底色先稳一段, 再缓慢过渡到 mid/bottom 水色,
-   * 消除 footer → river 衔接处的色带感 */
-  background: linear-gradient(180deg,
-    var(--footer-bg, #faf8f5) 0%,
-    var(--footer-river-top, #efe8dc) 28%,
-    var(--footer-river-mid, #e8d9c0) 62%,
-    var(--footer-river-bottom, #d4bc96) 100%);
+  /* v3: 背景透明, 颜色完全由 #footer 的一体渐变提供,
+   * stage 与 footer 内容之间没有任何边界 */
+  background: transparent;
   overflow: hidden;
   cursor: crosshair;
 }
@@ -127,11 +127,11 @@ body .footer-other > .footer-copyright { display: none !important; }
   }
 }
 
-/* ② 防止上滑白屏: html 底部用主题 footer 色兜底(overscroll 时与 river 衔接);
- *    body 用页面色 --page-bg — 内容列两侧边距与页面同色,
- *    避免 footer 顶部交界处出现 边距/footer/内容列/river 四色拼接 */
+/* ② 防止上滑白屏: html 底部用水色最深处 --footer-river-bottom 兜底
+ *    (overscroll 时与 river 底边同色); body 用页面色 --page-bg —
+ *    内容列两侧边距与页面同色, 避免交界处多色拼接 */
 html {
-  background-color: var(--footer-bg, #faf8f5) !important;
+  background-color: var(--footer-river-bottom, #d4bc96) !important;
 }
 body {
   background-color: var(--page-bg, #ffffff) !important;

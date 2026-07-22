@@ -7,22 +7,20 @@
   body { margin: 0; background: #fff; font-family: "Noto Serif SC", serif; }
   .label { padding: 8px 18px; font-size: 14px; color: #333; }
   /* ↓ 与 footer-river-inject.js 注入的 CSS 保持一致 */
-  /* 模拟 #footer: 页面色 → footer 色连续渐变(对应 inject 里 #footer 的规则) */
+  /* 模拟整个 #footer: 页面色 → 水色 一块连续渐变(v3, 仿 river.ai 一体色块) */
   .footer-sim {
-    height: 220px;
+    padding-top: 140px; /* 模拟 footer 内容区高度 */
     background: linear-gradient(180deg,
       var(--page-bg, #ffffff) 0%,
-      var(--footer-bg, #faf8f5) 100%);
+      var(--footer-river-top, #efe8dc) 55%,
+      var(--footer-river-mid, #e8d9c0) 82%,
+      var(--footer-river-bottom, #d4bc96) 100%);
   }
   .axtrivc-river-stage {
     position: relative;
     width: 100%;
     height: 160px;
-    background: linear-gradient(180deg,
-      var(--footer-bg, #faf8f5) 0%,
-      var(--footer-river-top, #efe8dc) 28%,
-      var(--footer-river-mid, #e8d9c0) 62%,
-      var(--footer-river-bottom, #d4bc96) 100%);
+    background: transparent;
     overflow: hidden;
   }
   .axtrivc-river-stage canvas {
@@ -46,11 +44,12 @@
 </head>
 <body>
 <div class="label" id="label"></div>
-<div class="footer-sim"></div>
-<div class="axtrivc-river-stage" id="axtrivcRiverStage">
-  <span class="axtrivc-river-hint">点击水面 →</span>
-  <canvas id="axtrivcRiverCanvas"></canvas>
-  <span class="axtrivc-copyright">&copy; 2026 By &nbsp;ɐ&thinsp;ℒℯℯ</span>
+<div class="footer-sim">
+  <div class="axtrivc-river-stage" id="axtrivcRiverStage">
+    <span class="axtrivc-river-hint">点击水面 →</span>
+    <canvas id="axtrivcRiverCanvas"></canvas>
+    <span class="axtrivc-copyright">&copy; 2026 By &nbsp;ɐ&thinsp;ℒℯℯ</span>
+  </div>
 </div>
 <script>
   // 模拟 theme-system.js: 按 ?theme= 设置 --page-bg / --footer-* 变量

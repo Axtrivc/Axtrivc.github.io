@@ -89,33 +89,19 @@ hexo.extend.filter.register('after_render:html', function (data) {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-/* ── hero 底部 → 页面内容 渐进过渡 v2（2026-07-22）──
- * v1 用 ::after 白色渐变盖在动画上方(用户反馈: 像一块白布遮住动画)。
- * v2: 让动画本身向下渐隐 — shell 底色换成 --page-bg,
- * 动画三层(placeholder/canvas/still)用 mask-image 从 55% 渐隐到 96% 全透明,
- * 动画"消散"进页面色, 与 main 的 --page-bg 无缝衔接。
- * hero-text(z3)/typed-wrap(z5) 不加 mask, 左下角文字不受影响。
- * 但渐隐后文字落在浅色区, 白字会看不清 → 文字改深色。 */
-.hero-shell {
-  background: var(--page-bg, #ffffff);
-}
-.hero-shell > section.hero {
-  background: transparent;
-}
-.hero-shell .hero-placeholder,
-.hero-shell canvas.hero-ascii,
-.hero-shell .hero-still {
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 96%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 96%);
-}
-.hero-shell .hero-text,
-.hero-shell .hero-text-headline {
-  color: rgba(23, 32, 51, 0.82) !important;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
-}
-.hero-shell .hero-typed-wrap {
-  color: rgba(23, 32, 51, 0.78);
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.45);
+/* ── hero 底部 → 页面内容 渐进过渡 v3（2026-07-22）──
+ * 动画本身保持完整, 不在动画上盖任何遮罩/mask。
+ * 在 hero-shell 下方接一段独立的 深蓝 → 页面白 渐变带(.hero-fade),
+ * 起点 #16141B 取自 canvas 底部真实像素色, 与动画底边零色差衔接。 */
+.hero-fade {
+  height: clamp(160px, 22vh, 280px);
+  background: linear-gradient(180deg,
+    #16141B 0%,
+    #12295E 28%,
+    #2F5698 55%,
+    #7E9CC4 78%,
+    var(--page-bg, #ffffff) 100%);
+  pointer-events: none;
 }
 
 /* canvas：独立 GPU 层 */
@@ -366,7 +352,7 @@ body.hero-released {
 </div>
 `;
 
-  const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${typedHtml}\n</div>`;
+  const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${typedHtml}\n</div>\n<div class="hero-fade" aria-hidden="true"></div>`;
 
   content = content.replace(
     '</header>',
