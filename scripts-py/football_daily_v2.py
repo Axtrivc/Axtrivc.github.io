@@ -10,6 +10,9 @@ v5 重构:
 - 修复: 关注球队 ESPN ID 失效 (81/78/1593/788 → 83/1068/20232/164)
 - 图片: 队徽 ESPN CDN teamlogos/500/{id}.png (浏览器 UA 可直链),
         联赛徽 leaguelogos/500/{lid}.png, 新闻图 Sky enclosure (365dm CDN)
+- lazyload 共存: Butterfly 的 post_lazyload 会把所有 img 改写为 1x1 占位 + data-lazy-src,
+        由 vanilla-lazyload 滚动触发回载; fm 图片必须 loading="eager" — 原生 lazy 会让
+        浏览器延迟发请求, 快滚时被 vanilla-lazyload 的 cancel_on_exit 取消, 大图永远空白
 - 比赛覆盖: get_daily_schedule 合并关注球队当/昨日比赛 (MLS 等不在 daily 接口的赛事)
 
 输出:
@@ -69,7 +72,7 @@ COMP_MAP = {
     'uefa.europa':              ('欧联', None),
     'fifa.world':               ('世界杯', None),
     'serie-a-brazil':           ('巴甲', None),
-    'liga-profesional-argentina': ('阿甲', None),
+    'liga-argentina':             ('阿甲', None),
     'eng.championship':         ('英冠', None),
     'fa-cup':                   ('足总杯', None),
     'club-world-cup':           ('世俱杯', None),
@@ -120,8 +123,13 @@ SOURCE_COLORS = {
 
 # ==================== 视觉样式 (FotMob 浅色卡片风) ====================
 # 作用域限定在 .fm-container 内, 不污染博客全局
+# 注意: Butterfly 的 .container img 会给文章内所有 img 注入 display:block + margin:0 auto 20px,
+# 特异性与 .fm-* 类打平, 靠文档顺序 (本文 style 块在 body 更靠后) 压制 — .fm-container img{margin:0}
+# 是必须存在的防线, 删掉会导致联赛徽标居中/队徽错位/缩略图偏上
 FM_CSS = """.fm-container{--fm-bg:#F3F5F7;--fm-card:#FFFFFF;--fm-text:#101828;--fm-sub:#667085;--fm-line:#EEF2F5;--fm-green:#00A651;--fm-green-d:#00843D;--fm-red:#E5484D;max-width:720px;margin:0 auto;background:var(--fm-bg);border-radius:20px;padding:14px 14px 6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',sans-serif;color:var(--fm-text);font-size:14px;line-height:1.5;box-shadow:0 10px 34px rgba(16,24,40,.10)}
 .fm-container a{text-decoration:none;color:inherit}
+.fm-container a:hover{text-decoration:none}
+.fm-container img{margin:0}
 .fm-card{background:var(--fm-card);border-radius:16px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.05)}
 .fm-hero{padding:20px 18px 16px}
 .fm-kicker{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--fm-green)}
@@ -426,7 +434,7 @@ def logo_html(team_id, abbr='', size=26):
     if team_id:
         return (f'<span class="fm-logo">{fb}'
                 f'<img src="{ESPN_TEAM_LOGO}/{team_id}.png" alt="{esc(abbr)}" '
-                f'loading="lazy" onerror="this.remove()"></span>')
+                f'loading="eager" onerror="this.remove()"></span>')
     return f'<span class="fm-logo">{fb}</span>'
 
 def comp_display(m):
@@ -513,7 +521,7 @@ def fm_match_block(events, limit=14):
     for key in order:
         evs = groups[key]
         cn, lid = comp_display(evs[0])
-        logo = (f'<img src="{ESPN_LEAGUE_LOGO}/{lid}.png" alt="" loading="lazy" '
+        logo = (f'<img src="{ESPN_LEAGUE_LOGO}/{lid}.png" alt="" loading="eager" '
                 f'onerror="this.remove()">' ) if lid else ''
         out.append(f'<div class="fm-league">{logo}<span>{esc(cn)}</span></div>')
         out.extend(fm_match_row(e) for e in evs)
@@ -529,7 +537,7 @@ def fm_news_hero(item):
     title, _ = split_news_title(item)
     link = item.get('link', '#')
     img = item.get('image') or ''
-    img_html = (f'<img class="fm-heroimg" src="{esc(img)}" alt="" loading="lazy" '
+    img_html = (f'<img class="fm-heroimg" src="{esc(img)}" alt="" loading="eager" '
                 f'onerror="this.remove()">') if img else ''
     return (f'<div class="fm-card">{img_html}'
             f'<div class="fm-nbody"><div class="fm-t1"><a href="{esc(link)}">{esc(title)}</a></div>'
@@ -541,7 +549,7 @@ def fm_news_row(item):
     link = item.get('link', '#')
     img = item.get('image') or ''
     if img:
-        thumb = (f'<img class="fm-thumb" src="{esc(img)}" alt="" loading="lazy" '
+        thumb = (f'<img class="fm-thumb" src="{esc(img)}" alt="" loading="eager" '
                  f'onerror="this.outerHTML=\'<div class=fm-thumb-fb style=background:{SOURCE_COLORS.get(source, "#667085")}>{esc((source or "?")[:1].upper())}</div>\'">')
     else:
         color = SOURCE_COLORS.get(source, '#667085')
@@ -606,7 +614,7 @@ def fm_team_card(tid, info, events):
 
     form_row = f'<div class="fm-form">{form_html}</div>' if form_html else ''
     return (f'<div class="fm-team" style="background:{info["color"]}">'
-            f'<img src="{ESPN_TEAM_LOGO}/{tid}.png" alt="{esc(info["name"])}" loading="lazy" onerror="this.remove()">'
+            f'<img src="{ESPN_TEAM_LOGO}/{tid}.png" alt="{esc(info["name"])}" loading="eager" onerror="this.remove()">'
             f'<div class="nm">{esc(info["name"])}</div>{form_row}'
             f'<div class="nx">{next_html}</div></div>')
 

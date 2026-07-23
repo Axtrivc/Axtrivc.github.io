@@ -25,8 +25,9 @@ Hexo 7 + Butterfly 主题的个人博客,部署到 GitHub Pages(Axtrivc.github.i
   - 数据源: sports_skills CLI(ESPN 赛程) + Sky Sports 足球 RSS(`skysports.com/rss/11095`,feedparser 直解析拿 enclosure 配图,注意 12040 是综合体育频道别用错) + BBC/ESPN RSS(文字) + Google News(转会/球队动态)
   - 图片: 队徽 `a.espncdn.com/i/teamlogos/soccer/500/{teamId}.png`(浏览器 UA 可直链,curl 不带 UA 会 404),联赛徽 `leaguelogos/soccer/500/{lid}.png`,新闻图走 Sky 的 365dm CDN
   - 关键防线: **未赛 = 状态非 closed 且开球时间 > 当前时间**——数据源会把已踢完的比赛(如世界杯决赛)永久遗留为 not_started,只按状态过滤会把旧比赛当"下一场"展示;赛程按北京时间重新分桶(daily 接口按自身时区给日期会串天);daily 接口缺 MLS 等赛事,要用关注球队赛程合并补齐
+  - 主题共存防线: Butterfly 的 `.container img` 会给文章内所有 img 注入 `display:block;margin:0 auto 20px`(特异性与 `.fm-*` 打平,靠文档顺序压制),**`.fm-container img{margin:0}` 不可删**,否则联赛徽标居中/关注卡队徽错位/缩略图偏上;fm 图片必须 `loading="eager"`——主题 post_lazyload 会把 src 改写成 1x1 占位 + `data-lazy-src` 由 vanilla-lazyload 滚动回载,原生 lazy 会让浏览器延迟发请求,快滚时被其 `cancel_on_exit` 取消导致大图永久空白;联赛 id 以数据源实际为准(阿甲 = `liga-argentina`,写错 id 会让联赛名显示英文原文)
   - 关注球队 ESPN ID: 巴萨 83 / 皇马 86 / 马竞 1068 / 迈阿密国际 20232 / 西班牙 164(旧档里的 81/78/1593/788 全部失效,勿复用)
-  - 截图目检: `scripts-py/_shot_preview.py`(playwright + 系统 Edge,需先滚屏触发 lazy 图再截)
+  - 截图目检: `scripts-py/_shot_preview.py`(隔离预览);`scripts-py/_shot_public.py`(带主题真机渲染,需先 `node serve.js` 起 4000 端口,滚动需≥1s/屏模拟真人节奏,否则 lazyload 的 cancel_on_exit 会让 365dm 大图保持空白——截图假影非 bug)
 - `source/js/theme-system.js`:5 主题切换系统,`themechange` 事件 + `--footer-*` / `--theme-*-current` CSS 变量
 - footer 配色衔接规则: body 背景 = `--page-bg`(页面色,内容列与两侧边距同色), html 背景 = `--footer-river-bottom`(overscroll 兜底,与水色最深处同色), **#footer 整体是一块连续渐变** `--page-bg 0% → --footer-river-top 55% → --footer-river-mid 82% → --footer-river-bottom 100%`(仿 river.ai 一体色块), river-stage 背景透明融在其中, canvas 顶部 38% 渐隐让波纹浮现 — 不要给 river-stage 单独设背景,否则会出现分界线
 - 首页文章列表: `_config.butterfly.yml` 的 `index_layout: 6`(masonry) 会被 `theme-system.css` 末尾的 grid 规则覆盖为对齐双列(压掉 MasonryInfiniteGrid 的内联定位), 改布局时两边都要看
