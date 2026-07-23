@@ -83,7 +83,9 @@ hexo.extend.filter.register('after_render:html', function (data) {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background: #0E2F7E;
+  /* 底色 = 渐变带顶部兜底色: 羽化兜底时 canvas/placeholder 渐隐进这块底色,
+     与带顶(#0B1220 / 默认 stripBg)同色, 交界处无阶跃 */
+  background: #0B1220;
 }
 .hero-shell, .hero-shell * {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -121,6 +123,25 @@ hexo.extend.filter.register('after_render:html', function (data) {
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+}
+
+/* hero 底边羽化兜底：fade 延伸层证明「取样成功」前(body 无 hero-fade-live),
+   hero canvas/still/placeholder 底部 22% 渐隐, 露出 section.hero 底色 #0B1220
+   (= 渐变带顶部兜底色) —— 取样链一旦在用户会话里断掉(扩展注入拦截/驱动丢
+   缓冲/极老缓存), 带顶退回默认深色, 亮场景底边会顶出一条直线分界; 羽化后
+   任何失败路径都只剩软过渡, 结构上不可能出直线。
+   取样成功即摘除遮罩, 恢复镜面衔接的逐像素对齐。 */
+.hero-shell canvas.hero-ascii,
+.hero-shell img.hero-still,
+.hero-shell .hero-placeholder {
+  -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
+          mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
+}
+body.hero-fade-live .hero-shell canvas.hero-ascii,
+body.hero-fade-live .hero-shell img.hero-still,
+body.hero-fade-live .hero-shell .hero-placeholder {
+  -webkit-mask-image: none;
+          mask-image: none;
 }
 
 /* hero 内部文字：静态定位，无 transform 动画 */
@@ -541,6 +562,7 @@ body.hero-released {
     var charColor = 'rgb(170,195,230)';
     var pageBg = '#ffffff';
     var running = false, inView = true, timer = null;
+    var fadeLive = false;                // 首次取样成功后置位, 摘掉 hero 底边羽化
 
     function readPageBg() {
       var v = getComputedStyle(document.documentElement).getPropertyValue('--page-bg');
@@ -638,6 +660,8 @@ body.hero-released {
         streakCx.globalCompositeOperation = 'destination-out';
         streakCx.drawImage(maskCv, 0, 0);
         streakCx.globalCompositeOperation = 'source-over';
+        // 取样链路证明可用 → 摘除 hero 底边羽化兜底(见 CSS .hero-ascii mask-image)
+        if (!fadeLive) { fadeLive = true; document.body.classList.add('hero-fade-live'); }
       } catch (e) { /* 保持上一帧 */ }
     }
     // river-hero.js 每帧绘制后回调(同一任务, 缓冲保证有效)
