@@ -532,12 +532,12 @@ body.hero-released {
     var maskCv = document.createElement('canvas');
     var maskCx = maskCv.getContext('2d');
     var probeCv = document.createElement('canvas');
-    probeCv.width = 32; probeCv.height = 1;
+    probeCv.width = 64; probeCv.height = 1;
     var probeCx = probeCv.getContext('2d', { willReadFrequently: true });
 
     var W = 0, H = 0, dpr = 1, cols = 0, rows = 0;
     var seeds = null, phases = null;
-    var stripAvg = [11, 18, 32];       // #0B1220 兜底
+    var stripBg = [4, 6, 16];          // canvas 底边真实底色(暗部分位数), 兜底深 navy
     var charColor = 'rgb(170,195,230)';
     var pageBg = '#ffffff';
     var running = false, inView = true, timer = null;
@@ -595,33 +595,46 @@ body.hero-released {
       lastStreak = now;
       var sh = Math.max(2, Math.round(h * 0.004));
       try {
-        probeCx.clearRect(0, 0, 32, 1);
-        probeCx.drawImage(src, 0, h - sh, w, sh, 0, 0, 32, 1);
-        var d = probeCx.getImageData(0, 0, 32, 1).data;
-        var i, aS = 0, rS = 0, gS = 0, bS = 0;
-        for (i = 0; i < d.length; i += 4) { aS += d[i+3]; rS += d[i]; gS += d[i+1]; bS += d[i+2]; }
-        if (aS / 32 < 40) return;             // 缓冲已销毁 → 透明, 丢弃本帧
-        stripAvg = [rS / 32 | 0, gS / 32 | 0, bS / 32 | 0];
-        var lum = (stripAvg[0] * 2 + stripAvg[1] * 3 + stripAvg[2]) / 6;
-        var bc = 0, br = 0, bg = 0, bb = 0, l;
+        probeCx.clearRect(0, 0, 64, 1);
+        probeCx.drawImage(src, 0, h - sh, w, sh, 0, 0, 64, 1);
+        var d = probeCx.getImageData(0, 0, 64, 1).data;
+        var i, aS = 0;
+        for (i = 0; i < d.length; i += 4) aS += d[i+3];
+        if (aS / 64 < 40) return;             // 缓冲已销毁 → 透明, 丢弃本帧
+        // 按亮度分位拆 暗部(真实底色) / 亮部(粒子色):
+        // 衬底必须用暗部底色, 否则遮罩半擦除区会透出偏亮的均色, 像贴了层膜
+        var lums = [];
+        for (i = 0; i < d.length; i += 4) lums.push((d[i] * 2 + d[i+1] * 3 + d[i+2]) / 6);
+        lums.sort(function (a, b) { return a - b; });
+        var cut = lums[Math.floor(lums.length * 0.45)];   // 45 分位以下 = 底色
+        var dc = 0, dr = 0, dg = 0, db = 0, bc = 0, br = 0, bg = 0, bb = 0, l;
         for (i = 0; i < d.length; i += 4) {
           l = (d[i] * 2 + d[i+1] * 3 + d[i+2]) / 6;
-          if (l > lum + 32) { br += d[i]; bg += d[i+1]; bb += d[i+2]; bc++; }
+          if (l <= cut) { dr += d[i]; dg += d[i+1]; db += d[i+2]; dc++; }
+          else if (l > cut + 20) { br += d[i]; bg += d[i+1]; bb += d[i+2]; bc++; }
         }
+        if (dc > 0) stripBg = [dr / dc | 0, dg / dc | 0, db / dc | 0];
         if (bc > 0) charColor = 'rgb(' + (br / bc | 0) + ',' + (bg / bc | 0) + ',' + (bb / bc | 0) + ')';
         // 镜面延续层: 取样底边 mh 行(按动画显示比例换算, 纹理大小与动画一致),
         // 垂直翻转铺满渐变带 —— 带顶 = 动画底边那一行, 向下是动画底边以上的
         // 镜像, 星野/山体纹理无缝续入, 再由遮罩溶解成碎尾。
+        // hero canvas 仅 0.95 不透明(底下垫 placeholder 深蓝), 这里同样以
+        // 0.95 合成到 placeholder 底色 #15397A 上, 交界处颜色逐像素一致。
         var ch = src.clientHeight || 0;
         var mh = ch > 0 ? Math.round((H / dpr) * (h / ch)) : Math.round(h * 0.27);
         mh = Math.max(8, Math.min(h, mh));
         streakCx.globalCompositeOperation = 'source-over';
+        streakCx.globalAlpha = 1;
         streakCx.clearRect(0, 0, W, H);
+        streakCx.fillStyle = '#15397A';
+        streakCx.fillRect(0, 0, W, H);
         streakCx.save();
         streakCx.translate(0, H);
         streakCx.scale(1, -1);
+        streakCx.globalAlpha = 0.95;
         streakCx.drawImage(src, 0, h - mh, w, mh, 0, 0, W, H);
         streakCx.restore();
+        streakCx.globalAlpha = 1;
         streakCx.globalCompositeOperation = 'destination-out';
         streakCx.drawImage(maskCv, 0, 0);
         streakCx.globalCompositeOperation = 'source-over';
@@ -640,13 +653,20 @@ body.hero-released {
         var img = document.getElementById('heroStill');
         if (img && img.classList.contains('is-shown')) ingestFrame(img, now);
       }
-      // 1. 色彩衬底: 采样均色 → 动画夜色系 → page-bg
+      // 1. 色彩衬底: 顶部 22% 与 canvas 底边底色一致的平坦区(遮罩擦除不露色),
+      //    之后 → 动画夜色系 → page-bg。底色同样补 0.05 placeholder 提升,
+      //    与镜像暗部逐像素对齐。
+      var ub = [Math.round(stripBg[0] * 0.95 + 21 * 0.05),
+                Math.round(stripBg[1] * 0.95 + 57 * 0.05),
+                Math.round(stripBg[2] * 0.95 + 122 * 0.05)];
+      var bgCss = 'rgb(' + ub[0] + ',' + ub[1] + ',' + ub[2] + ')';
       var g = ctx.createLinearGradient(0, 0, 0, H);
-      g.addColorStop(0.00, 'rgb(' + stripAvg[0] + ',' + stripAvg[1] + ',' + stripAvg[2] + ')');
-      g.addColorStop(0.30, '#101E38');
-      g.addColorStop(0.52, '#1B3566');
-      g.addColorStop(0.74, '#46608E');
-      g.addColorStop(0.88, '#8BA7C6');
+      g.addColorStop(0.00, bgCss);
+      g.addColorStop(0.22, bgCss);
+      g.addColorStop(0.42, '#101E38');
+      g.addColorStop(0.60, '#1B3566');
+      g.addColorStop(0.76, '#46608E');
+      g.addColorStop(0.89, '#8BA7C6');
       g.addColorStop(1.00, pageBg);
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
