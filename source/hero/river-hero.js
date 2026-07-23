@@ -4577,6 +4577,7 @@
         gl.uniform1f(U.tod, 0.28);              // ~06:45 — warm low sun, just risen
         if (AA_LADDER.indexOf(4) >= 0) { AA.taps = 4; gl.uniform1f(U.aaN, 4); } // crisp still
         draw(cam.clock || 8.0);                 // render the frame…
+        if (window.__heroFrameHook) window.__heroFrameHook(canvas); // hero-fade 延伸层同步取样
         // Same synchronous task as the draw → the drawing buffer hasn't been
         // cleared yet (that happens at composite), so toDataURL captures it
         // even without preserveDrawingBuffer.
@@ -4845,6 +4846,8 @@
       cam.clock += cdt;
 
       gpuTimedDraw(cam.clock);
+      // 供 hero-fade 延伸层取样: 同一同步任务内缓冲尚未被合成清除(同 toDataURL 原理)
+      if (window.__heroFrameHook) window.__heroFrameHook(canvas);
       if (state === "live" && liveClockAnchored && (now - liveT0) >= HERO_LIVE_STOP_MS) {
         stopLiveHeroAfterCycle();
         return;

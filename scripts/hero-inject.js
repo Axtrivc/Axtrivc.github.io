@@ -89,20 +89,22 @@ hexo.extend.filter.register('after_render:html', function (data) {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-/* ── hero 底部 → 页面内容 渐进过渡 v4（2026-07-23）──
- * 动画本身保持完整, 不在动画上盖任何遮罩/mask。
- * 渐变带(.hero-fade)仍负责色彩衔接, 起点 #16141B 取自 canvas 底部真实像素色;
- * 其上叠加一层与 hero 同款 RAMP_ASCII 的字符 canvas(.hero-fade-ascii):
- * 顶部密度接续动画底边纹理, 向下逐渐稀疏变暗直至溶入页面底色,
- * 避免字符动画直接接一坨纯色。字符渲染/闪烁逻辑在下方 heroJs。 */
+/* ── hero 底部 → 页面内容 渐进过渡 v5（2026-07-23）──
+ * 渐变带(.hero-fade) = 动画自身的延伸, 不再是手调固定色带:
+ * JS 每帧(12fps)取 hero canvas 底边一条像素带, 垂直翻转拉伸铺满整条带
+ * —— 带顶与动画底边逐列同像素, 接缝天然消失; 再以「渐晕+噪声」
+ * destination-out 遮罩把条带向下溶解成碎尾。色彩衬底 = 底边采样均色 →
+ * 动画夜色系 → --page-bg(跟随主题)。取样失败时退回纯程序渐变。
+ * 下方 background 仅作无 JS / 首帧前的兜底, 渲染逻辑在下方 heroJs。 */
 .hero-fade {
   position: relative;
-  height: clamp(160px, 22vh, 280px);
+  height: clamp(200px, 30vh, 380px);
   background: linear-gradient(180deg,
-    #16141B 0%,
-    #12295E 28%,
-    #2F5698 55%,
-    #7E9CC4 78%,
+    #0B1220 0%,
+    #101E38 30%,
+    #1B3566 52%,
+    #46608E 74%,
+    #8BA7C6 88%,
     var(--page-bg, #ffffff) 100%);
   pointer-events: none;
 }
@@ -505,10 +507,13 @@ body.hero-released {
     typeLine();
   }
 
-  // ── hero-fade ASCII 溶解层（2026-07-23）──
-  // 渐变带叠加与 hero 同款 ramp 的字符纹理: 顶部密度接续动画底边,
-  // 向下逐渐稀疏变暗直至溶入页面底色, 低速闪烁保持与动画一致的"活"感。
-  (function initFadeAscii() {
+  // ── hero-fade 动画延续层 v5（2026-07-23）──
+  // 渐变 = 动画自身的延伸: 每帧取 hero canvas 底边一条像素带, 垂直翻转
+  // 拉伸铺满渐变带(带顶 = 动画底边那一行, 逐列同像素, 接缝天然消失),
+  // 再用「渐晕+噪声」destination-out 遮罩把条带向下溶解成碎尾。
+  // 色彩衬底: 底边采样均色 → 动画夜色系 → --page-bg, 跟随 themechange。
+  // 取样失败(context lost / 静态兜底图)自动退回静态图取样或纯程序渐变。
+  (function initFadeExtend() {
     var fade = document.querySelector('.hero-fade');
     var cv = document.getElementById('heroFadeAscii');
     if (!fade || !cv) return;
@@ -520,52 +525,157 @@ body.hero-released {
     var FPS = 12;
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    var cols = 0, rows = 0, step = 0;
+    // 离屏: 延伸条带 / 溶解遮罩 / 取样探针
+    var streakCv = document.createElement('canvas');
+    var streakCx = streakCv.getContext('2d');
+    var maskCv = document.createElement('canvas');
+    var maskCx = maskCv.getContext('2d');
+    var probeCv = document.createElement('canvas');
+    probeCv.width = 32; probeCv.height = 1;
+    var probeCx = probeCv.getContext('2d', { willReadFrequently: true });
+
+    var W = 0, H = 0, dpr = 1, cols = 0, rows = 0;
     var seeds = null, phases = null;
+    var stripAvg = [11, 18, 32];       // #0B1220 兜底
+    var charColor = 'rgb(170,195,230)';
+    var pageBg = '#ffffff';
     var running = false, inView = true, timer = null;
+
+    function readPageBg() {
+      var v = getComputedStyle(document.documentElement).getPropertyValue('--page-bg');
+      pageBg = (v && v.trim()) || '#ffffff';
+      if (W && H) draw(performance.now());   // 主题切换后立即重绘
+    }
+
+    // 溶解遮罩: 顶部 25% 不擦(条带与动画严丝合缝), 中部渐擦, 底部全擦;
+    // 叠加越往下越密的噪声点, 让尾巴碎成颗粒而不是一条干净的斜坡。
+    function buildMask() {
+      maskCv.width = W; maskCv.height = H;
+      maskCx.clearRect(0, 0, W, H);
+      var g = maskCx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0.00, 'rgba(0,0,0,0)');
+      g.addColorStop(0.25, 'rgba(0,0,0,0)');
+      g.addColorStop(0.55, 'rgba(0,0,0,0.55)');
+      g.addColorStop(0.82, 'rgba(0,0,0,0.94)');
+      g.addColorStop(1.00, 'rgba(0,0,0,1)');
+      maskCx.fillStyle = g;
+      maskCx.fillRect(0, 0, W, H);
+      var n = Math.floor(W * H / 1100);
+      for (var i = 0; i < n; i++) {
+        var y = Math.pow(Math.random(), 0.55) * H;   // 分布偏下
+        var a = Math.pow(y / H, 1.7) * 0.9;
+        if (a < 0.06) continue;
+        maskCx.fillStyle = 'rgba(0,0,0,' + a.toFixed(3) + ')';
+        var s = (1 + Math.random() * 2.5) * dpr;
+        maskCx.fillRect(Math.random() * W, y, s, s * (1 + Math.random()));
+      }
+    }
+
+    // 在 hero 绘制的同一同步任务内取样(缓冲未被合成清除) →
+    // 更新衬底均色 / 字符亮色 / 重画延伸条带。节流到 15fps。
+    var lastHook = 0, lastStreak = 0;
+    function ingestFrame(src, now) {
+      if (!W || !H) return;                   // 尚未完成首次 resize
+      var w = src && (src.naturalWidth || src.width);
+      var h = src && (src.naturalHeight || src.height);
+      if (!w || w < 8 || !h || h < 8) return;
+      if (now - lastStreak < 66) return;
+      lastStreak = now;
+      var sh = Math.max(2, Math.round(h * 0.004));
+      try {
+        probeCx.clearRect(0, 0, 32, 1);
+        probeCx.drawImage(src, 0, h - sh, w, sh, 0, 0, 32, 1);
+        var d = probeCx.getImageData(0, 0, 32, 1).data;
+        var i, aS = 0, rS = 0, gS = 0, bS = 0;
+        for (i = 0; i < d.length; i += 4) { aS += d[i+3]; rS += d[i]; gS += d[i+1]; bS += d[i+2]; }
+        if (aS / 32 < 40) return;             // 缓冲已销毁 → 透明, 丢弃本帧
+        stripAvg = [rS / 32 | 0, gS / 32 | 0, bS / 32 | 0];
+        var lum = (stripAvg[0] * 2 + stripAvg[1] * 3 + stripAvg[2]) / 6;
+        var bc = 0, br = 0, bg = 0, bb = 0, l;
+        for (i = 0; i < d.length; i += 4) {
+          l = (d[i] * 2 + d[i+1] * 3 + d[i+2]) / 6;
+          if (l > lum + 32) { br += d[i]; bg += d[i+1]; bb += d[i+2]; bc++; }
+        }
+        if (bc > 0) charColor = 'rgb(' + (br / bc | 0) + ',' + (bg / bc | 0) + ',' + (bb / bc | 0) + ')';
+        // 重画延伸条带: 翻转拉伸, 带顶 = hero 底边那一行
+        streakCx.globalCompositeOperation = 'source-over';
+        streakCx.clearRect(0, 0, W, H);
+        streakCx.save();
+        streakCx.translate(0, H);
+        streakCx.scale(1, -1);
+        streakCx.drawImage(src, 0, h - sh, w, sh, 0, 0, W, H);
+        streakCx.restore();
+        streakCx.globalCompositeOperation = 'destination-out';
+        streakCx.drawImage(maskCv, 0, 0);
+        streakCx.globalCompositeOperation = 'source-over';
+      } catch (e) { /* 保持上一帧 */ }
+    }
+    // river-hero.js 每帧绘制后回调(同一任务, 缓冲保证有效)
+    window.__heroFrameHook = function (src) {
+      lastHook = performance.now();
+      ingestFrame(src, lastHook);
+    };
+
+    function draw(now) {
+      ctx.clearRect(0, 0, W, H);
+      // 挂钩沉默 >800ms 且静态兜底图在播 → 改从 <img> 取样(context lost 场景)
+      if (now - lastHook > 800) {
+        var img = document.getElementById('heroStill');
+        if (img && img.classList.contains('is-shown')) ingestFrame(img, now);
+      }
+      // 1. 色彩衬底: 采样均色 → 动画夜色系 → page-bg
+      var g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0.00, 'rgb(' + stripAvg[0] + ',' + stripAvg[1] + ',' + stripAvg[2] + ')');
+      g.addColorStop(0.30, '#101E38');
+      g.addColorStop(0.52, '#1B3566');
+      g.addColorStop(0.74, '#46608E');
+      g.addColorStop(0.88, '#8BA7C6');
+      g.addColorStop(1.00, pageBg);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+      // 2. 动画延伸条带(由挂钩/兜底取样维护)
+      ctx.drawImage(streakCv, 0, 0);
+      // 3. 稀疏字符闪烁(与动画同款 ramp, 限制在顶部 55% 内衰减)
+      var t = now / 1000, step = CELL * dpr;
+      ctx.fillStyle = charColor;
+      for (var r = 0; r < rows; r++) {
+        var density = 0.16 * Math.pow(Math.max(0, 1 - r / (rows * 0.55)), 1.4);
+        if (density < 0.015) break;
+        for (var c = 0; c < cols; c++) {
+          var i = r * cols + c;
+          var sd = seeds[i];
+          if (sd >= density) continue;
+          var edge = 1 - sd / density;
+          var tw = 0.6 + 0.4 * Math.sin(t * (0.5 + sd * 1.5) + phases[i]);
+          var alpha = edge * tw * 0.8;
+          if (alpha < 0.04) continue;
+          var gi = 1 + (Math.floor(sd * 977 + t * (0.2 + sd * 0.6)) % (RAMP.length - 1));
+          ctx.globalAlpha = alpha;
+          ctx.fillText(RAMP.charAt(gi), (c + 0.5) * step, (r + 0.55) * step);
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
 
     function resize() {
       var w = fade.clientWidth, h = fade.clientHeight;
       if (!w || !h) return;
-      var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      cv.width = Math.round(w * dpr);
-      cv.height = Math.round(h * dpr);
-      cols = Math.ceil(w / CELL);
-      rows = Math.ceil(h / CELL);
-      step = CELL * dpr;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = Math.round(w * dpr); H = Math.round(h * dpr);
+      cv.width = W; cv.height = H;
+      streakCv.width = W; streakCv.height = H;
+      cols = Math.ceil(w / CELL); rows = Math.ceil(h / CELL);
       seeds = new Float32Array(cols * rows);
       phases = new Float32Array(cols * rows);
       for (var i = 0; i < seeds.length; i++) {
         seeds[i] = Math.random();
         phases[i] = Math.random() * 6.2832;
       }
-      ctx.font = step + 'px ui-monospace, Menlo, Consolas, monospace';
+      ctx.font = (CELL * dpr) + 'px ui-monospace, Menlo, Consolas, monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = 'rgb(150,180,225)';
+      buildMask();
       draw(performance.now());
-    }
-
-    function draw(now) {
-      ctx.clearRect(0, 0, cv.width, cv.height);
-      var t = now / 1000;
-      for (var r = 0; r < rows; r++) {
-        var density = 0.34 * Math.pow(1 - r / rows, 1.5);  // 顶部接续动画, 向下指数衰减
-        if (density < 0.02) break;
-        for (var c = 0; c < cols; c++) {
-          var i = r * cols + c;
-          var s = seeds[i];
-          if (s >= density) continue;                      // 固定子集, 不整片闪烁
-          var edge = 1 - s / density;                      // cutoff 附近更暗 → 软边界
-          var tw = 0.6 + 0.4 * Math.sin(t * (0.5 + s * 1.5) + phases[i]);
-          var alpha = edge * tw * 0.85;
-          if (alpha < 0.04) continue;
-          var gi = 1 + (Math.floor(s * 977 + t * (0.2 + s * 0.6)) % (RAMP.length - 1));
-          ctx.globalAlpha = alpha;
-          ctx.fillText(RAMP.charAt(gi), (c + 0.5) * step, (r + 0.55) * step);
-        }
-      }
-      ctx.globalAlpha = 1;
     }
 
     function loop(now) {
@@ -583,6 +693,8 @@ body.hero-released {
       if (timer) { clearTimeout(timer); timer = null; }
     }
 
+    readPageBg();
+    window.addEventListener('themechange', readPageBg);   // theme-system.js 派发自 window
     resize();
     if (reduced) return;                 // 减少动态: 只留静态一帧
 
@@ -632,7 +744,7 @@ body.hero-released {
 `;
 
   const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
-  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=13"') : '';
+  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=14"') : '';
 
   const afterScriptIdx = heroSrc.indexOf(heroScriptTag) + heroScriptTag.length;
   const inlineScriptMatch = heroSrc.slice(afterScriptIdx).match(/<script>[\s\S]*?<\/script>/);
