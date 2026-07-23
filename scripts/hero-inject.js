@@ -89,12 +89,12 @@ hexo.extend.filter.register('after_render:html', function (data) {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-/* ── hero 底部 → 页面内容 渐进过渡 v5（2026-07-23）──
+/* ── hero 底部 → 页面内容 渐进过渡 v6（2026-07-23）──
  * 渐变带(.hero-fade) = 动画自身的延伸, 不再是手调固定色带:
- * JS 每帧(12fps)取 hero canvas 底边一条像素带, 垂直翻转拉伸铺满整条带
- * —— 带顶与动画底边逐列同像素, 接缝天然消失; 再以「渐晕+噪声」
- * destination-out 遮罩把条带向下溶解成碎尾。色彩衬底 = 底边采样均色 →
- * 动画夜色系 → --page-bg(跟随主题)。取样失败时退回纯程序渐变。
+ * JS 每帧(15fps)取 hero canvas 底边 mh 行(与动画显示比例一致)垂直翻转
+ * 铺满整条带 —— 带顶 = 动画底边那一行, 星野/山体纹理无缝续入, 再以
+ * 「渐晕+粗颗粒+细噪声」destination-out 遮罩溶解成碎尾, 无直线边界。
+ * 色彩衬底 = 底边采样均色 → 动画夜色系 → --page-bg(跟随主题)。
  * 下方 background 仅作无 JS / 首帧前的兜底, 渲染逻辑在下方 heroJs。 */
 .hero-fade {
   position: relative;
@@ -507,10 +507,11 @@ body.hero-released {
     typeLine();
   }
 
-  // ── hero-fade 动画延续层 v5（2026-07-23）──
-  // 渐变 = 动画自身的延伸: 每帧取 hero canvas 底边一条像素带, 垂直翻转
-  // 拉伸铺满渐变带(带顶 = 动画底边那一行, 逐列同像素, 接缝天然消失),
-  // 再用「渐晕+噪声」destination-out 遮罩把条带向下溶解成碎尾。
+  // ── hero-fade 动画延续层 v6（2026-07-23）──
+  // 渐变 = 动画自身的延伸: 挂钩每帧取 hero canvas 底边 mh 行(与动画显示
+  // 比例一致), 垂直翻转铺满渐变带 —— 带顶 = 动画底边那一行, 向下是底边
+  // 以上的镜像, 星野/山体纹理无缝续入; 再用「渐晕 + 粗颗粒 + 细噪声」
+  // destination-out 遮罩溶解成碎尾, 全程无直线边界。
   // 色彩衬底: 底边采样均色 → 动画夜色系 → --page-bg, 跟随 themechange。
   // 取样失败(context lost / 静态兜底图)自动退回静态图取样或纯程序渐变。
   (function initFadeExtend() {
@@ -547,21 +548,32 @@ body.hero-released {
       if (W && H) draw(performance.now());   // 主题切换后立即重绘
     }
 
-    // 溶解遮罩: 顶部 25% 不擦(条带与动画严丝合缝), 中部渐擦, 底部全擦;
-    // 叠加越往下越密的噪声点, 让尾巴碎成颗粒而不是一条干净的斜坡。
+    // 溶解遮罩: 顶部 10% 不擦(镜像与动画严丝合缝), 中段加速擦除, 80% 擦净;
+    // 粗颗粒径向团块让"消失线"波浪化, 细噪声把尾巴碎成颗粒 —— 无任何直线边界。
     function buildMask() {
       maskCv.width = W; maskCv.height = H;
       maskCx.clearRect(0, 0, W, H);
       var g = maskCx.createLinearGradient(0, 0, 0, H);
       g.addColorStop(0.00, 'rgba(0,0,0,0)');
-      g.addColorStop(0.25, 'rgba(0,0,0,0)');
-      g.addColorStop(0.55, 'rgba(0,0,0,0.55)');
-      g.addColorStop(0.82, 'rgba(0,0,0,0.94)');
+      g.addColorStop(0.10, 'rgba(0,0,0,0)');
+      g.addColorStop(0.30, 'rgba(0,0,0,0.50)');
+      g.addColorStop(0.55, 'rgba(0,0,0,0.90)');
+      g.addColorStop(0.80, 'rgba(0,0,0,1)');
       g.addColorStop(1.00, 'rgba(0,0,0,1)');
       maskCx.fillStyle = g;
       maskCx.fillRect(0, 0, W, H);
+      for (var i = 0; i < 10; i++) {
+        var bx = Math.random() * W;
+        var by = H * (0.15 + Math.random() * 0.55);
+        var br = (50 + Math.random() * 130) * dpr;
+        var rg = maskCx.createRadialGradient(bx, by, 0, bx, by, br);
+        rg.addColorStop(0, 'rgba(0,0,0,' + (0.30 + Math.random() * 0.35).toFixed(3) + ')');
+        rg.addColorStop(1, 'rgba(0,0,0,0)');
+        maskCx.fillStyle = rg;
+        maskCx.fillRect(bx - br, by - br, br * 2, br * 2);
+      }
       var n = Math.floor(W * H / 1100);
-      for (var i = 0; i < n; i++) {
+      for (i = 0; i < n; i++) {
         var y = Math.pow(Math.random(), 0.55) * H;   // 分布偏下
         var a = Math.pow(y / H, 1.7) * 0.9;
         if (a < 0.06) continue;
@@ -597,13 +609,18 @@ body.hero-released {
           if (l > lum + 32) { br += d[i]; bg += d[i+1]; bb += d[i+2]; bc++; }
         }
         if (bc > 0) charColor = 'rgb(' + (br / bc | 0) + ',' + (bg / bc | 0) + ',' + (bb / bc | 0) + ')';
-        // 重画延伸条带: 翻转拉伸, 带顶 = hero 底边那一行
+        // 镜面延续层: 取样底边 mh 行(按动画显示比例换算, 纹理大小与动画一致),
+        // 垂直翻转铺满渐变带 —— 带顶 = 动画底边那一行, 向下是动画底边以上的
+        // 镜像, 星野/山体纹理无缝续入, 再由遮罩溶解成碎尾。
+        var ch = src.clientHeight || 0;
+        var mh = ch > 0 ? Math.round((H / dpr) * (h / ch)) : Math.round(h * 0.27);
+        mh = Math.max(8, Math.min(h, mh));
         streakCx.globalCompositeOperation = 'source-over';
         streakCx.clearRect(0, 0, W, H);
         streakCx.save();
         streakCx.translate(0, H);
         streakCx.scale(1, -1);
-        streakCx.drawImage(src, 0, h - sh, w, sh, 0, 0, W, H);
+        streakCx.drawImage(src, 0, h - mh, w, mh, 0, 0, W, H);
         streakCx.restore();
         streakCx.globalCompositeOperation = 'destination-out';
         streakCx.drawImage(maskCv, 0, 0);

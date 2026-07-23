@@ -17,7 +17,7 @@ Hexo 7 + Butterfly 主题的个人博客,部署到 GitHub Pages(Axtrivc.github.i
 ## 自定义结构
 
 - `scripts/`:Hexo 7 手动注册的注入脚本(`_config.yml` 的 `scripts:` 列表)
-  - `hero-inject.js`:首页 hero(ASCII 河流 shader + 左下角 typed 副标题 + hero 下方 `.hero-fade` 渐变带 v5)——渐变带 = 动画自身的延伸,不是手调色带:river-hero.js 在主循环 `gpuTimedDraw()` 后与 `freezeStaticHero()` 快照后各回调一次 `window.__heroFrameHook(canvas)`(同一同步任务,WebGL 缓冲未被合成清除,外部 rAF/定时器取样会得到纯黑帧,勿绕行);heroJs 以 15fps 取 canvas 底边一条像素带**垂直翻转拉伸**铺满渐变带(带顶 = 动画底边那一行,逐列同像素,接缝天然消失),再用「渐晕 + 噪声」destination-out 遮罩向下溶解成碎尾;色彩衬底 = 底边采样均色 → 动画夜色系(#101E38/#1B3566/#46608E/#8BA7C6)→ `--page-bg`(监听 window 的 `themechange`),挂钩沉默 >800ms 且静态兜底图在播时改从 `#heroStill` img 取样;另叠加稀疏同款 RAMP_ASCII 字符 12fps 闪烁(密度限于顶部 55%,颜色取底边亮粒子);IntersectionObserver 不可见即停
+  - `hero-inject.js`:首页 hero(ASCII 河流 shader + 左下角 typed 副标题 + hero 下方 `.hero-fade` 渐变带 v6)——渐变带 = 动画自身的延伸,不是手调色带:river-hero.js 在主循环 `gpuTimedDraw()` 后与 `freezeStaticHero()` 快照后各回调一次 `window.__heroFrameHook(canvas)`(同一同步任务,WebGL 缓冲未被合成清除,外部 rAF/定时器取样会得到纯黑帧,勿绕行);heroJs 以 15fps 取 canvas 底边 mh 行(按显示比例换算 ≈ 底边以上 27% 场景)**垂直翻转**铺满渐变带(带顶 = 动画底边那一行,星野/山体纹理无缝续入——薄条拉伸会产生"点变线"分界,必须用整块镜像),再由「渐晕 + 粗颗粒径向团块 + 细噪声」destination-out 遮罩溶解成碎尾(遮罩仅 resize 时重建);色彩衬底 = 底边采样均色 → 动画夜色系(#101E38/#1B3566/#46608E/#8BA7C6)→ `--page-bg`(监听 window 的 `themechange`),挂钩沉默 >800ms 且静态兜底图在播时改从 `#heroStill` img 取样;另叠加稀疏同款 RAMP_ASCII 字符 12fps 闪烁(密度限于顶部 55%,颜色取底边亮粒子);IntersectionObserver 不可见即停
   - `footer-river-inject.js`:footer 水流动画注入(canvas 在 `source/js/axtrivc-river.js`)
   - `cache-bust.js` / `inject-site-config.js`:资源版本号 / 站点配置注入
   - `post-desc-fix.js`:首页摘要修复(剔除正文内联 `<style>/<script>` 块,防止足球日报卡片预览漏 CSS)
