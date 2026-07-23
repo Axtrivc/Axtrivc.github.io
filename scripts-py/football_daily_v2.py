@@ -1247,12 +1247,135 @@ categories:
 
     return '\n'.join(html)
 
+# ==================== 归档页更新 ====================
+def update_archive_index():
+    """扫描 POSTS_DIR 下所有 football-*.md，重新生成 /football/ 归档页。
+    移植自 scripts/football-daily.js 的 updateArchiveIndex()，模板保持一致
+    （含 dcd057f1 修复引入的 standalone-theme.js 引用）。"""
+    import re
+    archive_path = POSTS_DIR.parent / 'football' / 'index.html'
+    archive_path.parent.mkdir(parents=True, exist_ok=True)
+
+    pattern = re.compile(r'^football-(morning|evening)-(\d{4})-(\d{2})-(\d{2})\.md$')
+    weekday_cn = ['一', '二', '三', '四', '五', '六', '日']  # datetime.weekday(): 周一=0
+    posts = []
+    for f in POSTS_DIR.iterdir():
+        m = pattern.match(f.name)
+        if not m:
+            continue
+        typ, y, mo, d = m.group(1), int(m.group(2)), int(m.group(3)), int(m.group(4))
+        date_str = f'{y:04d}-{mo:02d}-{d:02d}'
+        posts.append({
+            'type': typ,
+            'date': date_str,
+            'label': f'{mo}月{d}日',
+            'weekday': f'星期{weekday_cn[datetime(y, mo, d).weekday()]}',
+            'href': f'/{y}/{mo:02d}/{d:02d}/football-{typ}-{date_str}/',
+        })
+
+    # 日期倒序，同日期晚报在前（两次稳定排序）
+    posts.sort(key=lambda p: 0 if p['type'] == 'evening' else 1)
+    posts.sort(key=lambda p: p['date'], reverse=True)
+
+    # 生成 HTML 卡片（按月分组，月份倒序）
+    cards = []
+    if not posts:
+        cards.append('<div class="archive-empty"><div class="archive-empty-icon">📭</div><p>暂无日报，敬请期待</p></div>')
+    else:
+        months = {}
+        for p in posts:
+            months.setdefault(p['date'][:7], []).append(p)
+        for mkey in sorted(months.keys(), reverse=True):
+            y, mo = mkey.split('-')
+            cards.append(f'<div class="archive-month-label">{y} 年 {int(mo)} 月</div>')
+            cards.append('<div class="archive-grid">')
+            for p in months[mkey]:
+                badge = '☀️ 早报' if p['type'] == 'morning' else '🌙 晚报'
+                desc = '晨间战报 + 赛程速览' if p['type'] == 'morning' else '晚间新闻 + 深度资讯'
+                cards.append(f'''      <a class="archive-card" href="{p['href']}">
+        <div class="ac-top">
+          <span class="ac-type ac-{p['type']}">{badge}</span>
+          <span class="ac-date">{p['label']}</span>
+        </div>
+        <div class="ac-weekday">{p['weekday']}</div>
+        <div class="ac-desc">{desc}</div>
+      </a>''')
+            cards.append('    </div>')
+    archive_cards = '\n'.join(cards)
+
+    html = f'''<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>足球日报 · 归档</title>
+  <link rel="stylesheet" href="/football/assets/common.css" />
+  <script src="/js/standalone-theme.js"></script>
+</head>
+<body>
+
+  <div class="top-nav">
+    <a href="/">首页</a>
+    <span class="nav-sep">|</span>
+    <span class="nav-current">⚽ 足球日报</span>
+  </div>
+
+  <div class="archive-header">
+    <div class="archive-icon">⚽</div>
+    <h1>足球日报</h1>
+    <p class="archive-sub">每日早报 · 晨间战报与赛程速览 &nbsp;|&nbsp; 每日晚报 · 晚间新闻与深度资讯</p>
+  </div>
+
+  <!-- 我的关注 -->
+  <div class="card" style="margin-top: 4px;">
+    <div class="card-title">我的关注</div>
+    <div class="follow-bar">
+      <a class="follow-chip chip-barca" href="/football/teams/barcelona.html">🔴 巴萨</a>
+      <a class="follow-chip chip-spain" href="/football/teams/spain.html">🇪🇸 西班牙</a>
+      <a class="follow-chip chip-miami" href="/football/teams/miami.html">🩷 迈阿密国际</a>
+      <span class="follow-chip chip-laliga">🟡 西甲</span>
+      <span class="follow-chip chip-ucl">🔵 欧冠</span>
+      <span class="follow-chip chip-pl">🟣 英超</span>
+    </div>
+  </div>
+
+  <!-- 归档列表 -->
+  <div class="archive-section">
+{archive_cards}
+  </div>
+
+  <div class="footer">
+    数据来源：ESPN · BBC Sport · Sky Sports · Google News · 自动更新
+  </div>
+
+</body>
+</html>
+'''
+
+    archive_path.write_text(html, encoding='utf-8')
+    print(f'✅ 归档页已更新（{len(posts)} 篇日报）: {archive_path}')
+
 # ==================== Main ====================
 def main():
+    # Windows 本地 GBK 控制台无法输出 emoji/中文，强制 UTF-8
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding='utf-8', errors='replace')
+        except Exception:
+            pass
+
     parser = argparse.ArgumentParser(description='足球日报 v4 增强版')
-    parser.add_argument('edition', choices=['morning', 'evening'], help='早报或晚报')
+    parser.add_argument('edition', nargs='?', choices=['morning', 'evening'], help='早报或晚报')
     parser.add_argument('--preview', action='store_true', help='只写到 D:/WorkBuddy-Outputs 备份')
+    parser.add_argument('--archive-only', action='store_true', help='只重新生成 /football/ 归档页，不拉取数据')
     args = parser.parse_args()
+
+    if args.archive_only:
+        update_archive_index()
+        return
+
+    if not args.edition:
+        parser.error('需要指定 edition (morning/evening)，或使用 --archive-only')
 
     edition = args.edition
     today_str = bj_date_str()
@@ -1285,6 +1408,9 @@ def main():
         backup = D / filename
         backup.write_text(md, encoding='utf-8')
         print(f"✅ 备份: {backup}")
+
+        # 3. 更新 /football/ 归档页
+        update_archive_index()
 
     print(f"\n🎉 完成。")
 
