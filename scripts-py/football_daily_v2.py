@@ -1,5 +1,16 @@
 """
-football_daily_v2.py — 足球日报 v5 · FotMob 版 (2026-07-23)
+football_daily_v2.py — 足球日报 v6 · FotMob 版 (2026-07-23)
+
+v6 调整:
+- 联赛白名单: 只展示 英超/西甲/意甲/德甲/法甲/沙特联/中超/美职联 + 欧冠/欧联
+  + 世界杯/欧洲杯/欧国联/国际友谊赛; 小众联赛 (巴甲/阿甲等) 一律剔除,
+  但关注球队参加的任何赛事 (如国王杯) 始终保留
+- 沙特联/中超不在 sports_skills 覆盖内, 直采 ESPN scoreboard (ksa.1/chn.1) 补齐
+- 关注球队赛程弃用 sports_skills get_team_schedule (数据陈旧: 巴萨返回 0 场,
+  西班牙只有 2024 欧洲杯), 改直采 ESPN site API schedule (按联赛+赛季合并)
+- 关注球队 9 支: 巴萨/西班牙/曼城/曼联/阿森纳/拜仁/巴黎/科莫/迈阿密,
+  卡片可点击跳转 /football/teams/<slug>.html (客户端实时拉取 ESPN 数据)
+- 联赛分隔条加大 (24px 联赛徽 + 14px 粗体 + 分隔线), 比赛行队徽加大到 30px
 
 v5 重构:
 - 弃用世界杯模式与暗色球场风, 全版改用 FotMob 浅色卡片风 (参照用户截图)
@@ -49,34 +60,84 @@ BJ = timezone(timedelta(hours=8))
 ESPN_TEAM_LOGO = 'https://a.espncdn.com/i/teamlogos/soccer/500'
 ESPN_LEAGUE_LOGO = 'https://a.espncdn.com/i/leaguelogos/soccer/500'
 
-# ==================== 关注球队 (ESPN team IDs, 2026-07 已逐一实测) ====================
+# ==================== 关注球队 (ESPN team IDs, 2026-07 逐一实测) ====================
+# slug = /football/teams/<slug>.html 球队详情页
+# espn = 直采赛程的 (联赛 slug, 赛季年份) 组合; 欧洲球队带欧冠, 赛季跨年用当年
 FOLLOWED_TEAMS = {
-    '83':    {'name': '巴塞罗那',   'color': '#8A1E4B'},
-    '86':    {'name': '皇家马德里', 'color': '#1E4E9C'},
-    '1068':  {'name': '马德里竞技', 'color': '#C3382B'},
-    '20232': {'name': '迈阿密国际', 'color': '#E77FAE'},
-    '164':   {'name': '西班牙',     'color': '#B31B1B'},
+    '83':    {'name': '巴塞罗那',    'slug': 'barcelona', 'color': '#A50044', 'color2': '#004D98',
+              'espn': [('esp.1', '2025'), ('esp.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026')]},
+    '164':   {'name': '西班牙',      'slug': 'spain',     'color': '#B31B1B', 'color2': '#6E0B0B',
+              'espn': [('fifa.world', '2026'), ('uefa.nations', '2026')]},
+    '382':   {'name': '曼城',        'slug': 'mancity',   'color': '#6CABDD', 'color2': '#1C2C5B',
+              'espn': [('eng.1', '2025'), ('eng.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026')]},
+    '360':   {'name': '曼联',        'slug': 'manutd',    'color': '#DA291C', 'color2': '#7A0D06',
+              'espn': [('eng.1', '2025'), ('eng.1', '2026')]},
+    '359':   {'name': '阿森纳',      'slug': 'arsenal',   'color': '#EF0107', 'color2': '#8F0000',
+              'espn': [('eng.1', '2025'), ('eng.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026')]},
+    '132':   {'name': '拜仁慕尼黑',  'slug': 'bayern',    'color': '#DC052D', 'color2': '#7A0219',
+              'espn': [('ger.1', '2025'), ('ger.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026')]},
+    '160':   {'name': '巴黎圣日耳曼', 'slug': 'psg',       'color': '#004170', 'color2': '#001829',
+              'espn': [('fra.1', '2025'), ('fra.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026')]},
+    '2572':  {'name': '科莫',        'slug': 'como',      'color': '#005DAA', 'color2': '#002C52',
+              'espn': [('ita.1', '2025'), ('ita.1', '2026')]},
+    '20232': {'name': '迈阿密国际',  'slug': 'miami',     'color': '#E77FAE', 'color2': '#8A2B56',
+              'espn': [('usa.1', '2026'), ('usa.1', '2025')]},
 }
 
-# 赛事 slug -> (中文名, ESPN 联赛徽标 id 或 None)
+# 赛事 id -> (中文名, ESPN 联赛徽标 id 或 None); 徽标 id 均已实测
 COMP_MAP = {
-    'la-liga':                  ('西甲', 15),
     'premier-league':           ('英超', 23),
+    'la-liga':                  ('西甲', 15),
     'serie-a':                  ('意甲', 12),
     'bundesliga':               ('德甲', 10),
     'ligue-1':                  ('法甲', 9),
-    'mls':                      ('MLS', 19),
-    'usa.1':                    ('MLS', 19),
+    'mls':                      ('美职联', 19),
+    'usa.1':                    ('美职联', 19),
+    'champions-league':         ('欧冠', 2),
     'uefa.champions':           ('欧冠', 2),
     'uefa.champions-league':    ('欧冠', 2),
-    'uefa.europa':              ('欧联', None),
-    'fifa.world':               ('世界杯', None),
-    'serie-a-brazil':           ('巴甲', None),
-    'liga-argentina':             ('阿甲', None),
-    'eng.championship':         ('英冠', None),
+    'europa-league':            ('欧联', 2310),
+    'uefa.europa':              ('欧联', 2310),
+    'world-cup':                ('世界杯', 4),
+    'fifa.world':               ('世界杯', 4),
+    'european-championship':    ('欧洲杯', 74),
+    'uefa.euro':                ('欧洲杯', 74),
+    'uefa.nations':             ('欧国联', 2395),
+    'international-friendly':   ('国际友谊赛', None),
+    'saudi-pro-league':         ('沙特联', 2488),
+    'chinese-super-league':     ('中超', 2350),
+    # 仅显示名映射 (关注队参加时才出现, 不在白名单)
+    'copa-del-rey':             ('国王杯', None),
     'fa-cup':                   ('足总杯', None),
     'club-world-cup':           ('世俱杯', None),
+    'conference-league':        ('欧协联', None),
 }
+
+# 主流赛事白名单 — 小众联赛 (巴甲/阿甲/英冠等) 一律不进日报
+MAIN_COMPS = frozenset((
+    'premier-league', 'la-liga', 'serie-a', 'bundesliga', 'ligue-1',
+    'mls', 'usa.1', 'saudi-pro-league', 'chinese-super-league',
+    'champions-league', 'uefa.champions', 'uefa.champions-league',
+    'europa-league', 'uefa.europa',
+    'world-cup', 'fifa.world', 'european-championship', 'uefa.euro',
+    'uefa.nations', 'international-friendly',
+))
+
+# 比赛分组展示顺序 (按白名单优先级)
+COMP_ORDER = [
+    'premier-league', 'la-liga', 'serie-a', 'bundesliga', 'ligue-1',
+    'saudi-pro-league', 'chinese-super-league', 'mls',
+    'champions-league', 'europa-league',
+    'world-cup', 'european-championship', 'uefa.nations', 'international-friendly',
+]
+
+# 沙特联/中超不在 sports_skills daily 覆盖内, 直采 ESPN scoreboard 补齐
+EXTRA_LEAGUES = [
+    ('ksa.1', 'saudi-pro-league', '沙特联'),
+    ('chn.1', 'chinese-super-league', '中超'),
+]
+ESPN_UA = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+           '(KHTML, like Gecko) Chrome/126.0 Safari/537.36')
 
 # RSS 源 (BBC / ESPN 走 sports_skills; Sky 走 feedparser 直解析拿配图)
 RSS_FEEDS = [
@@ -94,9 +155,11 @@ TRANSFER_QUERIES = [
 ]
 TEAM_QUERIES = [
     'Barcelona team news',
-    'Real Madrid team news',
+    'Manchester City Arsenal team news',
+    'Manchester United team news',
+    'Bayern Munich PSG team news',
     'Inter Miami Messi news',
-    'football pre-season friendlies',
+    'Como Fabregas news',
 ]
 
 # 转会关键词 (标题匹配)
@@ -141,18 +204,19 @@ FM_CSS = """.fm-container{--fm-bg:#F3F5F7;--fm-card:#FFFFFF;--fm-text:#101828;--
 .fm-sec-title{display:flex;align-items:center;gap:9px;padding:15px 16px 10px;font-size:16px;font-weight:800}
 .fm-sec-title::before{content:'';width:8px;height:8px;border-radius:3px;background:var(--fm-green)}
 .fm-count{margin-left:auto;font-size:11px;font-weight:700;color:var(--fm-sub);background:#F2F4F7;border-radius:999px;padding:2px 10px}
-.fm-league{display:flex;align-items:center;gap:8px;padding:10px 16px 0;font-size:11.5px;font-weight:700;color:var(--fm-sub);letter-spacing:.04em}
-.fm-league img{width:18px;height:18px;object-fit:contain}
-.fm-m{display:grid;grid-template-columns:minmax(0,1fr) 80px minmax(0,1fr);align-items:center;padding:10px 16px;border-top:1px solid var(--fm-line)}
-.fm-t{display:flex;align-items:center;gap:9px;min-width:0;font-size:14px;font-weight:600}
+.fm-league{display:flex;align-items:center;gap:10px;padding:16px 16px 6px;font-size:14.5px;font-weight:800;color:var(--fm-text);letter-spacing:.02em}
+.fm-league img{width:24px;height:24px;object-fit:contain}
+.fm-league .fm-lgline{flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,#E4E7EC,transparent)}
+.fm-m{display:grid;grid-template-columns:minmax(0,1fr) 84px minmax(0,1fr);align-items:center;padding:11px 16px;border-top:1px solid var(--fm-line)}
+.fm-t{display:flex;align-items:center;gap:10px;min-width:0;font-size:14px;font-weight:600}
 .fm-t.r{flex-direction:row-reverse;text-align:right}
 .fm-t .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fm-logo{position:relative;width:26px;height:26px;flex-shrink:0;display:inline-block}
-.fm-logo .fm-fp{position:absolute;inset:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#475467;background:#F2F4F7;border:1px solid #E4E7EC}
-.fm-logo img{position:relative;width:26px;height:26px;object-fit:contain;display:block}
+.fm-logo{position:relative;width:30px;height:30px;flex-shrink:0;display:inline-block}
+.fm-logo .fm-fp{position:absolute;inset:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#475467;background:#F2F4F7;border:1px solid #E4E7EC}
+.fm-logo img{position:relative;width:30px;height:30px;object-fit:contain;display:block}
 .fm-c{display:flex;flex-direction:column;align-items:center;gap:2px}
-.fm-score{font-weight:800;font-size:15px;color:var(--fm-text);white-space:nowrap}
-.fm-time{font-size:12.5px;font-weight:600;color:var(--fm-sub);white-space:nowrap}
+.fm-score{font-weight:800;font-size:16px;color:var(--fm-text);white-space:nowrap}
+.fm-time{font-size:13px;font-weight:600;color:var(--fm-sub);white-space:nowrap}
 .fm-livepill{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--fm-green);color:#fff;font-size:12px;font-weight:800;animation:fmpulse 2s infinite}
 @keyframes fmpulse{0%,100%{opacity:1}50%{opacity:.75}}
 .fm-mdate{font-size:10px;color:var(--fm-sub);white-space:nowrap}
@@ -169,18 +233,27 @@ FM_CSS = """.fm-container{--fm-bg:#F3F5F7;--fm-card:#FFFFFF;--fm-text:#101828;--
 .fm-nbody2{min-width:0;flex:1}
 .fm-t2{font-size:14px;font-weight:700;line-height:1.4;color:var(--fm-text);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .fm-nrow:hover .fm-t2{color:var(--fm-green)}
-.fm-teams{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:2px 16px 16px}
-.fm-team{border-radius:16px;padding:14px 13px;color:#fff;position:relative;overflow:hidden;min-height:132px;display:flex;flex-direction:column}
+.fm-teams{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:2px 16px 16px}
+.fm-team{border-radius:16px;padding:13px 12px 11px;color:#fff;position:relative;overflow:hidden;min-height:142px;display:flex;flex-direction:column;text-decoration:none;cursor:pointer;box-shadow:0 2px 8px rgba(16,24,40,.10);transition:transform .18s ease,box-shadow .18s ease}
+.fm-container a.fm-team,.fm-container a.fm-team:hover{color:#fff}
+.fm-team:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(16,24,40,.24);text-decoration:none;color:#fff}
+.fm-team::before{content:'';position:absolute;top:-20%;left:-70%;width:45%;height:140%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.30),transparent);transform:skewX(-20deg);transition:left .55s ease;pointer-events:none;z-index:1}
+.fm-team:hover::before{left:135%}
 .fm-team::after{content:'';position:absolute;inset:0;background:radial-gradient(120% 120% at 100% 0%,rgba(255,255,255,.18),transparent 55%);pointer-events:none}
-.fm-team img{width:50px;height:50px;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))}
-.fm-team .nm{position:relative;z-index:1;font-size:17px;font-weight:800;margin-top:10px;letter-spacing:.01em}
-.fm-team .nx{position:relative;z-index:1;margin-top:auto;padding-top:8px;font-size:12px;opacity:.95;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fm-team .top{display:flex;align-items:center;gap:10px;position:relative;z-index:2}
+.fm-team img{width:44px;height:44px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.28))}
+.fm-team .nm{font-size:15.5px;font-weight:800;letter-spacing:.01em;line-height:1.25;min-width:0}
+.fm-team .nx{position:relative;z-index:2;margin-top:auto;padding-top:8px;font-size:11.5px;opacity:.95;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .fm-team .ha{font-size:10px;font-weight:800;background:rgba(255,255,255,.22);border-radius:6px;padding:1px 6px;flex-shrink:0}
-.fm-form{display:flex;gap:4px;position:relative;z-index:1;margin-top:7px}
+.fm-team .cta{position:relative;z-index:2;margin-top:8px;padding-top:7px;border-top:1px solid rgba(255,255,255,.24);font-size:11px;font-weight:700;opacity:.95;display:flex;align-items:center;justify-content:space-between;letter-spacing:.02em}
+.fm-team .cta .arr{transition:transform .18s;font-size:13px}
+.fm-team:hover .cta .arr{transform:translateX(3px)}
+.fm-form{display:flex;gap:4px;position:relative;z-index:2;margin-top:8px}
 .fm-fb2{width:17px;height:17px;border-radius:50%;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#fff}
 .fm-fb2.w{background:#12B76A}
 .fm-fb2.d{background:rgba(255,255,255,.35)}
 .fm-fb2.l{background:rgba(0,0,0,.30)}
+@media(max-width:640px){.fm-teams{grid-template-columns:1fr 1fr}.fm-team .nm{font-size:14px}}
 .fm-foot{text-align:center;color:var(--fm-sub);font-size:11px;line-height:1.9;padding:12px 16px 20px}
 @media(max-width:560px){.fm-m{grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr)}.fm-hero h1{font-size:21px}.fm-thumb,.fm-thumb-fb{width:70px;height:70px}}"""
 
@@ -320,10 +393,115 @@ def get_daily_matches(date_str=None):
         data = call_skill('football', 'get_daily_schedule')
     return safe(data, 'data', 'events', default=[]) or []
 
+# ==================== 数据采集: ESPN 直采 (球队赛程 + 沙特联/中超) ====================
+def _espn_get(url):
+    """ESPN site API GET -> dict (失败返回 None); 必须带浏览器 UA"""
+    import urllib.request
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': ESPN_UA})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return json.loads(r.read().decode('utf-8', 'replace'))
+    except Exception:
+        return None
+
+def _espn_score(v):
+    """score 字段兼容: {$ref,value,displayValue} / 数字字符串 / 数字 / None"""
+    if v is None:
+        return None
+    if isinstance(v, dict):
+        v = v.get('value')
+    try:
+        return int(float(v))
+    except (TypeError, ValueError):
+        return None
+
+def normalize_espn_event(e, comp_id, comp_name):
+    """ESPN site API 事件 -> 与 sports_skills 一致的内部结构。
+    status: scoreboard 在顶层 e.status, schedule 在 competitions[0].status"""
+    comp0 = (e.get('competitions') or [{}])[0]
+    st = (e.get('status') or comp0.get('status') or {}).get('type') or {}
+    if st.get('completed'):
+        status = 'closed'
+    elif st.get('state') == 'in':
+        status = 'in_progress'
+    else:
+        status = 'not_started'
+    competitors = []
+    scores = {}
+    for c in comp0.get('competitors') or []:
+        t = c.get('team') or {}
+        sc = _espn_score(c.get('score'))
+        if not st.get('completed') and st.get('state') != 'in':
+            sc = None
+        qualifier = c.get('homeAway') or ''
+        competitors.append({
+            'team': {
+                'id': str(t.get('id') or ''),
+                'name': t.get('displayName') or t.get('name') or '?',
+                'short_name': t.get('shortDisplayName') or t.get('displayName') or '?',
+                'abbreviation': t.get('abbreviation') or '',
+            },
+            'qualifier': qualifier,
+            'score': sc,
+        })
+        if qualifier in ('home', 'away'):
+            scores[qualifier] = sc
+    # 主队排前 (sports_skills 约定 competitors[0]=home)
+    competitors.sort(key=lambda c: 0 if c['qualifier'] == 'home' else 1)
+    return {
+        'id': str(e.get('id') or comp0.get('id') or ''),
+        'status': status,
+        'start_time': e.get('date') or '',
+        'competition': {'id': comp_id, 'name': comp_name},
+        'competitors': competitors,
+        'scores': scores,
+    }
+
 def get_team_events(team_id):
-    """球队赛程 (已完成 + 未开始), events 列表"""
-    data = call_skill('football', 'get_team_schedule', f'--team_id={team_id}')
-    return safe(data, 'data', 'events', default=[]) or []
+    """球队赛程直采 ESPN site API (sports_skills get_team_schedule 数据陈旧已弃用)。
+    按 FOLLOWED_TEAMS[tid]['espn'] 的 (联赛, 赛季) 组合合并去重。"""
+    info = FOLLOWED_TEAMS.get(str(team_id)) or {}
+    out, seen = [], set()
+    for league, season in info.get('espn', []):
+        url = (f'https://site.api.espn.com/apis/site/v2/sports/soccer/{league}'
+               f'/teams/{team_id}/schedule?season={season}')
+        data = _espn_get(url)
+        for e in (data or {}).get('events') or []:
+            lg = e.get('league') or {}
+            cid = lg.get('slug') or league
+            cname = lg.get('name') or league
+            m = normalize_espn_event(e, cid, cname)
+            if m['id'] and m['id'] not in seen:
+                seen.add(m['id'])
+                out.append(m)
+    return out
+
+def get_extra_league_events(bj_dates):
+    """沙特联/中超: ESPN scoreboard 直采。bj_dates 为北京日期列表 (YYYY-MM-DD);
+    每个北京日横跨 UTC 两天 (16:00→16:00), 前后各多拉一天兜底, 靠北京时间重新分桶。"""
+    utc_dates = set()
+    for ds in bj_dates:
+        d = datetime.strptime(ds, '%Y-%m-%d')
+        for off in (-1, 0, 1):
+            utc_dates.add((d + timedelta(days=off)).strftime('%Y%m%d'))
+    out = []
+    for slug, cid, cname in EXTRA_LEAGUES:
+        for ymd in sorted(utc_dates):
+            data = _espn_get(f'https://site.api.espn.com/apis/site/v2/sports/soccer/{slug}'
+                             f'/scoreboard?dates={ymd}&limit=200')
+            for e in (data or {}).get('events') or []:
+                out.append(normalize_espn_event(e, cid, cname))
+    return out
+
+def involves_followed(m):
+    """比赛是否有关注球队参与"""
+    return any(str(safe(c, 'team', 'id', default='')) in FOLLOWED_TEAMS
+               for c in m.get('competitors', []))
+
+def is_main_match(m):
+    """主流赛事白名单过滤; 关注球队参加的任何赛事 (国王杯等) 始终保留"""
+    cid = (m.get('competition') or {}).get('id') or ''
+    return cid in MAIN_COMPS or involves_followed(m)
 
 # ==================== 数据采集: 新闻 ====================
 def get_sky_football_news(limit=14):
@@ -507,24 +685,32 @@ def fm_match_row(m):
             f'<div class="fm-t r"><span class="nm">{an}</span>{a_logo}</div></div>')
 
 def fm_match_block(events, limit=14):
-    """按赛事分组的比赛列表 HTML"""
+    """按赛事分组的比赛列表 HTML — 按中文名合并别名组 (如 uefa.champions/champions-league),
+    组序固定为 COMP_ORDER 白名单优先级"""
     groups = {}
-    order = []
     for e in events[:limit]:
         comp = e.get('competition') or {}
-        key = comp.get('id') or comp.get('name') or '其他'
+        cid = comp.get('id') or ''
+        cn, lid = comp_display(e)
+        key = cn  # 中文显示名为组键, 自动合并别名
         if key not in groups:
-            groups[key] = []
-            order.append(key)
-        groups[key].append(e)
+            groups[key] = {'lid': lid, 'cid': cid, 'evs': []}
+        groups[key]['evs'].append(e)
+        if groups[key]['lid'] is None and lid:
+            groups[key]['lid'] = lid
+
+    def _sort_key(k):
+        cid = groups[k]['cid']
+        return COMP_ORDER.index(cid) if cid in COMP_ORDER else len(COMP_ORDER)
+
     out = []
-    for key in order:
-        evs = groups[key]
-        cn, lid = comp_display(evs[0])
-        logo = (f'<img src="{ESPN_LEAGUE_LOGO}/{lid}.png" alt="" loading="eager" '
-                f'onerror="this.remove()">' ) if lid else ''
-        out.append(f'<div class="fm-league">{logo}<span>{esc(cn)}</span></div>')
-        out.extend(fm_match_row(e) for e in evs)
+    for key in sorted(groups.keys(), key=_sort_key):
+        g = groups[key]
+        logo = (f'<img src="{ESPN_LEAGUE_LOGO}/{g["lid"]}.png" alt="" loading="eager" '
+                f'onerror="this.remove()">') if g['lid'] else ''
+        out.append(f'<div class="fm-league">{logo}<span>{esc(key)}</span>'
+                   f'<span class="fm-lgline"></span></div>')
+        out.extend(fm_match_row(e) for e in g['evs'])
     return ''.join(out)
 
 def fm_section(title, inner, count=0):
@@ -613,10 +799,13 @@ def fm_team_card(tid, info, events):
         next_html = '<span>休赛期 · 赛程待定</span>'
 
     form_row = f'<div class="fm-form">{form_html}</div>' if form_html else ''
-    return (f'<div class="fm-team" style="background:{info["color"]}">'
-            f'<img src="{ESPN_TEAM_LOGO}/{tid}.png" alt="{esc(info["name"])}" loading="eager" onerror="this.remove()">'
-            f'<div class="nm">{esc(info["name"])}</div>{form_row}'
-            f'<div class="nx">{next_html}</div></div>')
+    return (f'<a class="fm-team" href="/football/teams/{info["slug"]}.html" '
+            f'style="background:linear-gradient(135deg,{info["color"]} 0%,{info["color2"]} 100%)">'
+            f'<div class="top"><img src="{ESPN_TEAM_LOGO}/{tid}.png" alt="{esc(info["name"])}" '
+            f'loading="eager" onerror="this.remove()">'
+            f'<div class="nm">{esc(info["name"])}</div></div>{form_row}'
+            f'<div class="nx">{next_html}</div>'
+            f'<div class="cta"><span>球队详情 · 实时数据</span><span class="arr">›</span></div></a>')
 
 # ==================== 渲染: Hero / 页脚 ====================
 def fm_hero(edition_cn, chips):
@@ -705,7 +894,16 @@ def generate_report(edition):
                 seen_ids.add(str(e.get('id')))
                 raw.append(e)
 
-    print('⭐ 拉取关注球队赛程...')
+    print('🌍 直采沙特联/中超 (ESPN scoreboard)...')
+    n_extra = 0
+    for m in get_extra_league_events((yday_str, today_str, tmrw_str)):
+        if m['id'] and m['id'] not in seen_ids:
+            seen_ids.add(m['id'])
+            raw.append(m)
+            n_extra += 1
+    print(f'   沙特联/中超补充 {n_extra} 场')
+
+    print('⭐ 拉取关注球队赛程 (ESPN 直采)...')
     team_events = {}
     for tid in FOLLOWED_TEAMS:
         team_events[tid] = get_team_events(tid)
@@ -719,6 +917,11 @@ def generate_report(edition):
                 seen_ids.add(str(m.get('id')))
                 raw.append(m)
 
+    # 小众联赛剔除: 白名单内赛事 + 关注队参加的比赛才保留
+    n_before = len(raw)
+    raw = [e for e in raw if is_main_match(e)]
+    print(f'🔎 联赛白名单过滤: {n_before} -> {len(raw)} 场')
+
     # 按北京时间重新分桶 (daily 接口按自身时区给日期, 会串天)
     ev_today = sorted([e for e in raw if match_bj_date(e) == today_str], key=lambda x: x.get('start_time', ''))
     ev_yday = sorted([e for e in raw if match_bj_date(e) == yday_str], key=lambda x: x.get('start_time', ''))
@@ -730,13 +933,10 @@ def generate_report(edition):
     tmrw_up = [e for e in ev_tmrw if is_future(e)]
 
     # 昨夜今晨: 近 20 小时内已结束的比赛, 关注队优先, 最多 12 场
-    def _involves_followed(m):
-        return any(str(safe(c, 'team', 'id', default='')) in FOLLOWED_TEAMS
-                   for c in m.get('competitors', []))
     cutoff = now_bj() - timedelta(hours=20)
     recent_closed = sorted(
         [e for e in raw if is_closed(e) and (parse_dt(e.get('start_time')) or now_bj()) >= cutoff],
-        key=lambda x: (not _involves_followed(x), x.get('start_time', '')))[:12]
+        key=lambda x: (not involves_followed(x), x.get('start_time', '')))[:12]
 
     # ---- 2. 新闻数据 ----
     hero_item, headline_rows, transfers, feed = collect_news()
@@ -750,17 +950,17 @@ def generate_report(edition):
     elif edition == 'evening' and today_closed:
         chips.append(f'⚽ 今日已赛 {len(today_closed)} 场')
     chips.append(f'🗞️ 足坛新闻 {n_news} 条')
-    # 距西甲揭幕天数 (三大西甲关注队最近的未赛)
-    la_liga_next = []
-    for tid in ('83', '86', '1068'):
-        fut = sorted([m for m in team_events.get(tid, []) if is_future(m)],
-                     key=lambda x: x.get('start_time', ''))
+    # 关注队最近的一场未赛 -> 距开赛天数
+    nxt_all = []
+    for tid, tev in team_events.items():
+        fut = sorted([m for m in tev if is_future(m)], key=lambda x: x.get('start_time', ''))
         if fut:
-            la_liga_next.append(parse_dt(fut[0].get('start_time')))
-    if la_liga_next:
-        days = (min(la_liga_next).date() - now_bj().date()).days
+            nxt_all.append((parse_dt(fut[0].get('start_time')), tid))
+    if nxt_all:
+        dt0, tid0 = min(nxt_all, key=lambda x: x[0])
+        days = (dt0.date() - now_bj().date()).days
         if days > 0:
-            chips.append(f'🗓️ 距西甲揭幕 {days} 天')
+            chips.append(f'🗓️ 距{FOLLOWED_TEAMS[tid0]["name"]}下一场 {days} 天')
     chips.append('🪟 夏季转会窗进行中')
 
     # ---- 4. 组装 ----
@@ -881,6 +1081,16 @@ def update_archive_index():
             cards.append('    </div>')
     archive_cards = '\n'.join(cards)
 
+    # 关注球队 chips — 与日报一致, 点击进球队详情页 (客户端实时拉取 ESPN 数据)
+    chips = []
+    for tid, info in FOLLOWED_TEAMS.items():
+        chips.append(
+            f'      <a class="follow-chip" href="/football/teams/{info["slug"]}.html" '
+            f'style="background:linear-gradient(135deg,{info["color"]},{info["color2"]});color:#fff;">'
+            f'<img class="chip-logo" src="{ESPN_TEAM_LOGO}/{tid}.png" alt="{esc(info["name"])}" '
+            f'loading="lazy" onerror="this.remove()">{esc(info["name"])}</a>')
+    follow_chips = '\n'.join(chips)
+
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -908,12 +1118,7 @@ def update_archive_index():
   <div class="card" style="margin-top: 4px;">
     <div class="card-title">我的关注</div>
     <div class="follow-bar">
-      <a class="follow-chip chip-barca" href="/football/teams/barcelona.html">🔴 巴萨</a>
-      <a class="follow-chip chip-spain" href="/football/teams/spain.html">🇪🇸 西班牙</a>
-      <a class="follow-chip chip-miami" href="/football/teams/miami.html">🩷 迈阿密国际</a>
-      <span class="follow-chip chip-laliga">🟡 西甲</span>
-      <span class="follow-chip chip-ucl">🔵 欧冠</span>
-      <span class="follow-chip chip-pl">🟣 英超</span>
+{follow_chips}
     </div>
   </div>
 
@@ -942,7 +1147,7 @@ def main():
         except Exception:
             pass
 
-    parser = argparse.ArgumentParser(description='足球日报 v5 · FotMob 版')
+    parser = argparse.ArgumentParser(description='足球日报 v6 · FotMob 版')
     parser.add_argument('edition', nargs='?', choices=['morning', 'evening'], help='早报或晚报')
     parser.add_argument('--preview', action='store_true', help='只写到 D:/WorkBuddy-Outputs 备份')
     parser.add_argument('--archive-only', action='store_true', help='只重新生成 /football/ 归档页, 不拉取数据')
@@ -958,7 +1163,7 @@ def main():
     edition = args.edition
     today_str = bj_date_str()
 
-    print(f'=== ⚽ 足球日报 v5 · FotMob 版 · {edition} ===')
+    print(f'=== ⚽ 足球日报 v6 · FotMob 版 · {edition} ===')
     print(f'北京时间: {bj_date_cn()}')
     print(f'输出目录: {POSTS_DIR}')
     print()

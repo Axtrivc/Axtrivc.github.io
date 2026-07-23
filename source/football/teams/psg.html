@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>巴塞罗那 · 足球日报</title>
+  <title>巴黎圣日耳曼 · 足球日报</title>
   <script src="/js/standalone-theme.js"></script>
   <script src="/js/team-dynamic.js"></script>
   <script src="/js/team-page.js"></script>
@@ -17,14 +17,14 @@
   <div class="top-nav">
     <a href="/football/">← 返回日报</a>
     <span class="nav-sep">|</span>
-    <span class="nav-current">🔴 巴塞罗那</span>
+    <span class="nav-current">🔵 巴黎圣日耳曼</span>
   </div>
 
-  <div class="team-hero" style="background: linear-gradient(180deg, #A5004418 0%, transparent 100%);">
-    <div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/soccer/500/83.png" alt="巴塞罗那" loading="eager" onerror="this.parentNode.className='team-emoji'; this.parentNode.innerHTML='⚽';" /></div>
+  <div class="team-hero" style="background: linear-gradient(180deg, #00417018 0%, transparent 100%);">
+    <div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/soccer/500/160.png" alt="巴黎圣日耳曼" loading="eager" onerror="this.parentNode.className='team-emoji'; this.parentNode.innerHTML='⚽';" /></div>
     <div class="team-text">
-      <div class="team-name">巴塞罗那</div>
-      <div class="team-sub">FC Barcelona · 西甲 · 欧冠</div>
+      <div class="team-name">巴黎圣日耳曼</div>
+      <div class="team-sub">Paris Saint-Germain · 法甲 · 欧冠</div>
     </div>
   </div>
 
@@ -72,7 +72,7 @@
 
   <!-- 积分榜（ESPN 实时） -->
   <div class="card">
-    <div class="team-section-title">📊 西甲积分榜 (2025-26赛季)<span class="last-update" id="standingsDate"></span></div>
+    <div class="team-section-title">📊 法甲积分榜 (2025-26赛季)<span class="last-update" id="standingsDate"></span></div>
     <div id="standingsLoading">
       <div class="skel-table-row loading-skeleton"></div>
       <div class="skel-table-row loading-skeleton"></div>
@@ -107,9 +107,9 @@
   <script>
   document.addEventListener('DOMContentLoaded', function() {
     TeamPage.init({
-      teamId: '83', league: 'esp.1', leagueName: '西甲', teamZh: '巴塞罗那',
+      teamId: '160', league: 'fra.1', leagueName: '法甲', teamZh: '巴黎圣日耳曼',
       seasons: ['2026', '2025'], standingsSeason: '2025', rosterSeason: '2025',
-      keywords: ['barcelona', 'barca', 'flick', 'yamal', 'pedri', 'lewandowski', 'raphinha', 'ter stegen', 'cubarsi']
+      keywords: ['psg', 'paris saint', 'luis enrique', 'dembele', 'vitinha', 'hakimi']
     });
   });
   </script>
