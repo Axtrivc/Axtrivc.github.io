@@ -89,11 +89,14 @@ hexo.extend.filter.register('after_render:html', function (data) {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-/* ── hero 底部 → 页面内容 渐进过渡 v3（2026-07-22）──
+/* ── hero 底部 → 页面内容 渐进过渡 v4（2026-07-23）──
  * 动画本身保持完整, 不在动画上盖任何遮罩/mask。
- * 在 hero-shell 下方接一段独立的 深蓝 → 页面白 渐变带(.hero-fade),
- * 起点 #16141B 取自 canvas 底部真实像素色, 与动画底边零色差衔接。 */
+ * 渐变带(.hero-fade)仍负责色彩衔接, 起点 #16141B 取自 canvas 底部真实像素色;
+ * 其上叠加一层与 hero 同款 RAMP_ASCII 的字符 canvas(.hero-fade-ascii):
+ * 顶部密度接续动画底边纹理, 向下逐渐稀疏变暗直至溶入页面底色,
+ * 避免字符动画直接接一坨纯色。字符渲染/闪烁逻辑在下方 heroJs。 */
 .hero-fade {
+  position: relative;
   height: clamp(160px, 22vh, 280px);
   background: linear-gradient(180deg,
     #16141B 0%,
@@ -102,6 +105,13 @@ hexo.extend.filter.register('after_render:html', function (data) {
     #7E9CC4 78%,
     var(--page-bg, #ffffff) 100%);
   pointer-events: none;
+}
+.hero-fade .hero-fade-ascii {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /* canvas：独立 GPU 层 */
@@ -352,7 +362,7 @@ body.hero-released {
 </div>
 `;
 
-  const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${typedHtml}\n</div>\n<div class="hero-fade" aria-hidden="true"></div>`;
+  const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${typedHtml}\n</div>\n<div class="hero-fade" aria-hidden="true"><canvas class="hero-fade-ascii" id="heroFadeAscii"></canvas></div>`;
 
   content = content.replace(
     '</header>',
@@ -494,6 +504,106 @@ body.hero-released {
     }
     typeLine();
   }
+
+  // ── hero-fade ASCII 溶解层（2026-07-23）──
+  // 渐变带叠加与 hero 同款 ramp 的字符纹理: 顶部密度接续动画底边,
+  // 向下逐渐稀疏变暗直至溶入页面底色, 低速闪烁保持与动画一致的"活"感。
+  (function initFadeAscii() {
+    var fade = document.querySelector('.hero-fade');
+    var cv = document.getElementById('heroFadeAscii');
+    if (!fade || !cv) return;
+    var ctx = cv.getContext('2d');
+    if (!ctx) return;
+
+    var RAMP = ' .:-=+*#%@';           // 与 river-hero.js RAMP_ASCII 一致
+    var CELL = 7;                      // css px / cell, 接近 hero 有效字号
+    var FPS = 12;
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var cols = 0, rows = 0, step = 0;
+    var seeds = null, phases = null;
+    var running = false, inView = true, timer = null;
+
+    function resize() {
+      var w = fade.clientWidth, h = fade.clientHeight;
+      if (!w || !h) return;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cv.width = Math.round(w * dpr);
+      cv.height = Math.round(h * dpr);
+      cols = Math.ceil(w / CELL);
+      rows = Math.ceil(h / CELL);
+      step = CELL * dpr;
+      seeds = new Float32Array(cols * rows);
+      phases = new Float32Array(cols * rows);
+      for (var i = 0; i < seeds.length; i++) {
+        seeds[i] = Math.random();
+        phases[i] = Math.random() * 6.2832;
+      }
+      ctx.font = step + 'px ui-monospace, Menlo, Consolas, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = 'rgb(150,180,225)';
+      draw(performance.now());
+    }
+
+    function draw(now) {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      var t = now / 1000;
+      for (var r = 0; r < rows; r++) {
+        var density = 0.34 * Math.pow(1 - r / rows, 1.5);  // 顶部接续动画, 向下指数衰减
+        if (density < 0.02) break;
+        for (var c = 0; c < cols; c++) {
+          var i = r * cols + c;
+          var s = seeds[i];
+          if (s >= density) continue;                      // 固定子集, 不整片闪烁
+          var edge = 1 - s / density;                      // cutoff 附近更暗 → 软边界
+          var tw = 0.6 + 0.4 * Math.sin(t * (0.5 + s * 1.5) + phases[i]);
+          var alpha = edge * tw * 0.85;
+          if (alpha < 0.04) continue;
+          var gi = 1 + (Math.floor(s * 977 + t * (0.2 + s * 0.6)) % (RAMP.length - 1));
+          ctx.globalAlpha = alpha;
+          ctx.fillText(RAMP.charAt(gi), (c + 0.5) * step, (r + 0.55) * step);
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function loop(now) {
+      if (!running) return;
+      draw(now);
+      timer = setTimeout(function () { requestAnimationFrame(loop); }, 1000 / FPS);
+    }
+    function start() {
+      if (running || reduced || !inView || document.hidden) return;
+      running = true;
+      requestAnimationFrame(loop);
+    }
+    function stop() {
+      running = false;
+      if (timer) { clearTimeout(timer); timer = null; }
+    }
+
+    resize();
+    if (reduced) return;                 // 减少动态: 只留静态一帧
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        inView = entries[0].isIntersecting;
+        if (inView) start(); else stop();
+      }).observe(fade);
+    }
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop(); else start();
+    });
+
+    var rsTimer = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(rsTimer);
+      rsTimer = setTimeout(resize, 200);
+    }, { passive: true });
+
+    start();
+  })();
 
   // scroll 监听：scrollY >= vh（hero 完全滚出视口）→ released
   // 修复：原 0.5vh 触发太早，hero display:none 后 main 还没到 viewport 顶部，
