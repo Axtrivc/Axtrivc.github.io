@@ -139,28 +139,12 @@ EXTRA_LEAGUES = [
 ESPN_UA = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
            '(KHTML, like Gecko) Chrome/126.0 Safari/537.36')
 
-# RSS 源 (BBC / ESPN 走 sports_skills; Sky 走 feedparser 直解析拿配图)
+# RSS 源 (Sky/BBC/ESPN 均走 feedparser 直解析拿配图; Google News 仅作转会文字补充)
 RSS_FEEDS = [
     ('BBC Sport', 'https://feeds.bbci.co.uk/sport/football/rss.xml'),
     ('ESPN FC',   'https://www.espn.com/espn/rss/soccer/news'),
 ]
 SKY_FOOTBALL_RSS = 'https://www.skysports.com/rss/11095'  # 足球频道, 逐条带 enclosure 图
-
-# Google News 查询
-TRANSFER_QUERIES = [
-    'Premier League transfer news',
-    'Real Madrid Barcelona transfer',
-    'football transfer rumours signings',
-    'La Liga Serie A transfer news',
-]
-TEAM_QUERIES = [
-    'Barcelona team news',
-    'Manchester City Arsenal team news',
-    'Manchester United team news',
-    'Bayern Munich PSG team news',
-    'Inter Miami Messi news',
-    'Como Fabregas news',
-]
 
 # 转会关键词 (标题匹配)
 TRANSFER_RE = None  # 在 main 前编译, 见 is_transfer_news()
@@ -533,22 +517,45 @@ def get_sky_football_news(limit=14):
     return items[:limit]
 
 def get_news_rss(feed_url, source_name, limit=6):
-    """RSS 文字新闻 (经 sports_skills)"""
-    data = call_skill('news', 'fetch_feed', f'--url={feed_url}')
-    entries = safe(data, 'data', 'entries', default=[]) or safe(data, 'entries', default=[]) or []
-    for e in entries:
-        e['source'] = e.get('source') or source_name
-        e['image'] = e.get('image') or ''
-    return entries[:limit]
+    """RSS 新闻直解析 (feedparser), 提取 enclosure/media_content 配图。
 
-def get_news_google(query, limit=3):
-    """Google News 搜索 (经 sports_skills)"""
-    data = call_skill('news', 'fetch_items', '--google_news',
-                      f'--query={query}', f'--limit={limit}', '--sort_by_date')
-    items = safe(data, 'data', 'items', default=[]) or safe(data, 'items', default=[]) or []
-    for e in items:
-        e['image'] = ''
-    return items
+    v6.2: 弃用 sports_skills news.fetch_feed (它丢图), 改走 feedparser 直解析,
+    与 get_sky_football_news 一致 — BBC Sport / ESPN FC 的 RSS 均逐条带配图。
+    """
+    try:
+        import feedparser
+    except ImportError:
+        return []
+    try:
+        f = feedparser.parse(feed_url)
+    except Exception:
+        return []
+    items = []
+    for e in f.entries:
+        img = ''
+        for enc in getattr(e, 'enclosures', []) or []:
+            href = enc.get('href', '') or enc.get('url', '')
+            if href:
+                img = href
+                break
+        if not img:
+            media = e.get('media_content', []) or e.get('media_thumbnail', []) or []
+            if media and media[0].get('url'):
+                img = media[0]['url']
+        if not img:
+            for l in e.get('links', []) or []:
+                if 'image' in (l.get('type', '') or ''):
+                    img = l.get('href', '')
+                    break
+        items.append({
+            'title': e.get('title', ''),
+            'link': e.get('link', '#'),
+            'source': source_name,
+            'published': e.get('published', ''),
+            'published_iso': '',
+            'image': img,
+        })
+    return items[:limit]
 
 # ==================== 新闻清洗 ====================
 import re as _re
@@ -840,16 +847,6 @@ def collect_news():
         print(f'   {name}: {len(entries)} 条')
         text_news.extend(entries)
 
-    print('🔀 拉取转会新闻 (Google News)...')
-    transfer_g = []
-    for q in TRANSFER_QUERIES:
-        transfer_g.extend(n for n in get_news_google(q, 3) if is_football_news(n) and news_fresh(n))
-
-    print('⚽ 拉取球队动态 (Google News)...')
-    team_g = []
-    for q in TEAM_QUERIES:
-        team_g.extend(n for n in get_news_google(q, 3) if is_football_news(n) and news_fresh(n))
-
     # Sky 按转会/非转会预切分 (均带图), BBC/ESPN/Google 作为文字补充源
     sky_all = dedup_news(sky)
     sky_tr = [n for n in sky_all if is_transfer_news(n)]
@@ -876,25 +873,26 @@ def collect_news():
             used.add(k)
             headline_rows.append(n)
 
-    # ---- 转会窗 (7 条): 优先 Sky 转会带图条目, 不足补 Google 转会查询 ----
+    # ---- 转会窗 (7 条): Sky 转会带图条目 + BBC/ESPN 转会带图条目; 全程只要带图 ----
+    # v6.2: 不再用无图的 Google News — 宁可少一条也不要色块占位
+    text_tr = [n for n in text_pool if is_transfer_news(n)]
     transfers = []
-    for n in (sky_tr + transfer_g):
+    for n in (sky_tr + text_tr):
         if len(transfers) >= 7:
             break
         k = norm_title(n['title'])
-        if k and k not in used:
+        if k and k not in used and n.get('image'):
             used.add(k)
             transfers.append(n)
 
-    # ---- 足坛动态 (6 条): Sky 尾部剩余 (带图) + BBC/ESPN + Google 球队动态 ----
-    # sky 剩余 = 未被 hero/时下人气/转会 用掉的 sky_all 条目 (大多带图)
+    # ---- 足坛动态 (6 条): Sky 尾部剩余 + BBC/ESPN 带图条目; 全程只要带图 ----
     sky_rest = [n for n in sky_all if norm_title(n['title']) not in used]
     feed = []
-    for n in (sky_rest + text_pool + team_g):
+    for n in (sky_rest + text_pool):
         if len(feed) >= 6:
             break
         k = norm_title(n['title'])
-        if k and k not in used:
+        if k and k not in used and n.get('image'):
             used.add(k)
             feed.append(n)
 
