@@ -823,9 +823,14 @@ def fm_footer():
 
 # ==================== 新闻聚合 ====================
 def collect_news():
-    """拉取全部新闻源, 返回 (头条列表带图, 转会列表, 动态列表), 均已去重过滤"""
+    """拉取全部新闻源, 返回 (hero_item, headline_rows, transfers, feed), 均已去重过滤。
+
+    v6.1 配图优先分配: Sky RSS 全量带图, 按转会/非转会预切分后分板块分配,
+    保证 时下人气/转会窗/足坛动态 三板块都尽量吃到 Sky 带图条目,
+    而不是像旧逻辑那样让转会/动态板块只能落到无图的 Google/BBC 文字源。
+    """
     print('🗞️ 拉取 Sky Sports 足球 RSS (带图)...')
-    sky = [n for n in get_sky_football_news(14) if is_football_news(n) and news_fresh(n)]
+    sky = [n for n in get_sky_football_news(25) if is_football_news(n) and news_fresh(n)]
     print(f'   Sky: {len(sky)} 条')
 
     print('📡 拉取 BBC / ESPN RSS...')
@@ -845,35 +850,53 @@ def collect_news():
     for q in TEAM_QUERIES:
         team_g.extend(n for n in get_news_google(q, 3) if is_football_news(n) and news_fresh(n))
 
-    # 头条: Sky 带图优先, 不足时用 BBC/ESPN 文字补齐
-    headlines = dedup_news(sky)
-    hero_item = headlines[0] if headlines else None
-    headline_rows = headlines[1:7] if len(headlines) > 1 else []
+    # Sky 按转会/非转会预切分 (均带图), BBC/ESPN/Google 作为文字补充源
+    sky_all = dedup_news(sky)
+    sky_tr = [n for n in sky_all if is_transfer_news(n)]
+    sky_gen = [n for n in sky_all if not is_transfer_news(n)]
     text_pool = dedup_news(text_news)
-    used = {norm_title(h['title']) for h in headlines}
-    for n in text_pool:
+    used = set()
+
+    # ---- hero (头条大图): 优先 Sky 非转会头条, 回落 Sky 转会头条, 再回落文字源 ----
+    hero_item = None
+    hero_pool = (sky_gen + sky_tr) or text_pool
+    for n in hero_pool:
+        if norm_title(n['title']) not in used:
+            hero_item = n
+            used.add(norm_title(n['title']))
+            break
+
+    # ---- 时下人气 (6 条): 优先 Sky 非转会带图, 不足补 BBC/ESPN ----
+    headline_rows = []
+    for n in (sky_gen + sky_tr + text_pool):
         if len(headline_rows) >= 6:
             break
-        if norm_title(n['title']) not in used:
-            used.add(norm_title(n['title']))
+        k = norm_title(n['title'])
+        if k and k not in used:
+            used.add(k)
             headline_rows.append(n)
-    if not hero_item and text_pool:
-        hero_item = text_pool[0]
-        used.add(norm_title(text_pool[0]['title']))
 
-    # 转会: Sky 中带转会关键词的 (有图) + Google 转会查询; 不与头条/hero 重复
-    sky_tr = [n for n in headlines if is_transfer_news(n)]
+    # ---- 转会窗 (7 条): 优先 Sky 转会带图条目, 不足补 Google 转会查询 ----
     transfers = []
-    for n in dedup_news(sky_tr + transfer_g):
+    for n in (sky_tr + transfer_g):
         if len(transfers) >= 7:
             break
-        if norm_title(n['title']) not in used:
-            used.add(norm_title(n['title']))
+        k = norm_title(n['title'])
+        if k and k not in used:
+            used.add(k)
             transfers.append(n)
 
-    # 足坛动态: 剩余文字新闻 + Google 球队动态
-    rest = [n for n in dedup_news(text_pool + team_g) if norm_title(n['title']) not in used]
-    feed = rest[:6]
+    # ---- 足坛动态 (6 条): Sky 尾部剩余 (带图) + BBC/ESPN + Google 球队动态 ----
+    # sky 剩余 = 未被 hero/时下人气/转会 用掉的 sky_all 条目 (大多带图)
+    sky_rest = [n for n in sky_all if norm_title(n['title']) not in used]
+    feed = []
+    for n in (sky_rest + text_pool + team_g):
+        if len(feed) >= 6:
+            break
+        k = norm_title(n['title'])
+        if k and k not in used:
+            used.add(k)
+            feed.append(n)
 
     return hero_item, headline_rows, transfers, feed
 
