@@ -805,7 +805,7 @@ body.hero-released {
 `;
 
   const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
-  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=14"') : '';
+  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=15"') : '';
 
   const afterScriptIdx = heroSrc.indexOf(heroScriptTag) + heroScriptTag.length;
   const inlineScriptMatch = heroSrc.slice(afterScriptIdx).match(/<script>[\s\S]*?<\/script>/);

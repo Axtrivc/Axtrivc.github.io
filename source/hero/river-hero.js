@@ -4601,6 +4601,11 @@
       heroCanRenderLive = false;
       looping = false;
       document.body.classList.add("hero-cycle-done");
+      // 循环结束 → 切静态日出图: 截一帧晨光淡入, canvas 淡出释放 GPU。
+      // 若不切, canvas 停止渲染后缓冲被合成清除 → 全黑, 与下方 hero-fade
+      // 渐变带(深蓝衬底)出现明显色阶分割线。freezeStaticHero 会同步 draw
+      // 一帧并触发 __heroFrameHook 让 hero-fade 取样对齐, 消除交界色差。
+      freezeStaticHero();
     }
     // Dev hook: call riverFreezeHero() in the console to preview the static
     // sunrise still on any machine, without having to be an actual shitbox.
