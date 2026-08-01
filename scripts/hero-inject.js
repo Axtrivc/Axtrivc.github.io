@@ -28,7 +28,8 @@ hexo.extend.filter.register('after_render:html', function (data) {
   const canonicalMatch = data.match(/canonical["']?\s*href=["']([^"']+)["']/);
   if (!canonicalMatch) return data;
   const canonical = canonicalMatch[1];
-  if (!/axtrivc\.github\.io\/(index\.html)?$/.test(canonical)) return data;
+  // 支持自定义域 axtrivc.com 与旧 github.io 域(绑定主域名后 canonical 变为 axtrivc.com,必须放行)
+  if (!/(?:axtrivc\.github\.io|axtrivc\.com)\/(?:index\.html)?$/.test(canonical)) return data;
 
   if (data.indexOf('full_page') === -1) return data;
   if (data.indexOf('</header>') === -1 || data.indexOf('</body>') === -1) return data;
