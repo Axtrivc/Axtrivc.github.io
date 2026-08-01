@@ -217,6 +217,18 @@ aside: false
     <p>一些实用的小工具，纯前端运行，数据不离开浏览器</p>
   </div>
 
+  <!-- ToolHub 完整版入口：指向子域名 toolhub.axtrivc.com(120+ 英文工具),传递主域权重 -->
+  <a href="https://toolhub.axtrivc.com" target="_blank" rel="noopener" style="display:block;text-decoration:none;margin-bottom:30px">
+    <div style="background:linear-gradient(135deg,#07C160 0%,#0A8B47 100%);border-radius:14px;padding:22px 24px;color:#fff;display:flex;align-items:center;gap:16px;box-shadow:0 4px 18px rgba(7,193,96,0.25);transition:transform 0.25s">
+      <div style="font-size:36px">🚀</div>
+      <div style="flex:1">
+        <div style="font-size:17px;font-weight:800;margin-bottom:3px">ToolHub — 120+ Free Online Tools</div>
+        <div style="font-size:13px;opacity:0.92">Calculators, converters, developer & text tools. Free, no signup, runs in your browser.</div>
+      </div>
+      <div style="font-size:20px">→</div>
+    </div>
+  </a>
+
   <!-- Tool Selector -->
   <div class="tool-grid">
     <div class="tool-card active" onclick="showTool('gpa', event)">

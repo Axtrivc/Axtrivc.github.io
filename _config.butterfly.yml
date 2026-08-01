@@ -19,6 +19,7 @@ menu:
   Music: /music/ || fas fa-music
   Guestbook: /guestbook/ || fas fa-comment-dots
   Tools: /tools/ || fas fa-tools
+  ToolHub: https://toolhub.axtrivc.com || fas fa-toolbox
 
 # Code Blocks
 code_blocks:
