@@ -10,18 +10,48 @@
   background-image: none !important;
 }
 
-/* CRITICAL: Override #page-header brown bg + dark overlay (root cause of gray!) */
-#page-header {
+/* CRITICAL: Override #page-header brown bg + dark overlay
+   修复 2026-06-26：hexo-butterfly 5.x 默认 #page-header { background-color: #8b6f47 } (棕色)
+   主题切换后 nav 仍是黄色就是这个没覆盖。
+   加 full_page + post-bg 两个变体（post-bg 是文章页）。 */
+#page-header,
+#page-header.full_page,
+#page-header.post-bg {
   background-color: transparent !important;
   background-image: none !important;
+  background-attachment: scroll !important;
 }
-#page-header::before {
+#page-header::before,
+#page-header.full_page::before,
+#page-header.post-bg::before {
   background-color: transparent !important;
   opacity: 0 !important;
 }
-#page-header.full_page {
-  background-color: transparent !important;
-  background-image: none !important;
+
+/* 2026-06-26 修复：文章页（非主页，无 hero-page-active）默认 post-bg 高度 400px，
+   但没 top_img 时显示成 400px 白色空白。压缩为自适应 + 最小 220px 放标题。 */
+body:not(.hero-page-active) #page-header.post-bg {
+  height: auto !important;
+  min-height: 220px !important;
+}
+
+/* 2026-07-22 修复：文章页标题/meta 隐形
+   header 背景已在上方改透明，但 Butterfly 的 #post-info 仍是为深色 top_img
+   设计的白字标题(#FFFFFF) + 浅灰 meta(#EEEEEE)，白底页面上完全/几乎看不见。
+   改为跟随主题的深色系（标题 --theme-heading，meta --theme-secondary-current）。 */
+#page-header.post-bg #post-info .post-title {
+  color: var(--theme-heading, #1a1a1a) !important;
+  text-shadow: none !important;
+}
+#page-header.post-bg #post-info #post-meta,
+#page-header.post-bg #post-info #post-meta span,
+#page-header.post-bg #post-info #post-meta time,
+#page-header.post-bg #post-info #post-meta i {
+  color: var(--theme-secondary-current, #7A7A7A) !important;
+  text-shadow: none !important;
+}
+#page-header.post-bg #post-info #post-meta a {
+  color: var(--theme-accent-current, #07C160) !important;
 }
 
 /* Hide Butterfly dark mode toggle */
@@ -40,13 +70,16 @@
   bottom: -2px; left: 50% !important;
   transform: translateX(-50%) !important;
   width: 0; height: 2px;
-  background: var(--theme-accent, #07C160) !important;
+  background: var(--theme-accent-current, #07C160) !important;
   border-radius: 1px;
   transition: width 0.25s ease, background 0.45s ease;
 }
 #nav-theme-trigger:hover::after { width: 80% !important; }
 
-/* 全局导航菜单下划线 - 跟随主题主色，但排除 Theme 按钮（避免覆盖其居中定位） */
+/* 全局导航菜单下划线 - 跟随主题主色，但排除 Theme 按钮（避免覆盖其居中定位）
+   注：使用 --theme-accent-current（不是 --theme-accent legacy），
+   保证 CSS 解析初期 JS 尚未 setProperty 时 fallback 到 #07C160 也至少等于
+   旧 var 的语义；JS 跑完后会平滑切换到当前主题色。 */
 #menus .menus_item a:not(#nav-theme-trigger),
 #nav a.site-page:not(#nav-theme-trigger),
 .menus_items a:not(#nav-theme-trigger) {
@@ -55,13 +88,50 @@
 #menus .menus_item a:not(#nav-theme-trigger)::after,
 #nav a.site-page:not(#nav-theme-trigger)::after,
 .menus_items a:not(#nav-theme-trigger)::after {
-  background: var(--theme-accent, #07C160) !important;
+  background: var(--theme-accent-current, #07C160) !important;
   transition: background 0.45s ease;
 }
 /* Butterfly 原生下划线选择器兼容 */
 #menus .menus_item:hover > a:not(#nav-theme-trigger)::after,
 .menus_item:hover > a.site-page:not(#nav-theme-trigger)::after {
-  background: var(--theme-accent, #07C160) !important;
+  background: var(--theme-accent-current, #07C160) !important;
+}
+
+/* ═══ 2026-06-27 修复：active menu 下划线不跟主题 ═══
+   根因 1：上面 --theme-accent → --theme-accent-current 改完，JS 未跑时 underline
+            颜色 fallback 到 #07C160，但 JS 一跑就 OK，理论上不应持久绿。
+   根因 2（真正的）：Butterfly 默认 underline 是 hover 触发 + 渐变色 brown，
+            theme-system.css 之前的覆盖虽然 specificty 够，但用了 legacy --theme-accent
+            （仅在 applyTheme 内设置），CSS 解析初期变量未定义 → fallback #07C160。
+            如果 JS 异步加载慢或 theme 切换瞬态，underline 会"卡"在绿色。
+   修复：
+     a) 上面已把 --theme-accent 改 --theme-accent-current（更早 setProperty）
+     b) 这里加 body 前缀的更高优先级兜底，覆盖所有可能的 active/select 类
+     c) 用 ID 选择器升一级 specificity，确保压过 Butterfly 原生规则 */
+body #page-header #nav #menus .menus_item a::after,
+body #page-header #nav #menus .menus_items a::after,
+body #page-header #nav a.site-page::after,
+body #nav .menus_item a::after,
+body #nav a.site-page::after {
+  background-color: var(--theme-accent-current, #07C160) !important;
+  transition: background-color 0.45s ease !important;
+}
+body #page-header #nav #menus .menus_item:hover a::after,
+body #page-header #nav #menus .menus_items a:hover::after,
+body #page-header #nav a.site-page:hover::after,
+body #nav .menus_item:hover a::after,
+body #nav a.site-page:hover::after {
+  background-color: var(--theme-accent-current, #07C160) !important;
+}
+/* 防御：覆盖 Butterfly 未来版本可能引入的 .select_parent / .select-child / .menus_item.select
+   即使本仓库 5.5.4 没有这些类，提前兜底避免升级后回归 */
+body #nav .select_parent > a::after,
+body #nav .select-child a::after,
+body #nav .menus_item.select a::after,
+body #nav .menus_item.select > a::after {
+  background: var(--theme-accent-current, #07C160) !important;
+  background-color: var(--theme-accent-current, #07C160) !important;
+  border-color: var(--theme-accent-current, #07C160) !important;
 }
 
 /* Panel overlay */
@@ -253,6 +323,53 @@ footer {
   color: var(--theme-text-current, #222222) !important;
 }
 
+/* ══ v3.1 修复: 上一篇/下一篇 + 相关推荐 背景色 ══
+ * butterfly 默认 .pagination-related 用 $dark-black (#000000) 纯黑底
+ * 内部 .cover div 用 var(--default-bg-color) = #8b6f47 棕灰色 (主题色)
+ * 没有封面图时两层叠加 → 丑棕灰底
+ * 改为白底 + 主题色文字,跟文章卡片风格一致 */
+.pagination-related,
+#pagination .pagination-related {
+  background: var(--theme-card-current, #FFFFFF) !important;
+}
+/* 关键: 覆盖 .cover div 的棕灰背景 */
+.pagination-related .cover {
+  background: var(--theme-card-current, #FFFFFF) !important;
+  opacity: 0 !important;
+}
+.pagination-related .info,
+.pagination-related .info-1,
+.pagination-related .info-2 {
+  color: var(--theme-text-current, #222222) !important;
+}
+.pagination-related .info-1 .info-item-1 {
+  color: var(--theme-secondary-current, #7A7A7A) !important;
+}
+.pagination-related .info-1 .info-item-2 {
+  color: var(--theme-text-current, #222222) !important;
+}
+/* 相关推荐卡片: 白底 + 主题色文字 */
+.relatedPosts-list > a {
+  background: var(--theme-card-current, #FFFFFF) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+.relatedPosts-list > a .cover {
+  background: var(--theme-card-current, #FFFFFF) !important;
+  opacity: 0 !important;
+}
+.relatedPosts-list > a .info,
+.relatedPosts-list > a .info-1,
+.relatedPosts-list > a .info-2 {
+  color: var(--theme-text-current, #222222) !important;
+}
+.relatedPosts-list > a .info-1 .info-item-1 {
+  color: var(--theme-secondary-current, #7A7A7A) !important;
+}
+/* 相关推荐标题 */
+.relatedPosts > .headline {
+  color: var(--theme-text-current, #222222) !important;
+}
+
 /* Sidebar Follow Me button — actual DOM id: #card-info-btn */
 #card-info-btn,
 a[id="card-info-btn"] {
@@ -342,4 +459,32 @@ a[id="card-info-btn"] {
 .avatar-img img:hover {
   transform: scale(1.08) !important;
   filter: brightness(1.05) !important;
+}
+
+/* ============================================================
+   2026-07-22: 首页文章列表 masonry → 对齐双列网格
+   Butterfly index_layout:6 用 MasonryInfiniteGrid 绝对定位、逐列堆叠,
+   左右两列高度各自累计 → 同一视觉行的卡片顶边错位(如 7-21 早报/晚报)。
+   覆盖为 CSS grid: 行内卡片顶边对齐, 行高取该行最高卡片。
+   !important 压过 InfiniteGrid 写入的内联 width/transform/position/height。
+   gap 与 masonry 配置一致(horizontal 10 / vertical 20)。
+   ============================================================ */
+#recent-posts.masonry .recent-post-items {
+  display: grid !important;
+  grid-template-columns: 1fr;
+  gap: 20px 10px;
+  height: auto !important;
+}
+#recent-posts.masonry .recent-post-item {
+  position: static !important;
+  transform: none !important;
+  width: auto !important;
+  left: auto !important;
+  top: auto !important;
+  margin-bottom: 0 !important;
+}
+@media (min-width: 768px) {
+  #recent-posts.masonry .recent-post-items {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

@@ -33,11 +33,11 @@
   // shader, even if we later decide to show the static fallback.
   const DETECT_GPU_URL = "https://esm.sh/@pmndrs/detect-gpu?bundle";
   const DETECT_GPU_MIN_TIER = 3;   // 0..3; only top-tier GPUs run the live hero.
-  const HERO_HEAD_LINE = "Intelligence that flows with you.";
-  const HERO_SUB_LINE  = "River is building a new stack for personal AI.";
-  const HERO_SUB_DELAY = 300;     // ms after headline finishes before sub starts
-  const HERO_SUB_RATE  = 30;      // ms per character
-  const HERO_TYPEIN_MS = 250 + HERO_HEAD_LINE.length * 36 + HERO_SUB_DELAY + HERO_SUB_LINE.length * HERO_SUB_RATE;
+  const HERO_HEAD_LINE = "Axtrivc's Blog";
+  const HERO_SUB_LINE  = "";  // sub 由主区 butterfly typed.js 显示 (hitokoto + '抽刀断水')
+  const HERO_SUB_DELAY = 0;   // no sub
+  const HERO_SUB_RATE  = 30;  // unused
+  const HERO_TYPEIN_MS = 250 + HERO_HEAD_LINE.length * 36;  // no sub, no delay
   const HERO_REVEAL_HOLD_MS = 350;
   const HERO_TEXT_SLIDE_MS = 1100;
   const HERO_REVEAL_MS = 1500;
@@ -330,6 +330,7 @@
     uniform float u_foam;    // foam flicker intensity
     uniform float u_contOn;  // 1 = render continents, 0 = hidden
     uniform vec3  u_contColor; // continent glyph colour (RGB)
+    uniform vec3  u_waterTint;   // theme-driven river tint (RGB 0..1)
     uniform float u_crtOn;   // 1 = CRT scanlines on, 0 = off
     uniform float u_pixelText; // 1 = chunky pixel text, 0 = sharp
     uniform float u_sun;     // sun disk + glow brightness (0 = none)
@@ -1067,9 +1068,13 @@
       float cellSpark = step(0.22, hash(cell + floor(flowY * 30.0)));
       float pixelInk = clamp(dotCore * (0.70 + 0.40 * cellSpark + 0.42 * strm), 0.0, 1.0);
       float waterInk = max(pixelInk, waterCore * 0.30);
-      vec3 waterBase = vec3(0.790, 0.910, 0.900);
-      vec3 waterWhite = vec3(1.000, 0.990, 0.940);
-      vec3 waterCol = mix(waterBase, waterWhite, clamp(0.56 + 0.36 * waterCore + 0.32 * strm + 0.18 * foam, 0.0, 1.0));
+      vec3 waterBase0  = vec3(0.790, 0.910, 0.900);
+      vec3 waterWhite0 = vec3(1.000, 0.990, 0.940);
+      vec3 tintBase    = u_waterTint * 0.85 + vec3(0.10, 0.10, 0.10);
+      vec3 tintHigh    = u_waterTint + vec3(0.15, 0.15, 0.15);
+      vec3 waterBase   = mix(waterBase0, tintBase,  0.55);
+      vec3 waterWhite  = mix(waterWhite0, tintHigh, 0.45);
+      vec3 waterCol    = mix(waterBase, waterWhite, clamp(0.56 + 0.36 * waterCore + 0.32 * strm + 0.18 * foam, 0.0, 1.0));
       float waterA = 0.0;
 
       float terrainA = clamp(fillA + lineA, 0.0, 0.58);
@@ -2911,6 +2916,7 @@
     foam:    gl.getUniformLocation(prog, "u_foam"),
     contOn:  gl.getUniformLocation(prog, "u_contOn"),
     contColor: gl.getUniformLocation(prog, "u_contColor"),
+    waterTint: gl.getUniformLocation(prog, "u_waterTint"),
     crtOn:   gl.getUniformLocation(prog, "u_crtOn"),
     pixelText: gl.getUniformLocation(prog, "u_pixelText"),
     sun:     gl.getUniformLocation(prog, "u_sun"),
@@ -3206,6 +3212,7 @@
   gl.uniform1f(U.hoist, 1.0);                         // PERF: cache frame-constant canyon values once (was recompute-per-step)
   gl.uniform1f(U.cityOn,  0.0);                       // starts without legacy cities
   gl.uniform3f(U.contColor, 0.36, 0.50, 0.28);        // forest green (hue ≈ 110°)
+    gl.uniform3f(U.waterTint, 0.45, 0.80, 0.70);  // 默认青绿水色（hex #73CCA3 近似）
   gl.uniform1f(U.crtOn,   0.0);                        // CRT scanlines off by default
   gl.uniform1f(U.pixelText, 0.0);                      // sharp text by default
   gl.uniform1f(U.sun, 0.64);                           // sun brightness — set by SUN slider
@@ -3767,15 +3774,18 @@
   // ── Silhouette AA tuning state (driven by the right-side debug panel) ──
   // Keep the full frame at 1× for volumetric cloud performance. Silhouette
   // clarity is tested through edge-only supersampling in the shader.
-  const AA = { taps: 8, feather: 0.0, signed: false, renderScale: 1.0 };
-  // FPS-adaptive AA governor: walks the tap count up/down this ladder based on
-  // the measured GPU frame time, keeping draw cost inside the frame budget.
-  // Touching the AA dropdown switches it off so the manual choice wins.
+  // PERF v12.5 — browser at 50fps vs preview at 90fps was renderScale + AA cap
+  // running wide-open. 0.66 backbuffer scaled by CSS = 2.3x fewer pixels for a
+  // barely-noticeable quality hit; AA_LADDER starts at 4 (was 8) so we don't
+  // peg the GPU on the very first frame and have to recover. Combine with the
+  // existing adaptive governor — the ladder still climbs if there's headroom.
+  // v13: 恢复 river.ai 原版值（hijack 已砍, shader 是唯一 pipeline）
+  const AA = { taps: 4, feather: 0.0, signed: false, renderScale: 0.66 };
   const AA_LADDER = [0, 4, 8, 9];
   let aaGovernor = true;
-  let aaLevel = Math.max(0, AA_LADDER.indexOf(AA.taps));   // current rung
+  let aaLevel = Math.max(0, AA_LADDER.indexOf(AA.taps));
   let liveScale = AA.renderScale;
-  let frameCap = 50;   // matches the FPS CAP slider default; wireKnob re-syncs on init
+  let frameCap = 40;   // river.ai 原版默认值
   let frameMin = 1000 / frameCap;
 
   let dpr = 1;
@@ -3788,13 +3798,14 @@
     let h = window.innerHeight || 720;
     if (!(w > 2)) w = 1280;
     if (!(h > 2)) h = 720;
-    // Base dpr capped at 1.5 (sharp on retina without tanking perf on iGPU);
-    // render-scale multiplies it for full-frame supersampling. CAP the result
-    // so the canvas never exceeds the GPU's max buffer — otherwise the browser
-    // silently clamps ONE axis and the whole scene + text stretch off-centre
-    // (worst at wide fullscreen). Scaling both axes by the same factor
-    // preserves the aspect ratio.
-    dpr = Math.min(window.devicePixelRatio || 1, 1.5) * liveScale;
+    // Base dpr capped at 1.0 (matches river.ai original — 2.25x fewer pixels
+    // than 1.5 cap, the single biggest win for iGPU. CSS handles the visual
+    // sharpness; the GPU only does the math). render-scale multiplies it for
+    // full-frame supersampling. CAP the result so the canvas never exceeds
+    // the GPU's max buffer — otherwise the browser silently clamps ONE axis
+    // and the whole scene + text stretch off-centre (worst at wide
+    // fullscreen). Scaling both axes by the same factor preserves aspect.
+    dpr = Math.min(window.devicePixelRatio || 1, 1.0) * liveScale;
     let cw = Math.max(2, Math.round(w * dpr));
     let ch = Math.max(2, Math.round(h * dpr));
     const maxDim = Math.min(gl.getParameter(gl.MAX_RENDERBUFFER_SIZE) || 4096, 8192);
@@ -4300,6 +4311,33 @@
   wireKnob("contSatSlider", "contSatLabel", 1, (v) => Math.round(v) + "%",
            (_) => pushContColor());
 
+  // ── Theme-driven river tint ── reads --theme-accent-current from the blog
+  // theme system and pushes it to the shader's u_waterTint uniform. The
+  // mix weight is softened (0.55 base / 0.45 highlight) inside the shader
+  // so the river keeps water-like luminance instead of becoming flat paint.
+  function hexToRgb01(hex){
+    if (!hex) return null;
+    hex = hex.trim().replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    if (hex.length !== 6) return null;
+    const n = parseInt(hex, 16);
+    if (isNaN(n)) return null;
+    return [
+      Math.max(0, Math.min(1, ((n >> 16) & 255) / 255)),
+      Math.max(0, Math.min(1, ((n >> 8)  & 255) / 255)),
+      Math.max(0, Math.min(1, ( n        & 255) / 255))
+    ];
+  }
+  function pushWaterTint(){
+    const css = getComputedStyle(document.documentElement)
+                 .getPropertyValue('--theme-accent-current');
+    const rgb = hexToRgb01(css);
+    if (!rgb) return;  // 解析失败保持默认
+    gl.uniform3f(U.waterTint, rgb[0], rgb[1], rgb[2]);
+  }
+  pushWaterTint();                                    // 立即同步当前主题
+  window.addEventListener('themechange', pushWaterTint);  // 监听主题切换
+
   // Gradient recolour — two vivid hue stops (top → bottom)
   function pushGradColors() {
     const aEl = document.getElementById("gradASlider");
@@ -4539,6 +4577,7 @@
         gl.uniform1f(U.tod, 0.28);              // ~06:45 — warm low sun, just risen
         if (AA_LADDER.indexOf(4) >= 0) { AA.taps = 4; gl.uniform1f(U.aaN, 4); } // crisp still
         draw(cam.clock || 8.0);                 // render the frame…
+        if (window.__heroFrameHook) window.__heroFrameHook(canvas); // hero-fade 延伸层同步取样
         // Same synchronous task as the draw → the drawing buffer hasn't been
         // cleared yet (that happens at composite), so toDataURL captures it
         // even without preserveDrawingBuffer.
@@ -4562,6 +4601,11 @@
       heroCanRenderLive = false;
       looping = false;
       document.body.classList.add("hero-cycle-done");
+      // 循环结束 → 切静态日出图: 截一帧晨光淡入, canvas 淡出释放 GPU。
+      // 若不切, canvas 停止渲染后缓冲被合成清除 → 全黑, 与下方 hero-fade
+      // 渐变带(深蓝衬底)出现明显色阶分割线。freezeStaticHero 会同步 draw
+      // 一帧并触发 __heroFrameHook 让 hero-fade 取样对齐, 消除交界色差。
+      freezeStaticHero();
     }
     // Dev hook: call riverFreezeHero() in the console to preview the static
     // sunrise still on any machine, without having to be an actual shitbox.
@@ -4638,16 +4682,10 @@
         // not render speed — one 5s gap averaged in reads as a fake stall.
         if (now >= aaMeasureFrom && frameDelta < 250) { aaFpsSum += fps; aaFpsCount++; }
       }
-      if (fpsMeter && frameDelta > 0) {
-        if (now - fpsUi > 250) {
-          // Show GPU ms (the real throughput metric, ∞ uncapped) when available,
-          // alongside the rAF fps (capped by the cap slider + monitor refresh).
-          fpsMeter.textContent = gpuMsEma > 0
-            ? gpuMsEma.toFixed(2) + " ms · " + Math.round(1000 / gpuMsEma) + " gpu-fps"
-            : Math.round(fpsEma) + " fps";
-          fpsUi = now;
-        }
-      }
+      // v12.14 - 移除右下角 fps/ms 显示 (用户要求) → 不再 textContent, 节省 layout/reflow 开销
+      // 保留 fpsEma / gpuMsEma 内部统计供 AA governor 使用, 仅跳过 DOM 更新
+      // fpsUi 变量保留以免改动其他逻辑
+      // (空块)
 
       // ── Adaptive AA governor (probe → settle → measure → verdict) ──
       // Instead of reacting to the instantaneous fps (twitchy: a scroll or GC
@@ -4813,6 +4851,8 @@
       cam.clock += cdt;
 
       gpuTimedDraw(cam.clock);
+      // 供 hero-fade 延伸层取样: 同一同步任务内缓冲尚未被合成清除(同 toDataURL 原理)
+      if (window.__heroFrameHook) window.__heroFrameHook(canvas);
       if (state === "live" && liveClockAnchored && (now - liveT0) >= HERO_LIVE_STOP_MS) {
         stopLiveHeroAfterCycle();
         return;

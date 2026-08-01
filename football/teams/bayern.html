@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>拜仁慕尼黑 · 足球日报</title>
+  <script src="/js/standalone-theme.js"></script>
+  <script src="/js/team-dynamic.js"></script>
+  <script src="/js/team-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="/football/assets/fonts.css" />
+  <link rel="stylesheet" href="/football/assets/common.css" />
+</head>
+<body>
+
+  <div class="top-nav">
+    <a href="/football/">← 返回日报</a>
+    <span class="nav-sep">|</span>
+    <span class="nav-current">🔴 拜仁慕尼黑</span>
+  </div>
+
+  <div class="team-hero" style="background: linear-gradient(180deg, #DC052D18 0%, transparent 100%);">
+    <div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/soccer/500/132.png" alt="拜仁慕尼黑" loading="eager" onerror="this.parentNode.className='team-emoji'; this.parentNode.innerHTML='⚽';" /></div>
+    <div class="team-text">
+      <div class="team-name">拜仁慕尼黑</div>
+      <div class="team-sub">FC Bayern München · 德甲 · 欧冠</div>
+    </div>
+  </div>
+
+  <!-- 数据总览（ESPN 实时） -->
+  <div class="card">
+    <div id="statsLoading">
+      <div class="skel-row loading-skeleton"></div>
+      <div class="skel-row loading-skeleton" style="margin-top:8px;"></div>
+    </div>
+    <div id="statsContent" style="display:none;"></div>
+  </div>
+
+  <!-- 下一场比赛（ESPN 实时） -->
+  <div class="card">
+    <div class="team-section-title">⏭️ 下一场比赛</div>
+    <div id="nextLoading"><div class="skel-row loading-skeleton" style="height:28px;"></div></div>
+    <div id="nextContent" style="display:none;"></div>
+  </div>
+
+  <!-- 最近5场比赛（ESPN 实时） -->
+  <div class="card">
+    <div class="team-section-title">📅 最近5场比赛<span class="last-update" id="recentDate"></span></div>
+    <div id="recentLoading">
+      <div class="skel-row loading-skeleton"></div>
+      <div class="skel-row loading-skeleton" style="height:24px;margin-top:8px;"></div>
+    </div>
+    <div id="recentContent" style="display:none;"></div>
+  </div>
+
+  <!-- 最新资讯（ESPN 新闻 + 关键词过滤，自动刷新） -->
+  <div class="card news-card">
+    <div class="news-section-title">
+      <span>📰 最新资讯</span>
+      <span class="news-section-meta">
+        <span class="news-refresh-pill">⏱ <span id="refreshCountdown">5:00</span></span>
+        <span id="newsLastUpdate">—</span>
+      </span>
+    </div>
+    <div id="newsLoading">
+      <div class="skel-row loading-skeleton"></div>
+      <div class="skel-row loading-skeleton" style="height:24px;margin-top:8px;"></div>
+    </div>
+    <div class="news-list" id="newsContent" style="display:none;"></div>
+  </div>
+
+  <!-- 积分榜（ESPN 实时） -->
+  <div class="card">
+    <div class="team-section-title">📊 德甲积分榜 (2025-26赛季)<span class="last-update" id="standingsDate"></span></div>
+    <div id="standingsLoading">
+      <div class="skel-table-row loading-skeleton"></div>
+      <div class="skel-table-row loading-skeleton"></div>
+      <div class="skel-table-row loading-skeleton"></div>
+    </div>
+    <div class="standings-wrap" id="standingsContent" style="display:none;">
+      <table class="standings-table">
+        <thead><tr><th>#</th><th>球队</th><th>场</th><th>胜</th><th>平</th><th>负</th><th>球</th><th>净</th><th>分</th></tr></thead>
+        <tbody id="standingsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 球员赛季数据（ESPN Roster API） -->
+  <div class="card roster-card">
+    <div class="news-section-title">
+      <span>👥 2025-26 赛季数据</span>
+      <span class="news-section-meta">
+        <span class="news-refresh-pill">📊 ESPN</span>
+        <span id="rosterLastUpdate">—</span>
+      </span>
+    </div>
+    <div id="rosterLoading">
+      <div class="skel-row loading-skeleton"></div>
+      <div class="skel-row loading-skeleton" style="height:24px;margin-top:8px;"></div>
+    </div>
+    <div id="rosterContent" style="display:none;padding-bottom:8px;"></div>
+  </div>
+
+  <div class="footer">数据来源：ESPN 实时接口 · 页面打开自动刷新 · 每 5 分钟更新</div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    TeamPage.init({
+      teamId: '132', league: 'ger.1', leagueName: '德甲', teamZh: '拜仁慕尼黑',
+      seasons: ['2026', '2025'], standingsSeason: '2025', rosterSeason: '2025',
+      keywords: ['bayern', 'kompany', 'kane', 'musiala', 'olise', 'allianz']
+    });
+  });
+  </script>
+
+</body>
+</html>

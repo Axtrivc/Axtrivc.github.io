@@ -24,6 +24,21 @@ html:has(link[rel="canonical"][href*="/football-evening"]) body {
   text-rendering: optimizeLegibility;
 }
 
+/* 2026-07-22 修复：新闻卡片缺图时的灰色占位块 + 来源为空时的孤立 "•"
+   （新生成的文章已由生成器修复，这里兼容存量文章） */
+html:has(link[rel="canonical"][href*="/football-"]) div.wc-news-thumb:empty {
+  display: none;
+}
+html:has(link[rel="canonical"][href*="/football-"]) .wc-news-meta:has(.wc-news-source:empty) {
+  display: none;
+}
+
+/* 2026-07-22 修复：日报头部深蓝色 banner 内 h1 被 Butterfly 文章样式压成深色，
+   深底深字看不见。强制回白色（生成器已修，这里兼容存量文章） */
+html:has(link[rel="canonical"][href*="/football-"]) .wc-header h1 {
+  color: #fff !important;
+}
+
 /* 文章主体 */
 html:has(link[rel="canonical"][href*="/football-"]) #article-container,
 html:has(link[rel="canonical"][href*="/football-"]) #article-container p,
