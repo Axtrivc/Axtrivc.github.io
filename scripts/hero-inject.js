@@ -505,7 +505,7 @@ body.hero-released {
       var tmp = lines[i]; lines[i] = lines[j]; lines[j] = tmp;
     }
     var li = 0, ci = 0;
-    var TYPE_MS = 150, DELETE_MS = 70, HOLD_MS = 2800, GAP_MS = 600;
+    var TYPE_MS = 150, DELETE_MS = 70, HOLD_MS = 1000, GAP_MS = 600;
     function typeLine() {
       var line = lines[li % lines.length];
       if (ci <= line.length) {
@@ -523,6 +523,9 @@ body.hero-released {
         setTimeout(eraseLine, DELETE_MS);
       } else {
         li++;
+        ci = 0; // 修复：eraseLine 退出时 ci=-1，若不重置，typeLine 首帧会执行
+                // line.slice(0, -1)，导致新行【末字被砍的全文】闪现一帧再清空。
+                // 重置为 0 后，typeLine 首帧为 slice(0,0)=""，干净地从头逐字。
         setTimeout(typeLine, GAP_MS);
       }
     }
