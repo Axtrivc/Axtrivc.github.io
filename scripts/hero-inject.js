@@ -51,7 +51,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
   heroCss = heroCss
     .replace(/^\s*html,\s*body\s*\{[^}]*\}\s*$/gm, '')
-    .replace(/^\s*\*,\s*\*::before,\s\*::after\s*\{[^}]*\}\s*$/gm, '');
+    .replace(/^\s*\*,\s*\*::before,\s*\*::after\s*\{[^}]*\}\s*$/gm, '');
 
   // ═══════════════════════════════════════════════════════════════
   // v13 CSS：零 CSS 变量、零 calc() transform、零 hijack
@@ -405,7 +405,7 @@ body.hero-released {
   var vh = window.innerHeight;
   var released = false;
 
-  // typed 副标题（分阶段 setTimeout: 打字 150ms/字, 停留 2.8s, 删除 70ms/字）
+  // typed 副标题（分阶段 setTimeout: 打字 150ms/字, 停留 1s, 删除 70ms/字）
   // 文案池 90 条不重复, 每次访问洗牌随机播放, 一轮播完前不重复
   var lines = [
     '水满则溢,月盈则亏',
@@ -505,7 +505,7 @@ body.hero-released {
       var tmp = lines[i]; lines[i] = lines[j]; lines[j] = tmp;
     }
     var li = 0, ci = 0;
-    var TYPE_MS = 150, DELETE_MS = 70, HOLD_MS = 2800, GAP_MS = 600;
+    var TYPE_MS = 150, DELETE_MS = 70, HOLD_MS = 1000, GAP_MS = 600;
     function typeLine() {
       var line = lines[li % lines.length];
       if (ci <= line.length) {
@@ -523,6 +523,9 @@ body.hero-released {
         setTimeout(eraseLine, DELETE_MS);
       } else {
         li++;
+        ci = 0; // 修复：eraseLine 退出时 ci=-1，若不重置，typeLine 首帧会执行
+                // line.slice(0, -1)，导致新行【末字被砍的全文】闪现一帧再清空。
+                // 重置为 0 后，typeLine 首帧为 slice(0,0)=""，干净地从头逐字。
         setTimeout(typeLine, GAP_MS);
       }
     }
