@@ -406,7 +406,7 @@ body.hero-released {
   var vh = window.innerHeight;
   var released = false;
 
-  // typed 副标题（分阶段 setTimeout: 打字 150ms/字, 停留 2.8s, 删除 70ms/字）
+  // typed 副标题（分阶段 setTimeout: 打字 150ms/字, 停留 1s, 删除 70ms/字）
   // 文案池 90 条不重复, 每次访问洗牌随机播放, 一轮播完前不重复
   var lines = [
     '水满则溢,月盈则亏',
