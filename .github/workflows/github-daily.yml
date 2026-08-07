@@ -1,0 +1,84 @@
+name: GitHub Daily Digest
+
+on:
+  schedule:
+    # UTC 16:00 = 北京 00:00,总结刚过去的一天(预留 Actions 排队延迟,实际产出可能稍晚)
+    - cron: '0 16 * * *'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: '补生成的日期 YYYY-MM-DD(留空 = 昨天,北京时间)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  # 与 deploy.yml / football-daily.yml 同组,避免同时部署 Pages 产生竞态
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Checkout source (master branch)
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Generate GitHub daily digest
+        env:
+          POSTS_DIR: ${{ github.workspace }}/source/_posts
+          GITHUB_USER: Axtrivc
+          # 默认 GITHUB_TOKEN 只能搜公开仓库;要纳入私有仓库提交,请配 PAT secret GH_ACTIVITY_TOKEN(repo scope)
+          GH_TOKEN: ${{ secrets.GH_ACTIVITY_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts-py/github_daily.py "${{ github.event.inputs.date }}"
+
+      - name: Commit and push source
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add source/_posts/github-daily-*.md || true
+          if git diff --cached --quiet; then
+            echo "No changes for github daily"
+          else
+            git commit -m "📝 GitHub 日报自动更新 - $(date +%Y-%m-%d)"
+            git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
+          fi
+
+      - name: Build Hexo
+        run: npx hexo clean && npx hexo generate
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
