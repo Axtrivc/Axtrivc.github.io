@@ -11,6 +11,7 @@ layout: false
   <style>
     :root {
       --hero-overscan: 0px;
+      --hero-tail: clamp(240px, 32vh, 420px);   /* 尾部溶解区高(与 river-hero.js size() 一致) */
     }
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -22,13 +23,18 @@ layout: false
     }
 
     /* ── River.ai 的 hero 容器结构 ───────────────────────── */
+    /* v9: 高度 = 场景区 100dvh + 尾部溶解区 --hero-tail; 底色在尾部平滑过渡到
+       --page-bg, 给 placeholder/still 羽化兜底(它们的 mask 在尾部渐隐露底)。 */
     .hero {
       position: relative;
-      height: 100vh;            /* viewport 高 */
-      height: 100dvh;           /* dynamic viewport，浏览器 chrome 收起时也跟随 */
+      height: calc(100vh + var(--hero-tail));
+      height: calc(100dvh + var(--hero-tail));
       width: 100%;
       overflow: hidden;
-      background: #0E2F7E;
+      background: linear-gradient(180deg,
+        #0E2F7E 0%,
+        #0E2F7E calc(100dvh - 60px),
+        var(--page-bg, #ffffff) 100%);
     }
 
     /* 静态兜底：CSS 渐变（WebGL 不可用时显示） */
@@ -65,6 +71,14 @@ layout: false
       transition: opacity 0.6s ease;
     }
     .hero-still.is-shown { opacity: 0.95; }
+
+    /* v9 羽化兜底: placeholder/still 在尾部溶解区渐隐, 露出 .hero 底色渐变
+       (场景深蓝 → --page-bg) —— WebGL canvas 在 shader 尾部自行溶白, 不需要 mask。 */
+    .hero-placeholder,
+    .hero-still {
+      -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - var(--hero-tail)), transparent 100%);
+              mask-image: linear-gradient(180deg, #000 calc(100% - var(--hero-tail)), transparent 100%);
+    }
 
     /* 顶部暗角：让文字浮在天空上方更易读 */
     .hero-vignette {

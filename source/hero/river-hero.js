@@ -275,6 +275,8 @@
     precision highp float;
     varying vec2 v_uv;
     uniform vec2  u_res;
+    uniform float u_sceneH;  // 场景区(100dvh)设备高 —— canvas 高 = u_sceneH + 尾部溶解区(v9)
+    uniform vec3  u_pageBg;  // 尾部溶解目标色 = 页面 --page-bg(v9)
     uniform float u_time;
     uniform sampler2D u_atlas;
     uniform sampler2D u_terrain;
@@ -1877,7 +1879,7 @@
       gNearCap      = mix(0.8, 0.28, gLowCanyon);          // marchCap near-field cap
       gLocalCapBase = mix(0.20, 0.075, gLowCanyon);        // nearSurface local cap base
       gStepScale    = clamp(u_canyonStepScale, 1.0, 2.6);  // frame-constant step multiplier
-      float asp = u_res.x / max(1.0, u_res.y);
+      float asp = u_res.x / max(1.0, u_sceneH);   // v9: 场景纵横比按场景区高度(不含尾部)
       float fx  = tan(0.60);                           // field of view
       float sx  = (uv.x - 0.5) * 2.0 * fx * asp;
       float sy  = (u_viewHorizon - uv.y) * 2.0 * fx;   // uv is y-down
@@ -2017,7 +2019,7 @@
                      || abs(minGap) < 1.25 || fwidth(covQ) > 0.0008;
 
       // ── Sky ── day/night gradient + sun glow + stars + aurora (from v1).
-      float asp2 = u_res.x / max(1.0, u_res.y);
+      float asp2 = u_res.x / max(1.0, u_sceneH);   // v9: 同 asp, 按场景区高度
       float skyG = pow(clamp(uv.y / 0.6, 0.0, 1.0), 1.6);     // top → horizon
       vec3 sky = mix(SKY_TOP, SKY_HOR, skyG);
       // Intro: the bare blue gradient is the floor that's visible from the very
@@ -2116,11 +2118,11 @@
           smoothstep(4.0, 5.2, cloudHr)           // pre-sunrise fade-in after aurora
         );
         float ch = u_viewHorizon;                            // sky/valley-mouth horizon
-        vec2  P    = uv * u_res;
-        float cell = max(u_res.y / max(u_cloudDot, 1.0), 2.0);
+        vec2  P    = uv * vec2(u_res.x, u_sceneH);           // v9: 真实设备 px(尾部连续)
+        float cell = max(u_sceneH / max(u_cloudDot, 1.0), 2.0);
         vec2  Cd   = floor(P / cell);
         vec2  dotCenter = (Cd + 0.5) * cell;
-        vec2  dotUv = dotCenter / u_res;
+        vec2  dotUv = dotCenter / vec2(u_res.x, u_sceneH);
         vec2  Cp   = (P - dotCenter) / cell;
         // Sample the cloud deck once at the dot cell centre. The shader still
         // executes per pixel, but every pixel inside a dot receives the same
@@ -2218,8 +2220,8 @@
         if (u_aurDot < 1.0) {
           sky += aur * aurCol * (0.55 + 0.6 * aur);
         } else {
-          vec2 P = uv * u_res;
-          float cell = max(u_res.y / u_aurDot, 2.0);
+          vec2 P = uv * vec2(u_res.x, u_sceneH);
+          float cell = max(u_sceneH / u_aurDot, 2.0);
           vec2 C = floor(P / cell);
           vec2 Cp = (P - (C + 0.5) * cell) / cell;
           float jitR = (hash(C + 47.0) - 0.5) * 0.12;
@@ -2273,7 +2275,7 @@
       // wall marches on those far-ridge pixels.
       if (u_aaN >= 3.5 && surfQ < 108.0
           && (fwidth(covC) > 0.0008 || (covC > 0.001 && covC < 0.999) || abs(minGap) < 0.85)) {
-        vec2 px = 1.0 / u_res;
+        vec2 px = 1.0 / vec2(u_res.x, u_sceneH);   // v9: 1 设备 px 的场景-uv 偏移
         // Offset rays graze the wall within a hair of the main ray's distance,
         // so window every supersample around it (see wallCoverage).
         float aaC = (tHit >= 0.0) ? tHit : minGapT;
@@ -2412,8 +2414,8 @@
         float foam   = smoothstep(0.80, 0.96, flow) * (0.55 + 0.45 * sin(along * 5.0 + fT * 6.0));
         strm = max(strm, foam * u_foam);
         float I = (0.30 + 0.70 * clamp(strm, 0.0, 1.0)) * mix(0.45, 1.0, chan) * bed;
-        vec2 P    = uv * u_res;
-        float waterCell = max(u_res.y / max(u_waterDot, 1.0), 2.0);
+        vec2 P    = uv * vec2(u_res.x, u_sceneH);   // v9: 真实设备 px(尾部连续)
+        float waterCell = max(u_sceneH / max(u_waterDot, 1.0), 2.0);
         vec2 cell = floor(P / waterCell);
         vec2 cp   = (P - (cell + 0.5) * waterCell) / waterCell;
         float jit = (hash(cell) - 0.5) * 0.16;
@@ -2464,21 +2466,31 @@
     }
 
     void main(){
-      vec2 uv = vec2(v_uv.x, 1.0 - v_uv.y);       // y down
+      vec2 uv = vec2(v_uv.x, 1.0 - v_uv.y);       // y down — 全 canvas [0,1]
       vec2 P  = uv * u_res;                       // screen px (glyph grid)
       vec2 uvR = bankUV(uv);                      // banked uv for the horizon
 
+      // v9: canvas = 场景区(100dvh, uvS.y∈[0,1]) + 尾部溶解区(uvS.y>1)。
+      // 场景区像素与加高前完全一致; 尾部射线自然更向下, 峡谷地面/河流
+      // 点阵延续渲染, 再由下方的 tailT 溶解进页面底色。
+      float sceneK = u_res.y / max(u_sceneH, 1.0);
+      vec2 uvS = vec2(uv.x, uv.y * sceneK);
+
       // ── Generated hero: smooth in-valley canyon (replaces the ASCII-river scene) ──
-      vec3 col = renderValley(uv);
+      vec3 col = renderValley(uvS);
       // Minimal post: boot fade, headline text, gentle vignette, grain.
       col = mix(col, vec3(0.010, 0.017, 0.045), u_boot);
-      float tAv = smoothstep(0.30, 0.62, texture2D(u_txt, uv).a);
+      float tAv = smoothstep(0.30, 0.62, texture2D(u_txt, uvS).a);
       col = mix(col, vec3(0.84, 0.93, 0.87), tAv);
       col += tAv * vec3(0.18, 0.40, 0.34) * 0.5;
-      vec2 qv = (uv - 0.5) * vec2(1.05, 1.18);
+      vec2 qv = (uvS - 0.5) * vec2(1.05, 1.18);
       float vigv = smoothstep(1.22, 0.10, dot(qv, qv) * 2.1);
       col *= mix(0.86, 1.0, vigv);
       col += (hash(uv * u_res + u_time) - 0.5) * u_grain;
+      // 尾部溶解: 场景 → --page-bg, smoothstep 两端导数为 0(无结节),
+      // 溶解放在 vignette/grain 之后, 底部 = 纯 pageBg, 与 main 底色零色差。
+      float tailT = smoothstep(1.0, sceneK, uvS.y);
+      col = mix(col, u_pageBg, tailT);
       gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
       return;
 #if 0
@@ -2953,6 +2965,8 @@
     hueA:    gl.getUniformLocation(prog, "u_hueA"),
     hueB:    gl.getUniformLocation(prog, "u_hueB"),
     gradBri: gl.getUniformLocation(prog, "u_gradBri"),
+    sceneH:  gl.getUniformLocation(prog, "u_sceneH"),
+    pageBg:  gl.getUniformLocation(prog, "u_pageBg"),
   };
   U.cloudTex = gl.getUniformLocation(prog, "u_cloudTex");
   U.aurTex   = gl.getUniformLocation(prog, "u_aurTex");
@@ -3075,7 +3089,8 @@
       gl.useProgram(p.prog);
       for (const n of SKY_SYNC) {
         const v = vals[n];
-        if (v && v.length === 2) gl.uniform2f(p.u[n], v[0], v[1]);
+        // v9: 主程序 u_res 是全 canvas(含尾部); sky pass 只渲染场景区, res.y 换成 sceneHDev
+        if (v && v.length === 2) gl.uniform2f(p.u[n], v[0], n === "res" ? sceneHDev : v[1]);
         else gl.uniform1f(p.u[n], v);
       }
       for (const n in skyKnobs) gl.uniform1f(p.u[n], skyKnobs[n]);
@@ -3592,13 +3607,33 @@
     }
   });
 
+  let sceneHDev = 0;              // 场景区(100dvh)设备高; canvas 高 = sceneHDev + 尾部溶解区(v9)
+  let pageBg = [1.0, 1.0, 1.0];   // 尾部溶解目标色 = --page-bg(themechange 同步)
+
+  // 读取 --page-bg → u_pageBg。hex 与 rgb() 都接; 解析失败保持上一色(初始白)。
+  function readPageBg() {
+    let v = '';
+    try { v = (getComputedStyle(document.documentElement).getPropertyValue('--page-bg') || '').trim(); } catch (e) {}
+    const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(v);
+    if (m) {
+      let hx = m[1];
+      if (hx.length === 3) hx = hx[0] + hx[0] + hx[1] + hx[1] + hx[2] + hx[2];
+      pageBg = [parseInt(hx.slice(0, 2), 16) / 255, parseInt(hx.slice(2, 4), 16) / 255, parseInt(hx.slice(4, 6), 16) / 255];
+    } else {
+      const m2 = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i.exec(v);
+      if (m2) pageBg = [parseFloat(m2[1]) / 255, parseFloat(m2[2]) / 255, parseFloat(m2[3]) / 255];
+    }
+    if (U.pageBg) gl.uniform3f(U.pageBg, pageBg[0], pageBg[1], pageBg[2]);
+  }
+  window.addEventListener('themechange', readPageBg);   // theme-system.js 派发自 window
+
   let headX = 0;                       // headline left, aligned to the nav logo
   let textScale   = 0.75;              // fixed boot text scale
 
   function sizeText() {
     // Match the render resolution so the text is sharp (not upscaled)
     txCanvas.width  = Math.max(2, canvas.width  || 1280);
-    txCanvas.height = Math.max(2, canvas.height || 720);
+    txCanvas.height = Math.max(2, sceneHDev || canvas.height || 720);   // v9: 文字层只覆盖场景区
     // Align the headline with the nav logo's left edge (--pad-x)
     const lk = document.querySelector(".nav .wordmark");
     const vw = Math.max(1, window.innerWidth || 1280);
@@ -3795,9 +3830,14 @@
     // declaration on the container doesn't make the canvas taller than the
     // visible viewport (causing a black letterbox strip when 100vh < min-height).
     let w = window.innerWidth || 1280;
-    let h = window.innerHeight || 720;
+    let hv = window.innerHeight || 720;
     if (!(w > 2)) w = 1280;
-    if (!(h > 2)) h = 720;
+    if (!(hv > 2)) hv = 720;
+    // v9: canvas 向下延伸 tail CSS px —— 过渡并入动画本体(尾部在 shader 内溶解
+    // 到 --page-bg), 不再有独立渐变带。与 CSS 侧 clamp(240px, 32dvh, 420px) 一致。
+    const tail = Math.max(240, Math.min(420, Math.round(hv * 0.32)));
+    let h = hv + tail;
+    readPageBg();
     // Base dpr capped at 1.0 (matches river.ai original — 2.25x fewer pixels
     // than 1.5 cap, the single biggest win for iGPU. CSS handles the visual
     // sharpness; the GPU only does the math). render-scale multiplies it for
@@ -3812,13 +3852,16 @@
     const over = Math.max(cw, ch) / maxDim;
     if (over > 1.0) { cw = Math.round(cw / over); ch = Math.round(ch / over); }
     dpr = cw / Math.max(1, w);   // effective dpr (after the cap) for cell sizing
+    sceneHDev = Math.max(2, Math.round(hv * dpr));   // 场景区设备高(v9)
     canvas.width = cw;
     canvas.height = ch;
     canvas.style.width = w + "px";
     canvas.style.height = h + "px";
     gl.viewport(0, 0, cw, ch);
-    sizeSkyTargets(cw, ch);
+    sizeSkyTargets(cw, sceneHDev);   // v9: sky FBO 只覆盖场景区(与加高前一致)
     gl.uniform2f(U.res, cw, ch);
+    gl.uniform1f(U.sceneH, sceneHDev);
+    gl.uniform3f(U.pageBg, pageBg[0], pageBg[1], pageBg[2]);
     gl.uniform1f(U.cell, CELL_PX * dpr);
     gl.uniform1f(U.bloom, BLOOM);
     gl.uniform1f(U.bRad, CELL_PX * dpr * BRAD_CELLS);
@@ -4577,7 +4620,6 @@
         gl.uniform1f(U.tod, 0.28);              // ~06:45 — warm low sun, just risen
         if (AA_LADDER.indexOf(4) >= 0) { AA.taps = 4; gl.uniform1f(U.aaN, 4); } // crisp still
         draw(cam.clock || 8.0);                 // render the frame…
-        if (window.__heroFrameHook) window.__heroFrameHook(canvas); // hero-fade 延伸层同步取样
         // Same synchronous task as the draw → the drawing buffer hasn't been
         // cleared yet (that happens at composite), so toDataURL captures it
         // even without preserveDrawingBuffer.
@@ -4602,9 +4644,8 @@
       looping = false;
       document.body.classList.add("hero-cycle-done");
       // 循环结束 → 切静态日出图: 截一帧晨光淡入, canvas 淡出释放 GPU。
-      // 若不切, canvas 停止渲染后缓冲被合成清除 → 全黑, 与下方 hero-fade
-      // 渐变带(深蓝衬底)出现明显色阶分割线。freezeStaticHero 会同步 draw
-      // 一帧并触发 __heroFrameHook 让 hero-fade 取样对齐, 消除交界色差。
+      // 若不切, canvas 停止渲染后缓冲被合成清除 → 全黑。v9: 过渡已在 shader
+      // 尾部(溶解到 --page-bg), toDataURL 整幅截图自带尾部, 无需取样对齐。
       freezeStaticHero();
     }
     // Dev hook: call riverFreezeHero() in the console to preview the static
@@ -4851,8 +4892,6 @@
       cam.clock += cdt;
 
       gpuTimedDraw(cam.clock);
-      // 供 hero-fade 延伸层取样: 同一同步任务内缓冲尚未被合成清除(同 toDataURL 原理)
-      if (window.__heroFrameHook) window.__heroFrameHook(canvas);
       if (state === "live" && liveClockAnchored && (now - liveT0) >= HERO_LIVE_STOP_MS) {
         stopLiveHeroAfterCycle();
         return;

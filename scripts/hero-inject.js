@@ -66,13 +66,13 @@ hexo.extend.filter.register('after_render:html', function (data) {
  * 无 CSS 变量, 无 calc() transform, 无 hijack
  * ═════════════════════════════════════════════════════════════ */
 
-/* hero-shell：绝对定位占 100dvh，在文档流中 */
+/* hero-shell：绝对定位占 100dvh + 尾部溶解区(--hero-tail)，在文档流中 */
 .hero-shell {
   position: relative;
   top: auto;
   left: auto;
   width: 100%;
-  height: 100dvh;
+  height: calc(100dvh + var(--hero-tail, 240px));
   overflow: hidden;
   background: #0E2F7E;
   margin: 0;
@@ -85,45 +85,18 @@ hexo.extend.filter.register('after_render:html', function (data) {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  /* 底色 = 渐变带顶部兜底色: 羽化兜底时 canvas/placeholder 渐隐进这块底色,
-     与带顶(#0B1220 / 默认 stripBg)同色, 交界处无阶跃 */
-  background: #0B1220;
+  /* 底色由 index.html 的 .hero 规则提供: 场景深蓝 → 尾部 --page-bg 渐变,
+     作为 placeholder/still 羽化后的兜底, 与 canvas 尾部溶白同色无阶跃 */
 }
 .hero-shell, .hero-shell * {
   font-family: -apple-system, BlinkMacSystemFont, "Inter Tight", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-/* ── hero 底部 → 页面内容 渐进过渡 v7（2026-08-07）──
- * 渐变带(.hero-fade) = 动画自身的延伸, 不再是手调固定色带:
- * JS 每帧(15fps)取 hero canvas 底边 mh 行(与动画显示比例一致)垂直翻转
- * 铺满整条带 —— 带顶 = 动画底边那一行, 星野/山体纹理无缝续入, 再以
- * 「渐晕+粗颗粒+细噪声」destination-out 遮罩溶解成碎尾, 无直线边界。
- * 色彩衬底 = 底边暗部采样色 → 动画夜色系 → --page-bg(跟随主题),
- * 关键帧路径经 smoothstep 重采样为 48 级 stop(导数逐帧归零, 无结节),
- * 尾段加 2 个中间色拉长融入页面色, 全带再覆一层静态细颗粒防 banding。
- * 下方 background 仅作无 JS / 首帧前的兜底, 渲染逻辑在下方 heroJs。 */
-.hero-fade {
-  position: relative;
-  height: clamp(240px, 32vh, 420px);
-  background: linear-gradient(180deg,
-    #0B1220 0%,
-    #0E182C 14%,
-    #101E38 30%,
-    #1B3566 48%,
-    #46608E 63%,
-    #8BA7C6 76%,
-    #BFCFE0 86%,
-    #E5ECF2 93%,
-    var(--page-bg, #ffffff) 100%);
-  pointer-events: none;
-}
-.hero-fade .hero-fade-ascii {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
+/* ── hero 底部 → 页面内容 渐进过渡 v9（2026-08-07）──
+ * v9: 过渡并入 hero 动画本体 —— canvas 向下延伸 --hero-tail(见 source/hero/
+ * index.html :root), 尾部在 river-hero.js shader 内溶解到 --page-bg(smoothstep,
+ * 底部 = 纯页面色)。不再有独立渐变带/桥接层/取样逻辑, 结构上不存在两个渲染面
+ * 的接边。placeholder/still 的羽化兜底 mask 在 index.html(渐隐露 .hero 底色渐变)。 */
 
 /* canvas：独立 GPU 层 */
 .hero-shell canvas.hero-ascii {
@@ -132,29 +105,10 @@ hexo.extend.filter.register('after_render:html', function (data) {
   -webkit-backface-visibility: hidden;
 }
 
-/* hero 底边羽化兜底：fade 延伸层证明「取样成功」前(body 无 hero-fade-live),
-   hero canvas/still/placeholder 底部 22% 渐隐, 露出 section.hero 底色 #0B1220
-   (= 渐变带顶部兜底色) —— 取样链一旦在用户会话里断掉(扩展注入拦截/驱动丢
-   缓冲/极老缓存), 带顶退回默认深色, 亮场景底边会顶出一条直线分界; 羽化后
-   任何失败路径都只剩软过渡, 结构上不可能出直线。
-   取样成功即摘除遮罩, 恢复镜面衔接的逐像素对齐。 */
-.hero-shell canvas.hero-ascii,
-.hero-shell img.hero-still,
-.hero-shell .hero-placeholder {
-  -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
-          mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
-}
-body.hero-fade-live .hero-shell canvas.hero-ascii,
-body.hero-fade-live .hero-shell img.hero-still,
-body.hero-fade-live .hero-shell .hero-placeholder {
-  -webkit-mask-image: none;
-          mask-image: none;
-}
-
-/* hero 内部文字：静态定位，无 transform 动画 */
+/* hero 内部文字：静态定位，无 transform 动画；bottom 抬高 --hero-tail 避开尾部溶解区 */
 .hero-text {
   position: absolute;
-  bottom: clamp(20px, 4vw, 56px);
+  bottom: calc(var(--hero-tail, 240px) + clamp(20px, 4vw, 56px));
   left: clamp(20px, 4vw, 56px);
   right: clamp(20px, 4vw, 56px);
   z-index: 3;
@@ -345,7 +299,7 @@ body.hero-released {
 .hero-typed-wrap {
   position: absolute;
   left: clamp(20px, 4vw, 56px);
-  bottom: clamp(8px, 1.6vw, 22px);
+  bottom: calc(var(--hero-tail, 240px) + clamp(8px, 1.6vw, 22px));
   z-index: 5;
   color: rgba(255, 255, 255, 0.88);
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Serif SC", serif;
@@ -376,7 +330,7 @@ body.hero-released {
   50%      { opacity: 0; }
 }
 @media (max-width: 768px) {
-  .hero-typed-wrap { left: 16px; bottom: 18px; font-size: 13px; max-width: 70vw; }
+  .hero-typed-wrap { left: 16px; bottom: calc(var(--hero-tail, 240px) + 18px); font-size: 13px; max-width: 70vw; }
 }
 `;
 
@@ -392,7 +346,7 @@ body.hero-released {
 </div>
 `;
 
-  const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${typedHtml}\n</div>\n<div class="hero-fade" aria-hidden="true"><canvas class="hero-fade-ascii" id="heroFadeAscii"></canvas></div>`;
+  const heroWrapped = `<div class="hero-shell">\n${heroSection}\n${typedHtml}\n</div>`;
 
   content = content.replace(
     '</header>',
@@ -538,320 +492,6 @@ body.hero-released {
     typeLine();
   }
 
-  // ── hero-fade 动画延续层 v7（2026-08-07）──
-  // 渐变 = 动画自身的延伸: 挂钩每帧取 hero canvas 底边 mh 行(与动画显示
-  // 比例一致), 垂直翻转铺满渐变带 —— 带顶 = 动画底边那一行, 向下是底边
-  // 以上的镜像, 星野/山体纹理无缝续入; 再用「渐晕(S 曲线缓擦) + 粗颗粒
-  // + 细噪声」destination-out 遮罩溶解成碎尾, 全程无直线边界。
-  // 色彩衬底: 底边暗部采样色 → 动画夜色系 → --page-bg, 关键帧路径经
-  // smoothstep 重采样为 48 级 stop(导数逐帧归零), 尾段加中间色拉长融入
-  // 页面色; 全带覆静态细颗粒防 banding。跟随 themechange。
-  // 取样失败(context lost / 静态兜底图)自动退回静态图取样或纯程序渐变。
-  (function initFadeExtend() {
-    var fade = document.querySelector('.hero-fade');
-    var cv = document.getElementById('heroFadeAscii');
-    if (!fade || !cv) return;
-    var ctx = cv.getContext('2d');
-    if (!ctx) return;
-
-    var RAMP = ' .:-=+*#%@';           // 与 river-hero.js RAMP_ASCII 一致
-    var CELL = 7;                      // css px / cell, 接近 hero 有效字号
-    var FPS = 12;
-    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // 离屏: 延伸条带 / 溶解遮罩 / 静态细颗粒 / 取样探针
-    var streakCv = document.createElement('canvas');
-    var streakCx = streakCv.getContext('2d');
-    var maskCv = document.createElement('canvas');
-    var maskCx = maskCv.getContext('2d');
-    var grainCv = document.createElement('canvas');
-    var grainCx = grainCv.getContext('2d');
-    var probeCv = document.createElement('canvas');
-    probeCv.width = 64; probeCv.height = 1;
-    var probeCx = probeCv.getContext('2d', { willReadFrequently: true });
-
-    var W = 0, H = 0, dpr = 1, cols = 0, rows = 0;
-    var seeds = null, phases = null;
-    var stripBg = [4, 6, 16];          // canvas 底边真实底色(暗部分位数), 兜底深 navy
-    var charColor = 'rgb(170,195,230)';
-    var pageBg = '#ffffff';
-    var running = false, inView = true, timer = null;
-    var fadeLive = false;                // 首次取样成功后置位, 摘掉 hero 底边羽化
-
-    function readPageBg() {
-      var v = getComputedStyle(document.documentElement).getPropertyValue('--page-bg');
-      pageBg = (v && v.trim()) || '#ffffff';
-      if (W && H) draw(performance.now());   // 主题切换后立即重绘
-    }
-
-    // 溶解遮罩: 顶部 8% 不擦(镜像与动画严丝合缝), 之后按 S 曲线缓擦
-    // (0.5 在 48% 处, 88% 擦净 —— 旧版 30%→55% 急擦会顶出"消失线"),
-    // 粗颗粒径向团块让擦除前沿波浪化, 细噪声把尾巴碎成颗粒 —— 无任何直线边界。
-    function buildMask() {
-      maskCv.width = W; maskCv.height = H;
-      maskCx.clearRect(0, 0, W, H);
-      var g = maskCx.createLinearGradient(0, 0, 0, H);
-      g.addColorStop(0.00, 'rgba(0,0,0,0)');
-      g.addColorStop(0.08, 'rgba(0,0,0,0)');
-      g.addColorStop(0.24, 'rgba(0,0,0,0.10)');
-      g.addColorStop(0.40, 'rgba(0,0,0,0.35)');
-      g.addColorStop(0.56, 'rgba(0,0,0,0.65)');
-      g.addColorStop(0.72, 'rgba(0,0,0,0.90)');
-      g.addColorStop(0.88, 'rgba(0,0,0,1)');
-      g.addColorStop(1.00, 'rgba(0,0,0,1)');
-      maskCx.fillStyle = g;
-      maskCx.fillRect(0, 0, W, H);
-      for (var i = 0; i < 10; i++) {
-        var bx = Math.random() * W;
-        var by = H * (0.15 + Math.random() * 0.55);
-        var br = (50 + Math.random() * 130) * dpr;
-        var rg = maskCx.createRadialGradient(bx, by, 0, bx, by, br);
-        rg.addColorStop(0, 'rgba(0,0,0,' + (0.30 + Math.random() * 0.35).toFixed(3) + ')');
-        rg.addColorStop(1, 'rgba(0,0,0,0)');
-        maskCx.fillStyle = rg;
-        maskCx.fillRect(bx - br, by - br, br * 2, br * 2);
-      }
-      var n = Math.floor(W * H / 1100);
-      for (i = 0; i < n; i++) {
-        var y = Math.pow(Math.random(), 0.55) * H;   // 分布偏下
-        var a = Math.pow(y / H, 1.7) * 0.9;
-        if (a < 0.06) continue;
-        maskCx.fillStyle = 'rgba(0,0,0,' + a.toFixed(3) + ')';
-        var s = (1 + Math.random() * 2.5) * dpr;
-        maskCx.fillRect(Math.random() * W, y, s, s * (1 + Math.random()));
-      }
-    }
-
-    // 全带静态细颗粒(仅 resize 重建): 白色微粒, alpha 随深度衰减, 70% 以下归零。
-    // 打破平坦渐变的 banding, 让镜像碎尾与衬底质感连续(呼应动画星野的颗粒感)。
-    function buildGrain() {
-      grainCv.width = W; grainCv.height = H;
-      grainCx.clearRect(0, 0, W, H);
-      var n = Math.floor(W * H / 900);
-      for (var i = 0; i < n; i++) {
-        var y = Math.random() * H;
-        var k = Math.max(0, 1 - y / (H * 0.7));
-        var a = Math.pow(k, 1.6) * (0.02 + Math.random() * 0.05);
-        if (a < 0.015) continue;
-        grainCx.fillStyle = 'rgba(255,255,255,' + a.toFixed(3) + ')';
-        var s = (Math.random() < 0.85 ? 1 : 2) * dpr;
-        grainCx.fillRect(Math.random() * W, y, s, s);
-      }
-    }
-
-    // ── 色彩路径工具: 关键帧 + 段内 smoothstep 插值 ──
-    function parseHex(s) {
-      var m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec((s || '').trim());
-      if (!m) return null;
-      var h = m[1];
-      if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
-      return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
-    }
-    function mix3(a, b, k) {
-      return [Math.round(a[0] + (b[0] - a[0]) * k),
-              Math.round(a[1] + (b[1] - a[1]) * k),
-              Math.round(a[2] + (b[2] - a[2]) * k)];
-    }
-    // 沿关键帧路径取样: 段内 smoothstep 插值 —— 每个关键帧处导数为 0,
-    // 整段渐变无任何"结节"(色阶交界), 这是底部不再顶出直线的关键。
-    function samplePath(path, t) {
-      if (t <= path[0][0]) return path[0][1];
-      for (var i = 1; i < path.length; i++) {
-        if (t <= path[i][0]) {
-          var p0 = path[i - 1], p1 = path[i];
-          var u = (t - p0[0]) / (p1[0] - p0[0]);
-          u = u * u * (3 - 2 * u);
-          return mix3(p0[1], p1[1], u);
-        }
-      }
-      return path[path.length - 1][1];
-    }
-
-    // 在 hero 绘制的同一同步任务内取样(缓冲未被合成清除) →
-    // 更新衬底均色 / 字符亮色 / 重画延伸条带。节流到 15fps。
-    var lastHook = 0, lastStreak = 0;
-    function ingestFrame(src, now) {
-      if (!W || !H) return;                   // 尚未完成首次 resize
-      var w = src && (src.naturalWidth || src.width);
-      var h = src && (src.naturalHeight || src.height);
-      if (!w || w < 8 || !h || h < 8) return;
-      if (now - lastStreak < 66) return;
-      lastStreak = now;
-      var sh = Math.max(2, Math.round(h * 0.004));
-      try {
-        probeCx.clearRect(0, 0, 64, 1);
-        probeCx.drawImage(src, 0, h - sh, w, sh, 0, 0, 64, 1);
-        var d = probeCx.getImageData(0, 0, 64, 1).data;
-        var i, aS = 0;
-        for (i = 0; i < d.length; i += 4) aS += d[i+3];
-        if (aS / 64 < 40) return;             // 缓冲已销毁 → 透明, 丢弃本帧
-        // 按亮度分位拆 暗部(真实底色) / 亮部(粒子色):
-        // 衬底必须用暗部底色, 否则遮罩半擦除区会透出偏亮的均色, 像贴了层膜
-        var lums = [];
-        for (i = 0; i < d.length; i += 4) lums.push((d[i] * 2 + d[i+1] * 3 + d[i+2]) / 6);
-        lums.sort(function (a, b) { return a - b; });
-        var cut = lums[Math.floor(lums.length * 0.45)];   // 45 分位以下 = 底色
-        var dc = 0, dr = 0, dg = 0, db = 0, bc = 0, br = 0, bg = 0, bb = 0, l;
-        for (i = 0; i < d.length; i += 4) {
-          l = (d[i] * 2 + d[i+1] * 3 + d[i+2]) / 6;
-          if (l <= cut) { dr += d[i]; dg += d[i+1]; db += d[i+2]; dc++; }
-          else if (l > cut + 20) { br += d[i]; bg += d[i+1]; bb += d[i+2]; bc++; }
-        }
-        if (dc > 0) stripBg = [dr / dc | 0, dg / dc | 0, db / dc | 0];
-        if (bc > 0) charColor = 'rgb(' + (br / bc | 0) + ',' + (bg / bc | 0) + ',' + (bb / bc | 0) + ')';
-        // 镜面延续层: 取样底边 mh 行(按动画显示比例换算, 纹理大小与动画一致),
-        // 垂直翻转铺满渐变带 —— 带顶 = 动画底边那一行, 向下是动画底边以上的
-        // 镜像, 星野/山体纹理无缝续入, 再由遮罩溶解成碎尾。
-        // hero canvas 仅 0.95 不透明(底下垫 placeholder 深蓝), 这里同样以
-        // 0.95 合成到 placeholder 底色 #15397A 上, 交界处颜色逐像素一致。
-        var ch = src.clientHeight || 0;
-        var mh = ch > 0 ? Math.round((H / dpr) * (h / ch)) : Math.round(h * 0.27);
-        mh = Math.max(8, Math.min(h, mh));
-        streakCx.globalCompositeOperation = 'source-over';
-        streakCx.globalAlpha = 1;
-        streakCx.clearRect(0, 0, W, H);
-        streakCx.fillStyle = '#15397A';
-        streakCx.fillRect(0, 0, W, H);
-        streakCx.save();
-        streakCx.translate(0, H);
-        streakCx.scale(1, -1);
-        streakCx.globalAlpha = 0.95;
-        streakCx.drawImage(src, 0, h - mh, w, mh, 0, 0, W, H);
-        streakCx.restore();
-        streakCx.globalAlpha = 1;
-        streakCx.globalCompositeOperation = 'destination-out';
-        streakCx.drawImage(maskCv, 0, 0);
-        streakCx.globalCompositeOperation = 'source-over';
-        // 取样链路证明可用 → 摘除 hero 底边羽化兜底(见 CSS .hero-ascii mask-image)
-        if (!fadeLive) { fadeLive = true; document.body.classList.add('hero-fade-live'); }
-      } catch (e) { /* 保持上一帧 */ }
-    }
-    // river-hero.js 每帧绘制后回调(同一任务, 缓冲保证有效)
-    window.__heroFrameHook = function (src) {
-      lastHook = performance.now();
-      ingestFrame(src, lastHook);
-    };
-
-    function draw(now) {
-      ctx.clearRect(0, 0, W, H);
-      // 挂钩沉默 >800ms 且静态兜底图在播 → 改从 <img> 取样(context lost 场景)
-      if (now - lastHook > 800) {
-        var img = document.getElementById('heroStill');
-        if (img && img.classList.contains('is-shown')) ingestFrame(img, now);
-      }
-      // 1. 色彩衬底: 关键帧路径 + smoothstep 重采样为 48 级 stop(导数逐帧
-      //    归零, 无结节)。顶部 14% 与 canvas 底边底色一致的平坦区(遮罩擦除
-      //    不露色), 尾段加 2 个中间色把到 page-bg 的过渡拉长 —— 底部不再
-      //    顶出直线。底色同样补 0.05 placeholder 提升, 与镜像暗部逐像素对齐。
-      var ub = [Math.round(stripBg[0] * 0.95 + 21 * 0.05),
-                Math.round(stripBg[1] * 0.95 + 57 * 0.05),
-                Math.round(stripBg[2] * 0.95 + 122 * 0.05)];
-      var pr = parseHex(pageBg) || [255, 255, 255];
-      var c5 = [139, 167, 198];              // #8BA7C6
-      var path = [
-        [0.00, ub], [0.14, ub],
-        [0.30, [16, 30, 56]],                // #101E38
-        [0.48, [27, 53, 102]],               // #1B3566
-        [0.63, [70, 96, 142]],               // #46608E
-        [0.76, c5],
-        [0.86, mix3(c5, pr, 0.45)],
-        [0.93, mix3(c5, pr, 0.78)],
-        [1.00, pr]
-      ];
-      var g = ctx.createLinearGradient(0, 0, 0, H);
-      var SEGS = 48;
-      for (var si = 0; si <= SEGS; si++) {
-        var tt = si / SEGS, cc = samplePath(path, tt);
-        g.addColorStop(tt, 'rgb(' + cc[0] + ',' + cc[1] + ',' + cc[2] + ')');
-      }
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-      // 2. 动画延伸条带(由挂钩/兜底取样维护)
-      ctx.drawImage(streakCv, 0, 0);
-      // 3. 静态细颗粒(防 banding + 质感连续)
-      ctx.drawImage(grainCv, 0, 0);
-      // 4. 稀疏字符闪烁(与动画同款 ramp, 限制在顶部 55% 内衰减)
-      var t = now / 1000, step = CELL * dpr;
-      ctx.fillStyle = charColor;
-      for (var r = 0; r < rows; r++) {
-        var density = 0.16 * Math.pow(Math.max(0, 1 - r / (rows * 0.55)), 1.4);
-        if (density < 0.015) break;
-        for (var c = 0; c < cols; c++) {
-          var i = r * cols + c;
-          var sd = seeds[i];
-          if (sd >= density) continue;
-          var edge = 1 - sd / density;
-          var tw = 0.6 + 0.4 * Math.sin(t * (0.5 + sd * 1.5) + phases[i]);
-          var alpha = edge * tw * 0.8;
-          if (alpha < 0.04) continue;
-          var gi = 1 + (Math.floor(sd * 977 + t * (0.2 + sd * 0.6)) % (RAMP.length - 1));
-          ctx.globalAlpha = alpha;
-          ctx.fillText(RAMP.charAt(gi), (c + 0.5) * step, (r + 0.55) * step);
-        }
-      }
-      ctx.globalAlpha = 1;
-    }
-
-    function resize() {
-      var w = fade.clientWidth, h = fade.clientHeight;
-      if (!w || !h) return;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = Math.round(w * dpr); H = Math.round(h * dpr);
-      cv.width = W; cv.height = H;
-      streakCv.width = W; streakCv.height = H;
-      cols = Math.ceil(w / CELL); rows = Math.ceil(h / CELL);
-      seeds = new Float32Array(cols * rows);
-      phases = new Float32Array(cols * rows);
-      for (var i = 0; i < seeds.length; i++) {
-        seeds[i] = Math.random();
-        phases[i] = Math.random() * 6.2832;
-      }
-      ctx.font = (CELL * dpr) + 'px ui-monospace, Menlo, Consolas, monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      buildMask();
-      buildGrain();
-      draw(performance.now());
-    }
-
-    function loop(now) {
-      if (!running) return;
-      draw(now);
-      timer = setTimeout(function () { requestAnimationFrame(loop); }, 1000 / FPS);
-    }
-    function start() {
-      if (running || reduced || !inView || document.hidden) return;
-      running = true;
-      requestAnimationFrame(loop);
-    }
-    function stop() {
-      running = false;
-      if (timer) { clearTimeout(timer); timer = null; }
-    }
-
-    readPageBg();
-    window.addEventListener('themechange', readPageBg);   // theme-system.js 派发自 window
-    resize();
-    if (reduced) return;                 // 减少动态: 只留静态一帧
-
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (entries) {
-        inView = entries[0].isIntersecting;
-        if (inView) start(); else stop();
-      }).observe(fade);
-    }
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) stop(); else start();
-    });
-
-    var rsTimer = null;
-    window.addEventListener('resize', function () {
-      clearTimeout(rsTimer);
-      rsTimer = setTimeout(resize, 200);
-    }, { passive: true });
-
-    start();
-  })();
 
   // scroll 监听：scrollY >= vh（hero 完全滚出视口）→ released
   // 修复：原 0.5vh 触发太早，hero display:none 后 main 还没到 viewport 顶部，
@@ -884,7 +524,7 @@ body.hero-released {
 `;
 
   const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
-  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=15"') : '';
+  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=16"') : '';
 
   // 定位必须用原始标签 scriptMatch[0] — heroScriptTag 是改写后的版本, 在源文件里找不到
   const afterScriptIdx = scriptMatch
