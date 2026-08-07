@@ -40,6 +40,7 @@ v5 重构:
 
 import sys
 import os
+import re
 import json
 import html as _html
 import argparse
@@ -964,6 +965,26 @@ def collect_news():
     return hero_item, headline_rows, transfers, feed
 
 # ==================== 日报生成 ====================
+def make_subtitle(news_items, max_len=90):
+    """从当天头条新闻标题提炼副标题: 取前若干条 ' · ' 拼接, 超长截断。
+    返回 YAML 双引号标量安全的字符串; 无新闻时返回空串, 由调用方回落固定文案。"""
+    parts = []
+    for n in news_items:
+        t = re.sub(r'\s+', ' ', (n.get('title') or '')).strip()
+        if not t:
+            continue
+        parts.append(t)
+        if len(' · '.join(parts)) >= max_len:
+            break
+    s = ' · '.join(parts)
+    if len(s) > max_len:
+        cut = s[:max_len]
+        sp = cut.rfind(' ')
+        if sp > max_len // 2:  # 按词边界截断, 避免切断单词
+            cut = cut[:sp]
+        s = cut.rstrip() + '…'
+    # front matter 用双引号包裹, 这里去掉会破坏 YAML 的字符
+    return s.replace('\\', '/').replace('"', "'")
 def generate_report(edition):
     """edition: 'morning' | 'evening' — 同一 FotMob 模版, 比赛板块侧重不同"""
     today_cn = bj_date_cn()
@@ -1030,6 +1051,10 @@ def generate_report(edition):
     # ---- 2. 新闻数据 ----
     hero_item, headline_rows, transfers, feed = collect_news()
 
+    # 副标题: 自动提炼当天头条 (头条大图 + 时下人气前几条), 无新闻时回落固定文案
+    news_tops = ([hero_item] if hero_item else []) + headline_rows
+    subtitle = make_subtitle(news_tops) or '足坛新闻 + 转会动态 + 赛程速览 (FotMob 风)'
+
     # ---- 3. Hero chips ----
     n_matches = len(ev_today)
     n_news = (1 if hero_item else 0) + len(headline_rows) + len(transfers) + len(feed)
@@ -1062,8 +1087,8 @@ def generate_report(edition):
     html_parts.append(f"""---
 title: 足球{edition_cn} · {today_cn}
 date: {today_str} {'08:00:00' if edition == 'morning' else '20:00:00'}
-excerpt: 足坛新闻 + 转会动态 + 赛程速览 (FotMob 风)
-description: 足坛头条 · 转会窗 · 关注球队 · 赛程速览 · FotMob 风格
+excerpt: "{subtitle}"
+description: "{subtitle}"
 cover_color: '#F3F5F7'
 tags:
   - 足球
@@ -1131,6 +1156,7 @@ def update_archive_index():
     archive_path.parent.mkdir(parents=True, exist_ok=True)
 
     pattern = re.compile(r'^football-(morning|evening)-(\d{4})-(\d{2})-(\d{2})\.md$')
+    excerpt_re = re.compile(r'^excerpt:\s*(.+?)\s*$', re.M)
     weekday_cn = ['一', '二', '三', '四', '五', '六', '日']
     posts = []
     for f in POSTS_DIR.iterdir():
@@ -1139,9 +1165,18 @@ def update_archive_index():
             continue
         typ, y, mo, d = m.group(1), int(m.group(2)), int(m.group(3)), int(m.group(4))
         date_str = f'{y:04d}-{mo:02d}-{d:02d}'
+        # 卡片描述取日报 front matter 的 excerpt (v6.4 起为当天头条提炼), 兼容带/不带双引号
+        desc = ''
+        try:
+            m_ex = excerpt_re.search(f.read_text(encoding='utf-8')[:800])
+            if m_ex:
+                desc = m_ex.group(1).strip('"')
+        except OSError:
+            pass
         posts.append({
             'type': typ,
             'date': date_str,
+            'desc': desc,
             'label': f'{mo}月{d}日',
             'weekday': f'星期{weekday_cn[datetime(y, mo, d).weekday()]}',
             'href': f'/{y}/{mo:02d}/{d:02d}/football-{typ}-{date_str}/',
@@ -1163,14 +1198,14 @@ def update_archive_index():
             cards.append('<div class="archive-grid">')
             for p in months[mkey]:
                 badge = '☀️ 早报' if p['type'] == 'morning' else '🌙 晚报'
-                desc = '足坛新闻 + 赛程速览' if p['type'] == 'morning' else '今日战报 + 新闻聚合'
+                desc = p['desc'] or ('足坛新闻 + 赛程速览' if p['type'] == 'morning' else '今日战报 + 新闻聚合')
                 cards.append(f'''      <a class="archive-card" href="{p['href']}">
         <div class="ac-top">
           <span class="ac-type ac-{p['type']}">{badge}</span>
           <span class="ac-date">{p['label']}</span>
         </div>
         <div class="ac-weekday">{p['weekday']}</div>
-        <div class="ac-desc">{desc}</div>
+        <div class="ac-desc">{esc(desc)}</div>
       </a>''')
             cards.append('    </div>')
     archive_cards = '\n'.join(cards)
