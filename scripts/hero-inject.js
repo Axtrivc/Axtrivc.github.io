@@ -29,10 +29,11 @@ hexo.extend.filter.register('after_render:html', function (data) {
   if (!canonicalMatch) return data;
   const canonical = canonicalMatch[1];
   // 支持自定义域 axtrivc.com 与旧 github.io 域(绑定主域名后 canonical 变为 axtrivc.com,必须放行)
-  if (!/(?:axtrivc\.github\.io|axtrivc\.com)\/(?:index\.html)?$/.test(canonical)) return data;
+  // 左边界限定协议/域名起点, 防止 evil-axtrivc.com 这类同后缀域名误放行
+  if (!/(?:^|\/\/)(?:www\.)?(?:axtrivc\.github\.io|axtrivc\.com)\/(?:index\.html)?$/.test(canonical)) return data;
 
   if (data.indexOf('full_page') === -1) return data;
-  if (data.indexOf('</header>') === -1 || data.indexOf('</body>') === -1) return data;
+  if (data.indexOf('</header>') === -1 || data.indexOf('</head>') === -1 || data.indexOf('</body>') === -1) return data;
 
   const heroHtmlPath = path.join(hexo.source_dir, 'hero', 'index.html');
   if (!fs.existsSync(heroHtmlPath)) {
@@ -51,7 +52,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
   heroCss = heroCss
     .replace(/^\s*html,\s*body\s*\{[^}]*\}\s*$/gm, '')
-    .replace(/^\s*\*,\s*\*::before,\s\*::after\s*\{[^}]*\}\s*$/gm, '');
+    .replace(/^\s*\*,\s*\*::before,\s*\*::after\s*\{[^}]*\}\s*$/gm, '');
 
   // ═══════════════════════════════════════════════════════════════
   // v13 CSS：零 CSS 变量、零 calc() transform、零 hijack
@@ -804,6 +805,10 @@ body.hero-released {
   window.addEventListener('resize', function() {
     vh = window.innerHeight;
   }, { passive: true });
+  // 浏览器恢复滚动位置 / bfcache 返回时, 页面可能一加载就在 hero 之下:
+  // 立即同步一次状态, 避免 hero-page-active 残留 (透明 nav/深蓝背景) 直到手动滚动
+  onScroll();
+  window.addEventListener('pageshow', onScroll);
 })();
 </script>
 `;
@@ -811,7 +816,10 @@ body.hero-released {
   const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
   const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=15"') : '';
 
-  const afterScriptIdx = heroSrc.indexOf(heroScriptTag) + heroScriptTag.length;
+  // 定位必须用原始标签 scriptMatch[0] — heroScriptTag 是改写后的版本, 在源文件里找不到
+  const afterScriptIdx = scriptMatch
+    ? heroSrc.indexOf(scriptMatch[0]) + scriptMatch[0].length
+    : 0;
   const inlineScriptMatch = heroSrc.slice(afterScriptIdx).match(/<script>[\s\S]*?<\/script>/);
   const heroInitScript = inlineScriptMatch ? inlineScriptMatch[0] : '';
 

@@ -51,6 +51,9 @@
     root.style.setProperty('--theme-border', t.border);
     root.style.setProperty('--theme-nav-text', t.navText);
     root.style.setProperty('--theme-nav-hover', t.navTextHover);
+    // 脚本在 <head> 同步加载, 此时 document.body 尚不存在 — 判空跳过,
+    // CSS 变量照设 (挂在 documentElement 上), body 相关赋值待 DOMContentLoaded 补齐
+    if (!document.body) return;
     document.body.style.backgroundColor = t.body;
     document.body.style.color = t.text;
     document.body.setAttribute('data-theme', themeId);
@@ -64,8 +67,13 @@
     }
   }
 
-  // 立即应用，避免 FOUC（无闪烁）
+  // 立即应用 CSS 变量, 避免 FOUC (无闪烁); body 就绪后再补 body 相关赋值
   applyTheme(getCurrentTheme());
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      applyTheme(getCurrentTheme());
+    });
+  }
 
   // 多标签页同步：storage 事件在另一个标签页修改 localStorage 时触发
   window.addEventListener('storage', function (e) {

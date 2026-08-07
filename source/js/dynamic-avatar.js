@@ -72,7 +72,7 @@
         // 属性变化：检查是不是头像被改回占位
         if (m.type === 'attributes' && m.target && m.target.tagName === 'IMG') {
           var img = m.target;
-          if (!img.matches('img.avatar-img, img[alt="avatar"], .author-info__avatar img, #card-info img')) return;
+          if (!img.matches('img.avatar-img, img[alt="avatar"], .author-info__avatar img')) return;
           // 用规范化后的 URL 比较，避免相对/绝对不一致
           var currentAbs = normalizeUrl(img.src);
           if (currentAbs !== avatarAbs) {

@@ -18,7 +18,8 @@
     if (text == null) return '';
     var div = document.createElement('div');
     div.textContent = String(text);
-    return div.innerHTML;
+    // textContent→innerHTML 不转引号, 但该结果会拼进 href="..."/url('...') 属性上下文, 需补转
+    return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
   // ISO 时间 → "3 小时前"

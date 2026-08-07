@@ -14,8 +14,6 @@
   var ADMIN_BASE = '/admin/#/collections/';
   var OPTIONS = [
     { icon: 'fa-pen-fancy', label: '文章', url: ADMIN_BASE + 'posts/new', color: '#07C160' },
-    { icon: 'fa-image', label: '图片', url: ADMIN_BASE + 'posts/new', color: '#2A8FE0' },
-    { icon: 'fa-video', label: '视频', url: ADMIN_BASE + 'posts/new', color: '#E0562A' },
     // 返回顶部（弥补 hide-rightside.css 删掉原生按钮的缺失）
     { icon: 'fa-arrow-up', label: '顶部', action: 'scrollTop', color: '#8B6F47' }
   ];

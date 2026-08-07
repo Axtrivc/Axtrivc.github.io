@@ -51,8 +51,12 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).parent.resolve()
 BLOG_ROOT = SCRIPT_DIR.parent
 POSTS_DIR = Path(os.environ.get('POSTS_DIR', BLOG_ROOT / 'source' / '_posts'))
-D = Path('D:/WorkBuddy-Outputs/Football-Daily')
-D.mkdir(parents=True, exist_ok=True)
+# 本地备份目录: BACKUP_DIR 环境变量可配; 目录不可建 (CI / 无 D 盘机器) 时静默跳过备份
+D = Path(os.environ.get('BACKUP_DIR', 'D:/WorkBuddy-Outputs/Football-Daily'))
+try:
+    D.mkdir(parents=True, exist_ok=True)
+except OSError:
+    D = None
 
 # 北京时间
 BJ = timezone(timedelta(hours=8))
@@ -65,21 +69,28 @@ ESPN_LEAGUE_LOGO = 'https://a.espncdn.com/i/leaguelogos/soccer/500'
 # espn = 直采赛程的 (联赛 slug, 赛季年份) 组合; 欧洲球队带欧冠, 赛季跨年用当年
 FOLLOWED_TEAMS = {
     '83':    {'name': '巴塞罗那',    'slug': 'barcelona', 'color': '#A50044', 'color2': '#004D98',
-              'espn': [('esp.1', '2025'), ('esp.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026')]},
+              'espn': [('esp.1', '2025'), ('esp.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026'),
+                       ('esp.copa_del_rey', '2025'), ('esp.copa_del_rey', '2026')]},
     '164':   {'name': '西班牙',      'slug': 'spain',     'color': '#B31B1B', 'color2': '#6E0B0B',
-              'espn': [('fifa.world', '2026'), ('uefa.nations', '2026')]},
+              'espn': [('fifa.world', '2026'), ('uefa.nations', '2026'), ('fifa.friendly', '2026')]},
     '382':   {'name': '曼城',        'slug': 'mancity',   'color': '#6CABDD', 'color2': '#1C2C5B',
-              'espn': [('eng.1', '2025'), ('eng.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026')]},
+              'espn': [('eng.1', '2025'), ('eng.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026'),
+                       ('eng.fa', '2025'), ('eng.fa', '2026')]},
     '360':   {'name': '曼联',        'slug': 'manutd',    'color': '#DA291C', 'color2': '#7A0D06',
-              'espn': [('eng.1', '2025'), ('eng.1', '2026')]},
+              'espn': [('eng.1', '2025'), ('eng.1', '2026'),
+                       ('eng.fa', '2025'), ('eng.fa', '2026')]},
     '359':   {'name': '阿森纳',      'slug': 'arsenal',   'color': '#EF0107', 'color2': '#8F0000',
-              'espn': [('eng.1', '2025'), ('eng.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026')]},
+              'espn': [('eng.1', '2025'), ('eng.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026'),
+                       ('eng.fa', '2025'), ('eng.fa', '2026')]},
     '132':   {'name': '拜仁慕尼黑',  'slug': 'bayern',    'color': '#DC052D', 'color2': '#7A0219',
-              'espn': [('ger.1', '2025'), ('ger.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026')]},
+              'espn': [('ger.1', '2025'), ('ger.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026'),
+                       ('ger.dfb_pokal', '2025'), ('ger.dfb_pokal', '2026')]},
     '160':   {'name': '巴黎圣日耳曼', 'slug': 'psg',       'color': '#004170', 'color2': '#001829',
-              'espn': [('fra.1', '2025'), ('fra.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026')]},
+              'espn': [('fra.1', '2025'), ('fra.1', '2026'), ('uefa.champions', '2025'), ('uefa.champions', '2026'),
+                       ('fra.coupe_de_france', '2025'), ('fra.coupe_de_france', '2026')]},
     '2572':  {'name': '科莫',        'slug': 'como',      'color': '#005DAA', 'color2': '#002C52',
-              'espn': [('ita.1', '2025'), ('ita.1', '2026')]},
+              'espn': [('ita.1', '2025'), ('ita.1', '2026'),
+                       ('ita.coppa_italia', '2025'), ('ita.coppa_italia', '2026')]},
     '20232': {'name': '迈阿密国际',  'slug': 'miami',     'color': '#E77FAE', 'color2': '#8A2B56',
               'espn': [('usa.1', '2026'), ('usa.1', '2025')]},
 }
@@ -87,10 +98,15 @@ FOLLOWED_TEAMS = {
 # 赛事 id -> (中文名, ESPN 联赛徽标 id 或 None); 徽标 id 均已实测
 COMP_MAP = {
     'premier-league':           ('英超', 23),
+    'eng.1':                    ('英超', 23),
     'la-liga':                  ('西甲', 15),
+    'esp.1':                    ('西甲', 15),
     'serie-a':                  ('意甲', 12),
+    'ita.1':                    ('意甲', 12),
     'bundesliga':               ('德甲', 10),
+    'ger.1':                    ('德甲', 10),
     'ligue-1':                  ('法甲', 9),
+    'fra.1':                    ('法甲', 9),
     'mls':                      ('美职联', 19),
     'usa.1':                    ('美职联', 19),
     'champions-league':         ('欧冠', 2),
@@ -104,23 +120,30 @@ COMP_MAP = {
     'uefa.euro':                ('欧洲杯', 74),
     'uefa.nations':             ('欧国联', 2395),
     'international-friendly':   ('国际友谊赛', None),
+    'fifa.friendly':            ('国际友谊赛', None),
     'saudi-pro-league':         ('沙特联', 2488),
     'chinese-super-league':     ('中超', 2350),
     # 仅显示名映射 (关注队参加时才出现, 不在白名单)
     'copa-del-rey':             ('国王杯', None),
+    'esp.copa_del_rey':         ('国王杯', None),
     'fa-cup':                   ('足总杯', None),
+    'eng.fa':                   ('足总杯', None),
+    'ger.dfb_pokal':            ('德国杯', None),
+    'fra.coupe_de_france':      ('法国杯', None),
+    'ita.coppa_italia':         ('意大利杯', None),
     'club-world-cup':           ('世俱杯', None),
     'conference-league':        ('欧协联', None),
 }
 
 # 主流赛事白名单 — 小众联赛 (巴甲/阿甲/英冠等) 一律不进日报
 MAIN_COMPS = frozenset((
-    'premier-league', 'la-liga', 'serie-a', 'bundesliga', 'ligue-1',
+    'premier-league', 'eng.1', 'la-liga', 'esp.1', 'serie-a', 'ita.1',
+    'bundesliga', 'ger.1', 'ligue-1', 'fra.1',
     'mls', 'usa.1', 'saudi-pro-league', 'chinese-super-league',
     'champions-league', 'uefa.champions', 'uefa.champions-league',
     'europa-league', 'uefa.europa',
     'world-cup', 'fifa.world', 'european-championship', 'uefa.euro',
-    'uefa.nations', 'international-friendly',
+    'uefa.nations', 'international-friendly', 'fifa.friendly',
 ))
 
 # 比赛分组展示顺序 (按白名单优先级)
@@ -130,6 +153,15 @@ COMP_ORDER = [
     'champions-league', 'europa-league',
     'world-cup', 'european-championship', 'uefa.nations', 'international-friendly',
 ]
+
+# ESPN slug 别名 -> COMP_ORDER 规范名 (分组排序前归一化, 否则别名组沉底)
+CID_CANON = {
+    'eng.1': 'premier-league', 'esp.1': 'la-liga', 'ita.1': 'serie-a',
+    'ger.1': 'bundesliga', 'fra.1': 'ligue-1', 'usa.1': 'mls',
+    'uefa.champions': 'champions-league', 'uefa.champions-league': 'champions-league',
+    'uefa.europa': 'europa-league', 'fifa.world': 'world-cup',
+    'uefa.euro': 'european-championship', 'fifa.friendly': 'international-friendly',
+}
 
 # 沙特联/中超不在 sports_skills daily 覆盖内, 直采 ESPN scoreboard 补齐
 EXTRA_LEAGUES = [
@@ -145,9 +177,6 @@ RSS_FEEDS = [
     ('ESPN FC',   'https://www.espn.com/espn/rss/soccer/news'),
 ]
 SKY_FOOTBALL_RSS = 'https://www.skysports.com/rss/11095'  # 足球频道, 逐条带 enclosure 图
-
-# 转会关键词 (标题匹配)
-TRANSFER_RE = None  # 在 main 前编译, 见 is_transfer_news()
 
 # 明显非足球的内容
 NON_FOOTBALL_HINTS = [
@@ -254,7 +283,8 @@ def bj_date_str(offset=0):
 
 def bj_date_cn():
     d = now_bj()
-    weekdays = ['日', '一', '二', '三', '四', '五', '六']
+    # Python weekday(): 周一=0 ... 周日=6
+    weekdays = ['一', '二', '三', '四', '五', '六', '日']
     return f"{d.year}年{d.month}月{d.day}日 星期{weekdays[d.weekday()]}"
 
 def parse_dt(utc_str):
@@ -310,6 +340,11 @@ def bj_full_cn(utc_str):
 
 # ==================== 比赛状态判定 ====================
 CLOSED_STATUSES = {'closed', 'finished', 'final', 'status_final', 'full-time', 'ft'}
+# 延期/取消/中断: 不算未赛也不算 live, 直接不展示 (sports_skills ESPN_STATUS_MAP 会产出这些状态)
+EXCLUDED_STATUSES = {'postponed', 'cancelled', 'canceled', 'suspended'}
+
+def is_excluded(m):
+    return str(m.get('status', '')).lower() in EXCLUDED_STATUSES
 
 def is_closed(m):
     return str(m.get('status', '')).lower() in CLOSED_STATUSES
@@ -317,7 +352,7 @@ def is_closed(m):
 def is_future(m):
     """真正未开球: 非已结束 且 开球时间晚于现在 (5 分钟宽限)。
     数据源会把已踢完的比赛遗留为 not_started (如世界杯决赛), 必须按时间过滤。"""
-    if is_closed(m):
+    if is_closed(m) or is_excluded(m):
         return False
     dt = parse_dt(m.get('start_time'))
     if not dt:
@@ -326,7 +361,7 @@ def is_future(m):
 
 def is_live(m):
     """已开球但未标记结束: 开球时间在 3 小时内"""
-    if is_closed(m):
+    if is_closed(m) or is_excluded(m):
         return False
     dt = parse_dt(m.get('start_time'))
     if not dt:
@@ -374,7 +409,9 @@ def get_daily_matches(date_str=None):
         args.append(f'--date={date_str}')
     data = call_skill(*args)
     if (not data or not data.get('status')) and date_str:
-        data = call_skill('football', 'get_daily_schedule')
+        # 指定日期失败时不能回退成"今天" — 会把错误日期的比赛混进昨/明日桶
+        print(f'   ⚠️ daily 接口未返回 {date_str} 赛程, 该日期按空处理')
+        return []
     return safe(data, 'data', 'events', default=[]) or []
 
 # ==================== 数据采集: ESPN 直采 (球队赛程 + 沙特联/中超) ====================
@@ -403,11 +440,26 @@ def normalize_espn_event(e, comp_id, comp_name):
     """ESPN site API 事件 -> 与 sports_skills 一致的内部结构。
     status: scoreboard 在顶层 e.status, schedule 在 competitions[0].status"""
     comp0 = (e.get('competitions') or [{}])[0]
-    st = (e.get('status') or comp0.get('status') or {}).get('type') or {}
+    if not isinstance(comp0, dict):
+        comp0 = {}
+    st_holder = e.get('status') or comp0.get('status') or {}
+    # 脏数据防御: 个别负载 status/type 可能是字符串而非 dict
+    if not isinstance(st_holder, dict):
+        st_holder = {}
+    st = st_holder.get('type') or {}
+    if not isinstance(st, dict):
+        st = {}
+    st_name = str(st.get('name') or '').upper()
     if st.get('completed'):
         status = 'closed'
     elif st.get('state') == 'in':
         status = 'in_progress'
+    elif 'POSTPONED' in st_name:
+        status = 'postponed'
+    elif 'CANCEL' in st_name:
+        status = 'cancelled'
+    elif 'SUSPEND' in st_name:
+        status = 'suspended'
     else:
         status = 'not_started'
     competitors = []
@@ -451,13 +503,16 @@ def get_team_events(team_id):
                f'/teams/{team_id}/schedule?season={season}')
         data = _espn_get(url)
         for e in (data or {}).get('events') or []:
-            lg = e.get('league') or {}
-            cid = lg.get('slug') or league
-            cname = lg.get('name') or league
-            m = normalize_espn_event(e, cid, cname)
-            if m['id'] and m['id'] not in seen:
-                seen.add(m['id'])
-                out.append(m)
+            try:
+                lg = e.get('league') or {}
+                cid = lg.get('slug') or league
+                cname = lg.get('name') or league
+                m = normalize_espn_event(e, cid, cname)
+                if m['id'] and m['id'] not in seen:
+                    seen.add(m['id'])
+                    out.append(m)
+            except Exception as ex:
+                print(f'   ⚠️ 球队 {team_id} 单条赛程解析失败, 已跳过: {ex}')
     return out
 
 def get_extra_league_events(bj_dates):
@@ -474,7 +529,10 @@ def get_extra_league_events(bj_dates):
             data = _espn_get(f'https://site.api.espn.com/apis/site/v2/sports/soccer/{slug}'
                              f'/scoreboard?dates={ymd}&limit=200')
             for e in (data or {}).get('events') or []:
-                out.append(normalize_espn_event(e, cid, cname))
+                try:
+                    out.append(normalize_espn_event(e, cid, cname))
+                except Exception as ex:
+                    print(f'   ⚠️ {cname} 单条赛程解析失败, 已跳过: {ex}')
     return out
 
 def involves_followed(m):
@@ -675,11 +733,18 @@ def fm_match_row(m):
 
     sub = ''
     if is_closed(m):
-        center = f'<a href="{link}" class="fm-score">{hs} - {as_}</a>'
+        # 比分缺失时回落 "-", 避免渲染 "None - None"
+        hs_d = hs if hs is not None else '-'
+        as_d = as_ if as_ is not None else '-'
+        center = f'<a href="{link}" class="fm-score">{hs_d} - {as_d}</a>'
         if match_bj_date(m) != bj_date_str():
             sub = f'<span class="fm-mdate">{esc(match_bj_date(m)[5:].replace("-", "/"))}</span>'
     elif is_live(m):
-        center = f'<a href="{link}" class="fm-livepill">{hs} - {as_} LIVE</a>'
+        if hs is None or as_ is None:
+            # 数据源遗留的假 not_started (无比分): 降级为开球时间, 不渲染 "None - None LIVE"
+            center = f'<span class="fm-time">{bj_time_str(m.get("start_time"))}</span>'
+        else:
+            center = f'<a href="{link}" class="fm-livepill">{hs} - {as_} LIVE</a>'
     else:
         center = f'<span class="fm-time">{bj_time_str(m.get("start_time"))}</span>'
         d = match_bj_date(m)
@@ -707,7 +772,7 @@ def fm_match_block(events, limit=14):
             groups[key]['lid'] = lid
 
     def _sort_key(k):
-        cid = groups[k]['cid']
+        cid = CID_CANON.get(groups[k]['cid'], groups[k]['cid'])
         return COMP_ORDER.index(cid) if cid in COMP_ORDER else len(COMP_ORDER)
 
     out = []
@@ -911,8 +976,10 @@ def generate_report(edition):
     raw, seen_ids = [], set()
     for ds in (yday_str, today_str, tmrw_str):
         for e in get_daily_matches(ds):
-            if str(e.get('id')) not in seen_ids:
-                seen_ids.add(str(e.get('id')))
+            eid = str(e.get('id') or '')
+            # 无 id 事件直接跳过: str(None)='None' 会让多条无 id 事件互相去重丢失
+            if eid and eid not in seen_ids:
+                seen_ids.add(eid)
                 raw.append(e)
 
     print('🌍 直采沙特联/中超 (ESPN scoreboard)...')
@@ -932,10 +999,11 @@ def generate_report(edition):
     # daily 接口缺 MLS 等赛事, 用关注球队赛程补齐三天窗口
     for tev in team_events.values():
         for m in tev:
-            if str(m.get('id')) in seen_ids:
+            mid = str(m.get('id') or '')
+            if not mid or mid in seen_ids:
                 continue
             if match_bj_date(m) in (yday_str, today_str, tmrw_str):
-                seen_ids.add(str(m.get('id')))
+                seen_ids.add(mid)
                 raw.append(m)
 
     # 小众联赛剔除: 白名单内赛事 + 关注队参加的比赛才保留
@@ -982,7 +1050,12 @@ def generate_report(edition):
         days = (dt0.date() - now_bj().date()).days
         if days > 0:
             chips.append(f'🗓️ 距{FOLLOWED_TEAMS[tid0]["name"]}下一场 {days} 天')
-    chips.append('🪟 夏季转会窗进行中')
+    # 转会窗 chip 按季节显示 (夏窗 6-8 月, 冬窗 1 月), 非窗口期不展示
+    _month = now_bj().month
+    if _month in (6, 7, 8):
+        chips.append('🪟 夏季转会窗进行中')
+    elif _month == 1:
+        chips.append('🪟 冬季转会窗进行中')
 
     # ---- 4. 组装 ----
     html_parts = []
@@ -1005,23 +1078,23 @@ categories:
 
     html_parts.append(fm_hero(edition_cn, chips))
 
-    # 比赛板块
+    # 比赛板块 (fm_match_block 默认截断 14 行, 角标场次数同步截断)
     if edition == 'morning':
         if recent_closed:
-            html_parts.append(fm_section('昨夜今晨', fm_match_block(recent_closed), len(recent_closed)))
+            html_parts.append(fm_section('昨夜今晨', fm_match_block(recent_closed), min(len(recent_closed), 14)))
         if today_live or today_up:
             evs = today_live + today_up
-            html_parts.append(fm_section('今日比赛', fm_match_block(evs), len(evs)))
+            html_parts.append(fm_section('今日比赛', fm_match_block(evs), min(len(evs), 14)))
         # 今日无未赛时预告明晨赛事 (美洲赛事集中在北京时间清晨)
         if not (today_live or today_up) and tmrw_up:
             html_parts.append(fm_section('明晨预告', fm_match_block(tmrw_up[:10]), len(tmrw_up[:10])))
     else:
         if today_closed or today_live:
             evs = today_live + today_closed
-            html_parts.append(fm_section('今日战报', fm_match_block(evs), len(evs)))
+            html_parts.append(fm_section('今日战报', fm_match_block(evs), min(len(evs), 14)))
         upcoming = today_up + tmrw_up
         if upcoming:
-            html_parts.append(fm_section('待赛', fm_match_block(upcoming), len(upcoming)))
+            html_parts.append(fm_section('待赛', fm_match_block(upcoming), min(len(upcoming), 14)))
     if not (recent_closed or today_closed or today_live or today_up or tmrw_up):
         html_parts.append('<div class="fm-card"><div class="fm-empty">🏖️ 休赛期 — 今日无主流赛事, 足坛动态详见下方新闻。</div></div>')
 
@@ -1193,7 +1266,7 @@ def main():
 
     if args.preview:
         filename = f'football-{edition}-preview-{today_str}.md'
-        out = D / filename
+        out = (D or BLOG_ROOT) / filename
         out.write_text(md, encoding='utf-8')
         print(f'\n✅ Preview 写到: {out}')
     else:
@@ -1203,9 +1276,13 @@ def main():
         filepath.write_text(md, encoding='utf-8')
         print(f'\n✅ {filename} 生成完成')
 
-        backup = D / filename
-        backup.write_text(md, encoding='utf-8')
-        print(f'✅ 备份: {backup}')
+        if D is not None:
+            try:
+                backup = D / filename
+                backup.write_text(md, encoding='utf-8')
+                print(f'✅ 备份: {backup}')
+            except OSError as ex:
+                print(f'⚠️ 备份失败, 已跳过: {ex}')
 
         update_archive_index()
 

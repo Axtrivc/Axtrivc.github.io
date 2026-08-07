@@ -22,6 +22,8 @@ hexo.extend.filter.register('before_post_render', function (data) {
   var cfg = hexo.theme.config && hexo.theme.config.index_post_content;
   if (cfg && cfg.length) length = cfg.length;
 
-  data.postDesc = data.excerpt || util.truncate(text, { length: length });
+  // front-matter 手写摘要可能含 HTML/Markdown, 需剥标签后再用
+  var fmExcerpt = util.stripHTML(data.excerpt || '').replace(/\s+/g, ' ').trim();
+  data.postDesc = fmExcerpt || util.truncate(text, { length: length });
   return data;
 });

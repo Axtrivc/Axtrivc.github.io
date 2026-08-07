@@ -102,12 +102,7 @@ ignore:
 ## Themes: https://hexo.io/themes/
 theme: butterfly
 
-# Custom scripts (Hexo 7.x 不再自动加载 scripts/ 目录，需要手动注册)
-scripts:
-  - scripts/hero-inject.js
-  - scripts/football-daily.js
-  - scripts/cache-bust.js
-  - scripts/inject-site-config.js
+# 注: Hexo 会自动加载 scripts/ 目录下所有 js 作为插件, 无需也不支持在此注册
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment

@@ -14,8 +14,8 @@ hexo.extend.filter.register('before_generate', function () {
     var execSync = require('child_process').execSync;
     hash = execSync('git rev-parse --short HEAD', { cwd: hexo.base_dir, encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
   } catch (e) {
-    // git 不可用时降级：用当天日期
-    hash = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    // git 不可用时降级：用构建时间戳（同日多次构建也能破缓存）
+    hash = String(Date.now());
   }
 
   var inject = hexo.theme.config && hexo.theme.config.inject;

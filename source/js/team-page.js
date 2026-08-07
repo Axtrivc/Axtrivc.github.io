@@ -29,7 +29,8 @@
     if (t == null) return '';
     var div = document.createElement('div');
     div.textContent = String(t);
-    return div.innerHTML;
+    // textContent→innerHTML 不转引号, 但该结果会拼进 href="..." 等属性上下文, 需补转
+    return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   function fetchJSON(url) {
     return fetch(url).then(function (r) {
@@ -110,6 +111,7 @@
       id: String(e.id || ''),
       date: e.date || '',
       completed: completed,
+      state: st.state || '',
       leagueName: (e.league || {}).name || '',
       home: home, away: away
     };
@@ -125,6 +127,8 @@
     });
     return Promise.all(urls.map(function (u) { return fetchJSON(u).catch(function () { return null; }); }))
       .then(function (datas) {
+        // 区分"全部请求失败"与"真无赛程": 全失败时不能伪装成休赛期
+        var allFailed = urls.length > 0 && datas.every(function (d) { return !d; });
         var seen = {}, evs = [];
         datas.forEach(function (d) {
           ((d && d.events) || []).forEach(function (e) {
@@ -132,7 +136,7 @@
             if (n.id && !seen[n.id] && n.home && n.away) { seen[n.id] = 1; evs.push(n); }
           });
         });
-        renderNext(cfg, evs);
+        renderNext(cfg, evs, allFailed);
         renderRecent(cfg, evs);
       })
       .catch(function (err) {
@@ -144,15 +148,43 @@
       });
   }
 
-  function renderNext(cfg, evs) {
+  function renderNext(cfg, evs, loadFailed) {
     var loading = $('nextLoading'), box = $('nextContent');
     var now = Date.now();
+
+    // 进行中场次单独呈现: state='in' 的比赛既不是"下一场", 也不该从卡片消失
+    var live = evs.filter(function (e) { return e.state === 'in'; })
+      .sort(function (a, b) { return new Date(a.date) - new Date(b.date); })[0];
+    if (live) {
+      var lOpp = oppOf(cfg, live);
+      var lVenue = venueOf(cfg, live);
+      var lTitle = lVenue === '主'
+        ? cfg.teamZh + ' vs ' + lOpp.name
+        : lOpp.name + ' vs ' + cfg.teamZh;
+      var lHs = live.home.score == null ? '-' : live.home.score;
+      var lAs = live.away.score == null ? '-' : live.away.score;
+      box.innerHTML =
+        '<div class="next-match">' +
+          '<img class="nx-logo" src="' + TEAM_LOGO + esc(lOpp.id) + '.png" alt="" loading="eager" onerror="this.remove()">' +
+          '<div class="nx-info">' +
+            '<div class="nx-title">' + esc(lTitle) + '</div>' +
+            '<div class="nx-meta">' + esc(compCn(live.leagueName, cfg.leagueName)) + ' · ' + lVenue + '场</div>' +
+          '</div>' +
+          '<div class="nx-when">🔴 直播中 ' + lHs + ' - ' + lAs + '</div>' +
+        '</div>';
+      if (loading) loading.style.display = 'none';
+      box.style.display = '';
+      return;
+    }
+
     var next = evs.filter(function (e) {
       return !e.completed && new Date(e.date).getTime() > now - 5 * 60000;
     }).sort(function (a, b) { return new Date(a.date) - new Date(b.date); })[0];
 
     if (!next) {
-      if (loading) loading.innerHTML = '<div class="next-empty">🏖️ 休赛期 · 赛程待定</div>';
+      if (loading) loading.innerHTML = loadFailed
+        ? '<div class="next-empty">加载失败, 稍后自动重试</div>'
+        : '<div class="next-empty">🏖️ 休赛期 · 赛程待定</div>';
       return;
     }
     var opp = oppOf(cfg, next);
@@ -253,7 +285,11 @@
   }
 
   function num(s) { var n = parseInt(s, 10); return isNaN(n) ? 0 : n; }
-  function suffix(n) { return n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th'; }
+  function suffix(n) {
+    var h = n % 100;
+    if (h >= 11 && h <= 13) return 'th';
+    return n % 10 === 1 ? 'st' : n % 10 === 2 ? 'nd' : n % 10 === 3 ? 'rd' : 'th';
+  }
 
   function renderStandings(cfg, rows) {
     var mine = null;
@@ -277,6 +313,10 @@
       var sl = $('statsLoading');
       if (sl) sl.style.display = 'none';
       statsBox.style.display = '';
+    } else if (!mine) {
+      // 本队不在积分榜分组里 (赛季/联赛配置错位) 时也要收尾骨架屏, 否则永远卡在加载态
+      var slm = $('statsLoading');
+      if (slm) slm.innerHTML = '<div class="next-empty">数据暂时不可用</div>';
     }
 
     /* 完整积分榜 */

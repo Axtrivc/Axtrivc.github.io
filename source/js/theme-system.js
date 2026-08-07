@@ -119,7 +119,6 @@
     if (pageHeader) {
       pageHeader.style.backgroundColor = 'transparent';
       pageHeader.style.backgroundImage = 'none';
-      var phBefore = pageHeader.querySelector(':scope::before');
     }
 
     // Article cards
@@ -395,7 +394,9 @@
   }
 
   function selectTheme(id) {
-    currentTheme=id; localStorage.setItem(STORAGE_KEY_THEME,id); applyTheme(id);
+    currentTheme=id;
+    try { localStorage.setItem(STORAGE_KEY_THEME,id); } catch (e) { /* Safari 隐私模式或禁用存储时仅本次生效 */ }
+    applyTheme(id);
     // 立即同步 nav 背景（v12.10 修复 — 主题切换时 nav 立刻更新）
     var navEl = document.getElementById('nav');
     if (navEl) {

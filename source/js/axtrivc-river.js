@@ -23,6 +23,8 @@
   var cursor = { x: -9999, y: -9999, active: false };
 
   function resize() {
+    // DPR 随窗口拖动跨显示器可能变化, 每次 resize 重取
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
     var rect = stage.getBoundingClientRect();
     W = rect.width;
     H = rect.height;
@@ -92,9 +94,9 @@
     }
   };
 
-  // 默认用 beige-lite (博客初始色) 的 palette, 等 themechange 事件覆盖
-  var currentWavePalette = THEME_WAVES['beige-lite'].waves;
-  var currentBg = THEME_WAVES['beige-lite'].bg;
+  // 默认与 theme-system.js 缺省一致 (wechat-classic), 等 themechange 事件覆盖
+  var currentWavePalette = THEME_WAVES['wechat-classic'].waves;
+  var currentBg = THEME_WAVES['wechat-classic'].bg;
 
   // 从 layers 模板 + 当前 palette 合成最终 layers (amp/freq/speed 固定, color 动态)
   var LAYER_TEMPLATE = [
@@ -172,9 +174,14 @@
   }
 
   var stageVisible = false, running = false;
-  function frame() {
-    if (!stageVisible) { running = false; return; }
-    t += 1;
+  var lastFrameTs = 0;
+  function frame(nowTs) {
+    if (!stageVisible) { running = false; lastFrameTs = 0; return; }
+    // 按真实帧间隔推进 (60fps 为基准 1 步, 上限 4 步防长时间挂起后跳变):
+    // 高刷屏不再加速, 丢帧不再变慢
+    var step = lastFrameTs ? Math.min((nowTs - lastFrameTs) / 16.666, 4) : 1;
+    lastFrameTs = nowTs;
+    t += step;
     ctx.clearRect(0, 0, W, H);
 
     // 主题适配的水深渐变背景(上淡下深, 让波纹线条有对比)
@@ -191,8 +198,8 @@
     // 推进涟漪
     for (var j = ripples.length - 1; j >= 0; j--) {
       var r = ripples[j];
-      r.radius += 2.2;
-      r.age += 1;
+      r.radius += 2.2 * step;
+      r.age += step;
       if (r.age > 220) ripples.splice(j, 1);
     }
 

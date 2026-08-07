@@ -10,6 +10,17 @@
  * - IntersectionObserver: 只在视口内才动画
  * - 不修改 butterfly 模板,纯 after_render:html 注入
  */
+
+// 构建期取 git 短哈希做 JS 版本号 (与 cache-bust.js 同思路), git 不可用降级时间戳
+var RIVER_JS_VER = (function () {
+  try {
+    return require('child_process').execSync('git rev-parse --short HEAD',
+      { cwd: hexo.base_dir, encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+  } catch (e) {
+    return String(Date.now());
+  }
+})();
+
 hexo.extend.filter.register('after_render:html', function (data) {
   if (!data || typeof data !== 'string') return data;
 
@@ -18,6 +29,9 @@ hexo.extend.filter.register('after_render:html', function (data) {
   if (footerIdx === -1) return data;
   var closingFooterIdx = data.indexOf('</footer>', footerIdx);
   if (closingFooterIdx === -1) return data;
+
+  // 三个注入锚点缺一不可, 否则 CSS/HTML/JS 部分注入会破版
+  if (data.indexOf('</head>') === -1 || data.indexOf('</body>') === -1) return data;
 
   // 跳过 /admin/ CMS 页面
   if (data.indexOf('id="nc-root"') !== -1) return data;
@@ -148,7 +162,7 @@ body {
 `;
 
   var js = `
-<script src="/js/axtrivc-river.js?v=3"></script>
+<script src="/js/axtrivc-river.js?v=${RIVER_JS_VER}"></script>
 `;
 
   // CSS 注入到 </head> 前

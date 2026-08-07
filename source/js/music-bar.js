@@ -30,16 +30,22 @@
     var bar = document.getElementById('music-bar');
     if (!panel || !embedContainer || !bar) return;
 
-    // 注入 iframe（按需构建，避免硬编码在 HTML 里）
-    embedContainer.innerHTML =
-      '<iframe src="' + SPOTIFY_EMBED_URL + '" height="352" frameBorder="0" ' +
-      'allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" ' +
-      'loading="lazy" style="display:block;width:100%;border:none;border-radius:0 0 16px 16px;"></iframe>';
+    // iframe 延迟到首次展开面板时才注入（避免每个页面加载都拉 Spotify embed）
+    var iframeInjected = false;
+    function ensureIframe() {
+      if (iframeInjected) return;
+      iframeInjected = true;
+      embedContainer.innerHTML =
+        '<iframe src="' + SPOTIFY_EMBED_URL + '" height="352" frameBorder="0" ' +
+        'allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" ' +
+        'loading="lazy" style="display:block;width:100%;border:none;border-radius:0 0 16px 16px;"></iframe>';
+    }
 
     // 以 DOM 实际状态为准，避免 panelOpen 变量与 UI 不同步
     function isOpen() { return panel.classList.contains('show'); }
 
     function openPlayer() {
+      ensureIframe();
       panel.classList.add('show');
       if (iconUp) iconUp.innerHTML = '<path d="M6 9l6 6 6-6"/>';
       if (barSub) barSub.textContent = '点击播放 ♪';
@@ -95,8 +101,8 @@
 
     // 监听 Spotify embed 的播放状态消息
     window.addEventListener('message', function (e) {
-      // 只接受 open.spotify.com 的消息
-      if (typeof e.origin === 'string' && e.origin.indexOf('spotify.com') === -1) return;
+      // 只接受 open.spotify.com 的消息（严格等值, 防止 evil-spotify.com 等仿冒域）
+      if (e.origin !== 'https://open.spotify.com') return;
       if (e.data && e.data.type === 'SPOTIFY_FRAME_MESSAGE') {
         try {
           var payload = typeof e.data.payload === 'string' ? JSON.parse(e.data.payload) : e.data.payload;
