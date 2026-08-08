@@ -33,7 +33,13 @@
     return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   function fetchJSON(url) {
-    return fetch(url).then(function (r) {
+    // AbortSignal.timeout 让挂起请求 8s 后 reject → 走 catch 渲染"加载失败",
+    // 否则 ESPN 慢/挂时骨架屏永不收场。旧浏览器无此 API 时回退裸 fetch。
+    var opts = {};
+    if (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) {
+      opts.signal = AbortSignal.timeout(8000);
+    }
+    return fetch(url, opts).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     });

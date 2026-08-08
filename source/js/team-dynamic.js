@@ -22,6 +22,19 @@
     return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
+  // 带超时的 fetch: 8s 后 reject → 走 catch 渲染"加载失败", 否则 ESPN 慢/挂时骨架屏永不收场。
+  // 旧浏览器无 AbortSignal.timeout 时回退裸 fetch (旧行为)。
+  function fetchJSON(url) {
+    var opts = {};
+    if (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) {
+      opts.signal = AbortSignal.timeout(8000);
+    }
+    return fetch(url, opts).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
+  }
+
   // ISO 时间 → "3 小时前"
   function timeAgo(iso) {
     if (!iso) return '';
@@ -86,11 +99,7 @@
 
     var url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/' + league + '/news';
 
-    fetch(url)
-      .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
+    fetchJSON(url)
       .then(function (data) {
         var articles = data.articles || [];
 
@@ -241,11 +250,7 @@
 
     var url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/' + league + '/teams/' + teamId + '/roster?season=' + season;
 
-    fetch(url)
-      .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
+    fetchJSON(url)
       .then(function (data) {
         var athletes = data.athletes || [];
         if (!athletes.length) throw new Error('空名单');

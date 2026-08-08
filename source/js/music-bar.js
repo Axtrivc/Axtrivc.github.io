@@ -65,11 +65,13 @@
     if (btnClose) btnClose.addEventListener('click', function (e) { e.stopPropagation(); closePlayer(); });
 
     // 隐藏整个音乐栏（用户主动收起） + 显示右下角迷你 launcher
+    // 注意: music-bar.css 用 body{padding-bottom:56px !important}, 普通内联样式被压死,
+    // 必须用 setProperty(...,'important') 才能在隐藏时真正清零底部占位, 否则留 56px 空白条
     if (btnBarClose) btnBarClose.addEventListener('click', function (e) {
       e.stopPropagation();
       closePlayer();
       bar.style.display = 'none';
-      document.body.style.paddingBottom = '0';
+      document.body.style.setProperty('padding-bottom', '0', 'important');
       if (launcher) launcher.hidden = false;
       try { sessionStorage.setItem('axtrivc_musicbar_hidden', '1'); } catch (_) {}
     });
@@ -78,7 +80,8 @@
     if (btnLauncher) btnLauncher.addEventListener('click', function (e) {
       e.stopPropagation();
       bar.style.display = '';
-      document.body.style.paddingBottom = '';
+      // 清掉 important 内联覆盖, 让 CSS 的 56px 规则重新生效
+      document.body.style.setProperty('padding-bottom', '', 'important');
       launcher.hidden = true;
       try { sessionStorage.removeItem('axtrivc_musicbar_hidden'); } catch (_) {}
     });
@@ -87,7 +90,7 @@
     try {
       if (sessionStorage.getItem('axtrivc_musicbar_hidden') === '1') {
         bar.style.display = 'none';
-        document.body.style.paddingBottom = '0';
+        document.body.style.setProperty('padding-bottom', '0', 'important');
         if (launcher) launcher.hidden = false;
       }
     } catch (_) {}

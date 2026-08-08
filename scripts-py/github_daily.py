@@ -47,10 +47,12 @@ WEEKDAYS = "一二三四五六日"
 
 def search_commits(user: str, target: date) -> list:
     """搜索 target 北京日期的提交。北京一天 = UTC 前一天 16:00 ~ 当天 16:00,
-    所以搜索区间放宽到 target-1 ~ target,再按北京日期精确过滤。"""
-    d1 = (target - timedelta(days=1)).isoformat()
-    d2 = target.isoformat()
-    q = f"author:{user}+committer-date:{d1}..{d2}"
+    搜索区间用精确 UTC 时间戳(纯日期边界会被 GitHub 当作 UTC 午夜,丢掉当天
+    08:00 之后的全部提交);再按北京日期精确过滤,防止边界串天。"""
+    start_utc = datetime.combine(target - timedelta(days=1), datetime.min.time(), tzinfo=timezone.utc).replace(hour=16)
+    end_utc = datetime.combine(target, datetime.min.time(), tzinfo=timezone.utc).replace(hour=16)
+    q = (f"author:{user}+committer-date:"
+         f"{start_utc:%Y-%m-%dT%H:%M:%SZ}..{end_utc:%Y-%m-%dT%H:%M:%SZ}")
     url = f"https://api.github.com/search/commits?q={q}&sort=committer-date&order=asc&per_page=100"
     headers = {
         "Accept": "application/vnd.github+json",

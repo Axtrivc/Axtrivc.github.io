@@ -4,11 +4,13 @@ hexo.extend.filter.register('before_generate', function () {
   const path = require('path');
   const yaml = require('js-yaml');
 
-  // 幂等检查：防止热重载时重复注入
-  if (hexo.theme.config.inject && hexo.theme.config.inject.bottom &&
-      hexo.theme.config.inject.bottom[0] &&
-      typeof hexo.theme.config.inject.bottom[0] === 'string' &&
-      hexo.theme.config.inject.bottom[0].includes('AXTRIVC_SITE_CONFIG')) {
+  // 幂等检查：防止热重载时重复注入。全表扫描而非只看 [0]——
+  // 若别的插件向 inject.bottom 头部 unshift, 会把本脚本挤到非 0 位, 只查 [0] 会误判未注入。
+  var bottom = (hexo.theme.config.inject && hexo.theme.config.inject.bottom) || [];
+  var already = bottom.some(function (s) {
+    return typeof s === 'string' && s.indexOf('AXTRIVC_SITE_CONFIG') !== -1;
+  });
+  if (already) {
     return;
   }
 

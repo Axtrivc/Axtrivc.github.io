@@ -85,6 +85,9 @@ jobs:
             echo "No changes for morning edition"
           else
             git commit -m "⚽ 足球早报 v2 自动更新 - $(date +%Y-%m-%d)"
+            # rebase 防非快进: 若 master 在 checkout 后被推进(手动 push / 日报时窗重叠),
+            # 裸 push 会被拒; 拉取最新 rebase 后重试
+            git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master
             git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
           fi
 
@@ -155,6 +158,7 @@ jobs:
             echo "No changes for evening edition"
           else
             git commit -m "🌙 足球晚报 v2 自动更新 - $(date +%Y-%m-%d)"
+            git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master
             git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
           fi
 

@@ -45,8 +45,32 @@ import json
 import html as _html
 import argparse
 import subprocess
+import socket
+import tempfile
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+
+# feedparser 走 urllib, 默认无 socket 超时 — 慢/半开 RSS 源会挂死整个日报作业。
+# _espn_get/call_skill 已各自限流 (20s/45s), 这里全局兜底覆盖 RSS 路径。
+socket.setdefaulttimeout(20)
+
+
+def atomic_write_text(path, content):
+    """原子写: 先写同目录临时文件再 os.replace (Windows/POSIX 均原子),
+    防止生成中途崩溃 (CI cancel/OOM) 留下截断/空文件被自动 commit 上线。"""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent), suffix='.tmp')
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8', newline='') as f:
+            f.write(content)
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
 
 # ==================== 路径配置 ====================
 SCRIPT_DIR = Path(__file__).parent.resolve()
@@ -1264,7 +1288,7 @@ def update_archive_index():
 </html>
 '''
 
-    archive_path.write_text(html, encoding='utf-8')
+    atomic_write_text(archive_path, html)
     print(f'✅ 归档页已更新({len(posts)} 篇日报): {archive_path}')
 
 # ==================== Main ====================
@@ -1302,19 +1326,19 @@ def main():
     if args.preview:
         filename = f'football-{edition}-preview-{today_str}.md'
         out = (D or BLOG_ROOT) / filename
-        out.write_text(md, encoding='utf-8')
+        atomic_write_text(out, md)
         print(f'\n✅ Preview 写到: {out}')
     else:
         POSTS_DIR.mkdir(parents=True, exist_ok=True)
         filename = f'football-{edition}-{today_str}.md'
         filepath = POSTS_DIR / filename
-        filepath.write_text(md, encoding='utf-8')
+        atomic_write_text(filepath, md)
         print(f'\n✅ {filename} 生成完成')
 
         if D is not None:
             try:
                 backup = D / filename
-                backup.write_text(md, encoding='utf-8')
+                atomic_write_text(backup, md)
                 print(f'✅ 备份: {backup}')
             except OSError as ex:
                 print(f'⚠️ 备份失败, 已跳过: {ex}')

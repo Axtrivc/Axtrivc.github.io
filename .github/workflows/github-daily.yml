@@ -68,6 +68,7 @@ jobs:
             echo "No changes for github daily"
           else
             git commit -m "📝 GitHub 日报自动更新 - $(date +%Y-%m-%d)"
+            git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master
             git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
           fi
 

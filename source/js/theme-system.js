@@ -258,8 +258,9 @@
         navEl.style.background = t.nav;
         navEl.style.backgroundImage = 'none';
         var links = navEl.querySelectorAll('a, .site-name, a.site-page');
+        var navColor = t.navText || t.text;
         for (var k = 0; k < links.length; k++) {
-          links[k].style.color = t.text;
+          links[k].style.color = navColor;
         }
       }
     }
@@ -402,12 +403,13 @@
     if (navEl) {
       var t = THEME_STYLES[id];
       if (t) {
-        navEl.style.background = t.nav;
-        navEl.style.backgroundImage = 'none';
-        var links = navEl.querySelectorAll('a, .site-name, a.site-page');
-        for (var k = 0; k < links.length; k++) {
-          links[k].style.color = t.text;
-        }
+      navEl.style.background = t.nav;
+      navEl.style.backgroundImage = 'none';
+      var links = navEl.querySelectorAll('a, .site-name, a.site-page');
+      var navColor = t.navText || t.text;
+      for (var k = 0; k < links.length; k++) {
+        links[k].style.color = navColor;
+      }
       }
     }
     document.querySelectorAll('.theme-option[data-theme]').forEach(function(o){o.classList.toggle('active',o.getAttribute('data-theme')===id)});
