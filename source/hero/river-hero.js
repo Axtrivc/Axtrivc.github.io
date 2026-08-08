@@ -2883,20 +2883,23 @@
     return true;
   }
 
-  const vs = compile(gl.VERTEX_SHADER, VS);
-  const fs = compile(gl.FRAGMENT_SHADER, FS);
-  const fsSkyCloud = compile(gl.FRAGMENT_SHADER, SKY_CLOUD_FS);
-  const fsSkyAur = compile(gl.FRAGMENT_SHADER, SKY_AUR_FS);
-  const prog = linkProg(vs, fs);
-  const skyCloudProg = linkProg(vs, fsSkyCloud);
-  const skyAurProg = linkProg(vs, fsSkyAur);
+  // GL resources below are declared with `let` (not `const`) so they can be
+  // rebuilt after a WebGL context loss (driver reset / GPU sleep-wake). On
+  // `webglcontextrestored` rebuildGLResources() re-runs this same init path.
+  let vs = compile(gl.VERTEX_SHADER, VS);
+  let fs = compile(gl.FRAGMENT_SHADER, FS);
+  let fsSkyCloud = compile(gl.FRAGMENT_SHADER, SKY_CLOUD_FS);
+  let fsSkyAur = compile(gl.FRAGMENT_SHADER, SKY_AUR_FS);
+  let prog = linkProg(vs, fs);
+  let skyCloudProg = linkProg(vs, fsSkyCloud);
+  let skyAurProg = linkProg(vs, fsSkyAur);
 
   // Terrain build runs in a Web Worker while the driver compiles — it is pure
   // math (~0.7s on a mid laptop, worse on weak CPUs) and used to sit in the
   // same blocking init stretch as the shader compiles.
   const terrainPromise = buildTerrainTextureAsync(512);
 
-  const parCompile = gl.getExtension("KHR_parallel_shader_compile");
+  let parCompile = gl.getExtension("KHR_parallel_shader_compile");
   if (parCompile) {
     const progs = [prog, skyCloudProg, skyAurProg];
     const t0 = performance.now();
@@ -2914,7 +2917,7 @@
   gl.useProgram(prog);
 
   // Fullscreen geometry (two triangles)
-  const buf = gl.createBuffer();
+  let buf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);
   gl.bufferData(
     gl.ARRAY_BUFFER,
@@ -2925,7 +2928,7 @@
   gl.enableVertexAttribArray(aPos);
   gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
-  const U = {
+  let U = {
     res: gl.getUniformLocation(prog, "u_res"),
     time: gl.getUniformLocation(prog, "u_time"),
     atlas: gl.getUniformLocation(prog, "u_atlas"),
@@ -3069,11 +3072,11 @@
     gl.useProgram(prog);
     return { prog: p2, u };
   }
-  const skyProgs = {
+  let skyProgs = {
     cloud: finishSkyProg(skyCloudProg, "cloud"),
     aur:   finishSkyProg(skyAurProg, "aurora"),
   };
-  const skyTargets = {
+  let skyTargets = {
     cloud: { unit: 4, tex: gl.createTexture(), fbo: gl.createFramebuffer(), w: 0, h: 0, fresh: false },
     aur:   { unit: 5, tex: gl.createTexture(), fbo: gl.createFramebuffer(), w: 0, h: 0, fresh: false },
   };
@@ -3158,9 +3161,9 @@
   const RAMP_ASCII  = " .:-=+*#%@";
   const RAMP_MATRIX = " ｦｱｴｵ01ﾊﾋﾌﾍﾎﾏﾐﾑﾜ█";
   const TILE = 48;
-  const ac = document.createElement("canvas");
+  const ac = document.createElement("canvas");   // Canvas2D — survives context loss
   const a2 = ac.getContext("2d");
-  const tex = gl.createTexture();
+  let tex = gl.createTexture();
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, tex);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
@@ -3233,85 +3236,92 @@
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.uniform1i(U.atlas, 0);
   buildAtlas(RAMP_ASCII);
-  gl.uniform2f(U.mouse, -1.0e4, -1.0e4); // offscreen until the pointer moves
-  gl.uniform1f(U.mAmt, 0.0);
-  gl.uniform1f(U.intro, 1.0);            // default fully-revealed (static/reduced)
-  gl.uniform1f(U.reveal, 1.0);           // default canyon fully shown (live loop animates 0→1)
-  gl.uniform1f(U.steer, 0.0);            // centred flight path
-  gl.uniform1f(U.tod, (new Date().getHours() * 60 + new Date().getMinutes()) / 1440);
+  // Initial default uniforms + the ones reapplied after a context restore share
+  // one function so the two paths can never drift. The per-frame uniforms
+  // (u_time/u_tod/u_boot/u_intro/u_reveal/…) are owned by the render loop and
+  // not set here.
+  function applyDefaultUniforms() {
+    gl.uniform2f(U.mouse, -1.0e4, -1.0e4); // offscreen until the pointer moves
+    gl.uniform1f(U.mAmt, 0.0);
+    gl.uniform1f(U.intro, 1.0);            // default fully-revealed (static/reduced)
+    gl.uniform1f(U.reveal, 1.0);           // default canyon fully shown (live loop animates 0→1)
+    gl.uniform1f(U.steer, 0.0);            // centred flight path
+    gl.uniform1f(U.tod, (new Date().getHours() * 60 + new Date().getMinutes()) / 1440);
 
-  // Slider-controlled defaults (mirror the original hard-coded values)
-  const KNOBS = {
-    horizon: 0.36, scroll: 1.18,
-    glyph:   2.19, grain: 0.000, vig:    0.43,
-    bgBright:0.97, earth: 2.09, blur: 0.31,
-    riverW:  1.31, flowSpd: 0.51, streak: 0.85, crest: 0.00, foam: 1.69,
-  };
-  gl.uniform1f(U.horizon, KNOBS.horizon);
-  gl.uniform1f(U.viewHorizon, 0.570);                  // active river/march horizon — POV HZN slider
-  gl.uniform1f(U.scroll,  KNOBS.scroll);
-  gl.uniform1f(U.glyph,   KNOBS.glyph);
-  gl.uniform1f(U.grain,   KNOBS.grain);
-  gl.uniform1f(U.vig,     KNOBS.vig);
-  gl.uniform1f(U.bgBright,KNOBS.bgBright);
-  gl.uniform1f(U.earth,   KNOBS.earth);
-  gl.uniform1f(U.blur,    KNOBS.blur);
-  gl.uniform1f(U.riverW,  KNOBS.riverW);
-  gl.uniform1f(U.flowSpd, KNOBS.flowSpd);
-  gl.uniform1f(U.streak,  KNOBS.streak);
-  gl.uniform1f(U.crest,   KNOBS.crest);
-  gl.uniform1f(U.foam,    KNOBS.foam);
-  gl.uniform1f(U.contOn,  0.0);                       // starts without legacy continents
-  gl.uniform1f(U.mtnOn,   0.0);                       // starts without legacy distant mountains
-  gl.uniform1f(U.topoOn,  1.0);                       // topographic contours visible by default
-  gl.uniform1f(U.relief,  1.0);                       // full 3D relief displacement by default
-  gl.uniform1f(U.canyonDepth, 0.50);                  // default canyon wall depth
-  gl.uniform1f(U.canyonShadow, 1.0);                  // full canyon shadowing by default
-  gl.uniform1f(U.canyonMaxSteps, 112.0);              // canyon march budget by default
-  gl.uniform1f(U.canyonStepScale, 1.18);               // slightly larger step (≈1.18x), fewer iters
-  gl.uniform1f(U.refineSteps, 14.0);                  // full hit-refine iterations (current behaviour)
-  gl.uniform1f(U.refineMode, 0.0);                    // bisection by default (current behaviour)
-  gl.uniform1f(U.hoist, 1.0);                         // PERF: cache frame-constant canyon values once (was recompute-per-step)
-  gl.uniform1f(U.cityOn,  0.0);                       // starts without legacy cities
-  gl.uniform3f(U.contColor, 0.36, 0.50, 0.28);        // forest green (hue ≈ 110°)
-    gl.uniform3f(U.waterTint, 0.45, 0.80, 0.70);  // 默认青绿水色（hex #73CCA3 近似）
-  gl.uniform1f(U.crtOn,   0.0);                        // CRT scanlines off by default
-  gl.uniform1f(U.pixelText, 0.0);                      // sharp text by default
-  gl.uniform1f(U.sun, 0.64);                           // sun brightness — set by SUN slider
-  gl.uniform1f(U.twilight, 1.0);                        // twilight mode on by default — TWILIGHT switch
-  gl.uniform1f(U.twRadius, 0.18);                       // twilight sun-orbit radius — TW RAD slider
-  gl.uniform1f(U.twEllipse, 0.90);                      // twilight orbit Y scale (1 = round) — TW ELY slider
-  gl.uniform1f(U.twEllipseX, 0.48);                     // twilight orbit X scale (1 = round) — TW ELX slider
-  gl.uniform1f(U.twSunZone, 0.10);                      // twilight sunset-zone height (uv) — TW ZONE slider
-  gl.uniform1f(U.atmo, 1.50);                          // horizon glow — set by ATMO slider
-  gl.uniform1f(U.haze, 0.33);                          // earth haze — set by HAZE slider
-  gl.uniform1f(U.aurDot, 186.0);                       // aurora dot density — set by AUR DOT slider
-  setSkyKnob("aurPlaneSamples", 28.0);                // aurora plane sample budget — AUR SAMP slider
-  setSkyKnob("aurSampleFill", 1.0);                   // filled sample cells — AUR FILL slider
-  setSkyKnob("aurTopGain", 0.50);                     // upper-plane brightness — TOP GAIN slider
-  setSkyKnob("aurRaySamples", 0.0);                   // 0 = cheaper filament-field path; nonzero = old ray loop
-  setSkyKnob("aurHeightScale", 2.75);                 // aurora vertical scale — AUR HGT slider
-  gl.uniform1f(U.aurOriginY, -0.05);                    // origin vertical offset — ORIG Y slider
-  setSkyKnob("aurOriginTaper", 0.50);                 // origin distance fade — ORIG TPR slider
-  setSkyKnob("aurFilamentDensity", 1.75);             // filament count — FIL DENS slider
-  setSkyKnob("aurFilamentWidth", 2.00);               // filament width — FIL W slider
-  setSkyKnob("aurFilamentHeight", 2.00);              // filament height cap — FIL H slider
-  setSkyKnob("aurFilamentIntensity", 2.25);           // filament brightness — FIL INT slider
-  setSkyKnob("aurFilamentTrack", 2.0);                // curve-lite
-  gl.uniform1f(U.cloudOn, 1.0);                         // cloud raymarch toggle — CLOUD switch
-  gl.uniform1f(U.aurOn, 1.0);                           // aurora enabled by default (disabled on mobile)
-  gl.uniform1f(U.cloudDot, 226.0);                      // cloud dot density — CLD DOT slider
-  gl.uniform1f(U.waterDot, 186.0);                      // water dot density — WATER DOT slider
-  gl.uniform1f(U.calm, 1.00);                          // river reaches the bottom (no fade) — CALM slider
-  gl.uniform1f(U.sunMaxY, 0.25);                        // sun apex height — set by SUN Y slider
-  gl.uniform1f(U.dotGain, 1.0);                        // neutral until Dots mode boosts it
-  gl.uniform1f(U.dots, 0.0);                           // ASCII render path by default
-  gl.uniform1f(U.lcd, 0.0);                            // Game Boy LCD off by default
-  gl.uniform1f(U.lcdPx, 8.0);                          // placeholder; LCD PX slider sets it
-  gl.uniform1f(U.grad, 0.0);                           // gradient recolour off by default
-  gl.uniform1f(U.hueA, 30.0 / 360.0);                  // orange start — set by GRAD A
-  gl.uniform1f(U.hueB, -140.0 / 360.0);                // sweep through magenta→blue — GRAD B
-  gl.uniform1f(U.gradBri, 1.0);                        // gradient brightness — GRAD BRI
+    // Slider-controlled defaults (mirror the original hard-coded values)
+    const KNOBS = {
+      horizon: 0.36, scroll: 1.18,
+      glyph:   2.19, grain: 0.000, vig:    0.43,
+      bgBright:0.97, earth: 2.09, blur: 0.31,
+      riverW:  1.31, flowSpd: 0.51, streak: 0.85, crest: 0.00, foam: 1.69,
+    };
+    gl.uniform1f(U.horizon, KNOBS.horizon);
+    gl.uniform1f(U.viewHorizon, 0.570);                  // active river/march horizon — POV HZN slider
+    gl.uniform1f(U.scroll,  KNOBS.scroll);
+    gl.uniform1f(U.glyph,   KNOBS.glyph);
+    gl.uniform1f(U.grain,   KNOBS.grain);
+    gl.uniform1f(U.vig,     KNOBS.vig);
+    gl.uniform1f(U.bgBright,KNOBS.bgBright);
+    gl.uniform1f(U.earth,   KNOBS.earth);
+    gl.uniform1f(U.blur,    KNOBS.blur);
+    gl.uniform1f(U.riverW,  KNOBS.riverW);
+    gl.uniform1f(U.flowSpd, KNOBS.flowSpd);
+    gl.uniform1f(U.streak,  KNOBS.streak);
+    gl.uniform1f(U.crest,   KNOBS.crest);
+    gl.uniform1f(U.foam,    KNOBS.foam);
+    gl.uniform1f(U.contOn,  0.0);                       // starts without legacy continents
+    gl.uniform1f(U.mtnOn,   0.0);                       // starts without legacy distant mountains
+    gl.uniform1f(U.topoOn,  1.0);                       // topographic contours visible by default
+    gl.uniform1f(U.relief,  1.0);                       // full 3D relief displacement by default
+    gl.uniform1f(U.canyonDepth, 0.50);                  // default canyon wall depth
+    gl.uniform1f(U.canyonShadow, 1.0);                  // full canyon shadowing by default
+    gl.uniform1f(U.canyonMaxSteps, 112.0);              // canyon march budget by default
+    gl.uniform1f(U.canyonStepScale, 1.18);               // slightly larger step (≈1.18x), fewer iters
+    gl.uniform1f(U.refineSteps, 14.0);                  // full hit-refine iterations (current behaviour)
+    gl.uniform1f(U.refineMode, 0.0);                    // bisection by default (current behaviour)
+    gl.uniform1f(U.hoist, 1.0);                         // PERF: cache frame-constant canyon values once (was recompute-per-step)
+    gl.uniform1f(U.cityOn,  0.0);                       // starts without legacy cities
+    gl.uniform3f(U.contColor, 0.36, 0.50, 0.28);        // forest green (hue ≈ 110°)
+      gl.uniform3f(U.waterTint, 0.45, 0.80, 0.70);  // 默认青绿水色（hex #73CCA3 近似）
+    gl.uniform1f(U.crtOn,   0.0);                        // CRT scanlines off by default
+    gl.uniform1f(U.pixelText, 0.0);                      // sharp text by default
+    gl.uniform1f(U.sun, 0.64);                           // sun brightness — set by SUN slider
+    gl.uniform1f(U.twilight, 1.0);                        // twilight mode on by default — TWILIGHT switch
+    gl.uniform1f(U.twRadius, 0.18);                       // twilight sun-orbit radius — TW RAD slider
+    gl.uniform1f(U.twEllipse, 0.90);                      // twilight orbit Y scale (1 = round) — TW ELY slider
+    gl.uniform1f(U.twEllipseX, 0.48);                     // twilight orbit X scale (1 = round) — TW ELX slider
+    gl.uniform1f(U.twSunZone, 0.10);                      // twilight sunset-zone height (uv) — TW ZONE slider
+    gl.uniform1f(U.atmo, 1.50);                          // horizon glow — set by ATMO slider
+    gl.uniform1f(U.haze, 0.33);                          // earth haze — set by HAZE slider
+    gl.uniform1f(U.aurDot, 186.0);                       // aurora dot density — set by AUR DOT slider
+    setSkyKnob("aurPlaneSamples", 28.0);                // aurora plane sample budget — AUR SAMP slider
+    setSkyKnob("aurSampleFill", 1.0);                   // filled sample cells — AUR FILL slider
+    setSkyKnob("aurTopGain", 0.50);                     // upper-plane brightness — TOP GAIN slider
+    setSkyKnob("aurRaySamples", 0.0);                   // 0 = cheaper filament-field path; nonzero = old ray loop
+    setSkyKnob("aurHeightScale", 2.75);                 // aurora vertical scale — AUR HGT slider
+    gl.uniform1f(U.aurOriginY, -0.05);                    // origin vertical offset — ORIG Y slider
+    setSkyKnob("aurOriginTaper", 0.50);                 // origin distance fade — ORIG TPR slider
+    setSkyKnob("aurFilamentDensity", 1.75);             // filament count — FIL DENS slider
+    setSkyKnob("aurFilamentWidth", 2.00);               // filament width — FIL W slider
+    setSkyKnob("aurFilamentHeight", 2.00);              // filament height cap — FIL H slider
+    setSkyKnob("aurFilamentIntensity", 2.25);           // filament brightness — FIL INT slider
+    setSkyKnob("aurFilamentTrack", 2.0);                // curve-lite
+    gl.uniform1f(U.cloudOn, 1.0);                         // cloud raymarch toggle — CLOUD switch
+    gl.uniform1f(U.aurOn, 1.0);                           // aurora enabled by default (disabled on mobile)
+    gl.uniform1f(U.cloudDot, 226.0);                      // cloud dot density — CLD DOT slider
+    gl.uniform1f(U.waterDot, 186.0);                      // water dot density — WATER DOT slider
+    gl.uniform1f(U.calm, 1.00);                          // river reaches the bottom (no fade) — CALM slider
+    gl.uniform1f(U.sunMaxY, 0.25);                        // sun apex height — set by SUN Y slider
+    gl.uniform1f(U.dotGain, 1.0);                        // neutral until Dots mode boosts it
+    gl.uniform1f(U.dots, 0.0);                           // ASCII render path by default
+    gl.uniform1f(U.lcd, 0.0);                            // Game Boy LCD off by default
+    gl.uniform1f(U.lcdPx, 8.0);                          // placeholder; LCD PX slider sets it
+    gl.uniform1f(U.grad, 0.0);                           // gradient recolour off by default
+    gl.uniform1f(U.hueA, 30.0 / 360.0);                  // orange start — set by GRAD A
+    gl.uniform1f(U.hueB, -140.0 / 360.0);                // sweep through magenta→blue — GRAD B
+    gl.uniform1f(U.gradBri, 1.0);                        // gradient brightness — GRAD BRI
+  }
+  applyDefaultUniforms();
 
   // Generated terrain map. RG = 16-bit altitude; BA reserved for future valley/river data.
   // It is generated once and sampled with wrapped terrain coordinates, so
@@ -3503,16 +3513,35 @@
   // Web-Worker twin of buildTerrainTexture: same deterministic math, off the
   // main thread. The worker source is built from the functions' own text so
   // the two implementations can never drift. Resolves null (→ sync fallback)
-  // when Workers/Blob URLs are unavailable.
+  // when Workers/Blob URLs are unavailable, OR if the worker stays silent past
+  // TERRAIN_WORKER_TIMEOUT_MS (a constrained/starved device could start the
+  // worker, never post a message, and never error — without this guard the
+  // await below would block forever and the hero would never render, with no
+  // static fallback either).
+  const TERRAIN_WORKER_TIMEOUT_MS = 4000;
   function buildTerrainTextureAsync(size) {
     try {
       const src = [mulberry32, smooth01, wrap01, wrapDelta, buildTerrainTexture]
         .map((f) => f.toString()).join("\n")
         + "\nonmessage = function (e) { var m = buildTerrainTexture(e.data); postMessage(m, [m.data.buffer]); };";
-      const worker = new Worker(URL.createObjectURL(new Blob([src], { type: "text/javascript" })));
+      const blobUrl = URL.createObjectURL(new Blob([src], { type: "text/javascript" }));
+      const worker = new Worker(blobUrl);
       return new Promise((resolve) => {
-        worker.onmessage = function (e) { worker.terminate(); resolve(e.data); };
-        worker.onerror = function () { worker.terminate(); resolve(null); };
+        let settled = false;
+        let timer = 0;
+        function finish(val) {
+          if (settled) return;
+          settled = true;
+          if (timer) { clearTimeout(timer); timer = 0; }
+          try { worker.terminate(); } catch (e) {}
+          try { URL.revokeObjectURL(blobUrl); } catch (e) {}  // avoid Blob URL leak
+          resolve(val);
+        }
+        worker.onmessage = function (e) { finish(e.data); };
+        worker.onerror   = function ()  { finish(null); };
+        // If the worker is starved/blocked and never posts nor errors, fall back
+        // to the sync path so the hero can still render.
+        timer = setTimeout(function () { finish(null); }, TERRAIN_WORKER_TIMEOUT_MS);
         worker.postMessage(size);
       });
     } catch (e) {
@@ -3522,8 +3551,10 @@
 
   // Kicked off next to the shader compiles (see "Async parallel shader
   // compile"); by the time we get here it has usually already finished.
+  // terrainMap is pure CPU data (Uint8Array) — it survives a context loss and
+  // is re-uploaded to the fresh texture by rebuildGLResources().
   const terrainMap = (await terrainPromise) || buildTerrainTexture(512);
-  const terrainTex = gl.createTexture();
+  let terrainTex = gl.createTexture();
   gl.activeTexture(gl.TEXTURE2);
   gl.bindTexture(gl.TEXTURE_2D, terrainTex);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
@@ -3556,9 +3587,9 @@
   }
 
   // ── In-shader terminal text layer ─────────────────────────────
-  const txCanvas = document.createElement("canvas");
+  const txCanvas = document.createElement("canvas");   // Canvas2D — survives context loss
   const txCtx = txCanvas.getContext("2d");
-  const txTex = gl.createTexture();
+  let txTex = gl.createTexture();
   gl.activeTexture(gl.TEXTURE1);
   gl.bindTexture(gl.TEXTURE_2D, txTex);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -3599,7 +3630,7 @@
     }
     return { size: N, data };
   }
-  const noiseTex = gl.createTexture();
+  let noiseTex = gl.createTexture();
   gl.activeTexture(gl.TEXTURE3);
   gl.bindTexture(gl.TEXTURE_2D, noiseTex);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -3971,6 +4002,283 @@
   gl.uniform1f(U.aaN, AA.signed ? 0.0 : AA.taps);
   gl.uniform1f(U.aaFeather, AA.feather);
   gl.uniform1f(U.aaSigned, AA.signed ? 1.0 : 0.0);
+
+  // ── WebGL context-loss recovery ───────────────────────────────
+  // On Windows driver reset / GPU sleep-wake every GL object (programs, buffers,
+  // textures, FBOs, uniform locations) is invalidated; the canvas stays alive
+  // and the same `gl` handle is reused once `webglcontextrestored` fires. Without
+  // rebuilding, the loop keeps drawing on a lost context → black hero + WebGL
+  // errors every frame. `contextLost` gates the loop (no GL calls while lost);
+  // rebuildGLResources() re-runs the SAME init primitives used at startup.
+  let contextLost = false;
+
+  async function rebuildGLResources() {
+    // Recompile/relink all three programs (shader sources VS/FS/SKY_* survive
+    // the loss — they are plain strings in this closure).
+    vs = compile(gl.VERTEX_SHADER, VS);
+    fs = compile(gl.FRAGMENT_SHADER, FS);
+    fsSkyCloud = compile(gl.FRAGMENT_SHADER, SKY_CLOUD_FS);
+    fsSkyAur = compile(gl.FRAGMENT_SHADER, SKY_AUR_FS);
+    prog = linkProg(vs, fs);
+    skyCloudProg = linkProg(vs, fsSkyCloud);
+    skyAurProg = linkProg(vs, fsSkyAur);
+
+    // Re-query the parallel-compile extension (handle object is also lost) and
+    // wait for all three programs exactly as on the cold start.
+    parCompile = gl.getExtension("KHR_parallel_shader_compile");
+    if (parCompile) {
+      const progs = [prog, skyCloudProg, skyAurProg];
+      const t0 = performance.now();
+      while (performance.now() - t0 < 60000) {
+        let done = true;
+        for (const p of progs) {
+          if (!gl.getProgramParameter(p, parCompile.COMPLETION_STATUS_KHR)) { done = false; break; }
+        }
+        if (done) break;
+        await new Promise((r) => setTimeout(r, 8));
+      }
+    }
+    if (!checkShader(vs, "vs") || !checkShader(fs, "main")) return;
+    if (!checkProg(prog, "main")) return;
+    gl.useProgram(prog);
+
+    // Fullscreen quad buffer + attrib (recreate + re-upload).
+    buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+      gl.STATIC_DRAW
+    );
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    // Re-cache main-program uniform locations + sampler unit bindings.
+    U = {
+      res: gl.getUniformLocation(prog, "u_res"),
+      time: gl.getUniformLocation(prog, "u_time"),
+      atlas: gl.getUniformLocation(prog, "u_atlas"),
+      terrain: gl.getUniformLocation(prog, "u_terrain"),
+      glyphs: gl.getUniformLocation(prog, "u_glyphs"),
+      cell: gl.getUniformLocation(prog, "u_cell"),
+      bloom: gl.getUniformLocation(prog, "u_bloom"),
+      bRad: gl.getUniformLocation(prog, "u_bRad"),
+      mouse: gl.getUniformLocation(prog, "u_mouse"),
+      mAmt: gl.getUniformLocation(prog, "u_mAmt"),
+      intro: gl.getUniformLocation(prog, "u_intro"),
+      steer: gl.getUniformLocation(prog, "u_steer"),
+      tod: gl.getUniformLocation(prog, "u_tod"),
+      aurHue: gl.getUniformLocation(prog, "u_aurHue"),
+      aurSpeed: gl.getUniformLocation(prog, "u_aurSpeed"),
+      aurDot: gl.getUniformLocation(prog, "u_aurDot"),
+      aurPlaneSamples: gl.getUniformLocation(prog, "u_aurPlaneSamples"),
+      aurSampleFill: gl.getUniformLocation(prog, "u_aurSampleFill"),
+      aurTopGain: gl.getUniformLocation(prog, "u_aurTopGain"),
+      aurRaySamples: gl.getUniformLocation(prog, "u_aurRaySamples"),
+      aurHeightScale: gl.getUniformLocation(prog, "u_aurHeightScale"),
+      aurOriginY: gl.getUniformLocation(prog, "u_aurOriginY"),
+      aurOriginTaper: gl.getUniformLocation(prog, "u_aurOriginTaper"),
+      aurFilamentDensity: gl.getUniformLocation(prog, "u_aurFilamentDensity"),
+      aurFilamentWidth: gl.getUniformLocation(prog, "u_aurFilamentWidth"),
+      aurFilamentHeight: gl.getUniformLocation(prog, "u_aurFilamentHeight"),
+      aurFilamentIntensity: gl.getUniformLocation(prog, "u_aurFilamentIntensity"),
+      aurFilamentTrack: gl.getUniformLocation(prog, "u_aurFilamentTrack"),
+      cloudOn: gl.getUniformLocation(prog, "u_cloudOn"),
+      aurOn: gl.getUniformLocation(prog, "u_aurOn"),
+      cloudDot: gl.getUniformLocation(prog, "u_cloudDot"),
+      waterDot: gl.getUniformLocation(prog, "u_waterDot"),
+      txt: gl.getUniformLocation(prog, "u_txt"),
+      noise: gl.getUniformLocation(prog, "u_noise"),
+      noiseOn: gl.getUniformLocation(prog, "u_noiseOn"),
+      aaN: gl.getUniformLocation(prog, "u_aaN"),
+      aaFeather: gl.getUniformLocation(prog, "u_aaFeather"),
+      aaSigned: gl.getUniformLocation(prog, "u_aaSigned"),
+      boot: gl.getUniformLocation(prog, "u_boot"),
+      reveal: gl.getUniformLocation(prog, "u_reveal"),
+      horizon: gl.getUniformLocation(prog, "u_horizon"),
+      viewHorizon: gl.getUniformLocation(prog, "u_viewHorizon"),
+      scroll:  gl.getUniformLocation(prog, "u_scroll"),
+      glyph:   gl.getUniformLocation(prog, "u_glyph"),
+      grain:   gl.getUniformLocation(prog, "u_grain"),
+      vig:     gl.getUniformLocation(prog, "u_vig"),
+      bgBright:gl.getUniformLocation(prog, "u_bgBright"),
+      earth:   gl.getUniformLocation(prog, "u_earth"),
+      blur:    gl.getUniformLocation(prog, "u_blur"),
+      riverW:  gl.getUniformLocation(prog, "u_riverW"),
+      flowSpd: gl.getUniformLocation(prog, "u_flowSpd"),
+      streak:  gl.getUniformLocation(prog, "u_streak"),
+      crest:   gl.getUniformLocation(prog, "u_crest"),
+      foam:    gl.getUniformLocation(prog, "u_foam"),
+      contOn:  gl.getUniformLocation(prog, "u_contOn"),
+      contColor: gl.getUniformLocation(prog, "u_contColor"),
+      waterTint: gl.getUniformLocation(prog, "u_waterTint"),
+      crtOn:   gl.getUniformLocation(prog, "u_crtOn"),
+      pixelText: gl.getUniformLocation(prog, "u_pixelText"),
+      sun:     gl.getUniformLocation(prog, "u_sun"),
+      atmo:    gl.getUniformLocation(prog, "u_atmo"),
+      haze:    gl.getUniformLocation(prog, "u_haze"),
+      mtn:     gl.getUniformLocation(prog, "u_mtn"),
+      mtnH:    gl.getUniformLocation(prog, "u_mtnH"),
+      mtnOn:   gl.getUniformLocation(prog, "u_mtnOn"),
+      topo:    gl.getUniformLocation(prog, "u_topo"),
+      topoN:   gl.getUniformLocation(prog, "u_topoN"),
+      topoOn:  gl.getUniformLocation(prog, "u_topoOn"),
+      relief:  gl.getUniformLocation(prog, "u_relief"),
+      canyonDepth: gl.getUniformLocation(prog, "u_canyonDepth"),
+      canyonShadow: gl.getUniformLocation(prog, "u_canyonShadow"),
+      canyonMaxSteps: gl.getUniformLocation(prog, "u_canyonMaxSteps"),
+      canyonStepScale: gl.getUniformLocation(prog, "u_canyonStepScale"),
+      refineSteps: gl.getUniformLocation(prog, "u_refineSteps"),
+      refineMode: gl.getUniformLocation(prog, "u_refineMode"),
+      hoist: gl.getUniformLocation(prog, "u_hoist"),
+      city:    gl.getUniformLocation(prog, "u_city"),
+      cityOn:  gl.getUniformLocation(prog, "u_cityOn"),
+      calm:    gl.getUniformLocation(prog, "u_calm"),
+      sunMaxY: gl.getUniformLocation(prog, "u_sunMaxY"),
+      twilight: gl.getUniformLocation(prog, "u_twilight"),
+      twRadius: gl.getUniformLocation(prog, "u_twRadius"),
+      twEllipse: gl.getUniformLocation(prog, "u_twEllipse"),
+      twEllipseX: gl.getUniformLocation(prog, "u_twEllipseX"),
+      twSunZone: gl.getUniformLocation(prog, "u_twSunZone"),
+      dotGain: gl.getUniformLocation(prog, "u_dotGain"),
+      dots:    gl.getUniformLocation(prog, "u_dots"),
+      lcd:     gl.getUniformLocation(prog, "u_lcd"),
+      lcdPx:   gl.getUniformLocation(prog, "u_lcdPx"),
+      grad:    gl.getUniformLocation(prog, "u_grad"),
+      hueA:    gl.getUniformLocation(prog, "u_hueA"),
+      hueB:    gl.getUniformLocation(prog, "u_hueB"),
+      gradBri: gl.getUniformLocation(prog, "u_gradBri"),
+      sceneH:  gl.getUniformLocation(prog, "u_sceneH"),
+      pageBg:  gl.getUniformLocation(prog, "u_pageBg"),
+    };
+    U.cloudTex = gl.getUniformLocation(prog, "u_cloudTex");
+    U.aurTex   = gl.getUniformLocation(prog, "u_aurTex");
+    gl.uniform1i(U.cloudTex, 4);
+    gl.uniform1i(U.aurTex, 5);
+
+    // Sky programs (re-finish) + half-res FBO targets (recreate textures/FBOs,
+    // re-bind, re-param). finishSkyProg re-collects the sky uniform locations.
+    skyProgs = {
+      cloud: finishSkyProg(skyCloudProg, "cloud"),
+      aur:   finishSkyProg(skyAurProg, "aurora"),
+    };
+    skyTargets = {
+      cloud: { unit: 4, tex: gl.createTexture(), fbo: gl.createFramebuffer(), w: 0, h: 0, fresh: false },
+      aur:   { unit: 5, tex: gl.createTexture(), fbo: gl.createFramebuffer(), w: 0, h: 0, fresh: false },
+    };
+    for (const t of [skyTargets.cloud, skyTargets.aur]) {
+      gl.activeTexture(gl.TEXTURE0 + t.unit);
+      gl.bindTexture(gl.TEXTURE_2D, t.tex);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, t.fbo);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t.tex, 0);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
+    gl.activeTexture(gl.TEXTURE0);
+
+    // Glyph atlas texture (recreate + re-param + re-upload the active ramp).
+    tex = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform1i(U.atlas, 0);
+    buildAtlas(RAMP_ASCII);
+    // Re-apply the slider/config defaults shared with the cold-start path.
+    applyDefaultUniforms();
+
+    // Terrain texture (recreate + re-param + re-upload the persistent CPU data).
+    terrainTex = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, terrainTex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    uploadTerrainMap(terrainMap);
+    gl.uniform1i(U.terrain, 2);
+
+    // In-shader text layer texture (recreate + re-param + re-upload current text).
+    txTex = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, txTex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform1i(U.txt, 1);
+    textSubMode = false;   // force a full texImage2D on the next uploadText()
+    txTexW = 0; txTexH = 0;
+
+    // Value-noise LUT texture (recreate + re-param + regenerate the 256² grid).
+    noiseTex = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE3);
+    gl.bindTexture(gl.TEXTURE_2D, noiseTex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    {
+      const nm = buildNoiseTexture(256);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, nm.size, nm.size, 0,
+                    gl.RGBA, gl.UNSIGNED_BYTE, nm.data);
+    }
+    gl.uniform1i(U.noise, 3);
+    gl.uniform1f(U.noiseOn, 1.0);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.clearColor(0.027, 0.078, 0.235, 1.0);
+
+    // Re-apply touch overrides (cloud/aurora off + lighter AA) exactly as on the
+    // cold start, so a restored hero on a phone doesn't suddenly turn both heavy
+    // sky passes back on. heroCoarsePointer is queried fresh here to avoid any
+    // TDZ coupling to its later top-level declaration.
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      gl.uniform1f(U.cloudOn, 0.0);
+      gl.uniform1f(U.aurOn, 0.0);
+    }
+
+    // Re-push the silhouette-AA settings from the persistent AA state.
+    gl.useProgram(prog);
+    gl.uniform1f(U.aaN, AA.signed ? 0.0 : AA.taps);
+    gl.uniform1f(U.aaFeather, AA.feather);
+    gl.uniform1f(U.aaSigned, AA.signed ? 1.0 : 0.0);
+
+    // Re-size (re-allocates the half-res sky targets against the new texture
+    // objects, re-sets viewport/u_res/u_sceneH/u_cell, repaints + re-uploads the
+    // text, and draws one frame so the hero isn't black for a tick).
+    size();
+  }
+
+  // preventDefault on `webglcontextlost` is what ALLOWS the context to be
+  // restored (otherwise the canvas stays permanently dead). The loop checks
+  // `contextLost` and no-ops while it is true.
+  canvas.addEventListener("webglcontextlost", function (e) {
+    e.preventDefault();
+    contextLost = true;
+  }, false);
+  canvas.addEventListener("webglcontextrestored", async function () {
+    try {
+      await rebuildGLResources();
+    } catch (err) {
+      // If the rebuild itself throws (a flaky driver mid-restore), don't leave
+      // the hero stuck: surface it and fall back so the page stays usable.
+      console.error("[river] context-restore rebuild failed", err);
+      if (typeof freezeStaticHero === "function") freezeStaticHero();
+      return;
+    }
+    contextLost = false;
+    // Kick the loop again — it self-schedules via rAF once restarted. The live
+    // loop's IntersectionObserver/startLoop path also re-arms on its own, but
+    // calling startLoop() here covers the common in-view case immediately.
+    if (!reduce && typeof startLoop === "function") startLoop();
+  }, false);
 
   // Pointer interaction removed — the hero is a deterministic animation; the
   // u_mouse/u_mAmt uniforms stay at their inert defaults (offscreen / 0).
@@ -4757,6 +5065,10 @@
       // Background tabs are already throttled by the browser's own rAF.
       if (heroFrozen) { looping = false; return; }
       if (!heroVisible) { looping = false; return; }
+      // Context is lost (driver reset / GPU sleep-wake): all GL calls would
+      // no-op or error. Stop self-scheduling; the webglcontextrestored handler
+      // rebuilds the resources and calls startLoop() to resume.
+      if (contextLost) { looping = false; return; }
 
       // Measure the display refresh from the raw rAF cadence (this runs on every
       // tick, including throttled-away ones). Lets the governor judge fps against
@@ -4979,6 +5291,7 @@
 
     function startLoop() {
       if (!heroCanRenderLive || looping || heroFrozen || heroCycleStopped) return;
+      if (contextLost) return;   // wait for webglcontextrestored → rebuild → startLoop
       looping = true;
       loop(performance.now());   // first frame now; it self-schedules via rAF
     }
