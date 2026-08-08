@@ -524,7 +524,7 @@ body.hero-released {
 `;
 
   const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
-  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=16"') : '';
+  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=17"') : '';
 
   // 定位必须用原始标签 scriptMatch[0] — heroScriptTag 是改写后的版本, 在源文件里找不到
   const afterScriptIdx = scriptMatch

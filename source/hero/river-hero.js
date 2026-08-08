@@ -31,7 +31,12 @@
   // This must run BEFORE the expensive hero shader is compiled/linked. Weak
   // mobile/Windows GPUs can freeze the browser just compiling the main fragment
   // shader, even if we later decide to show the static fallback.
-  const DETECT_GPU_URL = "https://esm.sh/@pmndrs/detect-gpu?bundle";
+  // Vendored locally (/hero/vendor/) — pulling the module + its benchmark DB
+  // from esm.sh/unpkg at runtime added seconds of cold-start latency (and could
+  // hang entirely on blocked/slow networks, e.g. crawlers), stalling the hero
+  // before it even started compiling shaders.
+  const DETECT_GPU_URL = "/hero/vendor/detect-gpu.js";
+  const DETECT_GPU_BENCHMARKS_URL = "/hero/vendor/benchmarks";
   const DETECT_GPU_MIN_TIER = 3;   // 0..3; only top-tier GPUs run the live hero.
   const HERO_HEAD_LINE = "Axtrivc's Blog";
   const HERO_SUB_LINE  = "";  // sub 由主区 butterfly typed.js 显示 (hitokoto + '抽刀断水')
@@ -193,7 +198,7 @@
   async function detectGpuTier() {
     const t0 = performance.now();
     const mod = await import(DETECT_GPU_URL);
-    const opts = { failIfMajorPerformanceCaveat: true, glContext: gl };
+    const opts = { failIfMajorPerformanceCaveat: true, glContext: gl, benchmarksURL: DETECT_GPU_BENCHMARKS_URL };
     let gpu = await mod.getGPUTier(opts);
     // detect-gpu matches against a benchmark DB fetched from a CDN at runtime.
     // On a cold load that fetch can lose the race / fail (BENCHMARK_FETCH_FAILED),
@@ -2834,29 +2839,73 @@
     }
   `;
 
+  // ── Async parallel shader compile ─────────────────────────────
+  // compileShader()/linkProgram() are SYNCHRONOUS on most drivers: translating
+  // + optimising this ~2.5k-line raymarcher (and the two sky passes sharing its
+  // prelude) blocked the main thread for many seconds on a cold shader cache —
+  // the whole page froze on load. With KHR_parallel_shader_compile the driver
+  // compiles on background threads, so we submit all three programs up front,
+  // overlap the wait with the terrain build (Web Worker), and only then read
+  // status/uniforms. Without the extension the status reads below block on
+  // first access, exactly as before — no regression on older browsers.
   function compile(type, src) {
     const s = gl.createShader(type);
     gl.shaderSource(s, src);
     gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-      console.error("[river] shader compile:", gl.getShaderInfoLog(s));
-      return null;
-    }
     return s;
+  }
+  function checkShader(s, label) {
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.error("[river] shader compile (" + label + "):", gl.getShaderInfoLog(s));
+      return false;
+    }
+    return true;
+  }
+  function linkProg(...shaders) {
+    const p = gl.createProgram();
+    // Fixed attribute location shared by every program (the sky passes used to
+    // re-bind to the main program's location for exactly this sharing).
+    gl.bindAttribLocation(p, 0, "a_pos");
+    for (const s of shaders) gl.attachShader(p, s);
+    gl.linkProgram(p);
+    return p;
+  }
+  function checkProg(p, label) {
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+      console.error("[river] program link (" + label + "):", gl.getProgramInfoLog(p));
+      return false;
+    }
+    return true;
   }
 
   const vs = compile(gl.VERTEX_SHADER, VS);
   const fs = compile(gl.FRAGMENT_SHADER, FS);
-  if (!vs || !fs) return;
+  const fsSkyCloud = compile(gl.FRAGMENT_SHADER, SKY_CLOUD_FS);
+  const fsSkyAur = compile(gl.FRAGMENT_SHADER, SKY_AUR_FS);
+  const prog = linkProg(vs, fs);
+  const skyCloudProg = linkProg(vs, fsSkyCloud);
+  const skyAurProg = linkProg(vs, fsSkyAur);
 
-  const prog = gl.createProgram();
-  gl.attachShader(prog, vs);
-  gl.attachShader(prog, fs);
-  gl.linkProgram(prog);
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-    console.error("[river] program link:", gl.getProgramInfoLog(prog));
-    return;
+  // Terrain build runs in a Web Worker while the driver compiles — it is pure
+  // math (~0.7s on a mid laptop, worse on weak CPUs) and used to sit in the
+  // same blocking init stretch as the shader compiles.
+  const terrainPromise = buildTerrainTextureAsync(512);
+
+  const parCompile = gl.getExtension("KHR_parallel_shader_compile");
+  if (parCompile) {
+    const progs = [prog, skyCloudProg, skyAurProg];
+    const t0 = performance.now();
+    while (performance.now() - t0 < 60000) {
+      let done = true;
+      for (const p of progs) {
+        if (!gl.getProgramParameter(p, parCompile.COMPLETION_STATUS_KHR)) { done = false; break; }
+      }
+      if (done) break;
+      await new Promise((r) => setTimeout(r, 8));
+    }
   }
+  if (!checkShader(vs, "vs") || !checkShader(fs, "main")) return;
+  if (!checkProg(prog, "main")) return;
   gl.useProgram(prog);
 
   // Fullscreen geometry (two triangles)
@@ -2867,7 +2916,7 @@
     new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
     gl.STATIC_DRAW
   );
-  const aPos = gl.getAttribLocation(prog, "a_pos");
+  const aPos = 0;   // bound via bindAttribLocation before link
   gl.enableVertexAttribArray(aPos);
   gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
@@ -3002,18 +3051,11 @@
     skyKnobs[name] = v;
     skyTargets.aur.fresh = false;
   }
-  function buildSkyProg(fsSrc, label) {
-    const fsObj = compile(gl.FRAGMENT_SHADER, fsSrc);
-    if (!fsObj) return null;
-    const p2 = gl.createProgram();
-    gl.attachShader(p2, vs);
-    gl.attachShader(p2, fsObj);
-    gl.bindAttribLocation(p2, aPos, "a_pos");  // share the quad attrib setup
-    gl.linkProgram(p2);
-    if (!gl.getProgramParameter(p2, gl.LINK_STATUS)) {
-      console.error("[river] sky program link (" + label + "):", gl.getProgramInfoLog(p2));
-      return null;
-    }
+  // The sky programs were already compiled+linked up front (parallel with the
+  // main program — see "Async parallel shader compile"); here we only verify
+  // the link and collect uniforms once SKY_SYNC/skyKnobs exist.
+  function finishSkyProg(p2, label) {
+    if (!checkProg(p2, label)) return null;
     const u = {};
     for (const n of SKY_SYNC) u[n] = gl.getUniformLocation(p2, "u_" + n);
     for (const n in skyKnobs) u[n] = gl.getUniformLocation(p2, "u_" + n);
@@ -3023,8 +3065,8 @@
     return { prog: p2, u };
   }
   const skyProgs = {
-    cloud: buildSkyProg(SKY_CLOUD_FS, "cloud"),
-    aur:   buildSkyProg(SKY_AUR_FS, "aurora"),
+    cloud: finishSkyProg(skyCloudProg, "cloud"),
+    aur:   finishSkyProg(skyAurProg, "aurora"),
   };
   const skyTargets = {
     cloud: { unit: 4, tex: gl.createTexture(), fbo: gl.createFramebuffer(), w: 0, h: 0, fresh: false },
@@ -3453,7 +3495,29 @@
     return { size: n, data };
   }
 
-  const terrainMap = buildTerrainTexture(512);
+  // Web-Worker twin of buildTerrainTexture: same deterministic math, off the
+  // main thread. The worker source is built from the functions' own text so
+  // the two implementations can never drift. Resolves null (→ sync fallback)
+  // when Workers/Blob URLs are unavailable.
+  function buildTerrainTextureAsync(size) {
+    try {
+      const src = [mulberry32, smooth01, wrap01, wrapDelta, buildTerrainTexture]
+        .map((f) => f.toString()).join("\n")
+        + "\nonmessage = function (e) { var m = buildTerrainTexture(e.data); postMessage(m, [m.data.buffer]); };";
+      const worker = new Worker(URL.createObjectURL(new Blob([src], { type: "text/javascript" })));
+      return new Promise((resolve) => {
+        worker.onmessage = function (e) { worker.terminate(); resolve(e.data); };
+        worker.onerror = function () { worker.terminate(); resolve(null); };
+        worker.postMessage(size);
+      });
+    } catch (e) {
+      return Promise.resolve(null);
+    }
+  }
+
+  // Kicked off next to the shader compiles (see "Async parallel shader
+  // compile"); by the time we get here it has usually already finished.
+  const terrainMap = (await terrainPromise) || buildTerrainTexture(512);
   const terrainTex = gl.createTexture();
   gl.activeTexture(gl.TEXTURE2);
   gl.bindTexture(gl.TEXTURE_2D, terrainTex);
