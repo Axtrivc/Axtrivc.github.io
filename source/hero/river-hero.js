@@ -9,6 +9,9 @@
   const hero = document.getElementById("hero");
   const fpsMeter = document.getElementById("fpsMeter");
   const heroStill = document.getElementById("heroStill");
+  // live 预热兜底: shader 在后台编译期间 canvas 还是不透明的黑布——先把日出
+  // 静态图盖在上面, 等 live 场景淡起过半再交叉淡出(见 loop 内 heroWarmupStill)。
+  let heroWarmupStill = false;
   if (!canvas || !hero) return;
 
   const gl =
@@ -258,6 +261,8 @@
     return;
   }
   window.__riverLive = true;             // live mode is taking over headline/subline text
+  // 预热兜底上岗: 后台编译期间用日出静态图盖住黑 canvas, 首帧淡起后再撤。
+  if (heroStill) { heroStill.classList.add("is-shown"); heroWarmupStill = true; }
 
   // ── Tunables ──────────────────────────────────────────────────
   // Ramp character sets live in RAMP_ASCII / RAMP_MATRIX below.
@@ -4641,6 +4646,8 @@
     heroRevealDone = true;
     refreshHeroTextForViewport();
     draw(8.0); // static, fully written-in (u_intro defaults to 1)
+    // 预热兜底图撤岗: 静态帧已整幅绘出, 直接交叉淡出
+    if (heroWarmupStill) { heroWarmupStill = false; heroStill.classList.remove("is-shown"); }
   } else {
     // Intro/boot screen ("Hi, I'm River" → press enter to continue) removed:
     // reveal the live hero immediately instead of waiting for the user to
@@ -4956,6 +4963,13 @@
       cam.clock += cdt;
 
       gpuTimedDraw(cam.clock);
+      // 预热兜底图撤岗: live 场景从黑淡起(bootCur 1→0)过半后再交叉淡出静态
+      // 图(0.6s transition 覆盖剩余淡起), 用户看到的是 日出图→动画 的无缝接力,
+      // 而不是 黑屏→淡起。
+      if (heroWarmupStill && bootCur < 0.4) {
+        heroWarmupStill = false;
+        if (heroStill) heroStill.classList.remove("is-shown");
+      }
       if (state === "live" && liveClockAnchored && (now - liveT0) >= HERO_LIVE_STOP_MS) {
         stopLiveHeroAfterCycle();
         return;
