@@ -3,7 +3,10 @@
 
 配色取自首页 hero(夜色系 #101E38 → #0B1220)与 typed 副标题的
 主题 accent(#07C160), 呼应 ASCII river / 终端光标的美学。
-输出 source/img/favicon.png(64x64, 8x 超采样抗锯齿)。
+输出:
+  - source/img/favicon.png  (64x64, 8x 超采样抗锯齿) — Butterfly 主题引用
+  - source/favicon.ico      (16/32/48 多分辨率)      — 根域 /favicon.ico 兜底,
+    Google Search Console / 浏览器默认请求, 不依赖主题 <link> 即可命中
 
 用法: python scripts-py/gen_favicon.py
 """
@@ -22,7 +25,9 @@ FG = (240, 246, 255)        # 字母色
 ACCENT = (7, 193, 96)       # #07C160 光标
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEST = os.path.join(ROOT, "source", "img", "favicon.png")
+DEST_PNG = os.path.join(ROOT, "source", "img", "favicon.png")
+DEST_ICO = os.path.join(ROOT, "source", "favicon.ico")
+ICO_SIZES = (16, 32, 48)    # .ico 多分辨率: 浏览器标签 / 桌面 / 收藏夹
 
 
 def load_font(size):
@@ -69,9 +74,17 @@ def main():
     d.rounded_rectangle([cx, cy, cx + cw, cy + ch], radius=ch // 2, fill=ACCENT + (255,))
 
     img = img.resize((OUT, OUT), Image.LANCZOS)
-    os.makedirs(os.path.dirname(DEST), exist_ok=True)
-    img.save(DEST)
-    print("written:", DEST)
+    os.makedirs(os.path.dirname(DEST_PNG), exist_ok=True)
+    img.save(DEST_PNG)
+    print("written:", DEST_PNG)
+
+    # 根域 favicon.ico(多分辨率), Hexo 按 source/ 结构原样拷到 public/favicon.ico。
+    # 传入超采样原图 + sizes= 让 Pillow 逐档降采样(官方 idiom); 以已缩图为 base
+    # 会被它丢弃所有大于 base 的档位。
+    os.makedirs(os.path.dirname(DEST_ICO), exist_ok=True)
+    img.save(DEST_ICO, format="ICO",
+             sizes=[(n, n) for n in ICO_SIZES])
+    print("written:", DEST_ICO)
 
 
 if __name__ == "__main__":
