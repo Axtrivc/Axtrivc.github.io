@@ -2897,6 +2897,14 @@
   // Terrain build runs in a Web Worker while the driver compiles — it is pure
   // math (~0.7s on a mid laptop, worse on weak CPUs) and used to sit in the
   // same blocking init stretch as the shader compiles.
+  // TERRAIN_WORKER_TIMEOUT_MS must be initialized HERE, before the call below:
+  // this IIFE evaluates top-level consts in source order, and the call runs
+  // ~600 lines before buildTerrainTextureAsync's definition — declared beside
+  // the function it sat in TDZ, the worker promise rejected instead of
+  // resolving null, the await threw, and the whole boot died with the warmup
+  // still image still covering the canvas (2026-08-15; same pitfall class as
+  // sceneHDev/pageBg/readPageBg).
+  const TERRAIN_WORKER_TIMEOUT_MS = 4000;
   const terrainPromise = buildTerrainTextureAsync(512);
 
   let parCompile = gl.getExtension("KHR_parallel_shader_compile");
@@ -3517,8 +3525,8 @@
   // TERRAIN_WORKER_TIMEOUT_MS (a constrained/starved device could start the
   // worker, never post a message, and never error — without this guard the
   // await below would block forever and the hero would never render, with no
-  // static fallback either).
-  const TERRAIN_WORKER_TIMEOUT_MS = 4000;
+  // static fallback either). The constant itself lives above the first call
+  // site (near the shader compiles) — see the TDZ note there.
   function buildTerrainTextureAsync(size) {
     try {
       const src = [mulberry32, smooth01, wrap01, wrapDelta, buildTerrainTexture]
@@ -3539,10 +3547,17 @@
         }
         worker.onmessage = function (e) { finish(e.data); };
         worker.onerror   = function ()  { finish(null); };
-        // If the worker is starved/blocked and never posts nor errors, fall back
-        // to the sync path so the hero can still render.
-        timer = setTimeout(function () { finish(null); }, TERRAIN_WORKER_TIMEOUT_MS);
-        worker.postMessage(size);
+        try {
+          // If the worker is starved/blocked and never posts nor errors, fall
+          // back to the sync path so the hero can still render.
+          timer = setTimeout(function () { finish(null); }, TERRAIN_WORKER_TIMEOUT_MS);
+          worker.postMessage(size);
+        } catch (e) {
+          // A throw inside the executor REJECTS the promise (it does not reach
+          // the outer try/catch), and the awaiting boot would die — degrade to
+          // the documented null→sync-fallback contract instead.
+          finish(null);
+        }
       });
     } catch (e) {
       return Promise.resolve(null);
