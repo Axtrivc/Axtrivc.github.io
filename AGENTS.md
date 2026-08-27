@@ -7,6 +7,7 @@ Hexo 7 + Butterfly 主题的个人博客,部署到 GitHub Pages(Axtrivc.github.i
 - **改完代码后自动 commit 并 push,无需逐次确认。**(用户 2026-07-22 明确授权)
   - commit message 用中文、遵循仓库现有 conventional commits 风格(如 `fix(football): ...` / `chore: ...`)
   - 仅限常规 commit/push;force-push、rebase、删分支等破坏性操作仍需先问
+- **git 代理走 `http://127.0.0.1:7897`(全局 .gitconfig 已配置,用户 2026-08-27 指定"以后都是这样")。** push 报 "Failed to connect" 类错误先确认代理进程在跑;不要用 `git -c http.proxy=` 绕过(仅当 7897 确实不可用且需紧急推送时临时绕过,事后说明)
 
 ## 构建与部署
 
