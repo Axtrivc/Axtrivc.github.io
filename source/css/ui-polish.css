@@ -86,6 +86,14 @@ body::-webkit-scrollbar {
   }
 }
 
+/* 收尾重构 2026-08-27(第二轮):
+   ① 首页网格统一沟槽(横纵一致),呼吸感与侧栏 gutter 对齐 */
+@media (min-width: 768px) {
+  #recent-posts.masonry .recent-post-items {
+    gap: 22px 20px;
+  }
+}
+
 /* 卡片标题:字号收敛 + 居左 + 双行截断(平衡换行防孤字) */
 #recent-posts.masonry .recent-post-item > .recent-post-info > .article-title {
   font-size: clamp(19px, 1.55vw, 21px) !important;
@@ -125,9 +133,14 @@ body::-webkit-scrollbar {
 
 /* 文章内链接 hover(全局 a:hover 是棕色) */
 #article-container a:hover,
+#post .post-copyright a:hover,
 #page-header.nav-fixed #nav a:hover,
 #page-header.nav-fixed #nav span.site-page:hover {
   color: var(--theme-accent-current, #07C160);
+}
+/* 吸顶导航下品牌名 hover(漏网棕色) */
+#page-header.nav-fixed #nav #blog-info:hover {
+  color: var(--theme-heading, #1a1a1a);
 }
 #post-info #post-meta a:hover {
   color: var(--theme-accent-current, #07C160);
@@ -214,6 +227,22 @@ body::-webkit-scrollbar {
 .container .timeline .timeline-item.headline .timeline-item-title .item-circle:before {
   background: var(--theme-accent-current, #07C160);
   color: #FFFFFF;
+}
+
+/* 分页按钮:与卡片体系统一圆角/字重,hover 轻浮起 */
+#pagination .page-number,
+.pagination .page-number,
+#pagination .extend,
+#pagination .extend.next,
+#pagination .extend.prev {
+  border-radius: 10px;
+  font-weight: 600;
+}
+@media (hover: hover) {
+  #pagination .page-number:hover,
+  .pagination .page-number:hover {
+    transform: translateY(-2px);
+  }
 }
 
 /* 搜索弹窗导航条 */
