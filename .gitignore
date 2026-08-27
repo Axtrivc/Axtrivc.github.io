@@ -27,9 +27,12 @@ Desktop.ini
 __pycache__/
 
 ### WorkBuddy 临时文件 ###
+.workbuddy/
 .workbuddy/test-avatar.jpg
-
-### Hero 实验页面（开发中，暂不部署到博客） ###
-
-### Hero 调试临时帧 ###
 .workbuddy/hero_frames/
+
+### 本地工具/代理产物（截图、自动化运行时缓存等） ###
+.playwright-mcp/
+.serena/
+.tmp.driveupload/
+.zcode/
