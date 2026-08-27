@@ -99,8 +99,26 @@ ignore:
 
 # Extensions
 ## Plugins: https://hexo.io/plugins/
-## Themes: https://hexo.io/themes/
+## Themes: https://hexo.io/theme/
 theme: butterfly
+
+# Search index (hexo-generator-searchdb) — Butterfly 本地搜索的数据源
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: striptags
+
+# RSS / Atom (hexo-generator-feed)
+feed:
+  enable: true
+  type: atom
+  path: atom.xml
+  limit: 20
+  content: true
+  content_limit: 200
+  content_limit_delim: ' '
+  order_by: -date
 
 # 注: Hexo 会自动加载 scripts/ 目录下所有 js 作为插件, 无需也不支持在此注册
 

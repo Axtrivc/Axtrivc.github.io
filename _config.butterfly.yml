@@ -60,7 +60,7 @@ error_img:
   post_page: /img/404.jpg
 
 error_404:
-  enable: false
+  enable: true
   subtitle: 'Page Not Found'
   background: /img/error-page.png
 
@@ -162,12 +162,20 @@ theme_color:
   text_selection: '#E8D5B5'
 
 # -------------------------------------------------------
-# Local Search
+# Search
+# Butterfly 5 的开关在 search.use(旧版顶层 local_search: 键无效,已移除);
+# 索引数据由根 _config.yml 的 search:(hexo-generator-searchdb)生成
 # -------------------------------------------------------
-local_search:
-  enable: true
-  preload: false
-  CDN:
+search:
+  use: local_search
+  placeholder: 搜索文章…
+  local_search:
+    preload: false
+    top_n_per_article: 1
+    unescape: false
+    pagination:
+      enable: true
+      hitsPerPage: 8
 
 # -------------------------------------------------------
 # Footer special effects

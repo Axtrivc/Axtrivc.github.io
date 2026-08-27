@@ -1,38 +1,31 @@
 ---
-title: Hello World
+title: 你好，世界
+date: 2026-04-02 22:00:00
+tags:
+  - 随笔
+categories:
+  - 生活
+cover:
 ---
-Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [documentation](https://hexo.io/docs/) for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).
 
-## Quick Start
+## 开篇
 
-### Create a new post
+这是我的第一篇博客文章。
 
-``` bash
-$ hexo new "My New Post"
-```
+用 Hexo 搭了这个小角落，打算在这里记录一些生活里的碎片——可能是某场比赛的观后感，可能是某段代码的心得，也可能只是一时兴起的胡思乱想。
 
-More info: [Writing](https://hexo.io/docs/writing.html)
+> 生活不止眼前的代码，还有远方的诗和球场。
 
-### Run server
+### 关于这个博客
 
-``` bash
-$ hexo server
-```
+- 框架：[Hexo](https://hexo.io/)
+- 主题：[Butterfly](https://butterfly.js.org/)
+- 部署：GitHub Pages
 
-More info: [Server](https://hexo.io/docs/server.html)
+一切都是免费的，感谢开源社区。
 
-### Generate static files
+### 接下来
 
-``` bash
-$ hexo generate
-```
+我会慢慢往这里填内容，关于游戏、足球、技术、或者任何我感兴趣的东西。
 
-More info: [Generating](https://hexo.io/docs/generating.html)
-
-### Deploy to remote sites
-
-``` bash
-$ hexo deploy
-```
-
-More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
+如果你恰好路过，希望你能在这里找到一点有趣的东西。
