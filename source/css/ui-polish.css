@@ -1,0 +1,298 @@
+/* ============================================================
+   Axtrivc's Blog — UI Polish 视觉优化层 (2026-08-27)
+   全站视觉板块统一收尾:与 theme-system.css 分工 —
+   那边管"主题切换正确性",这边管"版面质感一致性"。
+   一律使用 --theme-*-current 运行时变量,5 主题全适配。
+   板块:
+     A 滚动条与阅读进度   B 内页页头压缩+主题色晕染
+     C 首页文章卡片重塑   D Butterfly 默认棕色(#8b6f47)清扫
+     E 目录卡百分比徽标   F 相关推荐卡空封面修复
+     G 标题孤字换行治理   H 选区/焦点态
+   ============================================================ */
+
+/* ── A. 滚动条:隐藏根滚动条,消除右侧 5px 色带 ─────────────
+   html 背景 = --footer-river-bottom(overscroll 兜底),自定义
+   滚动条轨道透明 → 白色内容区旁永远漏出一条河底绿。索性隐藏
+   根滚动条(触摸/滚轮不受影响),阅读位置改由顶部进度线承担。
+   注意只作用于 html/body,代码块等内部滚动器不在此列。 */
+html {
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* 顶部阅读进度线(元素由 /js/ui-polish.js 注入) */
+#scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  width: 0;
+  height: 3px;
+  z-index: 10090;
+  background: var(--theme-accent-current, #07C160);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12);
+  border-radius: 0 2px 2px 0;
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  #scroll-progress { height: 2px; }
+}
+
+/* ── B. 内页页头(Archives/Tags/Categories 等 not-home-page)
+   原来 400px 空白只悬一行标题 → 压到 220px,底部加一层
+   极淡的主题色晕染过渡进正文,消除"白板"感。 */
+#page-header.not-home-page {
+  height: 220px !important;
+  min-height: 220px !important;
+}
+#page-header.not-home-page::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 62%;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(7, 193, 96, 0.06));
+  background: linear-gradient(180deg, transparent,
+    color-mix(in srgb, var(--theme-accent-current, #07C160) 7%, transparent));
+}
+#page-header.not-home-page #site-title {
+  font-size: clamp(1.7rem, 3.4vw, 2.2rem);
+  letter-spacing: 0.02em;
+}
+
+/* ── C. 首页文章卡片:从"裸文本"升级为实体卡片 ─────────────── */
+#recent-posts.masonry .recent-post-item {
+  padding: 20px 24px 18px !important;
+  border-radius: 16px !important;
+  border: 1px solid var(--theme-border-current, #EDEDED) !important;
+  background-color: var(--theme-card-current, #FFFFFF) !important;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease,
+              border-color 0.25s ease;
+}
+@media (hover: hover) {
+  #recent-posts.masonry .recent-post-item:hover {
+    transform: translateY(-4px);
+    border-color: var(--theme-accent-current, #07C160) !important;
+    box-shadow: 0 14px 34px rgba(16, 24, 40, 0.10);
+  }
+}
+@media (max-width: 768px) {
+  #recent-posts.masonry .recent-post-item {
+    padding: 16px 18px 15px !important;
+    border-radius: 14px !important;
+  }
+}
+
+/* 卡片标题:字号收敛 + 居左 + 双行截断(平衡换行防孤字) */
+#recent-posts.masonry .recent-post-item > .recent-post-info > .article-title {
+  font-size: clamp(19px, 1.55vw, 21px) !important;
+  line-height: 1.45;
+  text-wrap: balance;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.2s ease;
+}
+
+/* meta 行:缩小弱化,让标题成为视觉主角 */
+#recent-posts.masonry .recent-post-item > .recent-post-info > .article-meta-wrap {
+  font-size: 13px;
+  margin: 8px 0 12px;
+}
+#recent-posts.masonry .recent-post-item > .recent-post-info > .article-meta-wrap i {
+  font-size: 13px;
+}
+
+/* 摘要与 meta 之间加发丝分隔线,三行截断统一节奏 */
+#recent-posts.masonry .recent-post-item > .recent-post-info > .content {
+  font-size: 14.5px;
+  line-height: 1.75;
+  text-align: left;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  border-top: 1px solid var(--theme-border-current, rgba(0, 0, 0, 0.05));
+  padding-top: 12px;
+}
+
+/* ── D. Butterfly 默认棕色残留清扫(源 $theme-color #8b6f47)
+   全部映射到运行时主题变量,与站点 accent 系统对齐。 */
+
+/* 文章内链接 hover(全局 a:hover 是棕色) */
+#article-container a:hover,
+#page-header.nav-fixed #nav a:hover,
+#page-header.nav-fixed #nav span.site-page:hover {
+  color: var(--theme-accent-current, #07C160);
+}
+#post-info #post-meta a:hover {
+  color: var(--theme-accent-current, #07C160);
+}
+
+/* 首页卡片/侧栏 hover(部分已被 theme-system.css 处理,补齐同类) */
+#recent-posts .recent-post-item > .recent-post-info > .article-title:hover,
+#recent-posts .recent-post-item > .recent-post-info > .article-meta-wrap a:hover {
+  color: var(--theme-accent-current, #07C160);
+}
+
+/* 归档时间轴:圆点 + 连线 + 年份标记(原来棕色) */
+.article-sort-title:before,
+.article-sort-item:before,
+.article-sort-item.year:hover:before {
+  background: var(--theme-accent-current, #07C160) !important;
+  border-color: var(--theme-accent-current, #07C160) !important;
+}
+.article-sort-item:before {
+  background: var(--theme-card-current, #FFFFFF) !important;
+  border: 2px solid var(--theme-accent-current, #07C160) !important;
+}
+.article-sort-title,
+.article-sort-item:not(.year):hover .article-sort-item-time time {
+  color: inherit;
+}
+.article-sort-item-title:hover {
+  color: var(--theme-accent-current, #07C160);
+}
+.article-sort {
+  border-left: 1px dashed var(--theme-border-current, rgba(0, 0, 0, 0.08));
+}
+/* 年份标题下竖线连接段 + --pseudo-hover 兜底变量(原 #c4a96a 金棕) */
+.article-sort-title:after {
+  background: var(--theme-accent-current, #07C160);
+}
+:root {
+  --pseudo-hover: var(--theme-accent-current, #07C160);
+}
+
+/* 分类/列表圆点符号 */
+.category-lists ul li:before,
+.list-beauty li:before {
+  background: var(--theme-accent-current, #07C160);
+}
+.category-lists .category-list a:hover {
+  color: var(--theme-accent-current, #07C160);
+}
+
+/* 文章底部标签胶囊:描边式 → 主题化,hover 反色 */
+#post .tag_share .post-meta__tags {
+  border-color: var(--theme-border-current, rgba(0, 0, 0, 0.12));
+  color: var(--theme-text-current, #222222);
+  background: var(--theme-card-current, #FFFFFF);
+  transition: all 0.22s ease;
+}
+#post .tag_share .post-meta__tags:hover {
+  background: var(--theme-accent-current, #07C160);
+  border-color: var(--theme-accent-current, #07C160);
+  color: #FFFFFF;
+}
+
+/* 版权卡图标("©"大字与栏目标题色) */
+#post .post-copyright:before {
+  color: var(--theme-secondary-current, #7A7A7A);
+  text-shadow: none;
+}
+#post .post-copyright .post-copyright-meta {
+  color: var(--theme-heading, #1a1a1a);
+}
+
+/* 折叠块按钮 / 选项卡激活 / 回到顶部按钮 */
+.hide-block > .hide-button,
+.hide-inline > .hide-button {
+  background-color: var(--theme-accent-current, #07C160);
+}
+.container .tabs > .nav-tabs > .tab.active {
+  background: var(--theme-accent-current, #07C160);
+  color: #FFFFFF;
+  border: 1px solid var(--theme-accent-current, #07C160);
+}
+.container .tab-to-top button:hover,
+.container .timeline .timeline-item:hover .item-circle:before,
+.container .timeline .timeline-item.headline .timeline-item-title .item-circle:before {
+  background: var(--theme-accent-current, #07C160);
+  color: #FFFFFF;
+}
+
+/* 搜索弹窗导航条 */
+.search-dialog .search-nav {
+  color: var(--theme-heading, #1a1a1a);
+}
+.search-dialog .search-close-button:hover {
+  color: var(--theme-accent-current, #07C160);
+}
+.search-dialog .search-result-list .local-search-hit-item:hover,
+.search-dialog .ais-Hits-list .local-search-hit-item:hover {
+  background: var(--theme-card-current, #FFFFFF);
+}
+.search-dialog .local-search-input input,
+.search-dialog #algolia-search-input input,
+.search-dialog .local-search-input {
+  border: 2px solid var(--theme-border-current, #E5E7EB);
+}
+
+/* ── E. 目录卡右上角阅读进度:大号灰斜体 → 小徽标 ───────────── */
+#aside-content #card-toc .toc-percentage {
+  float: right;
+  margin-top: -4px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--theme-secondary-current, #7A7A7A);
+  background: transparent;
+}
+#aside-content #card-toc .toc-percentage:not(:empty) {
+  min-width: 30px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--theme-border-current, rgba(0, 0, 0, 0.08));
+  text-align: center;
+}
+#aside-content #card-toc .toc-percentage:not(:empty)::after {
+  content: '%';
+  font-size: 10px;
+  margin-left: 1px;
+}
+
+/* ── F. 相关推荐卡:无封面时 cover 占位半屏空白 → 移除并压实 ── */
+.relatedPosts-list > a {
+  padding: 18px 14px !important;
+  border-radius: 12px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+}
+.relatedPosts-list > a .cover {
+  display: none !important;
+}
+.relatedPosts-list > a .info-1 .info-item-2 {
+  text-wrap: balance;
+}
+@media (hover: hover) {
+  .relatedPosts-list > a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.10) !important;
+  }
+}
+
+/* ── G. 孤字换行治理:标题类文本平衡换行 ───────────────────── */
+#recent-posts.masonry .article-title,
+.article-sort-item-title,
+#aside-content .aside-list > .aside-list-item .content > .title,
+.pagination-related .info-2 {
+  text-wrap: balance;
+}
+
+/* ── H. 选区与键盘焦点 ─────────────────────────────────────── */
+::selection {
+  background: rgba(7, 193, 96, 0.22);
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 22%, transparent);
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--theme-accent-current, #07C160);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

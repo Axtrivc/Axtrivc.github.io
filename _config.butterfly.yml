@@ -232,6 +232,7 @@ inject:
     - <link rel="stylesheet" href="/css/hide-rightside.css?v={{cache_bust}}">
     - <link rel="stylesheet" href="/css/music-bar.css?v={{cache_bust}}">
     - <link rel="stylesheet" href="/css/football-typography.css?v={{cache_bust}}">
+    - <link rel="stylesheet" href="/css/ui-polish.css?v={{cache_bust}}">
   bottom:
     - |
       <div id="music-bar">
@@ -270,3 +271,4 @@ inject:
     - <script src="/js/theme-system.js?v={{cache_bust}}"></script>
     - <script src="/js/publish-button.js?v={{cache_bust}}"></script>
     - <script src="/js/dynamic-avatar.js?v={{cache_bust}}"></script>
+    - <script src="/js/ui-polish.js?v={{cache_bust}}"></script>
