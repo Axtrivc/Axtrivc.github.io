@@ -62,6 +62,22 @@ body::-webkit-scrollbar {
   letter-spacing: 0.02em;
 }
 
+/* 翻页首页(/page/2+)同样适用压缩:Butterfly 给它们 full_page 头图,
+   900px 白底只悬一行站点标题,是首页 hero 化之后的残留大空幕。
+   首页本体(带 hero 的 hero-page-active)不在此列——它由 hero-inject
+   置 height:0,两条规则各管各的。 */
+body:not(.hero-page-active) #page-header.full_page {
+  height: 220px !important;
+  min-height: 220px !important;
+}
+body:not(.hero-page-active) #page-header.full_page #site-title {
+  font-size: clamp(1.7rem, 3.4vw, 2.2rem);
+  letter-spacing: 0.02em;
+}
+body:not(.hero-page-active) #page-header.full_page #scroll-down {
+  display: none !important;
+}
+
 /* ── C. 首页文章卡片:从"裸文本"升级为实体卡片 ─────────────── */
 #recent-posts.masonry .recent-post-item {
   padding: 20px 24px 18px !important;
@@ -324,4 +340,58 @@ input:focus-visible,
   outline: 2px solid var(--theme-accent-current, #07C160);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   第三轮(2026-08-28):动效编排
+   入场动画走独立 translate/opacity 属性,不碰 transform——
+   网格锁(theme-system.css)用 transform:none !important 压
+   MasonryInfiniteGrid 的内联定位,hover 抬升也在用 transform,
+   三者互不踩脚。过渡类由 /js/ui-polish.js 挂载、动画结束后摘除,
+   摘除后卡片回到第一轮的 hover 过渡,不残留延迟。
+   ════════════════════════════════════════════════════════════ */
+
+/* ── I. 滚动入场编排(首页卡片 / 侧栏卡片 / 分页) ───────────── */
+@media (prefers-reduced-motion: no-preference) {
+  #recent-posts.masonry .recent-post-item.ui-reveal,
+  #aside-content .card-widget.ui-reveal,
+  #pagination .pagination.ui-reveal {
+    opacity: 0;
+    translate: 0 26px;
+    transition: opacity 0.65s ease, translate 0.65s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  #recent-posts.masonry .recent-post-item.ui-reveal.ui-revealed,
+  #aside-content .card-widget.ui-reveal.ui-revealed,
+  #pagination .pagination.ui-reveal.ui-revealed {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* ── J. 卡片标题 hover 下划线扫入(与 accent 抬升同语言) ─────── */
+#recent-posts.masonry .recent-post-item > .recent-post-info > .article-title {
+  padding-bottom: 3px;
+  background-image: linear-gradient(90deg,
+    color-mix(in srgb, var(--theme-accent-current, #07C160) 40%, transparent),
+    var(--theme-accent-current, #07C160));
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  transition: background-size 0.35s ease, color 0.2s ease;
+}
+@media (hover: hover) {
+  #recent-posts.masonry .recent-post-item > .recent-post-info > .article-title:hover {
+    background-size: 100% 2px;
+  }
+}
+
+/* ── K. 侧栏头像 lazyload 淡入(1x1 占位 → 真图不再跳变) ─────── */
+#aside-content .avatar-img img {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+#aside-content .avatar-img img.loaded,
+#aside-content .avatar-img img.error {
+  opacity: 1;
 }

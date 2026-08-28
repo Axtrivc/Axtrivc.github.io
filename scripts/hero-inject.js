@@ -332,6 +332,97 @@ body.hero-released {
 @media (max-width: 768px) {
   .hero-typed-wrap { left: 16px; bottom: calc(var(--hero-tail, 240px) + 18px); font-size: 13px; max-width: 70vw; }
 }
+
+/* ══ v13.1 动效收尾(2026-08-28) ══
+ * ① hero→released 状态切换不再硬切: nav 底色/字色、body/#web_bg 背景、
+ *    挂件(音乐条/rightside)透明度全部带过渡。这些都是场景上方的遮罩层,
+ *    不触碰 shader 输出,尾部溶解边界(硬约束)不受影响。
+ * ② 滚动离场: 开始滚动(scrollY>60)后 body.hero-leaving,typed 文案与
+ *    .hero-text 渐隐上浮、滚动提示光线同步淡出;回顶(scrollY<=60)恢复。
+ * ③ 滚动提示光线: 场景底部居中一条竖光带循环下滑,纯 CSS 动画,
+ *    prefers-reduced-motion 直接不渲染。 */
+
+body.hero-page-active {
+  transition: background-color .5s ease;
+}
+body.hero-page-active #web_bg {
+  transition: background-color .5s ease;
+}
+body.hero-page-active #nav {
+  transition: background-color .45s ease, box-shadow .45s ease;
+}
+body.hero-page-active #nav a,
+body.hero-page-active #nav .site-name,
+body.hero-page-active #nav a.site-page {
+  transition: color .25s ease, text-shadow .25s ease;
+}
+body.hero-page-active #rightside,
+body.hero-page-active #music-bar {
+  transition: opacity .45s ease, visibility .45s ease;
+}
+
+/* 滚动离场渐隐 */
+.hero-typed-wrap {
+  transition: opacity .5s ease, translate .5s ease;
+}
+body.hero-leaving .hero-typed-wrap {
+  opacity: 0;
+  translate: 0 12px;
+}
+.hero-text {
+  transition: opacity .5s ease;
+}
+body.hero-leaving .hero-text {
+  opacity: 0;
+}
+
+/* 底部滚动提示光线 */
+.hero-scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--hero-tail, 240px) + 30px);
+  width: 1px;
+  height: 54px;
+  margin-left: -0.5px;
+  z-index: 5;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 1px;
+  overflow: hidden;
+  transition: opacity .45s ease;
+}
+.hero-scroll-hint::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 42%;
+  border-radius: 1px;
+  background: linear-gradient(180deg,
+    transparent,
+    rgba(255, 255, 255, 0.85) 45%,
+    rgba(125, 235, 170, 0.95) 82%,
+    transparent);
+  transform: translateY(-110%);
+  animation: heroScrollHint 2.4s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+@keyframes heroScrollHint {
+  0%   { transform: translateY(-110%); }
+  62%  { transform: translateY(260%); }
+  100% { transform: translateY(260%); }
+}
+body.hero-leaving .hero-scroll-hint {
+  opacity: 0;
+}
+@media (max-width: 768px) {
+  /* 窄屏隐藏: typed 文案最长 70vw,长句会伸到屏幕中线,
+     居中的提示线会被误读成打字光标;触屏不缺下滑暗示 */
+  .hero-scroll-hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-hint { display: none; }
+}
 `;
 
   const heroStyleTag = `<style id="hero-inline-css">\n${heroCss}\n</style>`;
@@ -341,6 +432,7 @@ body.hero-released {
   // typed 副标题 HTML（打字逻辑在下方 heroJs, 分阶段 setTimeout 控速）
   // ═══════════════════════════════════════════════════════════════
   const typedHtml = `
+<div class="hero-scroll-hint" aria-hidden="true"></div>
 <div class="hero-typed-wrap" id="hero-typed-wrap">
   <span class="hero-typed-prefix">// </span><span class="hero-typed-text" id="hero-typed-text"></span><span class="hero-typed-cursor"></span>
 </div>
@@ -496,8 +588,18 @@ body.hero-released {
   // scroll 监听：scrollY >= vh（hero 完全滚出视口）→ released
   // 修复：原 0.5vh 触发太早，hero display:none 后 main 还没到 viewport 顶部，
   // 中间露出 body 白色背景。改为 hero 完全滚出才释放，并用 body 深蓝兜底。
+  // v13.1: scrollY>60 → hero-leaving,typed 文案与滚动提示光线渐隐离场,
+  // 回顶(<=60)恢复;bfcache/恢复滚动位置由初始 onScroll() 同步一次兜底。
+  var leaving = false;
   function onScroll() {
     var sy = window.scrollY;
+    if (!leaving && sy > 60) {
+      leaving = true;
+      body.classList.add('hero-leaving');
+    } else if (leaving && sy <= 60) {
+      leaving = false;
+      body.classList.remove('hero-leaving');
+    }
     if (!released && sy >= vh) {
       released = true;
       body.classList.add('hero-released');

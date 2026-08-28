@@ -1,10 +1,15 @@
 /**
- * UI Polish — 顶部阅读进度线 + 标题日期段防断行
- * 根滚动条隐藏后(ui-polish.css 板块 A),用 3px 主题色细线承担
- * 阅读位置指示。rAF 节流,passive 监听。
- * 中文标题里"2026年8月27日 星期四"常被平衡换行拦腰截成
- * "…2026 / 年8月…"——纯 CSS 无法把日期黏成一组,这里包一层
- * white-space:nowrap 的 span。
+ * UI Polish — 动效与版面收尾脚本
+ * 1) 顶部阅读进度线(根滚动条隐藏后的阅读位置指示)
+ * 2) 标题日期段防断行("2026年8月27日 星期四"不再被拦腰截断)
+ * 3) 滚动入场编排(ui-polish.css 板块 I):首页卡片/侧栏卡片/分页
+ *    用 IntersectionObserver 交错显现,--reveal-delay 控制同批错峰,
+ *    动画结束后摘除过渡类,把 hover 过渡还给第一轮的卡片规则。
+ *    入场位移走 translate 属性——theme-system.css 的
+ *    transform:none !important 网格锁与 hover 抬升都不受影响。
+ * 4) 侧栏头像淡入兜底:vanilla-lazyload 换图后补 loaded 类,
+ *    防止 CSS 默认 opacity:0 因类名不齐而永久隐身。
+ * 全部尊重 prefers-reduced-motion;无 IntersectionObserver 直接跳过。
  */
 (function () {
   'use strict';
@@ -67,9 +72,70 @@
     });
   }
 
+  /* ── 滚动入场编排 ── */
+  var REVEAL_SEL = [
+    '#recent-posts.masonry .recent-post-item',
+    '#aside-content .card-widget',
+    '#pagination .pagination'
+  ].join(',');
+  var STEP_MS = 70;   /* 同批相邻元素错峰 */
+  var DUR_MS = 700;   /* 与 CSS 过渡时长(0.65s)对齐再留余量 */
+
+  function initReveal() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!('IntersectionObserver' in window)) return;
+    var items = document.querySelectorAll(REVEAL_SEL);
+    if (!items.length) return;
+
+    /* 错峰在"进入视口的那一刻"分配:同一批出现的元素按 70ms 递增,
+       与上一批间隔超过 300ms 则重新从 0 起,深处卡片滚到时不吃旧延迟 */
+    var batchIndex = 0;
+    var lastMark = 0;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        io.unobserve(el);
+        var now = Date.now();
+        if (now - lastMark > 300) batchIndex = 0;
+        lastMark = now;
+        var delay = batchIndex++ * STEP_MS;
+        el.style.setProperty('--reveal-delay', delay + 'ms');
+        el.classList.add('ui-revealed');
+        window.setTimeout(function () {
+          el.classList.remove('ui-reveal', 'ui-revealed');
+          el.style.removeProperty('--reveal-delay');
+        }, DUR_MS + delay);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+
+    items.forEach(function (el) {
+      if (el.dataset.revealBound) return;
+      el.dataset.revealBound = '1';
+      el.classList.add('ui-reveal');
+      io.observe(el);
+    });
+  }
+
+  /* ── 侧栏头像淡入兜底 ── */
+  function initAvatarFade() {
+    document.querySelectorAll('#aside-content .avatar-img img').forEach(function (img) {
+      if (img.dataset.fadeBound) return;
+      img.dataset.fadeBound = '1';
+      if (img.complete && img.naturalWidth > 0) {
+        img.classList.add('loaded');
+        return;
+      }
+      img.addEventListener('load', function () { img.classList.add('loaded'); });
+      img.addEventListener('error', function () { img.classList.add('error'); });
+    });
+  }
+
   function init() {
     initProgress();
     protectDates();
+    initReveal();
+    initAvatarFade();
   }
 
   if (document.readyState === 'loading') {
@@ -78,4 +144,3 @@
     init();
   }
 })();
-
