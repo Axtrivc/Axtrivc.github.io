@@ -351,11 +351,17 @@ input:focus-visible,
    摘除后卡片回到第一轮的 hover 过渡,不残留延迟。
    ════════════════════════════════════════════════════════════ */
 
-/* ── I. 滚动入场编排(首页卡片 / 侧栏卡片 / 分页) ───────────── */
+/* ── I. 滚动入场编排(首页卡片 / 侧栏卡片 / 分页 / 归档时间轴 /
+   标签云 / 分类树 / 页脚) ───────────── */
 @media (prefers-reduced-motion: no-preference) {
   #recent-posts.masonry .recent-post-item.ui-reveal,
   #aside-content .card-widget.ui-reveal,
-  #pagination .pagination.ui-reveal {
+  #pagination .pagination.ui-reveal,
+  .article-sort-item.ui-reveal,
+  .article-sort-title.ui-reveal,
+  .tag-cloud-list.ui-reveal,
+  .category-lists.ui-reveal,
+  #footer .footer-other.ui-reveal {
     opacity: 0;
     translate: 0 26px;
     transition: opacity 0.65s ease, translate 0.65s cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -363,7 +369,12 @@ input:focus-visible,
   }
   #recent-posts.masonry .recent-post-item.ui-reveal.ui-revealed,
   #aside-content .card-widget.ui-reveal.ui-revealed,
-  #pagination .pagination.ui-reveal.ui-revealed {
+  #pagination .pagination.ui-reveal.ui-revealed,
+  .article-sort-item.ui-reveal.ui-revealed,
+  .article-sort-title.ui-reveal.ui-revealed,
+  .tag-cloud-list.ui-reveal.ui-revealed,
+  .category-lists.ui-reveal.ui-revealed,
+  #footer .footer-other.ui-reveal.ui-revealed {
     opacity: 1;
     translate: 0 0;
   }
@@ -433,5 +444,96 @@ input:focus-visible,
       border-color: var(--theme-accent-current, #07C160);
     }
     100% { transform: scale(1); }
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   第五轮(2026-08-28):全站动效推广 + 残留色修补
+   ════════════════════════════════════════════════════════════ */
+
+/* ── N. TOC 激活项:Butterfly 默认 #00c4b6 青绿块(又一漏网硬编码,
+   与 D 板块的 #8b6f47 棕色同源)→ 主题色浅底 + 左侧指示条滑入 ── */
+#aside-content #card-toc .toc-content .toc-link {
+  border-left: 2px solid transparent;
+  transition: color 0.2s ease, background-color 0.25s ease, border-color 0.25s ease;
+}
+#aside-content #card-toc .toc-content .toc-link.active {
+  background: rgba(7, 193, 96, 0.10);
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 12%, transparent);
+  color: var(--theme-accent-current, #07C160) !important;
+  border-left-color: var(--theme-accent-current, #07C160);
+  font-weight: 600;
+}
+
+/* ── P. 主题切换颜色过渡(html.theme-gliding 由 JS 在 themechange 时
+   挂载 ~550ms):消灭换主题瞬间背景/卡片/导航的颜色硬切。
+   只列大表面,不碰 * 通配,避免全页重绘风暴。 */
+html.theme-gliding body,
+html.theme-gliding #nav,
+html.theme-gliding #footer,
+html.theme-gliding #web_bg,
+html.theme-gliding .card-widget,
+html.theme-gliding .recent-post-item,
+html.theme-gliding #pagination .page-number,
+html.theme-gliding #pagination .extend {
+  transition: background-color 0.45s ease, border-color 0.45s ease,
+              color 0.45s ease, box-shadow 0.45s ease;
+}
+
+/* ── Q. 文章内图片 lazyload 淡入(1x1 占位 → 真图 0.45s 淡入,
+   类由 JS 挂载;只动 opacity,不碰 fm-* 布局防线) ── */
+#article-container img.ui-img-wait {
+  opacity: 0;
+}
+#article-container img.ui-img-done {
+  animation: uiImgIn 0.45s ease;
+}
+@keyframes uiImgIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── R. 代码块/表格内部滚动条主题化(根滚动条已隐藏,内部滚动器
+   保留但收细、上主题色) ── */
+#article-container pre::-webkit-scrollbar,
+#article-container .table-wrap::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+#article-container pre::-webkit-scrollbar-thumb,
+#article-container .table-wrap::-webkit-scrollbar-thumb {
+  background: rgba(7, 193, 96, 0.35);
+  background: color-mix(in srgb, var(--theme-accent-current, #07C160) 35%, transparent);
+  border-radius: 3px;
+}
+#article-container pre::-webkit-scrollbar-track,
+#article-container .table-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+#article-container pre,
+#article-container .table-wrap {
+  scrollbar-width: thin;
+}
+
+/* ── S. 页脚:链接 hover 下划线扫入(currentColor,水光底色上自适应) ── */
+#footer .footer-copyright a,
+#footer .footer-other a {
+  position: relative;
+  text-decoration: none;
+}
+#footer .footer-copyright a::after,
+#footer .footer-other a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 0; height: 1px;
+  background: currentColor;
+  opacity: 0.75;
+  transition: width 0.25s ease;
+}
+@media (hover: hover) {
+  #footer .footer-copyright a:hover::after,
+  #footer .footer-other a:hover::after {
+    width: 100%;
   }
 }

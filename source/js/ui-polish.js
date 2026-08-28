@@ -13,6 +13,8 @@
  *    交叉淡化 + 卡片标题↔文章标题共享元素飞入,名按文章路径生成。
  * 6) 文章页头视差:#post-info 随滚动缓出下移渐隐(220px 页头内)。
  * 7) 目录百分比徽标脉冲:数值变化时轻跳一下(节流 0.9s/次)。
+ * 8) 主题切换颜色过渡(板块 P):themechange 挂 html.theme-gliding 550ms。
+ * 9) 文章内图片 lazyload 淡入(板块 Q):占位→真图不再跳变。
  * 全部尊重 prefers-reduced-motion;无 IntersectionObserver 直接跳过。
  */
 (function () {
@@ -80,7 +82,12 @@
   var REVEAL_SEL = [
     '#recent-posts.masonry .recent-post-item',
     '#aside-content .card-widget',
-    '#pagination .pagination'
+    '#pagination .pagination',
+    '.article-sort-title',
+    '.article-sort-item',
+    '.tag-cloud-list',
+    '.category-lists',
+    '#footer .footer-other'
   ].join(',');
   var STEP_MS = 70;   /* 同批相邻元素错峰 */
   var DUR_MS = 700;   /* 与 CSS 过渡时长(0.65s)对齐再留余量 */
@@ -194,6 +201,35 @@
     }).observe(badge, { childList: true, characterData: true, subtree: true });
   }
 
+  /* ── 主题切换颜色过渡:themechange 时挂 html.theme-gliding ~550ms,
+     CSS(板块 P)接管大表面的 background/border/color 过渡,消除硬切 ── */
+  function initThemeGlide() {
+    var t = null;
+    window.addEventListener('themechange', function () {
+      var root = document.documentElement;
+      root.classList.add('theme-gliding');
+      clearTimeout(t);
+      t = setTimeout(function () { root.classList.remove('theme-gliding'); }, 550);
+    });
+  }
+
+  /* ── 文章内图片 lazyload 淡入:占位阶段挂 ui-img-wait(opacity:0),
+     真图 load 后换 ui-img-done 播一次淡入。已缓存(complete)的不动,
+     避免二次闪烁;只碰 opacity,不干预 vanilla-lazyload 的换图逻辑 ── */
+  function initArticleImgFade() {
+    document.querySelectorAll('#article-container img[data-lazy-src]').forEach(function (img) {
+      if (img.dataset.imgFadeBound) return;
+      img.dataset.imgFadeBound = '1';
+      if (img.complete && img.naturalWidth > 1) return;   /* 已是真图 */
+      img.classList.add('ui-img-wait');
+      img.addEventListener('load', function () {
+        if (img.naturalWidth <= 1) return;                /* 仍是 1x1 占位 */
+        img.classList.remove('ui-img-wait');
+        img.classList.add('ui-img-done');
+      });
+    });
+  }
+
   function init() {
     initProgress();
     protectDates();
@@ -202,6 +238,8 @@
     initViewTransitions();
     initPostHeaderParallax();
     initTocPulse();
+    initThemeGlide();
+    initArticleImgFade();
   }
 
   if (document.readyState === 'loading') {
