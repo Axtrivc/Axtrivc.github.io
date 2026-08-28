@@ -395,3 +395,43 @@ input:focus-visible,
 #aside-content .avatar-img img.error {
   opacity: 1;
 }
+
+/* ── L. 跨页 View Transitions(2026-08-28 第四轮) ───────────────
+   Chromium 系(Chrome/Edge 126+)原生支持;Firefox/Safari 不认识
+   @view-transition,整段规则被忽略 = 普通跳转,零成本降级。
+   根伪元素 = 整页交叉淡化;具名组只有"卡片标题 ↔ 文章标题"一类
+   共享元素(名由 /js/ui-polish.js 按文章路径生成),位移/形变稍慢
+   让"飞入"弧线更稳。reduce 用户全部动画归零 = 瞬时切换。 */
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.32s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+::view-transition-group(*) {
+  animation-duration: 0.38s;
+  animation-timing-function: cubic-bezier(0.3, 0.7, 0.3, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ── M. 目录百分比徽标:数值变化时轻脉冲(JS 节流 ≥0.9s/次) ────── */
+@media (prefers-reduced-motion: no-preference) {
+  #aside-content #card-toc .toc-percentage.toc-pulse {
+    animation: tocPulse 0.6s ease;
+  }
+  @keyframes tocPulse {
+    0% { transform: scale(1); }
+    35% {
+      transform: scale(1.18);
+      color: var(--theme-accent-current, #07C160);
+      border-color: var(--theme-accent-current, #07C160);
+    }
+    100% { transform: scale(1); }
+  }
+}

@@ -296,6 +296,7 @@
     uniform float u_bRad;
     uniform vec2  u_mouse;   // cursor, device px (y down); offscreen when idle
     uniform float u_mAmt;    // 0..1 interaction influence (eased)
+    uniform vec2  u_par;     // v14 指针视差: 相机摇摆(sx/sy 偏移), 天空 uv 层不动
     uniform float u_intro;   // 0..1 intro write-in progress (eased)
     uniform float u_steer;   // lateral flight steering (eased, arrow keys)
     uniform float u_tod;     // time of day, 0..1 == 00:00..24:00
@@ -1893,6 +1894,11 @@
       float fx  = tan(0.60);                           // field of view
       float sx  = (uv.x - 0.5) * 2.0 * fx * asp;
       float sy  = (u_viewHorizon - uv.y) * 2.0 * fx;   // uv is y-down
+      // v14 指针视差: 只摇 3D 峡谷相机的射线, 不动 uv 层(天空渐变/太阳/光晕
+      // 都是 uv 空间, 远墙 haze 也朝同像素 skyHaze 溶解)——近景峡谷/河面随
+      // 指针轻移, 远景天空锚定, 剪影衔接保持无缝; 尾部溶解(uvS)不受影响。
+      sx += u_par.x;
+      sy += u_par.y;
       float cpi = cos(0.0), spi = sin(0.0);            // centered active horizon
       vec3 dir  = normalize(vec3(sx, sy * cpi - spi, sy * spi + cpi));
 
@@ -2947,6 +2953,7 @@
     bRad: gl.getUniformLocation(prog, "u_bRad"),
     mouse: gl.getUniformLocation(prog, "u_mouse"),
     mAmt: gl.getUniformLocation(prog, "u_mAmt"),
+    par: gl.getUniformLocation(prog, "u_par"),
     intro: gl.getUniformLocation(prog, "u_intro"),
     steer: gl.getUniformLocation(prog, "u_steer"),
     tod: gl.getUniformLocation(prog, "u_tod"),
@@ -3251,6 +3258,7 @@
   function applyDefaultUniforms() {
     gl.uniform2f(U.mouse, -1.0e4, -1.0e4); // offscreen until the pointer moves
     gl.uniform1f(U.mAmt, 0.0);
+    gl.uniform2f(U.par, 0.0, 0.0);         // v14 指针视差默认居中
     gl.uniform1f(U.intro, 1.0);            // default fully-revealed (static/reduced)
     gl.uniform1f(U.reveal, 1.0);           // default canyon fully shown (live loop animates 0→1)
     gl.uniform1f(U.steer, 0.0);            // centred flight path
@@ -4080,6 +4088,7 @@
       bRad: gl.getUniformLocation(prog, "u_bRad"),
       mouse: gl.getUniformLocation(prog, "u_mouse"),
       mAmt: gl.getUniformLocation(prog, "u_mAmt"),
+      par: gl.getUniformLocation(prog, "u_par"),
       intro: gl.getUniformLocation(prog, "u_intro"),
       steer: gl.getUniformLocation(prog, "u_steer"),
       tod: gl.getUniformLocation(prog, "u_tod"),
@@ -4295,8 +4304,11 @@
     if (!reduce && typeof startLoop === "function") startLoop();
   }, false);
 
-  // Pointer interaction removed — the hero is a deterministic animation; the
-  // u_mouse/u_mAmt uniforms stay at their inert defaults (offscreen / 0).
+  // Pointer interaction note: the legacy field()-path river-bend reads
+  // u_mouse/u_mAmt, but field() lives behind `#if 0` (replaced by the
+  // raymarched renderValley) — those two uniforms stay at their inert
+  // defaults. The live pointer effect is the v14 camera sway (u_par),
+  // tracked in the loop-state block and written every frame in loop().
 
   const INTRO_MS = 650;                  // super-fast per-cell write-in
   // ── Intro reveal: text types in centred over a bare sky, then (after a beat)
@@ -4979,6 +4991,28 @@
 
     // Arrow-key steering removed — deterministic flight path (u_steer stays 0).
 
+    // ── Pointer parallax (v14, 2026-08-28) ──────────────────────
+    // 指针归一化坐标(-1..1)→ u_par,renderValley 里摇 3D 峡谷相机射线;
+    // 天空渐变/太阳/光晕是 uv 空间层,不随动,形成"近景移、远景定"的层次
+    // 视差。触屏 / reduced-motion 关闭(u_par 保持 applyDefaultUniforms 的
+    // 居中默认);指针离窗或 hero 滚离场景区时影响淡出。每帧缓动在 loop()。
+    const ptrEnabled = !reduce && !window.matchMedia("(pointer: coarse)").matches;
+    const ptr = { x: 0, y: 0, tx: 0, ty: 0, amt: 0, tAmt: 0, init: false };
+    if (ptrEnabled) {
+      window.addEventListener("pointermove", function (e) {
+        if (e.pointerType && e.pointerType !== "mouse") return;
+        const r = canvas.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > window.innerHeight) { ptr.tAmt = 0; return; }
+        ptr.tx = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width) * 2 - 1));
+        ptr.ty = Math.max(-1, Math.min(1, (e.clientY / window.innerHeight) * 2 - 1));
+        if (!ptr.init) { ptr.x = ptr.tx; ptr.y = ptr.ty; ptr.init = true; }
+        ptr.tAmt = 1;
+      }, { passive: true });
+      const ptrOff = function () { ptr.tAmt = 0; };
+      document.addEventListener("pointerleave", ptrOff);
+      window.addEventListener("blur", ptrOff);
+    }
+
     let bootCur = 1.0, lastTx = 0, lastFrame = 0, fpsEma = frameCap, fpsUi = 0;
     // ── Adaptive-AA governor: probe → settle → measure → keep or revert ──
     let aaCeiling = AA_LADDER.length - 1;  // highest rung known to be sustainable
@@ -5268,6 +5302,18 @@
       gl.uniform1f(U.tod, todFrac(now));     // rAF clock (advances here)
       gl.uniform1f(U.aurHue, auroraHue);
       gl.uniform1f(U.aurSpeed, auroraSpeed);
+
+      // Pointer parallax: exponential follow + influence ramp. 幅度上限
+      // ~2.6°(0.05 ≈ 半视场的 4.6%),有存在感不喧宾夺主;滚离场景区
+      // (scrollY > 0.5vh)自动淡出,回顶恢复。context-restore 后 applyDefault
+      // Uniforms 重置为居中,这里每帧重写,天然自愈。
+      if (ptrEnabled) {
+        const ptrGate = ptr.tAmt && window.scrollY < window.innerHeight * 0.5 ? 1 : 0;
+        ptr.x += (ptr.tx - ptr.x) * 0.06;
+        ptr.y += (ptr.ty - ptr.y) * 0.06;
+        ptr.amt += (ptrGate - ptr.amt) * 0.05;
+        gl.uniform2f(U.par, ptr.x * 0.05 * ptr.amt, -ptr.y * 0.032 * ptr.amt);
+      }
 
       // Repaint the terminal text while it's still animating (~14fps).
       // After the subtitle finishes typing we drop to a slow 4Hz cadence

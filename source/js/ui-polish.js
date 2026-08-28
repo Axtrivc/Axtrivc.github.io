@@ -9,6 +9,10 @@
  *    transform:none !important 网格锁与 hover 抬升都不受影响。
  * 4) 侧栏头像淡入兜底:vanilla-lazyload 换图后补 loaded 类,
  *    防止 CSS 默认 opacity:0 因类名不齐而永久隐身。
+ * 5) 跨页 View Transitions(ui-polish.css 板块 L):Chromium 系整页
+ *    交叉淡化 + 卡片标题↔文章标题共享元素飞入,名按文章路径生成。
+ * 6) 文章页头视差:#post-info 随滚动缓出下移渐隐(220px 页头内)。
+ * 7) 目录百分比徽标脉冲:数值变化时轻跳一下(节流 0.9s/次)。
  * 全部尊重 prefers-reduced-motion;无 IntersectionObserver 直接跳过。
  */
 (function () {
@@ -131,11 +135,73 @@
     });
   }
 
+  /* ── 跨页 View Transitions:卡片标题 ↔ 文章标题共享元素 ──
+     名按文章路径生成,列表页与文章页两侧算法一致才能配对;
+     中文 slug 的 % 编码字符不是合法 CSS ident,剥掉 % 后
+     (E8%A5%BF → E8A5BF)既合法又不撞名。只命名主列表卡片,
+     侧栏"最新文章"不命名——同页两个同名会让整个过渡被跳过。 */
+  function vtSlug(pathname) {
+    return pathname.replace(/^\/+|\/+$/g, '').replace(/\//g, '-').replace(/%/g, '');
+  }
+  function initViewTransitions() {
+    if (!('viewTransitionName' in document.documentElement.style)) return;
+    document.querySelectorAll('#recent-posts .article-title[href]').forEach(function (a) {
+      try { a.style.viewTransitionName = 'post-' + vtSlug(new URL(a.href).pathname); } catch (e) {}
+    });
+    var pt = document.querySelector('#post-info .post-title');
+    if (pt) pt.style.viewTransitionName = 'post-' + vtSlug(location.pathname);
+  }
+
+  /* ── 文章页头视差:标题随滚动缓出(220px 页头内渐隐下移) ── */
+  function initPostHeaderParallax() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var header = document.getElementById('page-header');
+    var info = document.getElementById('post-info');
+    if (!header || !info || !/\bpost-bg\b/.test(header.className)) return;
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var y = window.scrollY || 0;
+      var h = header.offsetHeight || 220;
+      if (y > h) return;
+      info.style.transform = 'translate3d(0,' + (y * 0.35).toFixed(1) + 'px,0)';
+      info.style.opacity = Math.max(0, 1 - y / (h * 0.85)).toFixed(3);
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
+  }
+
+  /* ── 目录百分比徽标脉冲(数值变化时,节流到 0.9s/次) ── */
+  function initTocPulse() {
+    if (!('MutationObserver' in window)) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var badge = document.querySelector('#aside-content #card-toc .toc-percentage');
+    if (!badge) return;
+    var last = badge.textContent, lastPulse = 0, t = null;
+    new MutationObserver(function () {
+      if (badge.textContent === last) return;
+      last = badge.textContent;
+      var now = Date.now();
+      if (now - lastPulse < 900) return;
+      lastPulse = now;
+      badge.classList.remove('toc-pulse');
+      void badge.offsetWidth;           /* 重启动画 */
+      badge.classList.add('toc-pulse');
+      clearTimeout(t);
+      t = setTimeout(function () { badge.classList.remove('toc-pulse'); }, 650);
+    }).observe(badge, { childList: true, characterData: true, subtree: true });
+  }
+
   function init() {
     initProgress();
     protectDates();
     initReveal();
     initAvatarFade();
+    initViewTransitions();
+    initPostHeaderParallax();
+    initTocPulse();
   }
 
   if (document.readyState === 'loading') {
