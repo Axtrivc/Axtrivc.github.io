@@ -227,6 +227,10 @@
         img.classList.remove('ui-img-wait');
         img.classList.add('ui-img-done');
       });
+      /* 审计修复: 图挂了(404/防盗链)也得撤掉占位隐藏,不能永久空白 */
+      img.addEventListener('error', function () {
+        img.classList.remove('ui-img-wait');
+      });
     });
   }
 
