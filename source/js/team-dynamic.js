@@ -185,15 +185,13 @@
     intervalSec = intervalSec || 300;
     callbacks = callbacks || [];
 
-    var remaining = intervalSec;
     var indicator = indicatorId ? document.getElementById(indicatorId) : null;
+    // 用目标时间戳算剩余秒: setInterval 在后台被节流时倒计时不漂移
+    var nextRefreshAt = Date.now() + intervalSec * 1000;
 
     // 倒计时显示
     setInterval(function () {
-      remaining--;
-      if (remaining <= 0) {
-        remaining = intervalSec;
-      }
+      var remaining = Math.max(0, Math.round((nextRefreshAt - Date.now()) / 1000));
       if (indicator) {
         var m = Math.floor(remaining / 60);
         var s = remaining % 60;
@@ -207,18 +205,29 @@
         try { if (typeof fn === 'function') fn(); }
         catch (e) { console.warn('自动刷新 callback 出错:', e); }
       });
-      remaining = intervalSec;
+      nextRefreshAt = Date.now() + intervalSec * 1000;
     }, intervalSec * 1000);
+
+    // visibilitychange 立即刷新后, 由它调用来重置倒计时
+    global.__axRefreshReset = function () {
+      nextRefreshAt = Date.now() + intervalSec * 1000;
+    };
   }
 
   /* ---------- 页面可见性优化 ---------- */
   // 当用户从别的 tab 切回来时，立即刷新一次（避免显示过期数据）
+  // 60s 防抖: 记录上次刷新时间戳, 频繁切 tab 不再每次全量重打 ESPN 请求
+  var lastVisibleRefresh = 0;
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible' && global.__autoRefreshCallbacks) {
-      global.__autoRefreshCallbacks.forEach(function (fn) {
-        try { if (typeof fn === 'function') fn(); } catch (e) {}
-      });
-    }
+    if (document.visibilityState !== 'visible' || !global.__autoRefreshCallbacks) return;
+    var now = Date.now();
+    if (now - lastVisibleRefresh < 60 * 1000) return;
+    lastVisibleRefresh = now;
+    global.__autoRefreshCallbacks.forEach(function (fn) {
+      try { if (typeof fn === 'function') fn(); } catch (e) {}
+    });
+    // 立即刷新后倒计时同步重置 (由 setupAutoRefresh 挂载)
+    if (typeof global.__axRefreshReset === 'function') global.__axRefreshReset();
   });
 
   /* ---------- 球员数据动态加载 ---------- */

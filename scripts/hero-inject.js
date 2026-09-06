@@ -20,19 +20,39 @@
 const fs = require('fs');
 const path = require('path');
 
+// 构建期取 git 短哈希做 river-hero.js 版本号 (与 footer-river-inject.js 同一做法,
+// cache-bust.js 同思路), git 不可用(如解压源码包构建)时降级为时间戳兜底
+const HERO_JS_VER = (function () {
+  try {
+    return require('child_process').execSync('git rev-parse --short HEAD',
+      { cwd: hexo.base_dir, encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+  } catch (e) {
+    return String(Date.now());
+  }
+})();
+
 hexo.extend.filter.register('after_render:html', function (data) {
   if (!data || typeof data !== 'string') return data;
 
   if (data.indexOf('id="asciiRiver"') !== -1) return data;
 
+  const hasFullPage = data.indexOf('full_page') !== -1;
+
   const canonicalMatch = data.match(/canonical["']?\s*href=["']([^"']+)["']/);
-  if (!canonicalMatch) return data;
+  if (!canonicalMatch) {
+    // 门槛静默失败可见化: 首页特征命中但 canonical 缺失时, 在构建日志留痕
+    if (hasFullPage) hexo.log.warn('[hero-inject] 跳过注入: 页面含 full_page 首页特征, 但未匹配到 canonical 链接');
+    return data;
+  }
   const canonical = canonicalMatch[1];
   // 支持自定义域 axtrivc.com 与旧 github.io 域(绑定主域名后 canonical 变为 axtrivc.com,必须放行)
   // 左边界限定协议/域名起点, 防止 evil-axtrivc.com 这类同后缀域名误放行
-  if (!/(?:^|\/\/)(?:www\.)?(?:axtrivc\.github\.io|axtrivc\.com)\/(?:index\.html)?$/.test(canonical)) return data;
+  if (!/(?:^|\/\/)(?:www\.)?(?:axtrivc\.github\.io|axtrivc\.com)\/(?:index\.html)?$/.test(canonical)) {
+    if (hasFullPage) hexo.log.warn('[hero-inject] 跳过注入: 页面含 full_page 首页特征, 但 canonical 不是首页: ' + canonical);
+    return data;
+  }
 
-  if (data.indexOf('full_page') === -1) return data;
+  if (!hasFullPage) return data;
   if (data.indexOf('</header>') === -1 || data.indexOf('</head>') === -1 || data.indexOf('</body>') === -1) return data;
 
   const heroHtmlPath = path.join(hexo.source_dir, 'hero', 'index.html');
@@ -433,7 +453,7 @@ body.hero-leaving .hero-scroll-hint {
   // ═══════════════════════════════════════════════════════════════
   const typedHtml = `
 <div class="hero-scroll-hint" aria-hidden="true"></div>
-<div class="hero-typed-wrap" id="hero-typed-wrap">
+<div class="hero-typed-wrap" id="hero-typed-wrap" aria-hidden="true">
   <span class="hero-typed-prefix">// </span><span class="hero-typed-text" id="hero-typed-text"></span><span class="hero-typed-cursor"></span>
 </div>
 `;
@@ -626,7 +646,7 @@ body.hero-leaving .hero-scroll-hint {
 `;
 
   const scriptMatch = heroSrc.match(/<script src="river-hero\.js"[^>]*><\/script>/);
-  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=19"') : '';
+  const heroScriptTag = scriptMatch ? scriptMatch[0].replace('src="river-hero.js"', 'src="/hero/river-hero.js?v=' + HERO_JS_VER + '"') : '';
 
   // 定位必须用原始标签 scriptMatch[0] — heroScriptTag 是改写后的版本, 在源文件里找不到
   const afterScriptIdx = scriptMatch
@@ -678,11 +698,24 @@ body.hero-leaving .hero-scroll-hint {
 `;
   content = content.replace('</body>', sidebarFix + '\n</body>');
 
-  // 给 body 加 class hero-page-active
-  content = content.replace(
-    /<body([^>]*)>/,
-    '<body$1 class="hero-page-active">'
-  );
+  // 给 body 加 class hero-page-active:
+  // body 已有 class 属性(双/单引号)则合并进去, 否则新增 class 属性 ——
+  // 直接拼接会产生两个 class 属性, 浏览器只认第一个, hero-page-active 会被静默丢弃
+  // (当前 Butterfly 输出裸 <body>, 主题一旦给 body 加 class 就触发)。
+  // 非全局正则 + String.replace 仍只替换首个 <body>, 首页语义不变。
+  content = content.replace(/<body([^>]*)>/, function (match, attrs) {
+    if (/class\s*=\s*"/.test(attrs)) {
+      return '<body' + attrs.replace(/class\s*=\s*"([^"]*)"/, function (cm, cls) {
+        return 'class="' + (cls ? cls + ' ' : '') + 'hero-page-active"';
+      }) + '>';
+    }
+    if (/class\s*=\s*'/.test(attrs)) {
+      return '<body' + attrs.replace(/class\s*=\s*'([^']*)'/, function (cm, cls) {
+        return "class='" + (cls ? cls + ' ' : '') + "hero-page-active'";
+      }) + '>';
+    }
+    return '<body' + attrs + ' class="hero-page-active">';
+  });
 
   hexo.log.info('[hero-inject] ✅ v13 单 pipeline + 原生滚动: ' + canonical);
   return content;

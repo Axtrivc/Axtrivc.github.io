@@ -35,7 +35,16 @@
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   }
   resize();
-  window.addEventListener('resize', resize);
+  // resize 事件高频触发, 直接重分配 canvas 开销大 — rAF 节流, 每帧最多一次
+  var resizePending = false;
+  window.addEventListener('resize', function () {
+    if (resizePending) return;
+    resizePending = true;
+    requestAnimationFrame(function () {
+      resizePending = false;
+      resize();
+    });
+  });
 
   // Layered waves — 5 主题适配, 每主题 4 层专属 palette + 专属画布渐变
   // 配色逻辑: 后层深饱和(主题 heading/暗版 accent) → 中层主色(accent) → 近层亮版 → 前景高光(主题 footer 亮色)
@@ -173,6 +182,23 @@
     ctx.stroke();
   }
 
+  // 渐变缓存: 只在高度/配色变化时重建 (key 含 H 与 currentBg,
+  // resize 改 H、themechange 改 currentBg 都会让 key 失效自动重建),
+  // 原来每帧 createLinearGradient + 正则替换, 是热路径上的固定开销
+  var gradCache = null, gradKey = '';
+  function getBgGradient() {
+    var key = H + '|' + currentBg[0] + '|' + currentBg[1];
+    if (!gradCache || gradKey !== key) {
+      var g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, currentBg[0].replace(/[\d.]+\s*\)$/, '0)'));
+      g.addColorStop(0.35, currentBg[0]);
+      g.addColorStop(1, currentBg[1]);
+      gradCache = g;
+      gradKey = key;
+    }
+    return gradCache;
+  }
+
   var stageVisible = false, running = false;
   var lastFrameTs = 0;
   function frame(nowTs) {
@@ -186,11 +212,7 @@
 
     // 主题适配的水深渐变背景(上淡下深, 让波纹线条有对比)
     // 顶部先透明淡入(0 → 35%), 避免与 footer 背景衔接处出现色阶断线
-    var g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, currentBg[0].replace(/[\d.]+\s*\)$/, '0)'));
-    g.addColorStop(0.35, currentBg[0]);
-    g.addColorStop(1, currentBg[1]);
-    ctx.fillStyle = g;
+    ctx.fillStyle = getBgGradient();
     ctx.fillRect(0, 0, W, H);
 
     for (var i = 0; i < layers.length; i++) drawLayer(layers[i], t);

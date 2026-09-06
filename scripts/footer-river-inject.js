@@ -2,7 +2,7 @@
  * Footer River 注入器
  *
  * 在博客 footer 底部 (.footer-other 之后) 注入 river.ai 风格的水流 canvas,
- * "© 2026 By ɐ ℒℯℯ" copyright 文字浮在水面上。
+ * "© <构建年> By ɐ ℒℯℯ" copyright 文字浮在水面上(年份构建期动态生成)。
  *
  * - canvas: 多层正弦波 + 点击涟漪 + 鼠标扰动
  * - 颜色: 全主题适配(footer/提示文字/copyright 均跟随 --footer-* CSS 变量,
@@ -157,7 +157,7 @@ body {
 <div class="axtrivc-river-stage" id="axtrivcRiverStage" role="img" aria-label="一片可以点击泛起涟漪的水面">
   <span class="axtrivc-river-hint">点击水面 →</span>
   <canvas id="axtrivcRiverCanvas"></canvas>
-  <span class="axtrivc-copyright">&copy; 2026 By &nbsp;ɐ&thinsp;ℒℯℯ</span>
+  <span class="axtrivc-copyright">&copy; ${new Date().getFullYear()} By &nbsp;ɐ&thinsp;ℒℯℯ</span>
 </div>
 `;
 

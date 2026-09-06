@@ -49,11 +49,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: scripts-py/requirements.txt
 
       - name: Install sports-skills (Football data, News, World Cup)
         run: |
           python -m pip install --upgrade pip
-          pip install sports-skills==0.27.1 feedparser
+          pip install -r scripts-py/requirements.txt
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -122,11 +124,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: scripts-py/requirements.txt
 
       - name: Install sports-skills
         run: |
           python -m pip install --upgrade pip
-          pip install sports-skills==0.27.1 feedparser
+          pip install -r scripts-py/requirements.txt
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

@@ -88,7 +88,7 @@ body:not(.hero-page-active) #page-header.full_page #scroll-down {
   /* 审计修复(2026-08-28): hover 上浮必须用独立 translate 属性——
      theme-system.css 的网格锁 transform:none !important 会无条件
      压掉任何 transform 声明(与特异性无关),首轮的 translateY 从未生效 */
-  transition: translate 0.25s ease, transform 0.25s ease,
+  transition: translate 0.25s ease,
               box-shadow 0.25s ease, border-color 0.25s ease;
 }
 @media (hover: hover) {
@@ -260,7 +260,7 @@ body:not(.hero-page-active) #page-header.full_page #scroll-down {
 @media (hover: hover) {
   #pagination .page-number:hover,
   .pagination .page-number:hover {
-    transform: translateY(-2px);
+    translate: 0 -2px;
   }
 }
 
@@ -308,7 +308,7 @@ body:not(.hero-page-active) #page-header.full_page #scroll-down {
 .relatedPosts-list > a {
   padding: 18px 14px !important;
   border-radius: 12px;
-  transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+  transition: translate 0.22s ease, box-shadow 0.22s ease !important;
 }
 .relatedPosts-list > a .cover {
   display: none !important;
@@ -318,7 +318,7 @@ body:not(.hero-page-active) #page-header.full_page #scroll-down {
 }
 @media (hover: hover) {
   .relatedPosts-list > a:hover {
-    transform: translateY(-3px);
+    translate: 0 -3px;
     box-shadow: 0 10px 26px rgba(16, 24, 40, 0.10) !important;
   }
 }
@@ -524,6 +524,9 @@ html.theme-gliding #recent-posts .recent-post-item {
 #article-container pre,
 #article-container .table-wrap {
   scrollbar-width: thin;
+  /* Firefox 用 scrollbar-color 上色 (拇指色/轨道色与上面 webkit 一致) */
+  scrollbar-color: rgba(7, 193, 96, 0.35) transparent;
+  scrollbar-color: color-mix(in srgb, var(--theme-accent-current, #07C160) 35%, transparent) transparent;
 }
 
 /* ── S. 页脚:链接 hover 下划线扫入(currentColor,水光底色上自适应) ── */

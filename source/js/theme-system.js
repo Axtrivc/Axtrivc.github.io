@@ -268,14 +268,17 @@
   }
 
   // Strategy 1: Try right away (script runs at bottom of body)
+  // mo 提升为外层变量: interval 先成功时也要能 disconnect,
+  // 否则 observer 终身观察全文档 childList (泄漏)
+  var mo = null;
   if (!tryApplyNow()) {
     // Strategy 2: Use MutationObserver to detect when #web_bg appears
-    var mo = new MutationObserver(function(mutations) {
+    mo = new MutationObserver(function(mutations) {
       for (var i = 0; i < mutations.length; i++) {
         var addedNodes = mutations[i].addedNodes;
         for (var j = 0; j < addedNodes.length; j++) {
           if (addedNodes[j].id === 'web_bg' || (addedNodes[j].querySelector && addedNodes[j].querySelector('#web_bg'))) {
-            mo.disconnect();
+            if (mo) mo.disconnect();
             applyTheme(currentTheme);
             return;
           }
@@ -288,8 +291,8 @@
     var fallbackTries = 0;
     var fallbackInt = setInterval(function() {
       fallbackTries++;
-      if (tryApplyNow()) clearInterval(fallbackInt);
-      if (fallbackTries > 40) clearInterval(fallbackInt); // max 2 seconds
+      if (tryApplyNow()) { clearInterval(fallbackInt); if (mo) mo.disconnect(); }
+      if (fallbackTries > 40) { clearInterval(fallbackInt); if (mo) mo.disconnect(); } // max 2 seconds
     }, 50);
   }
 

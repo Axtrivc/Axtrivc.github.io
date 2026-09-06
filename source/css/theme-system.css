@@ -6,7 +6,7 @@
 /* CRITICAL: Override Butterfly's inline-style background on #web_bg */
 #web_bg,
 .bg-animation#web_bg {
-  background-color: #FFFFFF !important;
+  background-color: var(--page-bg, #FFFFFF) !important;
   background-image: none !important;
 }
 
@@ -114,7 +114,9 @@ body #page-header #nav a.site-page::after,
 body #nav .menus_item a::after,
 body #nav a.site-page::after {
   background-color: var(--theme-accent-current, #07C160) !important;
-  transition: background-color 0.45s ease !important;
+  /* width 扫入动画: 原列表只有 background-color, 把 Butterfly 原生
+     下划线 hover 的 width 0→100% 压成瞬现 (head.styl 原生 all .3s ease-in-out) */
+  transition: background-color 0.45s ease, width 0.3s ease-in-out !important;
 }
 body #page-header #nav #menus .menus_item:hover a::after,
 body #page-header #nav #menus .menus_items a:hover::after,
@@ -259,11 +261,14 @@ body #nav .menus_item.select > a::after {
    Uses CSS custom properties set by theme-system.js
    ============================================================ */
 
-/* Footer — 完全融入背景（不单独拎出来，与背景同色） */
+/* Footer — 完全融入背景（不单独拎出来，与背景同色）
+   原 background-color: var(--theme-body-current) 紧接着被下一行
+   background: transparent 同层重置, 是死声明, 已删除。
+   footer 的连续渐变(--page-bg → river 水色)由 footer-river-inject.js
+   注入, 依赖其 <style> 在本文档之后的文档序生效, 这里必须保持透明 */
 #footer-wrap,
 #footer,
 footer {
-  background-color: var(--theme-body-current, transparent) !important;
   background: transparent !important;
   color: var(--theme-secondary-current, #666666) !important;
   border-top: none !important;
@@ -453,8 +458,11 @@ a[id="card-info-btn"] {
    改为轻微放大 + 柔和阴影，更专业
    ============================================================ */
 .avatar-img img {
+  /* opacity 合并进 !important 列表: 否则压死 ui-polish.css 的
+     .loaded 0.6s 淡入 (列表里没有 opacity → 不透明变化瞬切) */
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              filter 0.35s ease !important;
+              filter 0.35s ease,
+              opacity 0.6s ease !important;
 }
 .avatar-img img:hover {
   transform: scale(1.08) !important;

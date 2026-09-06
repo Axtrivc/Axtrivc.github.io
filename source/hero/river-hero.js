@@ -265,10 +265,6 @@
   if (heroStill) { heroStill.classList.add("is-shown"); heroWarmupStill = true; }
 
   // ── Tunables ──────────────────────────────────────────────────
-  // Ramp character sets live in RAMP_ASCII / RAMP_MATRIX below.
-  const CELL_PX = 4;           // logical px per glyph cell (smaller = denser, less pixel-y)
-  const BLOOM = 0.00;          // phosphor halo off by default
-  const BRAD_CELLS = 0.30;     // bloom radius, in cells
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // ── Shaders (GLSL ES 1.00) ────────────────────────────────────
@@ -288,17 +284,7 @@
     uniform float u_sceneH;  // 场景区(100dvh)设备高 —— canvas 高 = u_sceneH + 尾部溶解区(v9)
     uniform vec3  u_pageBg;  // 尾部溶解目标色 = 页面 --page-bg(v9)
     uniform float u_time;
-    uniform sampler2D u_atlas;
-    uniform sampler2D u_terrain;
-    uniform float u_glyphs;
-    uniform float u_cell;
-    uniform float u_bloom;
-    uniform float u_bRad;
-    uniform vec2  u_mouse;   // cursor, device px (y down); offscreen when idle
-    uniform float u_mAmt;    // 0..1 interaction influence (eased)
     uniform vec2  u_par;     // v14 指针视差: 相机摇摆(sx/sy 偏移), 天空 uv 层不动
-    uniform float u_intro;   // 0..1 intro write-in progress (eased)
-    uniform float u_steer;   // lateral flight steering (eased, arrow keys)
     uniform float u_tod;     // time of day, 0..1 == 00:00..24:00
     uniform float u_aurHue;  // aurora colour latched at sunset: 0=green, 1=violet
     uniform float u_aurSpeed; // aurora drift speed, rolled fresh each sunset
@@ -327,50 +313,17 @@
     uniform float u_noiseOn;    // 1 = sample the baked LUT, 0 = procedural hash noise (A/B)
     uniform float u_boot;    // 1 = terminal boot screen, 0 = live
     uniform float u_reveal;  // 0..1 intro reveal: canyon condenses in foreground→horizon (1 = full)
-    uniform float u_horizon; // base horizon Y (0.1..0.7)
     uniform float u_viewHorizon; // active canyon/river vanishing point Y
     uniform float u_scroll;  // worldZ scroll speed (river flow)
-    uniform float u_glyph;   // glyph intensity boost
     uniform float u_grain;   // pixel grain amplitude
-    uniform float u_vig;     // vignette corner darken (0..0.5)
-    uniform float u_bgBright;// base background brightness multiplier
-    uniform float u_earth;   // earth/ground brightness multiplier (vs sky)
-    uniform float u_blur;    // glyph-layer softening (0 = crisp)
-    uniform float u_riverW;  // river base width (world units)
     uniform float u_flowSpd; // river flow speed multiplier
-    uniform float u_streak;  // streamline intensity
-    uniform float u_crest;   // specular crest brightness
     uniform float u_foam;    // foam flicker intensity
-    uniform float u_contOn;  // 1 = render continents, 0 = hidden
-    uniform vec3  u_contColor; // continent glyph colour (RGB)
-    uniform vec3  u_waterTint;   // theme-driven river tint (RGB 0..1)
-    uniform float u_crtOn;   // 1 = CRT scanlines on, 0 = off
-    uniform float u_pixelText; // 1 = chunky pixel text, 0 = sharp
     uniform float u_sun;     // sun disk + glow brightness (0 = none)
-    uniform float u_atmo;    // planet-limb / horizon glow intensity
-    uniform float u_haze;    // earth atmospheric haze (ground→sky near horizon)
-    uniform float u_calm;    // river/field brightness floor at the bottom (1 = no fade)
-    uniform float u_sunMaxY; // sun apex Y at noon (smaller = higher in the sky)
     uniform float u_twilight; // 1 = twilight mode: sun orbits a small circle on the horizon
     uniform float u_twRadius; // twilight sun-orbit radius (uv units)
     uniform float u_twEllipse; // twilight orbit Y-axis scale (1 = round, <1 = flatter)
     uniform float u_twEllipseX; // twilight orbit X-axis scale (1 = round baseline)
     uniform float u_twSunZone;  // twilight: sun height (uv) below which sky is sunset-warm
-    uniform float u_dotGain; // dot-mode brightness boost (1 = neutral / ASCII)
-    uniform float u_dots;    // 1 = dot render mode (separated, capped, no burn)
-    uniform float u_lcd;     // 1 = Game Boy DMG LCD treatment
-    uniform float u_lcdPx;   // LCD pixel-grid size (device px)
-    uniform float u_grad;    // 1 = vivid spectral gradient recolour
-    uniform float u_hueA;    // gradient start hue (turns; may wrap)
-    uniform float u_hueB;    // gradient end hue (turns; may wrap)
-    uniform float u_gradBri; // gradient colour brightness
-    uniform float u_mtn;     // distant-mountain intensity/fade (0 = none)
-    uniform float u_mtnH;    // distant-mountain height above the horizon (uv units)
-    uniform float u_mtnOn;   // 1 = render distant mountains, 0 = hidden
-    uniform float u_topo;    // topographic contour strength (0 = none)
-    uniform float u_topoN;   // topographic contour density (bands)
-    uniform float u_topoOn;  // 1 = render topographic contours, 0 = hidden
-    uniform float u_relief;  // 3D relief displacement amount (0 = flat contours)
     uniform float u_canyonDepth; // canyon wall/depth scale (1 = default)
     uniform float u_canyonShadow; // 1 = full canyon self-shadowing, 0 = simpler lighting
     uniform float u_canyonMaxSteps; // PERF: max canyon march iterations
@@ -378,8 +331,6 @@
     uniform float u_refineSteps; // PERF: canyon hit-refine iterations (4..14)
     uniform float u_refineMode;  // PERF: 0 = bisection, 1 = secant (cheaper)
     uniform float u_hoist;       // PERF: 1 = read per-frame canyon constants cached once
-    uniform float u_city;    // city street/light strength (0 = none)
-    uniform float u_cityOn;  // 1 = render cities, 0 = hidden
 
     float hash(vec2 p){
       p = fract(p * vec2(123.34, 345.45));
@@ -560,33 +511,6 @@
       return sheet * stripe * heightGate * amp * shimmer * baseBias * u_aurFilamentIntensity;
     }
 
-    // ── Smooth Worley (cellular) noise ── exponential smooth-min over the
-    // neighbourhood (no sharp cell creases); inverting it gives puffy lumps.
-    float worley(vec2 p){
-      vec2 ip = floor(p), fp = fract(p);
-      float res = 0.0;
-      for (int j = -1; j <= 1; j++)
-      for (int i = -1; i <= 1; i++){
-        vec2 g = vec2(float(i), float(j));
-        vec2 o = vec2(hash(ip + g), hash(ip + g + 19.7));
-        vec2 r = g + o - fp;
-        res += exp(-18.0 * length(r));
-      }
-      return -log(res) / 18.0;
-    }
-    // Cloud density — CUMULUS puffs. Gently billow the sample so puff edges bulge
-    // into rounded cauliflower lobes, then build a big low-frequency body with
-    // lighter higher-frequency bumps ON it (round puff shape survives instead of
-    // dissolving into haze).
-    // Procedural CUMULUS density — a rounded billowing body (inverted Worley) with
-    // lighter cauliflower bumps, billowed by a domain warp. Small & sparse, shaded
-    // by normals + Beer below for the scene's stylised look.
-    float cloudDensity(vec2 p){
-      p += (fbm(p * 1.3 + 3.7) - 0.5) * 0.35;            // billow the lobes
-      return (1.0 - worley(p))                        * 0.70   // big rounded body
-           + (1.0 - worley(p * 2.3 + vec2(4.0, 1.0)))  * 0.30;  // cauliflower bumps
-    }
-
     // ── Volumetric clouds (3D raymarch, ported from the aurora sandbox) ──
     // 3D value noise + fbm (overloaded for vec3).
     float hash(vec3 p){
@@ -673,835 +597,6 @@
       }
       return clamp(sum, 0.0, 1.0);
     }
-    // Pure-hue → RGB (full saturation/value); h in turns, wraps via fract.
-    vec3 hue2rgb(float h){
-      vec3 k = abs(fract(h + vec3(0.0, 0.6666667, 0.3333333)) * 6.0 - 3.0);
-      return clamp(k - 1.0, 0.0, 1.0);
-    }
-
-    // Subtle camera bank — rolls the scene toward the steer direction.
-    // Applied to BOTH field() and the grade so the curved horizon and
-    // the ASCII ground tilt together; glyph cells stay screen-aligned.
-    vec2 bankUV(vec2 uv){
-      float roll = u_steer * 0.11;            // ≈ ±2° at full steer — just barely
-      float asp  = u_res.x / u_res.y;
-      vec2  rc   = (uv - 0.5) * vec2(asp, 1.0);
-      rc = mat2(cos(roll), sin(roll), -sin(roll), cos(roll)) * rc;
-      return rc * vec2(1.0 / asp, 1.0) + 0.5;
-    }
-
-    // Constellation segment → vec2(line mask, node mask)
-    vec2 segMask(vec2 p, vec2 a, vec2 b){
-      vec2 pa = p - a, ba = b - a;
-      float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
-      float d = length(pa - ba * h);
-      float line = smoothstep(0.010, 0.004, d);
-      float node = smoothstep(0.020, 0.006, min(length(p - a), length(p - b)));
-      return vec2(line, node);
-    }
-
-    // River centre-line in world space (X as a function of depth Z)
-    float riverCx(float wz){
-      return 0.90 * sin(wz * 0.16)
-           + 0.45 * sin(wz * 0.37 + 1.3)
-           + 0.70 * (vnoise(vec2(wz * 0.05, 2.0)) - 0.5);
-    }
-
-    const float TERRAIN_SIZE = 512.0;
-
-    // Generated terrain: a generated height texture sampled in stable
-    // world-space. Time only advances terrainZ, so features roll toward the
-    // viewer instead of emitting, expanding, or swimming sideways.
-    const float TERRAIN_GLOBE_R = 96.0;
-    const float TERRAIN_CAM_H = 0.84;
-    const float TERRAIN_RAY_X = 0.360;
-    const float TERRAIN_RAY_Y = 0.700;
-    // Max radial surface displacement (world units) at |altitude| = 1. Kept
-    // below TERRAIN_CAM_H so the highest peaks still pass beneath the camera.
-    const float RELIEF_AMP = 0.6;
-    float terrainTanHorizon(){
-      float camD = TERRAIN_GLOBE_R + TERRAIN_CAM_H;
-      return sqrt(max(0.0, camD * camD - TERRAIN_GLOBE_R * TERRAIN_GLOBE_R)) / TERRAIN_GLOBE_R;
-    }
-    float terrainHorizonAtX(float uvx){
-      float asp = u_res.x / u_res.y;
-      float x = (uvx - 0.5) * asp * TERRAIN_RAY_X;
-      float tanHorizon = terrainTanHorizon();
-      // Physical limb from the same sphere/ray model used by terrainInk().
-      // CURVE is intentionally ignored here so it cannot decouple the topo
-      // projection from the visible horizon.
-      return u_horizon + tanHorizon * (sqrt(1.0 + x * x) - 1.0) / TERRAIN_RAY_Y;
-    }
-    float terrainHorizon(vec2 uv){
-      return terrainHorizonAtX(uv.x);
-    }
-    vec3 terrainProject(vec2 uv){
-      float bend = uv.x - 0.5;
-      float hYc  = terrainHorizon(uv);
-      float gy   = (uv.y - hYc) / (1.0 - hYc);
-      float lateral = clamp(abs(bend) * 2.0, 0.0, 1.0);
-      float globeArc = 1.0 - sqrt(max(0.0, 1.0 - lateral * lateral));
-      float crown = 1.0 - globeArc;
-      float midBody = smoothstep(0.020, 0.78, gy) * (1.0 - smoothstep(0.90, 1.0, gy));
-      float sphereGy = gy + crown * 0.315 * midBody;
-      float z    = 1.0 / (sphereGy * sphereGy * 0.86 + 0.044);
-      float sideRecede = globeArc * (0.72 + 0.24 * (1.0 - smoothstep(0.72, 1.0, gy)));
-      float tx   = bend * z * 2.04 * (1.0 - sideRecede * 0.46)
-                 + u_steer * (0.14 + z * 0.16);
-      float tz   = z * 1.38 + u_time * u_scroll * 0.56;
-      return vec3(tx, tz, z);
-    }
-    float mirror01(float v){
-      float m = mod(v, 2.0);
-      return 1.0 - abs(m - 1.0);
-    }
-    vec2 terrainUV(vec2 terrainP){
-      return vec2(
-        fract(terrainP.x * 0.060 + 0.5),
-        0.035 + 0.930 * mirror01(terrainP.y * 0.0085 + 0.17)
-      );
-    }
-    vec4 decodeTerrain(vec4 raw){
-      float encodedAlt = clamp(raw.r * (65280.0 / 65535.0) + raw.g * (255.0 / 65535.0), 0.0, 1.0);
-      float alt = encodedAlt * 2.0 - 1.0;
-      return vec4(alt, 0.0, 0.0, 0.0);
-    }
-    vec4 terrainFetch(vec2 pixel){
-      vec2 p = vec2(
-        mod(pixel.x, TERRAIN_SIZE),
-        clamp(pixel.y, 0.0, TERRAIN_SIZE - 1.0)
-      );
-      vec2 uv = (p + 0.5) / TERRAIN_SIZE;
-      return decodeTerrain(texture2D(u_terrain, uv));
-    }
-    // Altitude lookup for the relief refinement loop. The terrain texture is
-    // NEAREST-filtered (it packs 16-bit altitude across two bytes, so the GPU
-    // can't linearly filter it), so we bilinearly blend four taps by hand —
-    // otherwise the displaced surface snaps to texel steps and shows blocky
-    // rectangular facets wherever the relief is steep.
-    float terrainHeightFast(vec2 terrainMap){
-      vec2 coord = vec2(fract(terrainMap.x), clamp(terrainMap.y, 0.0, 1.0)) * TERRAIN_SIZE - 0.5;
-      vec2 base = floor(coord);
-      vec2 f = fract(coord);
-      f = f * f * (3.0 - 2.0 * f);
-      float a = terrainFetch(base).x;
-      float b = terrainFetch(base + vec2(1.0, 0.0)).x;
-      float c = terrainFetch(base + vec2(0.0, 1.0)).x;
-      float d = terrainFetch(base + vec2(1.0, 1.0)).x;
-      return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-    }
-    vec4 terrainSampleAt(vec2 terrainP){
-      vec2 coord = terrainUV(terrainP) * TERRAIN_SIZE - 0.5;
-      vec2 base = floor(coord);
-      vec2 f = fract(coord);
-      f = f * f * (3.0 - 2.0 * f);
-      vec4 a = terrainFetch(base);
-      vec4 b = terrainFetch(base + vec2(1.0, 0.0));
-      vec4 c = terrainFetch(base + vec2(0.0, 1.0));
-      vec4 d = terrainFetch(base + vec2(1.0, 1.0));
-      return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-    }
-    vec4 terrainSampleUV(vec2 terrainMap){
-      vec2 coord = fract(terrainMap) * TERRAIN_SIZE - 0.5;
-      vec2 base = floor(coord);
-      vec2 f = fract(coord);
-      f = f * f * (3.0 - 2.0 * f);
-      vec4 a = terrainFetch(base);
-      vec4 b = terrainFetch(base + vec2(1.0, 0.0));
-      vec4 c = terrainFetch(base + vec2(0.0, 1.0));
-      vec4 d = terrainFetch(base + vec2(1.0, 1.0));
-      return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-    }
-    vec4 terrainSampleGlobeUV(vec2 terrainMap){
-      vec2 coord = vec2(fract(terrainMap.x), clamp(terrainMap.y, 0.0, 1.0)) * TERRAIN_SIZE - 0.5;
-      vec2 base = floor(coord);
-      vec2 f = fract(coord);
-      f = f * f * (3.0 - 2.0 * f);
-      vec4 a = terrainFetch(base);
-      vec4 b = terrainFetch(base + vec2(1.0, 0.0));
-      vec4 c = terrainFetch(base + vec2(0.0, 1.0));
-      vec4 d = terrainFetch(base + vec2(1.0, 1.0));
-      return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-    }
-    vec4 terrainSample(vec2 uv){
-      vec3 tp = terrainProject(uv);
-      return terrainSampleAt(tp.xy);
-    }
-    float terrainVisibility(vec2 uv, float z){
-      float hYc  = terrainHorizon(uv);
-      float gy   = (uv.y - hYc) / (1.0 - hYc);
-      float horizonTaper = smoothstep(0.055, 0.19, gy);
-      float farTaper = 1.0 - smoothstep(10.0, 26.0, z);
-      float bottomTaper = smoothstep(0.02, 0.10, 1.0 - uv.y);
-      return horizonTaper * farTaper * bottomTaper;
-    }
-    float axisValleyOffset(float py){
-      return 0.018 * sin(py * 8.0 + 0.7)
-           + 0.008 * sin(py * 15.0 - 1.6);
-    }
-    float sideTerrainLobes(vec2 polarP, float side){
-      float acc = 0.0;
-      float row0 = floor(polarP.y * 5.2);
-      for (int i = -2; i <= 2; i++){
-        float row = row0 + float(i);
-        float r1 = hash(vec2(row, side * 17.0 + 1.0));
-        float r2 = hash(vec2(row, side * 19.0 + 3.0));
-        float r3 = hash(vec2(row, side * 23.0 + 5.0));
-        float r4 = hash(vec2(row, side * 29.0 + 7.0));
-        float r5 = hash(vec2(row, side * 31.0 + 11.0));
-        float cy = (row + 0.5 + (r2 - 0.5) * 0.92) / 5.2;
-        float cx = axisValleyOffset(cy) + side * (0.060 + 0.110 * r1);
-        float sx = 0.052 + 0.105 * r3;
-        float sy = 0.100 + 0.240 * r4;
-        vec2 q = vec2((polarP.x - cx) / sx, (polarP.y - cy) / sy);
-        float blob = exp(-dot(q, q));
-        float amp = mix(-0.145, 0.300, r5);
-        acc += amp * blob;
-      }
-      return acc;
-    }
-    vec3 rotateAroundX(vec3 p, float a){
-      float c = cos(a);
-      float s = sin(a);
-      return vec3(p.x, p.y * c - p.z * s, p.y * s + p.z * c);
-    }
-    vec2 globeModelUV(vec3 n){
-      float lon = atan(n.x, n.z) * 0.15915494309189535 + 0.5;
-      float lat = asin(clamp(n.y, -1.0, 1.0)) * 0.3183098861837907 + 0.5;
-      return vec2(lon, 1.0 - lat);
-    }
-    float terrainHeightModel(vec2 terrainMap, vec2 polarP){
-      return clamp(terrainSampleGlobeUV(terrainMap).x, -1.0, 1.0);
-    }
-    vec2 terrainMapBase(vec2 heightP){
-      return vec2(0.50, 0.50) + vec2(heightP.x * 0.62, heightP.y * 0.355);
-    }
-    vec2 terrainMapWarped(vec2 heightP){
-      return terrainMapBase(heightP);
-    }
-    float terrainAltitude(vec2 heightP){
-      return terrainHeightModel(terrainMapWarped(heightP), heightP);
-    }
-    float valleyLowCenter(vec2 heightP){
-      float predicted = axisValleyOffset(heightP.y);
-      float bestX = predicted;
-      float bestH = 2.0;
-      for (int i = -3; i <= 3; i++){
-        float off = float(i) * 0.030;
-        vec2 p = vec2(predicted + off, heightP.y);
-        float h = terrainAltitude(p) + abs(off) * 0.010;
-        if (h < bestH){
-          bestH = h;
-          bestX = p.x;
-        }
-      }
-      return bestX;
-    }
-    vec4 terrainInk(vec2 uv){
-      float hSurface = terrainHorizon(uv);
-      float surfaceOffset = uv.y - hSurface;
-      float rayOffset = uv.y - u_horizon;
-
-      // Generated terrain topology. Cast a narrow camera ray into a large sphere,
-      // then sample a zoomed-in geodesic patch using local polar coordinates.
-      // This keeps the visible terrain locked to the globe without the
-      // screen-edge bends caused by flattening the normal back into X/Z.
-      float globeR = TERRAIN_GLOBE_R;
-      float camD = globeR + TERRAIN_CAM_H;
-      float tanHorizon = terrainTanHorizon();
-      float asp = u_res.x / u_res.y;
-      vec3 ro = vec3(0.0, camD, 0.0);
-      vec3 rd = normalize(vec3(
-        (uv.x - 0.5) * asp * TERRAIN_RAY_X,
-        -tanHorizon - rayOffset * TERRAIN_RAY_Y,
-        1.0
-      ));
-      float b = dot(ro, rd);
-      float c = dot(ro, ro) - globeR * globeR;
-      float disc = b * b - c;
-      if (disc <= 0.0) return vec4(0.0);
-      float root = sqrt(disc);
-      float t = -b - root;
-      if (t <= 0.0) return vec4(0.0);
-
-      float rollTravel = u_time * u_scroll * 0.020;
-
-      // ── Relief displacement ── the painted altitude pushes the surface in
-      // and out along the radius (peaks toward the camera, valleys away). A
-      // few fixed-point iterations re-solve the view ray against the displaced
-      // shell, so the terrain gains real parallax and slope shading as you
-      // fly over it — the altitude is actually *felt* as 3D, not drawn flat.
-      // |ro+rd*t| = targetR  →  t = -b - sqrt(b*b - (|ro|^2 - targetR^2)).
-      float amp = RELIEF_AMP * u_relief;
-      for (int i = 0; i < 8; i++){
-        if (amp <= 0.0001) break;
-        vec3 pp  = ro + rd * t;
-        vec3 nnp = normalize(rotateAroundX(normalize(pp), rollTravel));
-        float Hk = terrainHeightFast(globeModelUV(nnp));
-        float targetR = globeR + amp * Hk;
-        float dd = b * b - (dot(ro, ro) - targetR * targetR);
-        if (dd <= 0.0) break;
-        t = -b - sqrt(dd);
-      }
-
-      // Resolved surface point + normal (displaced). Sample the generated
-      // terrain by surface normal -> longitude/latitude, rotating the normal
-      // around the orbit axis so the terrain stays attached to the globe.
-      vec3 hit = ro + rd * t;
-      vec3 n = normalize(hit);
-      vec3 mapN = normalize(rotateAroundX(n, rollTravel));
-      vec2 terrainMap = globeModelUV(mapN);
-      vec2 heightP = terrainMap;
-      float surfaceDepth = clamp((uv.y - hSurface) / max(1.0 - hSurface, 0.0001), 0.0, 1.0);
-      float alt = terrainHeightModel(terrainMap, heightP);
-      float displayAlt = clamp(alt * 0.90 + 0.5, 0.0, 1.0);
-      float valleyCorridor = 1.0 - smoothstep(-0.16, 0.08, alt);
-      float density = max(5.0, u_topoN);
-      float bands = displayAlt * density + 0.23;
-      float dline = min(fract(bands), 1.0 - fract(bands));
-
-      // Relief lighting is sampled in the same spherical-map space as the
-      // contours, so the 3D cue stays registered to the actual bands.
-      float texel = 1.0 / TERRAIN_SIZE;
-      float altW = terrainHeightModel(terrainMap - vec2(texel * 2.0, 0.0), heightP);
-      float altE = terrainHeightModel(terrainMap + vec2(texel * 2.0, 0.0), heightP);
-      float altS = terrainHeightModel(terrainMap - vec2(0.0, texel * 2.0), heightP);
-      float altN = terrainHeightModel(terrainMap + vec2(0.0, texel * 2.0), heightP);
-      // Steepen the sampled slope with the relief amount so the lit/shadowed
-      // faces of the displaced terrain read clearly.
-      float slopeGain = 8.0 + 16.0 * u_relief;
-      vec3 reliefN = normalize(vec3((altW - altE) * slopeGain, 1.0, (altS - altN) * slopeGain * 0.70));
-      float horizonSoft = smoothstep(0.000, 0.780, root);
-      float ridgeAlt = smoothstep(0.68, 0.96, displayAlt);
-      // Constant screen-space line width from the band's pixel derivative, so
-      // contours stay crisp and locked to the surface instead of shimmering /
-      // warping as the steep canyon walls scroll past. (Without this the width
-      // is fixed in altitude units, so it goes sub-pixel on steep slopes.)
-      float bandWidth = clamp(fwidth(bands), 0.006, 0.12);
-      float line = 1.0 - smoothstep(0.0, bandWidth * (1.4 + ridgeAlt * 0.6), dline);
-
-      float bottomTaper = smoothstep(0.02, 0.10, 1.0 - uv.y);
-      float surfaceTaper = smoothstep(-0.010, 0.055, surfaceOffset);
-      float sideFeather = 1.0 - smoothstep(0.988, 1.0, abs(uv.x - 0.5) * 2.0);
-      float vis = horizonSoft * bottomTaper * surfaceTaper * sideFeather;
-      float crown = smoothstep(0.18, 0.74, n.z);
-      float reliefAmt = clamp(u_relief, 0.0, 1.3);
-
-      // ── Sun direction from time-of-day ── derived from the same u_tod the
-      // sky sun uses, expressed in the terrain tangent frame (x=east, y=up,
-      // z=north). The hillshade and cast shadows therefore track the sun:
-      // long raking shadows that swing east→west at dawn/dusk, short at noon.
-      float sunDay  = (u_tod * 24.0 - 6.0) / 12.0;           // 0 dawn .. 1 dusk
-      float sunElev = sin(sunDay * 3.14159265);              // matches sky 'elev'
-      float sunUpT  = smoothstep(-0.10, 0.12, sunElev);
-      float sunScrX = 0.16 + 0.68 * clamp(sunDay, 0.0, 1.0); // matches sky 'sunX'
-      float sunAz   = (sunScrX - 0.5) * 2.0;                 // -0.68 dawn .. +0.68 dusk
-      float sunVert = 0.26 + 1.60 * clamp(sunElev, 0.0, 1.0);
-      vec3 sunDir = normalize(vec3(sunAz, sunVert, 0.42));
-      // After dusk / before dawn, ease toward a soft overhead key so relief
-      // stays readable while the hard directional shadows fade with the sun.
-      sunDir = normalize(mix(vec3(0.0, 1.0, 0.0), sunDir, sunUpT));
-
-      // ── Hillshade ── the dominant depth cue: the sun rakes the displaced
-      // slopes so faces toward it brighten and faces away fall into shadow.
-      float lambert = dot(reliefN, sunDir);                       // -1 shadow .. +1 lit
-      float hill = pow(clamp(lambert * 0.5 + 0.5, 0.0, 1.0), 1.0 + 1.1 * reliefAmt);
-      float hillShade = mix(1.0, mix(0.30, 1.70, hill), reliefAmt);
-
-      // ── Soft cast shadow ── march along the sun's horizontal direction; if
-      // higher ground lies toward the sun this point sits in its shade. The
-      // per-step height threshold scales with the sun's elevation (low sun →
-      // shallow slope → long shadows), so shadow length tracks the day too.
-      float lightSlope = sunDir.y / max(length(sunDir.xz), 0.05);
-      vec2 sunMapDir = length(sunDir.xz) > 1.0e-3 ? normalize(vec2(sunDir.x, -sunDir.z)) : vec2(0.0);
-      float occl = 0.0;
-      for (int s = 1; s <= 4; s++){
-        float hs = terrainHeightFast(terrainMap + sunMapDir * texel * 7.0 * float(s));
-        occl = max(occl, (hs - alt) - float(s) * 0.29 * lightSlope);
-      }
-      float castShadow = 1.0 - reliefAmt * sunUpT * 0.50 * smoothstep(0.0, 0.18, occl);
-
-      // ── Valley ambient occlusion ── low, concave ground sits in shade.
-      float ao = 1.0 - 0.34 * reliefAmt * smoothstep(0.25, -0.35, alt);
-
-      float radialDepth = smoothstep(0.08, 0.90, surfaceDepth) * (1.0 - valleyCorridor * 0.30);
-      float elevationDepth = alt * radialDepth;
-      float baseShade = 0.52 + 0.28 * crown + 0.17 * clamp(n.y, 0.0, 1.0)
-                      + elevationDepth * (0.18 + 0.40 * reliefAmt);
-      float sphereShade = baseShade * hillShade * castShadow * ao;
-
-      vec3 lowCol  = vec3(0.050, 0.135, 0.300);
-      vec3 midCol  = vec3(0.140, 0.350, 0.470);
-      vec3 highCol = vec3(0.180, 0.400, 0.480);
-      vec3 fillCol = mix(lowCol, midCol, smoothstep(0.04, 0.78, displayAlt));
-      fillCol = mix(fillCol, highCol, smoothstep(0.70, 1.25, displayAlt));
-      fillCol *= sphereShade * (0.68 + 0.30 * smoothstep(0.10, 0.92, displayAlt));
-      vec3 lineCol = mix(vec3(0.430, 0.660, 0.670), vec3(0.620, 0.720, 0.570), smoothstep(0.10, 1.00, displayAlt));
-      lineCol *= sphereShade * (0.94 + 0.34 * smoothstep(0.20, 0.90, displayAlt));
-
-      float topoOn = u_topoOn * u_topo;
-      // Higher ground draws denser/more opaque so the shaded relief reads as
-      // solid form, not a faint wash over the ground plane.
-      float fillA = topoOn * vis * (0.105 + (0.075 + 0.30 * reliefAmt) * smoothstep(0.04, 0.96, displayAlt));
-      float lineA = topoOn * vis * line * (0.520 + 0.320 * ridgeAlt);
-
-      float channelX = valleyLowCenter(heightP);
-      float channelD = heightP.x - channelX;
-      float channelW = clamp(u_riverW * 0.035, 0.030, 0.085);
-      float channelJitter = 0.86 + 0.18 * fbm(vec2(heightP.y * 3.2, channelX * 15.0 + 21.0));
-      float channelAbs = abs(channelD) / max(channelW * channelJitter, 0.0001);
-      float waterBody = 1.0 - smoothstep(0.78, 1.26, channelAbs);
-      float waterCore = 1.0 - smoothstep(0.00, 0.72, channelAbs);
-      float bankEdge = exp(-sq((channelAbs - 0.96) / 0.28));
-
-      // The channel rides the rotating terrain, but the water texture itself
-      // flows upward through that fixed valley path. Its coverage is gated on
-      // the same screen-cell lattice as the original dot shader, so water reads
-      // as pale pixel ink instead of a dark smooth ribbon.
-      float flowY = heightP.y - u_time * u_flowSpd * 0.160;
-      float localX = channelD / max(channelW, 0.0001);
-      float flow1 = fbm(vec2(localX * 1.6, flowY * 8.0));
-      float flow2 = fbm(vec2(localX * 3.4 + 2.0, flowY * 18.0));
-      float flow = flow1 * 0.55 + flow2 * 0.45;
-      float strm = smoothstep(0.16, 0.86, waterBody * (0.52 + 0.82 * flow) + 0.06);
-      float waveA = 0.5 + 0.5 * sin(flowY * 34.0 + localX * 5.4);
-      float waveB = 0.5 + 0.5 * sin(flowY * 57.0 + localX * 9.1 + flow * 4.2);
-      float crest = pow(waveA * waveB, 5.0) * waterBody * 0.92;
-      float streak = abs(sin(localX * 7.4 + flow * 4.5));
-      streak = pow(1.0 - smoothstep(0.0, 0.34, streak), 7.0);
-      float streakPulse = 0.45 + 0.55 * sin(flowY * 18.0);
-      strm = max(strm, crest);
-      strm = max(strm, streak * waterBody * streakPulse * u_streak);
-      float foam = bankEdge * (0.22 + 0.44 * strm) * clamp(u_foam * 0.42, 0.0, 0.92);
-      float waterCell = max(u_res.y / max(u_waterDot, 1.0), 2.0);
-      vec2 cellP = uv * u_res / waterCell;
-      vec2 cell = floor(cellP);
-      vec2 lp = fract(cellP) - 0.5;
-      float dotCore = smoothstep(0.45, 0.18, length(lp));
-      float cellSpark = step(0.22, hash(cell + floor(flowY * 30.0)));
-      float pixelInk = clamp(dotCore * (0.70 + 0.40 * cellSpark + 0.42 * strm), 0.0, 1.0);
-      float waterInk = max(pixelInk, waterCore * 0.30);
-      vec3 waterBase0  = vec3(0.790, 0.910, 0.900);
-      vec3 waterWhite0 = vec3(1.000, 0.990, 0.940);
-      vec3 tintBase    = u_waterTint * 0.85 + vec3(0.10, 0.10, 0.10);
-      vec3 tintHigh    = u_waterTint + vec3(0.15, 0.15, 0.15);
-      vec3 waterBase   = mix(waterBase0, tintBase,  0.55);
-      vec3 waterWhite  = mix(waterWhite0, tintHigh, 0.45);
-      vec3 waterCol    = mix(waterBase, waterWhite, clamp(0.56 + 0.36 * waterCore + 0.32 * strm + 0.18 * foam, 0.0, 1.0));
-      float waterA = 0.0;
-
-      float terrainA = clamp(fillA + lineA, 0.0, 0.58);
-      vec3 terrainCol = (fillCol * fillA + lineCol * lineA) / max(terrainA, 0.0001);
-      float a = clamp(terrainA + waterA * (1.0 - terrainA * 0.32), 0.0, 0.94);
-      vec3 col = mix(terrainCol, waterCol, clamp(waterA * 1.55, 0.0, 0.96));
-      return vec4(col, a);
-    }
-
-    // Town footprint presence (0..1) at a ground point
-    float townF(vec2 wp){
-      vec2  tcell = floor(wp * 0.75);
-      float tOn   = step(0.40, hash(tcell + 17.0));
-      vec2  tc    = (tcell + 0.5
-                     + (vec2(hash(tcell + 3.0), hash(tcell + 5.0)) - 0.5) * 0.6) / 0.75;
-      float td    = length((wp - tc) * vec2(1.0, 0.8));
-      return tOn * smoothstep(0.88, 0.05, td);
-    }
-
-    // City intensity at a device-pixel P. Self-contained (recomputes the
-    // ground projection). A city is a coarse rectilinear BLOCK GRID — lit
-    // square blocks separated by dark streets, gently rotated per city —
-    // rendered through the scene's halftone so each block reads as a cluster
-    // of lit dots. Brighter toward downtown; sparse but present; far edges
-    // fade to avoid flicker; slow night pulse. Returns 0 off the cities.
-    float cityAt(vec2 P){
-      if (u_cityOn < 0.5) return 0.0;
-      vec2  uv   = bankUV(P / u_res);
-      float hYc  = terrainHorizon(uv);
-      if (uv.y <= hYc) return 0.0;
-      float gy = (uv.y - hYc) / (1.0 - hYc);
-      float z  = 1.0 / (gy * gy * 0.90 + 0.05);
-      float worldZ = z * 1.8 + u_time * u_scroll;
-      float wzNear = (1.0 / 0.95) * 1.8 + u_time * 1.2;
-      float cxN    = riverCx(wzNear);
-      float slope  = clamp((riverCx(wzNear + 0.6) - riverCx(wzNear - 0.6)) / 1.2, -0.5, 0.5);
-      float follow = cxN + slope * (worldZ - wzNear);
-      float worldX = (uv.x - 0.5) * z * 1.6 + follow + u_steer * (0.25 + z * 0.30);
-      float cxBase = riverCx(worldZ);
-      float width  = max(u_riverW + u_riverW * 0.33 * sin(worldZ * 0.21), u_riverW * 0.45);
-      float d      = (worldX - cxBase) / width;
-      float offR   = 1.0 - exp(-d * d * 1.6);
-      float farRiver = smoothstep(1.30, 2.30, abs(d));
-      float contN  = fbm(vec2(worldX * 0.18 + 7.0, worldZ * 0.18 + 13.0));
-      float contBody = smoothstep(0.44, 0.54, contN) * farRiver;  // broad land so the city can sprawl
-      float bankLand = smoothstep(2.60, 1.10, abs(d)) * smoothstep(0.55, 1.10, abs(d));
-      float landMask = max(contBody, bankLand) * offR;
-      vec2  wp    = vec2(worldX, worldZ);
-      // Sparse but PRESENT: a city is in view much of the time, with open
-      // ground between — distinct places, not crowding the scene.
-      vec2  ccell = floor(wp * 0.042);
-      float here  = step(0.48, hash(ccell + 21.0));
-      vec2  cpos  = (ccell + 0.5 + (vec2(hash(ccell + 3.0), hash(ccell + 9.0)) - 0.5) * 0.40) / 0.042;
-      float cdst  = length((wp - cpos) * vec2(1.0, 0.85));
-      float foot  = here * smoothstep(2.10, 0.05, cdst) * offR;
-      if (foot <= 0.001) return 0.0;
-      float core  = smoothstep(1.55, 0.05, cdst);             // brighter toward downtown
-      // City BLOCK GRID — coarse rectilinear blocks (the squares) with dark
-      // streets between, gently rotated per city. Rendered through the scene
-      // halftone so each block becomes a little cluster of lit dots → reads
-      // as a real city, not a featureless patch.
-      float ang   = (hash(ccell + 11.0) - 0.5) * 0.7;
-      mat2  R     = mat2(cos(ang), sin(ang), -sin(ang), cos(ang));
-      float gf    = 3.0 + hash(ccell + 13.0) * 1.3;           // coarse — big, clear blocks
-      vec2  g     = R * (wp - cpos) * gf;
-      vec2  fr    = abs(fract(g) - 0.5);
-      float blocks = smoothstep(0.10, 0.18, min(fr.x, fr.y));  // lit blocks, dark street grid
-      vec2  blk    = floor(g);
-      float blkLit = 0.55 + 0.45 * hash(blk + 3.0);           // some blocks brighter (lit windows)
-      float built  = blocks * blkLit * (0.55 + 0.55 * core);  // denser/brighter downtown
-      float aDayL  = (u_tod * 24.0 - 6.0) / 12.0;
-      float sunUpL = smoothstep(-0.10, 0.30, sin(aDayL * 3.14159265));
-      float nightG = 1.0 - sunUpL;
-      float pulse  = 0.75 + 0.25 * sin(u_time * 1.0 + hash(ccell + 4.0) * 6.2831);
-      float far    = smoothstep(15.0, 6.0, z);                // fade distant blocks (anti-flicker)
-      return foot * built * mix(0.55, pulse, nightG) * far * u_city * 1.35;
-    }
-
-    // Aerial flythrough over a gently curved planet (it rotates toward
-    // the viewer), a river down the centre, with little cities whose
-    // buildings rise on the banks from time to time.
-    float field(vec2 P){
-      vec2 uv = P / u_res;                  // y-down: 0 top .. 1 bottom
-      uv = bankUV(uv);                      // subtle bank toward steer
-      float hYc = terrainHorizon(uv);
-
-      // Per-cell fast write-in (random order; all on by u_intro ≈ 0.9)
-      vec2  cellp = floor(P / u_cell);
-      float th    = hash(cellp + 7.13) * 0.85;
-      float rv    = smoothstep(th, th + 0.05, u_intro);
-
-      // River-follow params (pixel-independent — time only)
-      float wzNear = (1.0 / 0.95) * 1.8 + u_time * 1.2;
-      float cxN    = riverCx(wzNear);
-      float slope  = clamp((riverCx(wzNear + 0.6) - riverCx(wzNear - 0.6)) / 1.2, -0.5, 0.5);
-
-      // ── Mountains = the continents' OWN surface, lifted ──────────────
-      // The peaks are not a separate sky layer: they are the landmass
-      // itself raised in screen space by its relief. We march the ground
-      // depths along this column and, for each continent found, lift its
-      // crest a fixed screen amount (u_mtnH) ABOVE its real base. The
-      // visible FACE spans [crest .. base], so the peak is physically
-      // joined to the continent it grows from — and because it's anchored
-      // to the land's actual depth, it TRAVELS DOWN with the continent and
-      // sinks below the horizon as the land scrolls into the foreground.
-      // Computed before the sky/ground split so the same mass renders
-      // continuously across the seam. Gated to a band around the horizon.
-      float contLift = 0.0;
-      if (u_mtnOn > 0.5 && uv.y > hYc - (u_mtnH + 0.02) && uv.y < hYc + 0.16) {
-        float elevM = sin(((u_tod * 24.0 - 6.0) / 12.0) * 3.14159265);
-        float litM  = mix(0.40, 1.0, smoothstep(-0.10, 0.12, elevM));
-        float gyP   = max((uv.y - hYc) / (1.0 - hYc), 0.0);
-        for (int i = 0; i < 9; i++) {
-          float gyB  = gyP + (float(i) + 0.5) * 0.028;       // march toward the viewer
-          float zB   = 1.0 / (gyB * gyB * 0.90 + 0.05);
-          float wzB  = zB * 1.8 + u_time * u_scroll;
-          float folB = cxN + slope * (wzB - wzNear);
-          float wxB  = (uv.x - 0.5) * zB * 1.6 + folB + u_steer * (0.25 + zB * 0.30);
-          float cNB  = fbm(vec2(wxB * 0.18 + 7.0, wzB * 0.18 + 13.0));
-          // SAME continent field + threshold the ground uses (0.50–0.58).
-          float landB = smoothstep(0.50, 0.58, cNB)
-                      * smoothstep(1.30, 2.30, abs((wxB - riverCx(wzB)) / max(u_riverW, 0.6)));
-          // Jagged ridge profile: SHARP in world-X (a defined mountain
-          // crest, not a smooth blob) but VERY SLOW in world-Z, so the shape
-          // is stable and scrolls coherently with the land instead of
-          // flickering. Gated by landB so it only rises on the continent.
-          float jz = wzB * 0.07;
-          float r1 = 1.0 - abs(2.0 * vnoise(vec2(wxB * 0.95 + 4.0, jz)) - 1.0);
-          float r2 = 1.0 - abs(2.0 * vnoise(vec2(wxB * 2.20 + 9.0, jz + 5.0)) - 1.0);
-          float ridge = pow(clamp(r1, 0.0, 1.0), 1.5) * 0.70
-                      + pow(clamp(r2, 0.0, 1.0), 2.4) * 0.40;
-          float hB = landB * clamp(ridge, 0.0, 1.0);
-          float uvyB = hYc + gyB * (1.0 - hYc);              // continent base on screen
-          float L    = hB * u_mtnH;                          // screen-space lift
-          float topY = uvyB - L;                             // lifted crest
-          float onFace = smoothstep(topY - 0.0024, topY + 0.0032, uv.y)        // below the crest
-                       * (1.0 - smoothstep(uvyB - 0.0020, uvyB + 0.0090, uv.y)); // above the base
-          float frac = clamp((uvyB - uv.y) / max(L, 1e-4), 0.0, 1.0);    // 0 base→1 crest
-          // Weight by frac so the rise FADES INTO the existing continent at
-          // its base (no doubled, "spilled" copy of the land) — only the
-          // lifted crest adds above the landmass it grows from.
-          contLift = max(contLift, onFace * frac);
-        }
-        contLift *= litM * u_mtn;
-      }
-
-      if (uv.y < hYc) {
-        // ── Sky — stars/constellations at night, sun/clouds by day ──
-        float todH  = u_tod * 24.0;
-        float aDay  = (todH - 6.0) / 12.0;
-        float elev  = sin(aDay * 3.14159265);
-        float sunUp = smoothstep(-0.10, 0.12, elev);
-        float skyH  = uv.y / max(hYc, 0.001);
-
-        float nightAmt = smoothstep(0.02, -0.45, elev);
-        float gap = smoothstep(1.0, 0.74, skyH);
-
-        float g    = hash(cellp + 41.7);
-        float mag  = pow(hash(cellp + 5.0), 3.5);
-        float star = step(0.90, g) * (0.18 + 0.82 * mag);
-        float dens = mix(0.45, 1.0, 1.0 - smoothstep(0.0, 1.0, skyH));
-        float tw   = 0.45 + 0.55 * sin(u_time * (1.6 + 3.0 * hash(cellp + 9.0)) + g * 63.0);
-        star *= dens * tw;
-
-        vec2 cm = vec2(0.0);
-        cm = max(cm, segMask(uv, vec2(0.16, 0.10), vec2(0.22, 0.15)));
-        cm = max(cm, segMask(uv, vec2(0.22, 0.15), vec2(0.29, 0.12)));
-        cm = max(cm, segMask(uv, vec2(0.29, 0.12), vec2(0.35, 0.18)));
-        cm = max(cm, segMask(uv, vec2(0.68, 0.09), vec2(0.74, 0.14)));
-        cm = max(cm, segMask(uv, vec2(0.74, 0.14), vec2(0.71, 0.20)));
-        cm = max(cm, segMask(uv, vec2(0.74, 0.14), vec2(0.81, 0.17)));
-        // The whole constellation (lines + nodes) sparkles: each glyph
-        // cell along the path fires discrete bright flashes at random
-        // intervals. The shape emerges from where the sparkles cluster,
-        // never from a steady drawn line.
-        float cellId  = hash(cellp + 7.7);
-        float st      = u_time * 1.6 + cellId * 9.0;
-        float bucket  = floor(st);
-        float lcl     = fract(st);
-        float fire    = step(0.72, hash(cellp + bucket * 13.7));
-        float env     = smoothstep(0.0, 0.08, lcl) * (1.0 - smoothstep(0.20, 0.55, lcl));
-        float sparkle = 0.16 + fire * env * 1.75;
-        float conMask = max(cm.x * 0.55, cm.y);   // line + node coverage
-        float con     = conMask * sparkle;
-
-        // ✦ Easter egg — full Milky Way only around solar midnight
-        float milky  = smoothstep(-0.80, -0.985, elev);
-        vec2  mm     = uv - vec2(0.5, hYc * 0.42);
-        float ca = cos(-0.55), sa = sin(-0.55);
-        float across = mm.x * sa + mm.y * ca;
-        float along  = mm.x * ca - mm.y * sa;
-        float band   = exp(-(across * across) / 0.020);
-        float dust   = fbm(vec2(along * 6.0 + 3.0, across * 11.0));
-        float rift   = smoothstep(0.26, 0.62, fbm(vec2(along * 4.0, across * 9.0) + 7.0));
-        float mwHaze = band * (0.14 + 0.22 * dust) * rift;
-        float mwStr  = step(0.80, hash(cellp + 71.0)) * (0.25 + 0.75 * pow(hash(cellp + 12.0), 2.0));
-        mwStr *= band * (0.5 + 0.5 * sin(u_time * (2.0 + 3.0 * hash(cellp + 4.0)) + hash(cellp + 71.0) * 50.0));
-        float mw = max(mwHaze, mwStr) * milky;
-
-        float nightSky = max(max(star, con), mw) * nightAmt * gap;
-
-        float sunX = 0.16 + 0.68 * clamp(aDay, 0.0, 1.0);
-        float sunBaseY = terrainHorizonAtX(sunX);
-        float sunY = mix(sunBaseY, u_sunMaxY, clamp(elev, 0.0, 1.0));
-        float asp  = u_res.x / u_res.y;
-        float sr   = length((uv - vec2(sunX, sunY)) * vec2(asp, 1.0));
-        float sun  = (smoothstep(0.060, 0.030, sr)
-                    + smoothstep(0.105, 0.060, sr) * 0.30) * sunUp * u_sun;
-
-        float cl    = fbm(vec2(uv.x * 2.3 + u_time * 0.010, uv.y * 4.2 + 1.0));
-        float ccov  = 0.58 + 0.30 * sin(u_time * 0.045
-                    + fbm(vec2(uv.x * 0.7, u_time * 0.010)) * 4.0); // waxes & wanes
-        float cloud = smoothstep(ccov, ccov + 0.16, cl)
-                    * smoothstep(0.0, 0.45, skyH) * (0.25 + 0.75 * sunUp) * 0.45;
-
-        // ✦ Easter egg — northern lights at the peak of midnight:
-        // fine vertical curtains that dance in place
-        float aurZ  = smoothstep(-0.93, -0.999, elev);
-        float aurora = 0.0;
-        if (aurZ > 0.001) {                       // only near solar midnight
-          float drift = u_time * 0.10;            // flows / dances more
-          float fold  = 0.08 * (vnoise(vec2(uv.y * 1.7 + drift, 4.0)) - 0.5);
-          float ax    = uv.x + fold;
-          float n1    = fbm(vec2(ax * 7.0 + drift * 2.0, 1.7));
-          float broad = pow(clamp(1.0 - abs(2.0 * n1 - 1.0), 0.0, 1.0), 1.8);
-          float fine  = pow(clamp(1.0 - abs(2.0 *
-                          fbm(vec2(ax * 24.0 - drift, 5.0)) - 1.0), 0.0, 1.0), 3.0);
-          float dnc   = 0.22 + 0.78 * smoothstep(0.20, 0.86,
-                    fbm(vec2(ax * 3.0 - u_time * 0.20, u_time * 0.16 + 2.0)));
-          float b0    = broad * dnc;
-          // pronounce vertical lines where the curtain peaks in brightness
-          float rays  = broad * mix(1.0, 0.30 + 0.70 * fine,
-                                    smoothstep(0.35, 0.85, b0));
-          // Column height scales with its intensity: tall where bright,
-          // short (near the horizon) where faint
-          float bot   = hYc - 0.05;
-          float it    = smoothstep(0.15, 0.85, b0);
-          float tEdge = mix(hYc - 0.10, 0.16, it);
-          float aHi   = smoothstep(tEdge - 0.04, tEdge + 0.02, uv.y)
-                      * (1.0 - smoothstep(bot, hYc - 0.005, uv.y));
-          float aCtr  = smoothstep(0.52, 0.12, abs(uv.x - 0.5));
-          aurora = aurZ * rays * dnc * aHi * aCtr * 0.70;
-        }
-
-        // Distant mountains are the lifted continent surface (contLift),
-        // computed above the branch split so the peak joins its landmass
-        // continuously across the seam.
-        float skyI = max(nightSky, max(sun, max(cloud, max(aurora, contLift))));
-        return clamp(skyI * rv, 0.0, 1.0);
-      }
-
-      // Perspective ground projection (near = bottom, far = horizon).
-      // worldZ advances with time → the planet rotates toward the viewer.
-      float gy = (uv.y - hYc) / (1.0 - hYc);
-      float z  = 1.0 / (gy * gy * 0.90 + 0.05);
-      float worldZ = z * 1.8 + u_time * u_scroll;
-      float follow = cxN + slope * (worldZ - wzNear);
-      float worldX = (uv.x - 0.5) * z * 1.6 + follow + u_steer * (0.25 + z * 0.30);
-
-      // ── Mouse interaction ────────────────────────────────────────
-      // Project the cursor onto the ground plane (same perspective as
-      // worldX/worldZ), then use that world position to (1) BEND the
-      // river's centerline toward the cursor at the cursor's depth,
-      // and (2) emit concentric RIPPLES across the water surface.
-      vec2  mUV   = u_mouse / u_res;                 // 0..1 (y down)
-      float mgyR  = (mUV.y - hYc) / (1.0 - hYc);
-      float mOn   = u_mAmt * smoothstep(0.0, 0.06, mgyR); // only below horizon
-      float mgyS  = max(mgyR, 0.02);
-      float mz_   = 1.0 / (mgyS * mgyS * 0.90 + 0.05);
-      float mWZ   = mz_ * 1.8 + u_time * u_scroll;
-      float mFol  = cxN + slope * (mWZ - wzNear);
-      float mWX   = (mUV.x - 0.5) * mz_ * 1.6 + mFol + u_steer * (0.25 + mz_ * 0.30);
-
-      // Bend river center toward cursor — depth-localized Gaussian pull
-      float cxBase = riverCx(worldZ);
-      float dz     = worldZ - mWZ;
-      float bAmt   = exp(-dz * dz * 0.45) * mOn;
-      float cx     = cxBase + (mWX - cxBase) * 0.55 * bAmt;
-
-      float width = max(u_riverW + u_riverW * 0.33 * sin(worldZ * 0.21),
-                        u_riverW * 0.45);
-      float d     = (worldX - cx) / width;
-      float chan  = exp(-d * d * 1.6);
-      float offR  = 1.0 - chan;                       // away from the river
-
-      // ── River flow ── anisotropic noise stretched along Z so the
-      // water reads as streaks SLIDING DOWNSTREAM rather than blobs.
-      // Two octaves drift at different speeds for parallax, and a slight
-      // shear ties them to the river's curving centerline.
-      float fT     = u_time * u_flowSpd;
-      float shear  = (worldX - cxBase) * 0.30;        // skew with bank curve
-      float flow1  = fbm(vec2(worldX * 1.6, worldZ * 0.42 + shear - fT * 2.6));
-      float flow2  = fbm(vec2(worldX * 3.4, worldZ * 0.95 + shear - fT * 4.2));
-      float flow   = flow1 * 0.55 + flow2 * 0.45;
-      float strm   = smoothstep(0.18, 0.92, chan * (0.45 + 0.75 * flow) + 0.05);
-
-      // ── Specular crests ── sun-glints that slide downstream
-      float crestPh = worldZ * 3.0 - fT * 4.2;
-      float waveA   = sin(crestPh + worldX * 5.5) * 0.5 + 0.5;
-      float waveB   = sin(crestPh * 1.65 + worldX * 9.3) * 0.5 + 0.5;
-      float crest   = pow(waveA * waveB, 5.0) * chan;
-      strm = max(strm, crest * u_crest);
-
-      // ── Streamlines ── thin bright streaks aligned with the flow,
-      // pulsing along Z so you can see the current moving.
-      float streak = abs(sin(worldX * 8.0 + flow * 4.5));
-      streak = pow(1.0 - smoothstep(0.0, 0.32, streak), 7.0);
-      float streakPulse = 0.45 + 0.55 * sin(worldZ * 1.6 - fT * 4.6);
-      strm = max(strm, streak * chan * streakPulse * u_streak);
-
-      // ── Foam ── crest peaks catch extra brightness where flow noise
-      // happens to align — gives the eye a fast-moving sparkle.
-      float foam = smoothstep(0.78, 0.95, flow) * chan;
-      foam *= 0.55 + 0.45 * sin(worldZ * 5.0 - fT * 6.0);
-      strm = max(strm, foam * u_foam);
-
-      // (Cursor radial ripples removed — the river-bend pull above is
-      // the only cursor effect now.)
-      float ripGround = 0.0;
-
-      // Rolling banks with directional shading — slopes facing the sun
-      // brighten, slopes facing away darken, giving the terrain real form.
-      float terr = fbm(vec2(worldX * 0.50, worldZ * 0.50));
-      float ridg = vnoise(vec2(worldX * 1.40 + 5.0, worldZ * 1.40));
-      // Cross-X slope of the bank height for shading
-      float hL   = fbm(vec2((worldX - 0.40) * 0.50, worldZ * 0.50));
-      float hR   = fbm(vec2((worldX + 0.40) * 0.50, worldZ * 0.50));
-      float slpX = (hR - hL);
-      float aDayL = (u_tod * 24.0 - 6.0) / 12.0;
-      float sunUpL = smoothstep(-0.10, 0.30, sin(aDayL * 3.14159265));
-      float sunX  = clamp(aDayL * 2.0 - 1.0, -1.0, 1.0);   // dawn -1 → dusk +1
-      float lit   = 0.55 - slpX * sunX * 2.2;
-      lit = mix(0.70, clamp(lit, 0.18, 1.15), sunUpL);
-      float land = (0.16 + 0.42 * terr + 0.16 * ridg) * offR * lit;
-
-      // (Cities — street networks that sparkle at night — are computed
-      // after the continents below, so they can settle on the landmasses.)
-
-      // ── Continents ── large irregular landmasses with distinct
-      // coastlines, scattered along both sides of the river. A low-
-      // frequency noise field defines continent presence; inside the
-      // landmasses, finer noise paints mountain relief. Continents
-      // are pushed well back from the river so they never overlap the
-      // water channel or the immediate banks.
-      float farRiver  = smoothstep(1.30, 2.30, abs(d));   // hard exclusion
-      float contN     = fbm(vec2(worldX * 0.18 + 7.0, worldZ * 0.18 + 13.0));
-      // Distinct continent interior + thin coastline rim
-      float contBody  = smoothstep(0.50, 0.58, contN) * farRiver;
-      float contCoast = (smoothstep(0.46, 0.50, contN)
-                        - smoothstep(0.50, 0.58, contN)) * farRiver;
-      // Mountain relief inside the continent — uses local slope shading
-      float contRelief = fbm(vec2(worldX * 1.20 + 17.0, worldZ * 1.20))
-                       + 0.45 * vnoise(vec2(worldX * 2.80, worldZ * 2.80));
-      // Slope lighting for mountain ridges
-      float contRidge  = pow(smoothstep(0.35, 0.85, contRelief), 1.4);
-      float continents = contBody * (0.30 + 0.45 * contRelief + 0.35 * contRidge)
-                       * (0.65 + 0.55 * lit);
-      // Coastline — bright thin highlight ring around each continent
-      continents = max(continents, contCoast * (0.55 + 0.25 * lit));
-      continents *= u_contOn;                          // checkbox toggle
-
-      // ── Topographic depth map ── elevation isolines that fill the ground
-      // like a bathymetric chart. Elevation shares the continent field so
-      // contours bunch around the landmasses (highlands) and undulate across
-      // the open water; low-frequency so the lines flow toward the viewer
-      // with the scroll instead of flickering. Denser where the terrain is
-      // steep (the gradient packs the bands), exactly like a real topo map.
-      float topo = 0.0;
-      if (u_topoOn > 0.5) {
-        // World-X WITHOUT the river-follow term, so the contours only scroll
-        // toward the viewer (Z) and never sway left/right as the camera
-        // tracks the meandering river.
-        float topoX = (uv.x - 0.5) * z * 1.6 + u_steer * (0.25 + z * 0.30);
-        // Elevation varies mainly ACROSS the flow (higher freq in topoX) and
-        // only slowly ALONG it (low freq in worldZ), so the isolines are
-        // elongated down-river — they run PARALLEL to the river as gently
-        // wavy perspective rays, not horizontal bands crossing it. The low Z
-        // frequency also keeps them from shimmering.
-        float topoElev = fbm(vec2(topoX * 0.50 + 7.0, worldZ * 0.07 + 13.0)) * 1.50
-                       + 0.38 * fbm(vec2(topoX * 1.00 + 2.0, worldZ * 0.12));
-        float bands = topoElev * u_topoN;
-        float dline = min(fract(bands), 1.0 - fract(bands));   // dist to nearest isoline
-        topo = smoothstep(0.13, 0.03, dline);                  // soft, stable contour line
-        // Fade the FAR contours: near the horizon they bunch into sub-pixel
-        // lines that alias and flicker, so keep only the readable near–mid
-        // bands and let the distance dissolve them smoothly.
-        float topoFar = smoothstep(16.0, 7.0, z);
-        topo *= (0.32 + 0.68 * offR) * u_topo * topoFar;
-      }
-
-      // (Cities are rendered separately in main() via cityAt(), at a FINER
-      // dot cell than the rest of the scene so the street grid resolves
-      // crisply — they're not folded into this coarse field.)
-
-      // Generated terrain renders as a direct continuous overlay in main(), not
-      // through the glyph/dot intensity field. Keeping this at zero prevents
-      // a second cell-quantized terrain layer from shearing over the lines.
-      float Iother = 0.0;
-
-      // Atmospheric depth fade + soft fade-in just below the horizon
-      float fog   = smoothstep(20.0, 1.5, z);
-      float horiz = smoothstep(hYc, hYc + 0.20, uv.y);          // soft horizon (river/land/cities)
-      // Continents reach much closer to the seam than the rest of the scene
-      // so their crest MEETS the distant peaks projecting just above the
-      // horizon line — without this gentler fade the peaks float over a
-      // dead band and read as detached from the land.
-      float horizC = smoothstep(hYc - 0.004, hYc + 0.05, uv.y);
-      float I = max(Iother * horiz, continents * 0.95 * horizC) * mix(0.20, 1.0, fog);
-      I = max(I, contLift);                            // lifted faces join the land
-
-      float calm = mix(1.0, u_calm, smoothstep(0.66, 1.0, uv.y)); // bottom ease (CALM slider; 1 = no fade)
-      return clamp(I * calm * rv, 0.0, 1.0);
-    }
-
     // ── In-valley meandering canyon (smooth, reference-style) ────────
     // A perspective camera flies along a winding valley: tall walls rise on
     // both sides and converge toward a warm glow at the vanishing point, with
@@ -2466,25 +1561,8 @@
       return mix(bg, col, coverage * revealA);              // feathered silhouette + depth reveal
     }
 
-    // Glyph coverage at a device-pixel position
-    float glyph(vec2 P){
-      vec2 cell = floor(P / u_cell);
-      vec2 cc   = (cell + 0.5) * u_cell;
-      float I   = field(cc);
-      // Per-cell jitter → adjacent cells of similar intensity pick
-      // different glyphs (dither), so the ASCII varies instead of banding
-      float jit = (hash(cell) - 0.5) * 1.7;
-      float gi  = clamp(floor(I * u_glyphs + jit), 0.0, u_glyphs - 1.0);
-      vec2 lp   = (P - cell * u_cell) / u_cell;
-      vec2 luv  = clamp(lp, 0.04, 0.96);          // inset: no LINEAR bleed
-      vec2 auv  = vec2((gi + luv.x) / u_glyphs, luv.y);
-      return texture2D(u_atlas, auv).r;
-    }
-
     void main(){
       vec2 uv = vec2(v_uv.x, 1.0 - v_uv.y);       // y down — 全 canvas [0,1]
-      vec2 P  = uv * u_res;                       // screen px (glyph grid)
-      vec2 uvR = bankUV(uv);                      // banked uv for the horizon
 
       // v9: canvas = 场景区(100dvh, uvS.y∈[0,1]) + 尾部溶解区(uvS.y>1)。
       // 场景区像素与加高前完全一致; 尾部射线自然更向下, 峡谷地面/河流
@@ -2507,283 +1585,6 @@
       // 溶解放在 vignette/grain 之后, 底部 = 纯 pageBg, 与 main 底色零色差。
       float tailT = smoothstep(1.0, sceneK, uvS.y);
       col = mix(col, u_pageBg, tailT);
-      gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
-      return;
-#if 0
-      float I     = field((floor(P / u_cell) + 0.5) * u_cell);
-      float crisp = glyph(P);
-
-      // Optional soft-focus — 4-tap ring averaged into the crisp glyph.
-      if (u_blur > 0.001){
-        float soft = crisp;
-        float r = u_blur * u_cell * 0.55;
-        for (int i = 0; i < 4; i++){
-          float a = (float(i) + 0.5) * 1.5707963268;  // 2π / 4
-          vec2 dir = vec2(cos(a), sin(a)) * r;
-          soft += glyph(P + dir);
-        }
-        soft *= 0.20;                                  // /5
-        crisp = mix(crisp, soft, clamp(u_blur, 0.0, 1.0));
-      }
-
-      // Glyph-shaped bloom: blur the coverage over two rings of taps.
-      // 4 angles × 2 rings = 8 glyph() calls per fragment (down from 12).
-      float bloom = 0.0, wsum = 0.0;
-      for (int i = 0; i < 4; i++){
-        float a = (float(i) + 0.5) * 1.5707963268; // 2π / 4
-        vec2 dir = vec2(cos(a), sin(a));
-        bloom += glyph(P + dir *  u_bRad)        * 0.55; wsum += 0.55;
-        bloom += glyph(P + dir * (u_bRad * 0.5)) * 1.00; wsum += 1.00;
-      }
-      bloom /= wsum;
-
-      // ── Grade — time-of-day sky + curved ground + glowing ASCII ──
-      float hY = u_horizon;
-      float bend = uvR.x - 0.5;
-      float hYc  = terrainHorizon(uvR); // match Generated terrain's convex globe arc
-
-      float todH  = u_tod * 24.0;
-      float aDay  = (todH - 6.0) / 12.0;
-      float elev  = sin(aDay * 3.14159265);
-      float sunUp = smoothstep(-0.10, 0.12, elev);
-      float skyG  = pow(clamp(uvR.y / hYc, 0.0, 1.0), 1.8);
-
-      // Night floor lifted to a deep blue-hour — the sky is never dead
-      // black, so even solar midnight reads as a moody cinematic blue.
-      vec3 nightTop = vec3(0.026, 0.046, 0.115);
-      vec3 nightHor = vec3(0.060, 0.112, 0.245);
-      vec3 dayTop   = vec3(0.060, 0.160, 0.420);
-      vec3 dayHor   = vec3(0.330, 0.560, 0.820);
-      vec3 skyTopC  = mix(nightTop, dayTop, smoothstep(0.0, 0.55, sunUp));
-      vec3 skyHor   = mix(nightHor, dayHor, smoothstep(0.0, 0.55, sunUp));
-      // Twilight ramp stretched over ~2x the sun-elevation span so the
-      // sunrise/sunset warm tint lasts about twice as long (same colour).
-      float twR = smoothstep(-0.21, 0.23, elev);
-      float twi = smoothstep(0.02, 0.30, twR) * (1.0 - smoothstep(0.30, 0.70, twR));
-      skyHor = mix(skyHor, vec3(0.85, 0.45, 0.24), twi * 0.60);
-      vec3 sky = mix(skyTopC, skyHor, skyG);
-
-      // Sun glow
-      float sunX = 0.16 + 0.68 * clamp(aDay, 0.0, 1.0);
-      float sunBaseY = terrainHorizonAtX(sunX);
-      float sunY = mix(sunBaseY, u_sunMaxY, clamp(elev, 0.0, 1.0));
-      float asp2 = u_res.x / u_res.y;
-      float sgl  = exp(-length((uvR - vec2(sunX, sunY)) * vec2(asp2, 1.0)) * 4.0);
-      sky += sunUp * sgl * vec3(0.55, 0.42, 0.25) * u_sun;
-
-      // ✦ Northern lights — fine vertical curtains that dance in place
-      float aurZ2 = smoothstep(-0.93, -0.999, elev);
-      if (aurZ2 > 0.001 && u_aurOn > 0.5) {      // only near solar midnight
-        float drift = u_time * 0.10;
-        float fold  = 0.08 * (vnoise(vec2(uvR.y * 1.7 + drift, 4.0)) - 0.5);
-        float ax    = uvR.x + fold;
-        float n1    = fbm(vec2(ax * 7.0 + drift * 2.0, 1.7));
-        float broad = pow(clamp(1.0 - abs(2.0 * n1 - 1.0), 0.0, 1.0), 1.8);
-        float fine  = pow(clamp(1.0 - abs(2.0 *
-                        fbm(vec2(ax * 24.0 - drift, 5.0)) - 1.0), 0.0, 1.0), 3.0);
-        float dnc   = 0.22 + 0.78 * smoothstep(0.20, 0.86,
-                  fbm(vec2(ax * 3.0 - u_time * 0.20, u_time * 0.16 + 2.0)));
-        float b0    = broad * dnc;
-        float rays  = broad * mix(1.0, 0.30 + 0.70 * fine,
-                                  smoothstep(0.35, 0.85, b0));
-        // Column height scales with intensity (tall where bright)
-        float bot   = hYc - 0.05;
-        float it    = smoothstep(0.15, 0.85, b0);
-        float tEdge = mix(hYc - 0.10, 0.16, it);
-        float aH    = smoothstep(tEdge - 0.04, tEdge + 0.02, uvR.y)
-                    * (1.0 - smoothstep(bot, hYc - 0.005, uvR.y));
-        float aCtr  = smoothstep(0.52, 0.12, abs(uvR.x - 0.5));
-        // green base; purple only toward the TOP of the intense columns
-        float frac  = smoothstep(bot, tEdge, uvR.y);          // 0 base → 1 top
-        float pMix  = smoothstep(0.25, 1.0, frac) * smoothstep(0.42, 0.85, b0);
-        vec3 aurCol = mix(vec3(0.26, 0.96, 0.52), vec3(0.80, 0.32, 1.00), pMix);
-        aurCol = mix(aurCol, vec3(0.25, 0.85, 0.80), 0.05);
-        sky += aurZ2 * rays * dnc * aH * aCtr * aurCol * 0.85;
-      }
-
-      // Soften harsh midday: a real daytime still happens, but the sky
-      // never blows out to flat white — keeps the moody brand even at
-      // noon. Golden hour (elev≈0) is untouched; only high sun is tamed.
-      float harsh = smoothstep(0.45, 0.95, elev);
-      sky *= mix(1.0, 0.80, harsh);
-
-      // Ground — low-frequency drift through several blue tones
-      float cv = fbm(P * 0.0016 + vec2(4.0, -u_time * 0.05));
-      vec3 bIndigo = vec3(0.020, 0.044, 0.140);
-      vec3 bNavy   = vec3(0.055, 0.130, 0.330);
-      vec3 bCeru   = vec3(0.085, 0.225, 0.470);
-      vec3 bSteel  = vec3(0.070, 0.155, 0.290);
-      vec3 ground = mix(bIndigo, bNavy, smoothstep(0.18, 0.55, cv));
-      ground = mix(ground, bCeru,  smoothstep(0.55, 0.88, cv) * 0.80);
-      ground = mix(ground, bSteel, smoothstep(0.30, 0.05, cv) * 0.40);
-      float haze = smoothstep(1.0, hYc, uvR.y);
-      ground = mix(ground, skyHor, haze * u_haze);             // atmospheric perspective (HAZE)
-      ground += I * 0.06 * vec3(0.10, 0.32, 0.55);
-
-      // Earth illumination + a constant warm base so the ground reads as
-      // its own surface, distinct from the sky behind it.
-      ground = ground * u_earth + vec3(0.022, 0.020, 0.012) * u_earth;
-
-      float g = smoothstep(hYc - 0.06, hYc + 0.11, uvR.y);     // crisper seam
-      vec3 water = mix(sky, ground, g);
-
-      // ── Planet-limb atmosphere ── luminous air hugging the curved
-      // horizon: a hot thin core at the seam plus a soft airglow halo
-      // that bleeds up into the sky and faintly onto the ground. Tinted
-      // warm at golden hour, deep blue after dusk — this is what sells
-      // the sense of skimming low over a curved world.
-      float dHor  = uvR.y - hYc;                 // +below seam, -above (y-down)
-      float above = max(-dHor, 0.0);             // into the sky
-      float below = max( dHor, 0.0);             // onto the ground
-      vec3  rimC  = mix(skyHor, vec3(1.00, 0.64, 0.34), twi * 0.55);
-      float core  = exp(-abs(dHor) * 20.0);                    // tight hot line
-      float halo  = exp(-above * 5.5) * 0.40                   // airglow into sky
-                  + exp(-below * 8.0) * 0.20;                  // bleed onto ground
-      // The limb glow is a TWILIGHT phenomenon — brightest when the sun
-      // sits on the horizon (golden / blue hour) and all but gone under
-      // high daylight, so the horizon never burns. A small night term
-      // keeps a faint glow beneath the stars around midnight. Kept gentle
-      // overall so even sunrise / sunset reads as a soft glow, not a band.
-      float limb   = exp(-elev * elev / 0.14);                 // peak at golden
-      float night  = smoothstep(0.0, -0.5, elev);
-      float rimAmt = 0.10 + 0.34 * limb + 0.18 * night;
-      vec3  atmo   = rimC * (core * 0.45 + halo) * rimAmt * u_atmo;
-      water += atmo;
-
-      // Generated terrain topology: heightfield contours sampled through the
-      // ray-sphere projection, so topology follows the globe transform.
-      vec4 topoInk = terrainInk(uvR);
-      water = mix(water, topoInk.rgb, topoInk.a);
-
-      vec3 aqua  = vec3(0.737, 0.855, 0.816);          // #BCDAD0
-      vec3 cream = vec3(0.949, 0.914, 0.839);          // #F2E9D6
-      vec3 gcol  = mix(aqua, cream, smoothstep(0.0, 0.62, I));
-      // The brightest glyphs (sun, river crest) burn toward white — but
-      // NOT in dot mode, where we want dots to keep their colour, not whiteout.
-      gcol = mix(gcol, vec3(1.0, 0.99, 0.94), smoothstep(0.72, 1.0, I) * 0.7 * (1.0 - u_dots));
-
-      // ── Continent glyph tint ── recompute the continent mask at
-      // this fragment and bias the glyph colour toward u_contColor.
-      if (u_contOn > 0.5) {
-        float gyC = (uvR.y - hYc) / (1.0 - hYc);
-        if (gyC > 0.01) {
-          float zC      = 1.0 / (gyC * gyC * 0.90 + 0.05);
-          float wzNearC = u_time * u_scroll;
-          float worldZC = zC * 1.8 + wzNearC;
-          float cxNC    = riverCx(wzNearC);
-          float slpC    = clamp((riverCx(wzNearC + 0.6) - riverCx(wzNearC - 0.6))
-                                / 1.2, -0.5, 0.5);
-          float followC = cxNC + slpC * (worldZC - wzNearC);
-          float worldXC = (uvR.x - 0.5) * zC * 1.6 + followC
-                        + u_steer * (0.25 + zC * 0.30);
-          float cxBaseC = riverCx(worldZC);
-          float widthC  = max(1.20 + 0.40 * sin(worldZC * 0.21), 0.55);
-          float dC      = (worldXC - cxBaseC) / widthC;
-          float farRivC = smoothstep(1.30, 2.30, abs(dC));
-          float contNC  = fbm(vec2(worldXC * 0.18 + 7.0, worldZC * 0.18 + 13.0));
-          float contMaskC = smoothstep(0.50, 0.58, contNC) * farRivC;
-          gcol = mix(gcol, u_contColor, contMaskC * 0.90);
-        }
-      }
-
-      // Gradient recolour — only the glyph ink + its bloom take a vivid
-      // spectral gradient that sweeps HUE across a diagonal (so it runs
-      // through many colours like the reference globes); bg is untouched.
-      float gt = clamp((uv.x + uv.y) * 0.5, 0.0, 1.0);   // diagonal: top-left → bottom-right
-      vec3 gradCol = hue2rgb(fract(mix(u_hueA, u_hueB, gt))) * u_gradBri;
-      gcol = mix(gcol, gradCol, u_grad);
-
-      // Crisp pass: glyphs carry the image, just a hint of bloom for life.
-      // Gradient mode keeps the normal earth/scene illumination behind the
-      // colour-graded glyphs (same lighting as non-gradient mode).
-      vec3 col = water * u_bgBright;
-      vec3 bloomC = bloom * mix(mix(vec3(0.44, 0.78, 1.00), cream, 0.42), gradCol, u_grad) * u_bloom * 0.55;
-      if (u_dots > 0.5) {
-        // Dots: brightness from DOT INT with mild intensity falloff, then a
-        // luminance-preserving cap so a dot can glow but never clip to pure
-        // white. Bloom is cut hard so neighbouring dots stay separated.
-        vec3 ink = crisp * gcol * (u_dotGain * (0.30 + 0.70 * I));
-        float mx = max(ink.r, max(ink.g, ink.b));
-        ink *= (mx > 0.85) ? (0.85 / mx) : 1.0;           // never reaches white
-        col += ink;
-        col += bloomC * 0.20;                              // faint glow, keeps gaps
-      } else {
-        col += crisp * gcol * (0.55 + u_glyph * I) * u_dotGain;   // sharp glyph ink
-        col += bloomC;
-      }
-
-      // ── City pass ── a city is just a BRIGHTER PATCH of the same dot grid
-      // as the rest of the scene: same cell size, same lattice, same dot
-      // colours — so it reads as that clean halftone grid, lit up. Sampled
-      // once per cell on the exact grid the scene already uses.
-      {
-        float fc    = u_cell;
-        vec2  fcell = floor(P / fc);
-        float cI    = cityAt((fcell + 0.5) * fc);
-        if (cI > 0.003) {
-          float jit = (hash(fcell + 3.3) - 0.5) * 1.4;
-          float gi  = clamp(floor(cI * u_glyphs + jit), 0.0, u_glyphs - 1.0);
-          vec2  lp  = (P - fcell * fc) / fc;
-          vec2  luv = clamp(lp, 0.04, 0.96);
-          float cov = texture2D(u_atlas, vec2((gi + luv.x) / u_glyphs, luv.y)).r;
-          vec3  ccol = mix(vec3(0.737, 0.855, 0.816), vec3(0.949, 0.914, 0.839), smoothstep(0.0, 0.62, cI));
-          ccol = mix(ccol, gradCol, u_grad);                       // respect gradient mode
-          vec3  cink = cov * ccol * (u_dotGain * (0.34 + 0.66 * cI));
-          float mx = max(cink.r, max(cink.g, cink.b));
-          cink *= (mx > 0.92) ? (0.92 / mx) : 1.0;
-          col += cink;
-        }
-      }
-
-#endif
-      // Gentle vignette
-      vec2 q = (uv - 0.5) * vec2(1.05, 1.18);
-      float vig = smoothstep(1.22, 0.10, dot(q, q) * 2.1);
-      col *= mix(0.80, 1.0, vig);
-
-      // Grain — amplitude from slider
-      col += (hash(uv * u_res + u_time) - 0.5) * u_grain;
-
-      // Terminal boot — fade the scene to near-black while booting
-      col = mix(col, vec3(0.010, 0.017, 0.045), u_boot);
-
-      // In-shader terminal text. u_pixelText=1 → chunky pixel-block look;
-      // 0 (default) → sampled sharp at native resolution (clean, AA'd).
-      vec2 tuv = uv;
-      if (u_pixelText > 0.5) {
-        float blk = max(1.0, u_res.y / 620.0);               // ~2px pixel grid
-        tuv = (floor(uv * u_res / blk) + 0.5) * blk / u_res;
-      }
-      float tA  = texture2D(u_txt, tuv).a;
-      tA = smoothstep(0.30, 0.62, tA);
-      col = mix(col, vec3(0.84, 0.93, 0.87), tA);
-      col += tA * vec3(0.18, 0.40, 0.34) * 0.5;
-
-      // ── Whole-screen CRT (softened) ── scanlines, toggled from the
-      // debug console (u_crtOn). Off → col is untouched (no scanlines).
-      col *= mix(1.0, 0.96 + 0.04 * sin(uv.y * u_res.y * 3.14159), u_crtOn);
-      vec2 cc = uv - 0.5;
-      float edge = smoothstep(0.78, 0.45, max(abs(cc.x) * 1.05, abs(cc.y) * 1.18));
-      col *= mix(1.0 - u_vig, 1.0, edge);
-
-      // ── Game Boy DMG LCD ── posterize the whole scene to the iconic
-      // 4-shade green palette and overlay a fine pixel grid, so it reads
-      // as a dot-matrix LCD. Brightest scene → palest green; darkest → deep green.
-      if (u_lcd > 0.5) {
-        float lum = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);
-        float q   = floor(lum * 3.999) / 3.0;            // 4 quantised levels
-        vec3 g0 = vec3(0.059, 0.220, 0.059);             // #0f380f darkest
-        vec3 g1 = vec3(0.188, 0.384, 0.188);             // #306230
-        vec3 g2 = vec3(0.545, 0.675, 0.059);             // #8bac0f
-        vec3 g3 = vec3(0.608, 0.737, 0.059);             // #9bbc0f lightest
-        vec3 lcd = q < 0.16 ? g0 : (q < 0.50 ? g1 : (q < 0.83 ? g2 : g3));
-        vec2 cuv = fract(uv * u_res / max(u_lcdPx, 2.0));
-        float gx = smoothstep(0.0, 0.12, cuv.x) * (1.0 - smoothstep(0.88, 1.0, cuv.x));
-        float gy = smoothstep(0.0, 0.12, cuv.y) * (1.0 - smoothstep(0.88, 1.0, cuv.y));
-        lcd *= 0.78 + 0.22 * (gx * gy);                  // thin dark grid gaps
-        col = lcd;
-      }
-
       gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
     }
   `;
@@ -2900,19 +1701,6 @@
   let skyCloudProg = linkProg(vs, fsSkyCloud);
   let skyAurProg = linkProg(vs, fsSkyAur);
 
-  // Terrain build runs in a Web Worker while the driver compiles — it is pure
-  // math (~0.7s on a mid laptop, worse on weak CPUs) and used to sit in the
-  // same blocking init stretch as the shader compiles.
-  // TERRAIN_WORKER_TIMEOUT_MS must be initialized HERE, before the call below:
-  // this IIFE evaluates top-level consts in source order, and the call runs
-  // ~600 lines before buildTerrainTextureAsync's definition — declared beside
-  // the function it sat in TDZ, the worker promise rejected instead of
-  // resolving null, the await threw, and the whole boot died with the warmup
-  // still image still covering the canvas (2026-08-15; same pitfall class as
-  // sceneHDev/pageBg/readPageBg).
-  const TERRAIN_WORKER_TIMEOUT_MS = 4000;
-  const terrainPromise = buildTerrainTextureAsync(512);
-
   let parCompile = gl.getExtension("KHR_parallel_shader_compile");
   if (parCompile) {
     const progs = [prog, skyCloudProg, skyAurProg];
@@ -2942,119 +1730,87 @@
   gl.enableVertexAttribArray(aPos);
   gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
-  let U = {
-    res: gl.getUniformLocation(prog, "u_res"),
-    time: gl.getUniformLocation(prog, "u_time"),
-    atlas: gl.getUniformLocation(prog, "u_atlas"),
-    terrain: gl.getUniformLocation(prog, "u_terrain"),
-    glyphs: gl.getUniformLocation(prog, "u_glyphs"),
-    cell: gl.getUniformLocation(prog, "u_cell"),
-    bloom: gl.getUniformLocation(prog, "u_bloom"),
-    bRad: gl.getUniformLocation(prog, "u_bRad"),
-    mouse: gl.getUniformLocation(prog, "u_mouse"),
-    mAmt: gl.getUniformLocation(prog, "u_mAmt"),
-    par: gl.getUniformLocation(prog, "u_par"),
-    intro: gl.getUniformLocation(prog, "u_intro"),
-    steer: gl.getUniformLocation(prog, "u_steer"),
-    tod: gl.getUniformLocation(prog, "u_tod"),
-    aurHue: gl.getUniformLocation(prog, "u_aurHue"),
-    aurSpeed: gl.getUniformLocation(prog, "u_aurSpeed"),
-    aurDot: gl.getUniformLocation(prog, "u_aurDot"),
-    aurPlaneSamples: gl.getUniformLocation(prog, "u_aurPlaneSamples"),
-    aurSampleFill: gl.getUniformLocation(prog, "u_aurSampleFill"),
-    aurTopGain: gl.getUniformLocation(prog, "u_aurTopGain"),
-    aurRaySamples: gl.getUniformLocation(prog, "u_aurRaySamples"),
-    aurHeightScale: gl.getUniformLocation(prog, "u_aurHeightScale"),
-    aurOriginY: gl.getUniformLocation(prog, "u_aurOriginY"),
-    aurOriginTaper: gl.getUniformLocation(prog, "u_aurOriginTaper"),
-    aurFilamentDensity: gl.getUniformLocation(prog, "u_aurFilamentDensity"),
-    aurFilamentWidth: gl.getUniformLocation(prog, "u_aurFilamentWidth"),
-    aurFilamentHeight: gl.getUniformLocation(prog, "u_aurFilamentHeight"),
-    aurFilamentIntensity: gl.getUniformLocation(prog, "u_aurFilamentIntensity"),
-    aurFilamentTrack: gl.getUniformLocation(prog, "u_aurFilamentTrack"),
-    cloudOn: gl.getUniformLocation(prog, "u_cloudOn"),
-    aurOn: gl.getUniformLocation(prog, "u_aurOn"),
-    cloudDot: gl.getUniformLocation(prog, "u_cloudDot"),
-    waterDot: gl.getUniformLocation(prog, "u_waterDot"),
-    txt: gl.getUniformLocation(prog, "u_txt"),
-    noise: gl.getUniformLocation(prog, "u_noise"),
-    noiseOn: gl.getUniformLocation(prog, "u_noiseOn"),
-    aaN: gl.getUniformLocation(prog, "u_aaN"),
-    aaFeather: gl.getUniformLocation(prog, "u_aaFeather"),
-    aaSigned: gl.getUniformLocation(prog, "u_aaSigned"),
-    boot: gl.getUniformLocation(prog, "u_boot"),
-    reveal: gl.getUniformLocation(prog, "u_reveal"),
-    horizon: gl.getUniformLocation(prog, "u_horizon"),
-    viewHorizon: gl.getUniformLocation(prog, "u_viewHorizon"),
-    scroll:  gl.getUniformLocation(prog, "u_scroll"),
-    glyph:   gl.getUniformLocation(prog, "u_glyph"),
-    grain:   gl.getUniformLocation(prog, "u_grain"),
-    vig:     gl.getUniformLocation(prog, "u_vig"),
-    bgBright:gl.getUniformLocation(prog, "u_bgBright"),
-    earth:   gl.getUniformLocation(prog, "u_earth"),
-    blur:    gl.getUniformLocation(prog, "u_blur"),
-    riverW:  gl.getUniformLocation(prog, "u_riverW"),
-    flowSpd: gl.getUniformLocation(prog, "u_flowSpd"),
-    streak:  gl.getUniformLocation(prog, "u_streak"),
-    crest:   gl.getUniformLocation(prog, "u_crest"),
-    foam:    gl.getUniformLocation(prog, "u_foam"),
-    contOn:  gl.getUniformLocation(prog, "u_contOn"),
-    contColor: gl.getUniformLocation(prog, "u_contColor"),
-    waterTint: gl.getUniformLocation(prog, "u_waterTint"),
-    crtOn:   gl.getUniformLocation(prog, "u_crtOn"),
-    pixelText: gl.getUniformLocation(prog, "u_pixelText"),
-    sun:     gl.getUniformLocation(prog, "u_sun"),
-    atmo:    gl.getUniformLocation(prog, "u_atmo"),
-    haze:    gl.getUniformLocation(prog, "u_haze"),
-    mtn:     gl.getUniformLocation(prog, "u_mtn"),
-    mtnH:    gl.getUniformLocation(prog, "u_mtnH"),
-    mtnOn:   gl.getUniformLocation(prog, "u_mtnOn"),
-    topo:    gl.getUniformLocation(prog, "u_topo"),
-    topoN:   gl.getUniformLocation(prog, "u_topoN"),
-    topoOn:  gl.getUniformLocation(prog, "u_topoOn"),
-    relief:  gl.getUniformLocation(prog, "u_relief"),
-    canyonDepth: gl.getUniformLocation(prog, "u_canyonDepth"),
-    canyonShadow: gl.getUniformLocation(prog, "u_canyonShadow"),
-    canyonMaxSteps: gl.getUniformLocation(prog, "u_canyonMaxSteps"),
-    canyonStepScale: gl.getUniformLocation(prog, "u_canyonStepScale"),
-    refineSteps: gl.getUniformLocation(prog, "u_refineSteps"),
-    refineMode: gl.getUniformLocation(prog, "u_refineMode"),
-    hoist: gl.getUniformLocation(prog, "u_hoist"),
-    city:    gl.getUniformLocation(prog, "u_city"),
-    cityOn:  gl.getUniformLocation(prog, "u_cityOn"),
-    calm:    gl.getUniformLocation(prog, "u_calm"),
-    sunMaxY: gl.getUniformLocation(prog, "u_sunMaxY"),
-    twilight: gl.getUniformLocation(prog, "u_twilight"),
-    twRadius: gl.getUniformLocation(prog, "u_twRadius"),
-    twEllipse: gl.getUniformLocation(prog, "u_twEllipse"),
-    twEllipseX: gl.getUniformLocation(prog, "u_twEllipseX"),
-    twSunZone: gl.getUniformLocation(prog, "u_twSunZone"),
-    dotGain: gl.getUniformLocation(prog, "u_dotGain"),
-    dots:    gl.getUniformLocation(prog, "u_dots"),
-    lcd:     gl.getUniformLocation(prog, "u_lcd"),
-    lcdPx:   gl.getUniformLocation(prog, "u_lcdPx"),
-    grad:    gl.getUniformLocation(prog, "u_grad"),
-    hueA:    gl.getUniformLocation(prog, "u_hueA"),
-    hueB:    gl.getUniformLocation(prog, "u_hueB"),
-    gradBri: gl.getUniformLocation(prog, "u_gradBri"),
-    sceneH:  gl.getUniformLocation(prog, "u_sceneH"),
-    pageBg:  gl.getUniformLocation(prog, "u_pageBg"),
-  };
+  // Main-program uniform locations — one factory shared by the cold start and
+  // rebuildGLResources() so the two lists can never drift apart again. (The
+  // rebuild used to carry 45 stale keys from the removed ASCII/field systems.)
+  function collectMainUniforms(p) {
+    return {
+      res: gl.getUniformLocation(p, "u_res"),
+      time: gl.getUniformLocation(p, "u_time"),
+      par: gl.getUniformLocation(p, "u_par"),
+      tod: gl.getUniformLocation(p, "u_tod"),
+      aurHue: gl.getUniformLocation(p, "u_aurHue"),
+      aurSpeed: gl.getUniformLocation(p, "u_aurSpeed"),
+      aurDot: gl.getUniformLocation(p, "u_aurDot"),
+      aurPlaneSamples: gl.getUniformLocation(p, "u_aurPlaneSamples"),
+      aurSampleFill: gl.getUniformLocation(p, "u_aurSampleFill"),
+      aurTopGain: gl.getUniformLocation(p, "u_aurTopGain"),
+      aurRaySamples: gl.getUniformLocation(p, "u_aurRaySamples"),
+      aurHeightScale: gl.getUniformLocation(p, "u_aurHeightScale"),
+      aurOriginY: gl.getUniformLocation(p, "u_aurOriginY"),
+      aurOriginTaper: gl.getUniformLocation(p, "u_aurOriginTaper"),
+      aurFilamentDensity: gl.getUniformLocation(p, "u_aurFilamentDensity"),
+      aurFilamentWidth: gl.getUniformLocation(p, "u_aurFilamentWidth"),
+      aurFilamentHeight: gl.getUniformLocation(p, "u_aurFilamentHeight"),
+      aurFilamentIntensity: gl.getUniformLocation(p, "u_aurFilamentIntensity"),
+      aurFilamentTrack: gl.getUniformLocation(p, "u_aurFilamentTrack"),
+      cloudOn: gl.getUniformLocation(p, "u_cloudOn"),
+      aurOn: gl.getUniformLocation(p, "u_aurOn"),
+      cloudDot: gl.getUniformLocation(p, "u_cloudDot"),
+      waterDot: gl.getUniformLocation(p, "u_waterDot"),
+      txt: gl.getUniformLocation(p, "u_txt"),
+      noise: gl.getUniformLocation(p, "u_noise"),
+      noiseOn: gl.getUniformLocation(p, "u_noiseOn"),
+      aaN: gl.getUniformLocation(p, "u_aaN"),
+      aaFeather: gl.getUniformLocation(p, "u_aaFeather"),
+      aaSigned: gl.getUniformLocation(p, "u_aaSigned"),
+      boot: gl.getUniformLocation(p, "u_boot"),
+      reveal: gl.getUniformLocation(p, "u_reveal"),
+      viewHorizon: gl.getUniformLocation(p, "u_viewHorizon"),
+      scroll:  gl.getUniformLocation(p, "u_scroll"),
+      grain:   gl.getUniformLocation(p, "u_grain"),
+      flowSpd: gl.getUniformLocation(p, "u_flowSpd"),
+      foam:    gl.getUniformLocation(p, "u_foam"),
+      sun:     gl.getUniformLocation(p, "u_sun"),
+      canyonDepth: gl.getUniformLocation(p, "u_canyonDepth"),
+      canyonShadow: gl.getUniformLocation(p, "u_canyonShadow"),
+      canyonMaxSteps: gl.getUniformLocation(p, "u_canyonMaxSteps"),
+      canyonStepScale: gl.getUniformLocation(p, "u_canyonStepScale"),
+      refineSteps: gl.getUniformLocation(p, "u_refineSteps"),
+      refineMode: gl.getUniformLocation(p, "u_refineMode"),
+      hoist: gl.getUniformLocation(p, "u_hoist"),
+      twilight: gl.getUniformLocation(p, "u_twilight"),
+      twRadius: gl.getUniformLocation(p, "u_twRadius"),
+      twEllipse: gl.getUniformLocation(p, "u_twEllipse"),
+      twEllipseX: gl.getUniformLocation(p, "u_twEllipseX"),
+      twSunZone: gl.getUniformLocation(p, "u_twSunZone"),
+      sceneH:  gl.getUniformLocation(p, "u_sceneH"),
+      pageBg:  gl.getUniformLocation(p, "u_pageBg"),
+    };
+  }
+  let U = collectMainUniforms(prog);
   U.cloudTex = gl.getUniformLocation(prog, "u_cloudTex");
   U.aurTex   = gl.getUniformLocation(prog, "u_aurTex");
   gl.uniform1i(U.cloudTex, 4);
   gl.uniform1i(U.aurTex, 5);
+
+  // ── JS uniform 镜像 ── updateSkyTextures 每帧要读 reveal/tod/cloudOn/aurOn +
+  // SKY_SYNC 共 16 个值; gl.getUniform 是同步回读(管线 stall)。这 16 个 uniform
+  // 的所有写入都经 setU1f/setU2f, 同步更新 uMirror; 读取只查 map, 不再回读。
+  const uMirror = {};
+  function setU1f(name, loc, v) { gl.uniform1f(loc, v); uMirror[name] = v; }
+  function setU2f(name, loc, x, y) { gl.uniform2f(loc, x, y); uMirror[name] = [x, y]; }
 
   // ── Offscreen sky pass (perf) ── half-res FBO targets for the volumetric
   // layers (cloud march / aurora curtains, see SKY_FS). Updated at ~30Hz from
   // draw(); the main pass samples them on units 4/5 instead of recomputing
   // the loops per pixel. Falls back silently (zero textures = no clouds, no
   // aurora) if the sky program fails to build.
-  // Frame uniforms mirrored main→sky on each update (names map as "u_" +
-  // key). Only uniforms still ACTIVE in the main program can appear here —
-  // getUniform throws on a null location. (A name a given SKY program does
-  // not use simply yields a null location there, and uniform1f on null is a
-  // silent no-op — so one list serves both layer programs.)
+  // Frame uniforms mirrored main→sky on each update (names map as "u_" + key);
+  // values come from the uMirror JS map above (every write goes through
+  // setU1f/setU2f). A name a given SKY program does not use simply yields a
+  // null location there, and uniform1f on null is a silent no-op — so one list
+  // serves both layer programs.
   const SKY_SYNC = [
     "res", "time", "tod", "viewHorizon", "noiseOn",
     "twilight", "twRadius", "twEllipse", "twEllipseX", "twSunZone",
@@ -3127,14 +1883,14 @@
   let skyTick = 0;
   function updateSkyTextures() {
     // Match renderValley's u_reveal early-out: nothing samples the sky yet.
-    if (!(gl.getUniform(prog, U.reveal) > 0.001)) return;
+    if (!(uMirror.reveal > 0.001)) return;
     // JS copies of the shader's own time-of-day gates (clouds: cloudDayGate,
     // aurora: aurZ × u_aurOn) with slightly LOOSER thresholds, so a layer's
     // texture is always fresh by the time the main pass starts sampling it.
-    const hr = gl.getUniform(prog, U.tod) * 24.0;
-    const cloudGate = gl.getUniform(prog, U.cloudOn) > 0.5
+    const hr = uMirror.tod * 24.0;
+    const cloudGate = uMirror.cloudOn > 0.5
       ? Math.min(1 - skySmooth(18.6, 20.4, hr), skySmooth(4.0, 5.2, hr)) : 0;
-    const aurGate = gl.getUniform(prog, U.aurOn) > 0.5
+    const aurGate = uMirror.aurOn > 0.5
       ? Math.max(skySmooth(19.5, 22.5, hr), 1 - skySmooth(2.0, 4.0, hr)) : 0;
     const wantCloud = cloudGate > 0.005 && skyProgs.cloud;
     const wantAur = aurGate > 0.0005 && skyProgs.aur;
@@ -3146,17 +1902,14 @@
     if (wantCloud && (due || !skyTargets.cloud.fresh)) list.push("cloud");
     if (wantAur && (due || !skyTargets.aur.fresh)) list.push("aur");
     if (!list.length) return;
-    // Read the mirrored frame uniforms once, then push per layer program.
-    const vals = {};
-    for (const n of SKY_SYNC) vals[n] = gl.getUniform(prog, U[n]);
+    // Push the mirrored frame uniforms per layer program (JS map, no readback).
     for (const name of list) {
       const p = skyProgs[name], t = skyTargets[name];
       gl.useProgram(p.prog);
       for (const n of SKY_SYNC) {
-        const v = vals[n];
         // v9: 主程序 u_res 是全 canvas(含尾部); sky pass 只渲染场景区, res.y 换成 sceneHDev
-        if (v && v.length === 2) gl.uniform2f(p.u[n], v[0], n === "res" ? sceneHDev : v[1]);
-        else gl.uniform1f(p.u[n], v);
+        if (n === "res") gl.uniform2f(p.u[n], uMirror.res[0], sceneHDev);
+        else gl.uniform1f(p.u[n], uMirror[n]);
       }
       for (const n in skyKnobs) gl.uniform1f(p.u[n], skyKnobs[n]);
       gl.bindFramebuffer(gl.FRAMEBUFFER, t.fbo);
@@ -3169,126 +1922,22 @@
     gl.useProgram(prog);
   }
 
-  // Glyph atlas — ramp rendered into a horizontal strip.
-  // Two ramps available: the default ASCII density ramp, and a Matrix
-  // (half-width katakana + digits) ramp. buildAtlas() rebuilds the GPU
-  // texture for the active ramp and updates u_glyphs.
-  const RAMP_ASCII  = " .:-=+*#%@";
-  const RAMP_MATRIX = " ｦｱｴｵ01ﾊﾋﾌﾍﾎﾏﾐﾑﾜ█";
-  const TILE = 48;
-  const ac = document.createElement("canvas");   // Canvas2D — survives context loss
-  const a2 = ac.getContext("2d");
-  let tex = gl.createTexture();
-  gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-
-  function buildAtlas(ramp){
-    const N = ramp.length;
-    ac.width = TILE * N;
-    ac.height = TILE;
-    a2.fillStyle = "#000";
-    a2.fillRect(0, 0, ac.width, ac.height);
-    a2.fillStyle = "#fff";
-    a2.textAlign = "center";
-    a2.textBaseline = "middle";
-    a2.font = `600 ${Math.floor(TILE * 0.64)}px "JetBrains Mono", ui-monospace, monospace`;
-    for (let i = 0; i < N; i++) {
-      a2.fillText(ramp[i], i * TILE + TILE / 2, TILE * 0.54);
-    }
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ac);
-    gl.uniform1f(U.glyphs, N);
-  }
-
-  // Dot ramp — tiles are filled circles whose radius grows with intensity.
-  // Reuses the exact intensity→tile pipeline, so the scene renders as a
-  // refined halftone dot field instead of ASCII glyphs.
-  function buildDotAtlas(N, sizeFactor){
-    ac.width = TILE * N;
-    ac.height = TILE;
-    a2.fillStyle = "#000";
-    a2.fillRect(0, 0, ac.width, ac.height);
-    a2.fillStyle = "#fff";
-    for (let i = 0; i < N; i++) {
-      const r = (i / (N - 1)) * TILE * sizeFactor;   // max dot radius from DOT SZ
-      if (r > 0.4) {
-        a2.beginPath();
-        a2.arc(i * TILE + TILE / 2, TILE / 2, r, 0, 6.2831853);
-        a2.fill();
-      }
-    }
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ac);
-    gl.uniform1f(U.glyphs, N);
-  }
-
-  // Pick the active atlas from the toggles (read live so ordering is moot):
-  // Dots beats Matrix beats the default ASCII ramp.
-  function applyAtlas(){
-    const dots   = document.getElementById("dotsToggle");
-    const matrix = document.getElementById("matrixToggle");
-    if (dots && dots.checked) {
-      const szEl = document.getElementById("dotSizeSlider");
-      const sz = szEl ? (parseInt(szEl.value, 10) / 100) : 0.38;
-      buildDotAtlas(12, sz);
-      const inEl = document.getElementById("dotIntSlider");
-      gl.uniform1f(U.dotGain, inEl ? (parseInt(inEl.value, 10) / 100) : 1.6);
-      gl.uniform1f(U.dots, 1.0);
-      return;
-    }
-    buildAtlas(matrix && matrix.checked ? RAMP_MATRIX : RAMP_ASCII);
-    gl.uniform1f(U.dotGain, 1.0);                  // neutral for ASCII / Matrix
-    gl.uniform1f(U.dots, 0.0);
-  }
-
-  // Texture filtering only needs to be set once; buildAtlas() handles data.
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.uniform1i(U.atlas, 0);
-  buildAtlas(RAMP_ASCII);
   // Initial default uniforms + the ones reapplied after a context restore share
   // one function so the two paths can never drift. The per-frame uniforms
-  // (u_time/u_tod/u_boot/u_intro/u_reveal/…) are owned by the render loop and
-  // not set here.
+  // (u_time/u_tod/u_boot/u_reveal/…) are owned by the render loop and not set
+  // here. Mirrored uniforms (uMirror, see setU1f) go through the write helper.
   function applyDefaultUniforms() {
-    gl.uniform2f(U.mouse, -1.0e4, -1.0e4); // offscreen until the pointer moves
-    gl.uniform1f(U.mAmt, 0.0);
     gl.uniform2f(U.par, 0.0, 0.0);         // v14 指针视差默认居中
-    gl.uniform1f(U.intro, 1.0);            // default fully-revealed (static/reduced)
-    gl.uniform1f(U.reveal, 1.0);           // default canyon fully shown (live loop animates 0→1)
-    gl.uniform1f(U.steer, 0.0);            // centred flight path
-    gl.uniform1f(U.tod, (new Date().getHours() * 60 + new Date().getMinutes()) / 1440);
+    setU1f("reveal", U.reveal, 1.0);       // default canyon fully shown (live loop animates 0→1)
+    setU1f("tod", U.tod, (new Date().getHours() * 60 + new Date().getMinutes()) / 1440);
 
     // Slider-controlled defaults (mirror the original hard-coded values)
-    const KNOBS = {
-      horizon: 0.36, scroll: 1.18,
-      glyph:   2.19, grain: 0.000, vig:    0.43,
-      bgBright:0.97, earth: 2.09, blur: 0.31,
-      riverW:  1.31, flowSpd: 0.51, streak: 0.85, crest: 0.00, foam: 1.69,
-    };
-    gl.uniform1f(U.horizon, KNOBS.horizon);
-    gl.uniform1f(U.viewHorizon, 0.570);                  // active river/march horizon — POV HZN slider
+    const KNOBS = { scroll: 1.18, grain: 0.000, flowSpd: 0.51, foam: 1.69 };
+    setU1f("viewHorizon", U.viewHorizon, 0.570);   // active river/march horizon — POV HZN slider
     gl.uniform1f(U.scroll,  KNOBS.scroll);
-    gl.uniform1f(U.glyph,   KNOBS.glyph);
     gl.uniform1f(U.grain,   KNOBS.grain);
-    gl.uniform1f(U.vig,     KNOBS.vig);
-    gl.uniform1f(U.bgBright,KNOBS.bgBright);
-    gl.uniform1f(U.earth,   KNOBS.earth);
-    gl.uniform1f(U.blur,    KNOBS.blur);
-    gl.uniform1f(U.riverW,  KNOBS.riverW);
     gl.uniform1f(U.flowSpd, KNOBS.flowSpd);
-    gl.uniform1f(U.streak,  KNOBS.streak);
-    gl.uniform1f(U.crest,   KNOBS.crest);
     gl.uniform1f(U.foam,    KNOBS.foam);
-    gl.uniform1f(U.contOn,  0.0);                       // starts without legacy continents
-    gl.uniform1f(U.mtnOn,   0.0);                       // starts without legacy distant mountains
-    gl.uniform1f(U.topoOn,  1.0);                       // topographic contours visible by default
-    gl.uniform1f(U.relief,  1.0);                       // full 3D relief displacement by default
     gl.uniform1f(U.canyonDepth, 0.50);                  // default canyon wall depth
     gl.uniform1f(U.canyonShadow, 1.0);                  // full canyon shadowing by default
     gl.uniform1f(U.canyonMaxSteps, 112.0);              // canyon march budget by default
@@ -3296,303 +1945,31 @@
     gl.uniform1f(U.refineSteps, 14.0);                  // full hit-refine iterations (current behaviour)
     gl.uniform1f(U.refineMode, 0.0);                    // bisection by default (current behaviour)
     gl.uniform1f(U.hoist, 1.0);                         // PERF: cache frame-constant canyon values once (was recompute-per-step)
-    gl.uniform1f(U.cityOn,  0.0);                       // starts without legacy cities
-    gl.uniform3f(U.contColor, 0.36, 0.50, 0.28);        // forest green (hue ≈ 110°)
-      gl.uniform3f(U.waterTint, 0.45, 0.80, 0.70);  // 默认青绿水色（hex #73CCA3 近似）
-    gl.uniform1f(U.crtOn,   0.0);                        // CRT scanlines off by default
-    gl.uniform1f(U.pixelText, 0.0);                      // sharp text by default
     gl.uniform1f(U.sun, 0.64);                           // sun brightness — set by SUN slider
-    gl.uniform1f(U.twilight, 1.0);                        // twilight mode on by default — TWILIGHT switch
-    gl.uniform1f(U.twRadius, 0.18);                       // twilight sun-orbit radius — TW RAD slider
-    gl.uniform1f(U.twEllipse, 0.90);                      // twilight orbit Y scale (1 = round) — TW ELY slider
-    gl.uniform1f(U.twEllipseX, 0.48);                     // twilight orbit X scale (1 = round) — TW ELX slider
-    gl.uniform1f(U.twSunZone, 0.10);                      // twilight sunset-zone height (uv) — TW ZONE slider
-    gl.uniform1f(U.atmo, 1.50);                          // horizon glow — set by ATMO slider
-    gl.uniform1f(U.haze, 0.33);                          // earth haze — set by HAZE slider
+    setU1f("twilight", U.twilight, 1.0);                 // twilight mode on by default — TWILIGHT switch
+    setU1f("twRadius", U.twRadius, 0.18);                // twilight sun-orbit radius — TW RAD slider
+    setU1f("twEllipse", U.twEllipse, 0.90);              // twilight orbit Y scale (1 = round) — TW ELY slider
+    setU1f("twEllipseX", U.twEllipseX, 0.48);            // twilight orbit X scale (1 = round) — TW ELX slider
+    setU1f("twSunZone", U.twSunZone, 0.10);              // twilight sunset-zone height (uv) — TW ZONE slider
     gl.uniform1f(U.aurDot, 186.0);                       // aurora dot density — set by AUR DOT slider
     setSkyKnob("aurPlaneSamples", 28.0);                // aurora plane sample budget — AUR SAMP slider
     setSkyKnob("aurSampleFill", 1.0);                   // filled sample cells — AUR FILL slider
     setSkyKnob("aurTopGain", 0.50);                     // upper-plane brightness — TOP GAIN slider
     setSkyKnob("aurRaySamples", 0.0);                   // 0 = cheaper filament-field path; nonzero = old ray loop
     setSkyKnob("aurHeightScale", 2.75);                 // aurora vertical scale — AUR HGT slider
-    gl.uniform1f(U.aurOriginY, -0.05);                    // origin vertical offset — ORIG Y slider
+    setU1f("aurOriginY", U.aurOriginY, -0.05);           // origin vertical offset — ORIG Y slider
     setSkyKnob("aurOriginTaper", 0.50);                 // origin distance fade — ORIG TPR slider
     setSkyKnob("aurFilamentDensity", 1.75);             // filament count — FIL DENS slider
     setSkyKnob("aurFilamentWidth", 2.00);               // filament width — FIL W slider
     setSkyKnob("aurFilamentHeight", 2.00);              // filament height cap — FIL H slider
     setSkyKnob("aurFilamentIntensity", 2.25);           // filament brightness — FIL INT slider
     setSkyKnob("aurFilamentTrack", 2.0);                // curve-lite
-    gl.uniform1f(U.cloudOn, 1.0);                         // cloud raymarch toggle — CLOUD switch
-    gl.uniform1f(U.aurOn, 1.0);                           // aurora enabled by default (disabled on mobile)
+    setU1f("cloudOn", U.cloudOn, 1.0);                   // cloud raymarch toggle — CLOUD switch
+    setU1f("aurOn", U.aurOn, 1.0);                       // aurora enabled by default (disabled on mobile)
     gl.uniform1f(U.cloudDot, 226.0);                      // cloud dot density — CLD DOT slider
     gl.uniform1f(U.waterDot, 186.0);                      // water dot density — WATER DOT slider
-    gl.uniform1f(U.calm, 1.00);                          // river reaches the bottom (no fade) — CALM slider
-    gl.uniform1f(U.sunMaxY, 0.25);                        // sun apex height — set by SUN Y slider
-    gl.uniform1f(U.dotGain, 1.0);                        // neutral until Dots mode boosts it
-    gl.uniform1f(U.dots, 0.0);                           // ASCII render path by default
-    gl.uniform1f(U.lcd, 0.0);                            // Game Boy LCD off by default
-    gl.uniform1f(U.lcdPx, 8.0);                          // placeholder; LCD PX slider sets it
-    gl.uniform1f(U.grad, 0.0);                           // gradient recolour off by default
-    gl.uniform1f(U.hueA, 30.0 / 360.0);                  // orange start — set by GRAD A
-    gl.uniform1f(U.hueB, -140.0 / 360.0);                // sweep through magenta→blue — GRAD B
-    gl.uniform1f(U.gradBri, 1.0);                        // gradient brightness — GRAD BRI
   }
   applyDefaultUniforms();
-
-  // Generated terrain map. RG = 16-bit altitude; BA reserved for future valley/river data.
-  // It is generated once and sampled with wrapped terrain coordinates, so
-  // the landscape is fixed under the camera and only advances in depth.
-  function mulberry32(seed) {
-    return function () {
-      let t = seed += 0x6D2B79F5;
-      t = Math.imul(t ^ (t >>> 15), t | 1);
-      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-  function smooth01(t) {
-    t = Math.max(0, Math.min(1, t));
-    return t * t * (3 - 2 * t);
-  }
-  function wrap01(v) {
-    return v - Math.floor(v);
-  }
-  function wrapDelta(a, b) {
-    let d = a - b;
-    d -= Math.round(d);
-    return d;
-  }
-  function buildTerrainTexture(size) {
-    const TAU = Math.PI * 2;
-    const rand = mulberry32(0x72595632);
-    const features = [];
-    function addFeature(kind, amp, sx, sy) {
-      features.push({
-        kind,
-        amp,
-        sx,
-        sy,
-        x: rand(),
-        y: rand(),
-        a: rand() * TAU,
-      });
-    }
-    for (let i = 0; i < 12; i++) addFeature("peak", 0.12 + rand() * 0.22, 0.030 + rand() * 0.050, 0.035 + rand() * 0.070);
-    for (let i = 0; i < 10; i++) addFeature("basin", -(0.10 + rand() * 0.22), 0.055 + rand() * 0.095, 0.050 + rand() * 0.115);
-    for (let i = 0; i < 11; i++) addFeature("ridge", 0.08 + rand() * 0.20, 0.018 + rand() * 0.035, 0.140 + rand() * 0.190);
-    for (let i = 0; i < 7; i++) addFeature("shelf", (rand() < 0.5 ? -1 : 1) * (0.06 + rand() * 0.15), 0.060 + rand() * 0.110, 0.120 + rand() * 0.180);
-
-    function baseHeight(x, y) {
-      let h = 0.46;
-      h += 0.060 * Math.sin(TAU * (x * 1.0 + 0.11)) * Math.cos(TAU * (y * 1.0 + 0.37));
-      h += 0.045 * Math.sin(TAU * (x * 2.0 + y * 1.0 + 0.23));
-      h += 0.035 * Math.cos(TAU * (x * 3.0 - y * 2.0 + 0.61));
-      h += 0.024 * Math.sin(TAU * (x * 5.0 + y * 3.0 + 0.09));
-      for (const f of features) {
-        const dx = wrapDelta(x, f.x);
-        const dy = wrapDelta(y, f.y);
-        const ca = Math.cos(f.a);
-        const sa = Math.sin(f.a);
-        const xr = dx * ca + dy * sa;
-        const yr = -dx * sa + dy * ca;
-        const d = (xr / f.sx) ** 2 + (yr / f.sy) ** 2;
-        if (f.kind === "ridge") {
-          h += f.amp * Math.exp(-((xr / f.sx) ** 2)) * Math.exp(-0.34 * ((yr / f.sy) ** 2));
-        } else if (f.kind === "shelf") {
-          const local = Math.exp(-0.58 * d);
-          const step = smooth01((xr / f.sx) * 0.50 + 0.50) - 0.5;
-          h += f.amp * local * step;
-        } else {
-          h += f.amp * Math.exp(-d);
-        }
-      }
-      return h;
-    }
-
-    const n = size;
-    const height = new Float32Array(n * n);
-    const valley = new Float32Array(n * n);
-    for (let y = 0; y < n; y++) {
-      const v = y / n;
-      for (let x = 0; x < n; x++) {
-        const u = x / n;
-        height[y * n + x] = baseHeight(u, v);
-      }
-    }
-
-    let centers = new Float32Array(n);
-    for (let y = 0; y < n; y++) {
-      const v = y / n;
-      centers[y] = wrap01(
-        0.50
-        + 0.055 * Math.sin(TAU * (v * 1.0 + 0.13))
-        + 0.035 * Math.sin(TAU * (v * 2.0 + 0.58))
-        + 0.018 * Math.sin(TAU * (v * 5.0 + 0.21))
-      );
-    }
-    function rowHeightAt(xf, y) {
-      const xi = Math.floor(wrap01(xf) * n) % n;
-      return height[y * n + xi];
-    }
-    for (let iter = 0; iter < 9; iter++) {
-      const next = new Float32Array(n);
-      for (let y = 0; y < n; y++) {
-        const v = y / n;
-        const prevC = centers[(y + n - 1) % n];
-        const nextC = centers[(y + 1) % n];
-        const target = wrap01(0.50 + 0.070 * Math.sin(TAU * (v * 1.0 + 0.13)) + 0.028 * Math.sin(TAU * (v * 3.0 + 0.41)));
-        let best = centers[y];
-        let bestCost = Infinity;
-        for (let k = -7; k <= 7; k++) {
-          const cand = wrap01(centers[y] + k * 0.0048);
-          const smoothCost = (wrapDelta(cand, prevC) ** 2 + wrapDelta(cand, nextC) ** 2) * 24.0;
-          const centerCost = Math.abs(wrapDelta(cand, target)) * 0.72;
-          const cost = rowHeightAt(cand, y) + smoothCost + centerCost;
-          if (cost < bestCost) {
-            bestCost = cost;
-            best = cand;
-          }
-        }
-        next[y] = wrap01(centers[y] + wrapDelta(best, centers[y]) * 0.68);
-      }
-      centers = next;
-    }
-
-    for (let y = 0; y < n; y++) {
-      const v = y / n;
-      const cy = centers[y];
-      const w = 0.024 + 0.004 * Math.sin(TAU * (v * 3.0 + 0.19)) + 0.003 * Math.sin(TAU * (v * 7.0 + 0.47));
-      const leftBank = 0.72 + 0.28 * Math.sin(TAU * (v * 2.0 + 0.14));
-      const rightBank = 0.70 + 0.30 * Math.sin(TAU * (v * 2.7 + 0.58));
-      const leftPeakY = smooth01(0.50 + 0.50 * Math.sin(TAU * (v * 3.0 + 0.27)));
-      const rightPeakY = smooth01(0.50 + 0.50 * Math.sin(TAU * (v * 2.4 + 0.66)));
-      for (let x = 0; x < n; x++) {
-        const u = x / n;
-        const dx = wrapDelta(u, cy);
-        const adx = Math.abs(dx);
-        const channel = Math.exp(-((adx / w) ** 2));
-        const shoulder = Math.exp(-(((adx - w * 2.05) / (w * 1.28)) ** 2));
-        const leftRidge = Math.exp(-(((dx + w * (2.8 + 0.35 * Math.sin(TAU * (v * 4.0 + 0.18)))) / (w * 0.82)) ** 2));
-        const rightRidge = Math.exp(-(((dx - w * (2.5 + 0.40 * Math.sin(TAU * (v * 3.0 + 0.51)))) / (w * 0.90)) ** 2));
-        const leftPeak = Math.exp(-(((dx + w * (5.7 + 0.70 * Math.sin(TAU * (v * 1.4 + 0.33)))) / (w * 1.55)) ** 2)) * leftPeakY;
-        const rightPeak = Math.exp(-(((dx - w * (6.2 + 0.65 * Math.sin(TAU * (v * 1.7 + 0.72)))) / (w * 1.70)) ** 2)) * rightPeakY;
-        const leftBasin = Math.exp(-(((dx + w * (8.3 + 0.80 * Math.sin(TAU * (v * 1.9 + 0.04)))) / (w * 2.45)) ** 2))
-                        * smooth01(0.50 + 0.50 * Math.sin(TAU * (v * 2.1 + 0.76)));
-        const rightShelf = Math.exp(-(((dx - w * (8.0 + 0.60 * Math.sin(TAU * (v * 2.2 + 0.44)))) / (w * 2.75)) ** 2))
-                         * Math.sin(TAU * (v * 1.6 + 0.12));
-        const idx = y * n + x;
-        valley[idx] = Math.max(0, Math.min(1, channel));
-        height[idx] -= channel * (0.42 + 0.12 * Math.sin(TAU * (v * 2.0 + 0.07)) ** 2);
-        height[idx] += shoulder * 0.090;
-        height[idx] += leftRidge * 0.085 * leftBank;
-        height[idx] += rightRidge * 0.075 * rightBank;
-        height[idx] += leftPeak * 0.150;
-        height[idx] += rightPeak * 0.130;
-        height[idx] -= leftBasin * 0.085;
-        height[idx] += rightShelf * 0.040;
-      }
-    }
-
-    let minH = Infinity;
-    let maxH = -Infinity;
-    for (let i = 0; i < height.length; i++) {
-      minH = Math.min(minH, height[i]);
-      maxH = Math.max(maxH, height[i]);
-    }
-    const span = Math.max(0.0001, maxH - minH);
-    for (let i = 0; i < height.length; i++) {
-      height[i] = Math.max(0, Math.min(1, (height[i] - minH) / span));
-      height[i] = Math.pow(height[i], 1.08);
-    }
-
-    const encodeSignedAltitude = (h) => Math.max(0, Math.min(1, h * 0.5 + 0.5));
-    const data = new Uint8Array(n * n * 4);
-    for (let y = 0; y < n; y++) {
-      const yp = (y + 1) % n;
-      const ym = (y + n - 1) % n;
-      for (let x = 0; x < n; x++) {
-        const xp = (x + 1) % n;
-        const xm = (x + n - 1) % n;
-        const idx = y * n + x;
-        const signedHeight = height[idx] * 1.35 - 0.50;
-        const h16 = Math.max(0, Math.min(65535, Math.round(encodeSignedAltitude(signedHeight) * 65535)));
-        const o = idx * 4;
-        data[o] = h16 >> 8;
-        data[o + 1] = h16 & 255;
-        data[o + 2] = Math.round(valley[idx] * 255);
-        data[o + 3] = 255;
-      }
-    }
-    return { size: n, data };
-  }
-
-  // Web-Worker twin of buildTerrainTexture: same deterministic math, off the
-  // main thread. The worker source is built from the functions' own text so
-  // the two implementations can never drift. Resolves null (→ sync fallback)
-  // when Workers/Blob URLs are unavailable, OR if the worker stays silent past
-  // TERRAIN_WORKER_TIMEOUT_MS (a constrained/starved device could start the
-  // worker, never post a message, and never error — without this guard the
-  // await below would block forever and the hero would never render, with no
-  // static fallback either). The constant itself lives above the first call
-  // site (near the shader compiles) — see the TDZ note there.
-  function buildTerrainTextureAsync(size) {
-    try {
-      const src = [mulberry32, smooth01, wrap01, wrapDelta, buildTerrainTexture]
-        .map((f) => f.toString()).join("\n")
-        + "\nonmessage = function (e) { var m = buildTerrainTexture(e.data); postMessage(m, [m.data.buffer]); };";
-      const blobUrl = URL.createObjectURL(new Blob([src], { type: "text/javascript" }));
-      const worker = new Worker(blobUrl);
-      return new Promise((resolve) => {
-        let settled = false;
-        let timer = 0;
-        function finish(val) {
-          if (settled) return;
-          settled = true;
-          if (timer) { clearTimeout(timer); timer = 0; }
-          try { worker.terminate(); } catch (e) {}
-          try { URL.revokeObjectURL(blobUrl); } catch (e) {}  // avoid Blob URL leak
-          resolve(val);
-        }
-        worker.onmessage = function (e) { finish(e.data); };
-        worker.onerror   = function ()  { finish(null); };
-        try {
-          // If the worker is starved/blocked and never posts nor errors, fall
-          // back to the sync path so the hero can still render.
-          timer = setTimeout(function () { finish(null); }, TERRAIN_WORKER_TIMEOUT_MS);
-          worker.postMessage(size);
-        } catch (e) {
-          // A throw inside the executor REJECTS the promise (it does not reach
-          // the outer try/catch), and the awaiting boot would die — degrade to
-          // the documented null→sync-fallback contract instead.
-          finish(null);
-        }
-      });
-    } catch (e) {
-      return Promise.resolve(null);
-    }
-  }
-
-  // Kicked off next to the shader compiles (see "Async parallel shader
-  // compile"); by the time we get here it has usually already finished.
-  // terrainMap is pure CPU data (Uint8Array) — it survives a context loss and
-  // is re-uploaded to the fresh texture by rebuildGLResources().
-  const terrainMap = (await terrainPromise) || buildTerrainTexture(512);
-  let terrainTex = gl.createTexture();
-  gl.activeTexture(gl.TEXTURE2);
-  gl.bindTexture(gl.TEXTURE_2D, terrainTex);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  function uploadTerrainMap(map) {
-    gl.activeTexture(gl.TEXTURE2);
-    gl.bindTexture(gl.TEXTURE_2D, terrainTex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, map.size, map.size, 0, gl.RGBA, gl.UNSIGNED_BYTE, map.data);
-  }
-
-
-  uploadTerrainMap(terrainMap);
-  gl.uniform1i(U.terrain, 2);
 
   const cam = { clock: 0, lastNow: null };
 
@@ -3666,7 +2043,7 @@
                   gl.RGBA, gl.UNSIGNED_BYTE, nm.data);
   }
   gl.uniform1i(U.noise, 3);
-  gl.uniform1f(U.noiseOn, 1.0);
+  setU1f("noiseOn", U.noiseOn, 1.0);
 
   const BOOT_LINE = "Hi, I'm River";
   const HEAD_LINE = HERO_HEAD_LINE;
@@ -3918,7 +2295,6 @@
       heroSublineLive.textContent = "";
       heroSublineLive.classList.remove("cursor");
     }
-    gl.uniform1f(U.intro, 0.0);
     paintText(performance.now());
     uploadText();
   }
@@ -3982,12 +2358,9 @@
     canvas.style.height = h + "px";
     gl.viewport(0, 0, cw, ch);
     sizeSkyTargets(cw, sceneHDev);   // v9: sky FBO 只覆盖场景区(与加高前一致)
-    gl.uniform2f(U.res, cw, ch);
+    setU2f("res", U.res, cw, ch);    // 镜像 res: updateSkyTextures 读 uMirror.res
     gl.uniform1f(U.sceneH, sceneHDev);
     gl.uniform3f(U.pageBg, pageBg[0], pageBg[1], pageBg[2]);
-    gl.uniform1f(U.cell, CELL_PX * dpr);
-    gl.uniform1f(U.bloom, BLOOM);
-    gl.uniform1f(U.bRad, CELL_PX * dpr * BRAD_CELLS);
     sizeText();
     paintText(performance.now());
     uploadText();
@@ -3998,7 +2371,7 @@
   }
 
   function draw(t) {
-    gl.uniform1f(U.time, t);
+    setU1f("time", U.time, t);   // time ∈ SKY_SYNC: 云/极光的天空 pass 靠它流动
     updateSkyTextures();   // refresh the half-res cloud/aurora layers (~30Hz)
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -4077,104 +2450,9 @@
     gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
     // Re-cache main-program uniform locations + sampler unit bindings.
-    U = {
-      res: gl.getUniformLocation(prog, "u_res"),
-      time: gl.getUniformLocation(prog, "u_time"),
-      atlas: gl.getUniformLocation(prog, "u_atlas"),
-      terrain: gl.getUniformLocation(prog, "u_terrain"),
-      glyphs: gl.getUniformLocation(prog, "u_glyphs"),
-      cell: gl.getUniformLocation(prog, "u_cell"),
-      bloom: gl.getUniformLocation(prog, "u_bloom"),
-      bRad: gl.getUniformLocation(prog, "u_bRad"),
-      mouse: gl.getUniformLocation(prog, "u_mouse"),
-      mAmt: gl.getUniformLocation(prog, "u_mAmt"),
-      par: gl.getUniformLocation(prog, "u_par"),
-      intro: gl.getUniformLocation(prog, "u_intro"),
-      steer: gl.getUniformLocation(prog, "u_steer"),
-      tod: gl.getUniformLocation(prog, "u_tod"),
-      aurHue: gl.getUniformLocation(prog, "u_aurHue"),
-      aurSpeed: gl.getUniformLocation(prog, "u_aurSpeed"),
-      aurDot: gl.getUniformLocation(prog, "u_aurDot"),
-      aurPlaneSamples: gl.getUniformLocation(prog, "u_aurPlaneSamples"),
-      aurSampleFill: gl.getUniformLocation(prog, "u_aurSampleFill"),
-      aurTopGain: gl.getUniformLocation(prog, "u_aurTopGain"),
-      aurRaySamples: gl.getUniformLocation(prog, "u_aurRaySamples"),
-      aurHeightScale: gl.getUniformLocation(prog, "u_aurHeightScale"),
-      aurOriginY: gl.getUniformLocation(prog, "u_aurOriginY"),
-      aurOriginTaper: gl.getUniformLocation(prog, "u_aurOriginTaper"),
-      aurFilamentDensity: gl.getUniformLocation(prog, "u_aurFilamentDensity"),
-      aurFilamentWidth: gl.getUniformLocation(prog, "u_aurFilamentWidth"),
-      aurFilamentHeight: gl.getUniformLocation(prog, "u_aurFilamentHeight"),
-      aurFilamentIntensity: gl.getUniformLocation(prog, "u_aurFilamentIntensity"),
-      aurFilamentTrack: gl.getUniformLocation(prog, "u_aurFilamentTrack"),
-      cloudOn: gl.getUniformLocation(prog, "u_cloudOn"),
-      aurOn: gl.getUniformLocation(prog, "u_aurOn"),
-      cloudDot: gl.getUniformLocation(prog, "u_cloudDot"),
-      waterDot: gl.getUniformLocation(prog, "u_waterDot"),
-      txt: gl.getUniformLocation(prog, "u_txt"),
-      noise: gl.getUniformLocation(prog, "u_noise"),
-      noiseOn: gl.getUniformLocation(prog, "u_noiseOn"),
-      aaN: gl.getUniformLocation(prog, "u_aaN"),
-      aaFeather: gl.getUniformLocation(prog, "u_aaFeather"),
-      aaSigned: gl.getUniformLocation(prog, "u_aaSigned"),
-      boot: gl.getUniformLocation(prog, "u_boot"),
-      reveal: gl.getUniformLocation(prog, "u_reveal"),
-      horizon: gl.getUniformLocation(prog, "u_horizon"),
-      viewHorizon: gl.getUniformLocation(prog, "u_viewHorizon"),
-      scroll:  gl.getUniformLocation(prog, "u_scroll"),
-      glyph:   gl.getUniformLocation(prog, "u_glyph"),
-      grain:   gl.getUniformLocation(prog, "u_grain"),
-      vig:     gl.getUniformLocation(prog, "u_vig"),
-      bgBright:gl.getUniformLocation(prog, "u_bgBright"),
-      earth:   gl.getUniformLocation(prog, "u_earth"),
-      blur:    gl.getUniformLocation(prog, "u_blur"),
-      riverW:  gl.getUniformLocation(prog, "u_riverW"),
-      flowSpd: gl.getUniformLocation(prog, "u_flowSpd"),
-      streak:  gl.getUniformLocation(prog, "u_streak"),
-      crest:   gl.getUniformLocation(prog, "u_crest"),
-      foam:    gl.getUniformLocation(prog, "u_foam"),
-      contOn:  gl.getUniformLocation(prog, "u_contOn"),
-      contColor: gl.getUniformLocation(prog, "u_contColor"),
-      waterTint: gl.getUniformLocation(prog, "u_waterTint"),
-      crtOn:   gl.getUniformLocation(prog, "u_crtOn"),
-      pixelText: gl.getUniformLocation(prog, "u_pixelText"),
-      sun:     gl.getUniformLocation(prog, "u_sun"),
-      atmo:    gl.getUniformLocation(prog, "u_atmo"),
-      haze:    gl.getUniformLocation(prog, "u_haze"),
-      mtn:     gl.getUniformLocation(prog, "u_mtn"),
-      mtnH:    gl.getUniformLocation(prog, "u_mtnH"),
-      mtnOn:   gl.getUniformLocation(prog, "u_mtnOn"),
-      topo:    gl.getUniformLocation(prog, "u_topo"),
-      topoN:   gl.getUniformLocation(prog, "u_topoN"),
-      topoOn:  gl.getUniformLocation(prog, "u_topoOn"),
-      relief:  gl.getUniformLocation(prog, "u_relief"),
-      canyonDepth: gl.getUniformLocation(prog, "u_canyonDepth"),
-      canyonShadow: gl.getUniformLocation(prog, "u_canyonShadow"),
-      canyonMaxSteps: gl.getUniformLocation(prog, "u_canyonMaxSteps"),
-      canyonStepScale: gl.getUniformLocation(prog, "u_canyonStepScale"),
-      refineSteps: gl.getUniformLocation(prog, "u_refineSteps"),
-      refineMode: gl.getUniformLocation(prog, "u_refineMode"),
-      hoist: gl.getUniformLocation(prog, "u_hoist"),
-      city:    gl.getUniformLocation(prog, "u_city"),
-      cityOn:  gl.getUniformLocation(prog, "u_cityOn"),
-      calm:    gl.getUniformLocation(prog, "u_calm"),
-      sunMaxY: gl.getUniformLocation(prog, "u_sunMaxY"),
-      twilight: gl.getUniformLocation(prog, "u_twilight"),
-      twRadius: gl.getUniformLocation(prog, "u_twRadius"),
-      twEllipse: gl.getUniformLocation(prog, "u_twEllipse"),
-      twEllipseX: gl.getUniformLocation(prog, "u_twEllipseX"),
-      twSunZone: gl.getUniformLocation(prog, "u_twSunZone"),
-      dotGain: gl.getUniformLocation(prog, "u_dotGain"),
-      dots:    gl.getUniformLocation(prog, "u_dots"),
-      lcd:     gl.getUniformLocation(prog, "u_lcd"),
-      lcdPx:   gl.getUniformLocation(prog, "u_lcdPx"),
-      grad:    gl.getUniformLocation(prog, "u_grad"),
-      hueA:    gl.getUniformLocation(prog, "u_hueA"),
-      hueB:    gl.getUniformLocation(prog, "u_hueB"),
-      gradBri: gl.getUniformLocation(prog, "u_gradBri"),
-      sceneH:  gl.getUniformLocation(prog, "u_sceneH"),
-      pageBg:  gl.getUniformLocation(prog, "u_pageBg"),
-    };
+    // Same factory as the cold start — the lists cannot drift (see
+    // collectMainUniforms above).
+    U = collectMainUniforms(prog);
     U.cloudTex = gl.getUniformLocation(prog, "u_cloudTex");
     U.aurTex   = gl.getUniformLocation(prog, "u_aurTex");
     gl.uniform1i(U.cloudTex, 4);
@@ -4203,30 +2481,8 @@
     }
     gl.activeTexture(gl.TEXTURE0);
 
-    // Glyph atlas texture (recreate + re-param + re-upload the active ramp).
-    tex = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.uniform1i(U.atlas, 0);
-    buildAtlas(RAMP_ASCII);
     // Re-apply the slider/config defaults shared with the cold-start path.
     applyDefaultUniforms();
-
-    // Terrain texture (recreate + re-param + re-upload the persistent CPU data).
-    terrainTex = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE2);
-    gl.bindTexture(gl.TEXTURE_2D, terrainTex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    uploadTerrainMap(terrainMap);
-    gl.uniform1i(U.terrain, 2);
 
     // In-shader text layer texture (recreate + re-param + re-upload current text).
     txTex = gl.createTexture();
@@ -4254,7 +2510,7 @@
                     gl.RGBA, gl.UNSIGNED_BYTE, nm.data);
     }
     gl.uniform1i(U.noise, 3);
-    gl.uniform1f(U.noiseOn, 1.0);
+    setU1f("noiseOn", U.noiseOn, 1.0);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.clearColor(0.027, 0.078, 0.235, 1.0);
@@ -4264,8 +2520,8 @@
     // sky passes back on. heroCoarsePointer is queried fresh here to avoid any
     // TDZ coupling to its later top-level declaration.
     if (window.matchMedia("(pointer: coarse)").matches) {
-      gl.uniform1f(U.cloudOn, 0.0);
-      gl.uniform1f(U.aurOn, 0.0);
+      setU1f("cloudOn", U.cloudOn, 0.0);
+      setU1f("aurOn", U.aurOn, 0.0);
     }
 
     // Re-push the silhouette-AA settings from the persistent AA state.
@@ -4275,8 +2531,9 @@
     gl.uniform1f(U.aaSigned, AA.signed ? 1.0 : 0.0);
 
     // Re-size (re-allocates the half-res sky targets against the new texture
-    // objects, re-sets viewport/u_res/u_sceneH/u_cell, repaints + re-uploads the
-    // text, and draws one frame so the hero isn't black for a tick).
+    // objects, re-sets viewport/u_res(镜像)/u_sceneH/u_pageBg, repaints +
+    // re-uploads the text, and draws one frame so the hero isn't black for a
+    // tick).
     size();
   }
 
@@ -4304,13 +2561,11 @@
     if (!reduce && typeof startLoop === "function") startLoop();
   }, false);
 
-  // Pointer interaction note: the legacy field()-path river-bend reads
-  // u_mouse/u_mAmt, but field() lives behind `#if 0` (replaced by the
-  // raymarched renderValley) — those two uniforms stay at their inert
-  // defaults. The live pointer effect is the v14 camera sway (u_par),
+  // Pointer interaction note: the legacy u_mouse/u_mAmt river-bend uniforms
+  // died with the ASCII field() code (removed in the dead-code sweep) — do not
+  // re-add them. The live pointer effect is the v14 camera sway (u_par),
   // tracked in the loop-state block and written every frame in loop().
 
-  const INTRO_MS = 650;                  // super-fast per-cell write-in
   // ── Intro reveal: text types in centred over a bare sky, then (after a beat)
   // the headline slides left quickly to its resting offset while the canyon + sky
   // condense in front→horizon over a slower, more cinematic fade. Both start
@@ -4378,77 +2633,6 @@
   const TOD_CYCLE_MS = 90000;              // one full (warped) day ~90s
   const HERO_LIVE_STOP_MS = TOD_CYCLE_MS;  // stop after the full scene cycle, not just the intro
   const TOD_DWELL    = 0.60;               // dawn/dusk dwell strength (0..<1)
-  // ── Day-1 sunset → river alignment ───────────────────────────────────────
-  // We want the first sunset to land with the sun HALF-SET (its centre on the
-  // horizon) right at the centre of the river. Two facts make this solvable by
-  // timing alone (no forcing the sun's position):
-  //   • The sun's screen-x is fixed at 0.56 once aDay≥1 (mix(0.16,0.56,1)).
-  //   • The active march horizon sits at uv.y = 0.5, and the sun centre reaches
-  //     it at elev ≈ −0.064 (sunY = mix(0.47,0.0,·) = 0.5).
-  // The river's vanishing point on screen is set by the valley meander at the
-  // camera depth camZ, which advances with u_time — so we pick the start-of-day
-  // minute whose first "half-set" instant occurs at the camZ that puts the
-  // river's horizon crossing under the sun. (Aspect-dependent → computed at load.)
-  const VALLEY_PERIOD = 69.813170;         // vCenter()/camZ wrap period
-  const SUN_SET_X     = 0.56;              // river-alignment target (canyon framing) — keep fixed
-  const HORIZON_Y     = 0.5;                  // active march / river vanishing point
-  function vCenterJS(z){
-    const zz = ((z % VALLEY_PERIOD) + VALLEY_PERIOD) % VALLEY_PERIOD;
-    return 2.0 * Math.sin(zz * 0.09 + 0.4);
-  }
-  function riverHorizonX(camZ, asp){
-    // asymptotic vanishing point of the yawed valley axis (mirrors renderValley)
-    const yaw = Math.atan2(vCenterJS(camZ + 20.0) - vCenterJS(camZ), 20.0);
-    return 0.5 - Math.tan(yaw) / (2.0 * Math.tan(0.60) * asp);
-  }
-  // The sun's day-phase warp (must match todFrac): linear phase → displayed.
-  function todWarp(pl){
-    const pw = pl + (TOD_DWELL / (4.0 * Math.PI)) * Math.sin(4.0 * Math.PI * pl);
-    return ((pw % 1) + 1) % 1;
-  }
-  function solveStartMin(asp, scroll){
-    // The sun is half-set when sunY = HORIZON_Y → solve elev, then the displayed
-    // time-of-day u_tod (sun is descending, so aDay just past 1).
-    const tSun     = (0.47 - HORIZON_Y) / 0.47;            // mix param (matches sunY range 0.47→0.0)
-    const elevAlign = Math.max(-0.42, tSun);               // = elevation here
-    const aDayAlign = 1.0 + Math.asin(-elevAlign) / Math.PI;   // descending past dusk
-    const todAlign  = (aDayAlign * 12.0 + 6.0) / 24.0;     // displayed u_tod at half-set
-    // Invert the warp to the LINEAR phase (todWarp is monotonic here), then the
-    // linear minute of that instant.
-    let lo = 0.74, hi = 0.92;
-    for (let j = 0; j < 50; j++){
-      const mid = 0.5 * (lo + hi);
-      if (todWarp(mid) < todAlign) lo = mid; else hi = mid;
-    }
-    const linMinAlign = 0.5 * (lo + hi) * 1440.0;          // linear minute of half-set
-    const k = (TOD_CYCLE_MS / 1440) / 1000;                // ms→s per advanced minute
-    // Find the start minute whose first half-set instant best lands the river
-    // under the sun; among near-best, prefer a start closest to sunrise (360).
-    let bestErr = 1e9; const hits = [];
-    for (let m = 0; m <= 1439; m++){
-      const adv = linMinAlign - m;
-      if (adv <= 0) continue;                              // half-set must be in the future
-      const t    = adv * k;
-      const camZ = ((t * scroll * 2.2) % VALLEY_PERIOD + VALLEY_PERIOD) % VALLEY_PERIOD;
-      const err  = Math.abs(riverHorizonX(camZ, asp) - SUN_SET_X);
-      hits.push([m, err]);
-      if (err < bestErr) bestErr = err;
-    }
-    // The river only peaks near 0.557 once per meander cycle, so equally-good
-    // starts recur ~every 430 min. Among the near-best, prefer the one that OPENS
-    // in the brightest daylight (highest sun elevation at load) — so the page
-    // doesn't open in darkness and the aligned sunset arrives a little later.
-    function elevAtStart(m){
-      const tod = todWarp(m / 1440.0);                     // displayed u_tod at load
-      return Math.sin(((tod * 24.0 - 6.0) / 12.0) * Math.PI);
-    }
-    const near = hits.filter(function (h){ return h[1] <= bestErr + 0.003; });
-    near.sort(function (a, b){ return elevAtStart(b[0]) - elevAtStart(a[0]); });
-    return near[0][0];
-  }
-  // Manual nudge: the solver aligns the river's X, but the canyon can still HEAD
-  // so the sun sets behind a wall. Shifting the start moves the sunset's camZ
-  // (canyon orientation) to clear the walls — tune in minutes (− = earlier).
   const todStartMin = 510;                 // 08:30
   let todBaseMin = todStartMin;            // linear, unwarped minute at todStartTS
   let todStartTS = -1;                     // set from the rAF clock on 1st frame
@@ -4493,61 +2677,29 @@
   const fix3 = (v) => v.toFixed(3);
   wireKnob("waterDotSlider", "waterDotLabel", 1, (v) => String(Math.round(v)),
            (v) => gl.uniform1f(U.waterDot, v));
-  wireKnob("bloomSlider", "bloomLabel", 100, fix2,
-           (v) => gl.uniform1f(U.bloom, v));
-  wireKnob("bradSlider", "bradLabel", 100, fix2,
-           (v) => gl.uniform1f(U.bRad, CELL_PX * dpr * v));
-  wireKnob("horizonSlider", "horizonLabel", 100, fix2,
-           (v) => gl.uniform1f(U.horizon, v));
   wireKnob("viewHorizonSlider", "viewHorizonLabel", 1000, fix3,
            (v) => {
-             gl.uniform1f(U.viewHorizon, v);
+             setU1f("viewHorizon", U.viewHorizon, v);   // 镜像: 天空 pass 地平线同步
              setHeroHorizonY(v);
            });
-  wireKnob("curveSlider", "curveLabel", 100, fix3,
-           () => {});
   wireKnob("scrollSlider", "scrollLabel", 100, fix2,
            (v) => gl.uniform1f(U.scroll, v));
-  wireKnob("glyphSlider", "glyphLabel", 100, fix2,
-           (v) => gl.uniform1f(U.glyph, v));
-  wireKnob("vigSlider", "vigLabel", 100, fix2,
-           (v) => gl.uniform1f(U.vig, v));
-  wireKnob("bgSlider", "bgLabel", 100, fix2,
-           (v) => gl.uniform1f(U.bgBright, v));
-  wireKnob("earthSlider", "earthLabel", 100, fix2,
-           (v) => gl.uniform1f(U.earth, v));
-  wireKnob("blurSlider", "blurLabel", 100, fix2,
-           (v) => gl.uniform1f(U.blur, v));
   wireKnob("sunSlider", "sunLabel", 100, fix2,
            (v) => gl.uniform1f(U.sun, v));
   const twilightToggle = document.getElementById("twilightToggle");
   if (twilightToggle) {
-    const applyTwilight = () => gl.uniform1f(U.twilight, twilightToggle.checked ? 1.0 : 0.0);
+    const applyTwilight = () => setU1f("twilight", U.twilight, twilightToggle.checked ? 1.0 : 0.0);
     twilightToggle.addEventListener("change", applyTwilight);
     applyTwilight();
   }
   wireKnob("twRadiusSlider", "twRadiusLabel", 100, fix2,
-           (v) => gl.uniform1f(U.twRadius, v));
+           (v) => setU1f("twRadius", U.twRadius, v));
   wireKnob("twEllipseSlider", "twEllipseLabel", 100, fix2,
-           (v) => gl.uniform1f(U.twEllipse, v));
+           (v) => setU1f("twEllipse", U.twEllipse, v));
   wireKnob("twEllipseXSlider", "twEllipseXLabel", 100, fix2,
-           (v) => gl.uniform1f(U.twEllipseX, v));
+           (v) => setU1f("twEllipseX", U.twEllipseX, v));
   wireKnob("twSunZoneSlider", "twSunZoneLabel", 100, fix2,
-           (v) => gl.uniform1f(U.twSunZone, v));
-  wireKnob("atmoSlider", "atmoLabel", 100, fix2,
-           (v) => gl.uniform1f(U.atmo, v));
-  wireKnob("hazeSlider", "hazeLabel", 100, fix2,
-           (v) => gl.uniform1f(U.haze, v));
-  wireKnob("mtnSlider", "mtnLabel", 100, fix2,
-           (v) => gl.uniform1f(U.mtn, v));
-  wireKnob("mtnHSlider", "mtnHLabel", 1000, fix3,
-           (v) => gl.uniform1f(U.mtnH, v));
-  wireKnob("topoSlider", "topoLabel", 100, fix2,
-           (v) => gl.uniform1f(U.topo, v));
-  wireKnob("topoNSlider", "topoNLabel", 1, (v) => String(Math.round(v)),
-           (v) => gl.uniform1f(U.topoN, v));
-  wireKnob("reliefSlider", "reliefLabel", 100, fix2,
-           (v) => gl.uniform1f(U.relief, v));
+           (v) => setU1f("twSunZone", U.twSunZone, v));
   wireKnob("canyonSlider", "canyonLabel", 100, fix2,
            (v) => gl.uniform1f(U.canyonDepth, v));
   wireKnob("fpsCapSlider", "fpsCapLabel", 1, (v) => String(Math.round(v)),
@@ -4604,7 +2756,7 @@
   }
   const noiseTexToggle = document.getElementById("noiseTexToggle");
   if (noiseTexToggle) {
-    const applyNoiseTex = () => gl.uniform1f(U.noiseOn, noiseTexToggle.checked ? 1.0 : 0.0);
+    const applyNoiseTex = () => setU1f("noiseOn", U.noiseOn, noiseTexToggle.checked ? 1.0 : 0.0);
     noiseTexToggle.addEventListener("change", applyNoiseTex);
     applyNoiseTex();
   }
@@ -4643,12 +2795,6 @@
              liveScale = AA.renderScale;
              size();
            });
-  wireKnob("citySlider", "cityLabel", 100, fix2,
-           (v) => gl.uniform1f(U.city, v));
-  wireKnob("calmSlider", "calmLabel", 100, fix2,
-           (v) => gl.uniform1f(U.calm, v));
-  wireKnob("sunMaxYSlider", "sunMaxYLabel", 100, fix2,
-           (v) => gl.uniform1f(U.sunMaxY, v));
   wireKnob("aurDotSlider", "aurDotLabel", 1, (v) => String(Math.round(v)),
            (v) => gl.uniform1f(U.aurDot, v));
   wireKnob("aurPlaneSlider", "aurPlaneLabel", 1, (v) => String(Math.round(v)),
@@ -4662,7 +2808,7 @@
   wireKnob("aurHeightSlider", "aurHeightLabel", 100, fix2,
            (v) => setSkyKnob("aurHeightScale", v));
   wireKnob("aurOriginYSlider", "aurOriginYLabel", 100, fix2,
-           (v) => gl.uniform1f(U.aurOriginY, v));
+           (v) => setU1f("aurOriginY", U.aurOriginY, v));   // 镜像: 天空 pass 发射原点同步
   wireKnob("aurOriginTaperSlider", "aurOriginTaperLabel", 100, fix2,
            (v) => setSkyKnob("aurOriginTaper", v));
   wireKnob("aurFilDensitySlider", "aurFilDensityLabel", 100, fix2,
@@ -4684,7 +2830,7 @@
   const cloudToggle = document.getElementById("cloudToggle");
   if (cloudToggle) {
     const applyCloudToggle = () => {
-      gl.uniform1f(U.cloudOn, cloudToggle.checked ? 1.0 : 0.0);
+      setU1f("cloudOn", U.cloudOn, cloudToggle.checked ? 1.0 : 0.0);   // 镜像: 云层门控
     };
     cloudToggle.addEventListener("change", applyCloudToggle);
     applyCloudToggle();
@@ -4694,8 +2840,8 @@
   // toggle wiring so it wins; touch state doesn't change on resize.)
   if (heroCoarsePointer.matches) {
     if (cloudToggle) cloudToggle.checked = false;
-    gl.uniform1f(U.cloudOn, 0.0);
-    gl.uniform1f(U.aurOn, 0.0);
+    setU1f("cloudOn", U.cloudOn, 0.0);
+    setU1f("aurOn", U.aurOn, 0.0);
     // Open lighter on touch GPUs — start AA at ×4; the governor climbs back
     // to ×8/×9 if the device proves it has the headroom.
     AA.taps = 4;
@@ -4714,191 +2860,10 @@
     applyCanyonShadowToggle();
   }
 
-  wireKnob("lcdPxSlider", "lcdPxLabel", 1, (v) => Math.round(v) + "px",
-           (v) => gl.uniform1f(U.lcdPx, v * dpr));
-  wireKnob("widthSlider", "widthLabel", 100, fix2,
-           (v) => gl.uniform1f(U.riverW, v));
   wireKnob("flowSlider", "flowLabel", 100, fix2,
            (v) => gl.uniform1f(U.flowSpd, v));
-  wireKnob("streakSlider", "streakLabel", 100, fix2,
-           (v) => gl.uniform1f(U.streak, v));
-  wireKnob("crestSlider", "crestLabel", 100, fix2,
-           (v) => gl.uniform1f(U.crest, v));
   wireKnob("foamSlider", "foamLabel", 100, fix2,
            (v) => gl.uniform1f(U.foam, v));
-
-  // Continent hue slider — 0..360°, mapped through HSV → RGB
-  function hsv2rgb(h, s, v) {
-    const c = v * s;
-    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
-    const m = v - c;
-    let r = 0, g = 0, b = 0;
-    if (h < 60)      { r = c; g = x; }
-    else if (h < 120){ r = x; g = c; }
-    else if (h < 180){ g = c; b = x; }
-    else if (h < 240){ g = x; b = c; }
-    else if (h < 300){ r = x; b = c; }
-    else             { r = c; b = x; }
-    return [r + m, g + m, b + m];
-  }
-  // Continent colour — built from hue + saturation sliders. Hue picks
-  // the tone, saturation controls how vivid vs. muted/earthy it is.
-  function pushContColor() {
-    const hueEl = document.getElementById("contHueSlider");
-    const satEl = document.getElementById("contSatSlider");
-    const h = ((parseInt(hueEl ? hueEl.value : 110, 10) % 360) + 360) % 360;
-    const s = (parseInt(satEl ? satEl.value : 45, 10) / 100);
-    // Value flatter for warm/cool symmetry so earth tones stay legible
-    const v = 0.62 + 0.08 * Math.cos((h - 180) * Math.PI / 180);
-    const [r, g, b] = hsv2rgb(h, Math.max(0.0, s), Math.max(0.50, v));
-    gl.uniform3f(U.contColor, r, g, b);
-  }
-  wireKnob("contHueSlider", "contHueLabel", 1, (v) => Math.round(v) + "°",
-           (_) => pushContColor());
-  wireKnob("contSatSlider", "contSatLabel", 1, (v) => Math.round(v) + "%",
-           (_) => pushContColor());
-
-  // ── Theme-driven river tint ── reads --theme-accent-current from the blog
-  // theme system and pushes it to the shader's u_waterTint uniform. The
-  // mix weight is softened (0.55 base / 0.45 highlight) inside the shader
-  // so the river keeps water-like luminance instead of becoming flat paint.
-  function hexToRgb01(hex){
-    if (!hex) return null;
-    hex = hex.trim().replace('#', '');
-    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
-    if (hex.length !== 6) return null;
-    const n = parseInt(hex, 16);
-    if (isNaN(n)) return null;
-    return [
-      Math.max(0, Math.min(1, ((n >> 16) & 255) / 255)),
-      Math.max(0, Math.min(1, ((n >> 8)  & 255) / 255)),
-      Math.max(0, Math.min(1, ( n        & 255) / 255))
-    ];
-  }
-  function pushWaterTint(){
-    const css = getComputedStyle(document.documentElement)
-                 .getPropertyValue('--theme-accent-current');
-    const rgb = hexToRgb01(css);
-    if (!rgb) return;  // 解析失败保持默认
-    gl.uniform3f(U.waterTint, rgb[0], rgb[1], rgb[2]);
-  }
-  pushWaterTint();                                    // 立即同步当前主题
-  window.addEventListener('themechange', pushWaterTint);  // 监听主题切换
-
-  // Gradient recolour — two vivid hue stops (top → bottom)
-  function pushGradColors() {
-    const aEl = document.getElementById("gradASlider");
-    const bEl = document.getElementById("gradBSlider");
-    const ha = parseInt(aEl ? aEl.value : 30, 10);
-    const hb = parseInt(bEl ? bEl.value : -140, 10);
-    gl.uniform1f(U.hueA, ha / 360.0);
-    gl.uniform1f(U.hueB, hb / 360.0);
-  }
-  wireKnob("gradASlider", "gradALabel", 1, (v) => Math.round(v) + "°", (_) => pushGradColors());
-  wireKnob("gradBSlider", "gradBLabel", 1, (v) => Math.round(v) + "°", (_) => pushGradColors());
-  wireKnob("gradBriSlider", "gradBriLabel", 100, fix2, (v) => gl.uniform1f(U.gradBri, v));
-
-  // Continents on/off
-  const contToggle = document.getElementById("contToggle");
-  if (contToggle) {
-    contToggle.addEventListener("change", () => {
-      gl.uniform1f(U.contOn, contToggle.checked ? 1.0 : 0.0);
-    });
-  }
-
-  // Distant mountains on/off
-  const mtnToggle = document.getElementById("mtnToggle");
-  if (mtnToggle) {
-    mtnToggle.addEventListener("change", () => {
-      gl.uniform1f(U.mtnOn, mtnToggle.checked ? 1.0 : 0.0);
-    });
-  }
-
-  // Topographic contours on/off
-  const topoToggle = document.getElementById("topoToggle");
-  if (topoToggle) {
-    topoToggle.addEventListener("change", () => {
-      gl.uniform1f(U.topoOn, topoToggle.checked ? 1.0 : 0.0);
-    });
-  }
-
-  // Cities on/off
-  const cityToggle = document.getElementById("cityToggle");
-  if (cityToggle) {
-    cityToggle.addEventListener("change", () => {
-      gl.uniform1f(U.cityOn, cityToggle.checked ? 1.0 : 0.0);
-    });
-  }
-
-  // CRT scanlines on/off
-  const crtToggle = document.getElementById("crtToggle");
-  if (crtToggle) {
-    crtToggle.addEventListener("change", () => {
-      gl.uniform1f(U.crtOn, crtToggle.checked ? 1.0 : 0.0);
-    });
-  }
-
-  // Game Boy LCD treatment on/off
-  const lcdToggle = document.getElementById("lcdToggle");
-  if (lcdToggle) {
-    lcdToggle.addEventListener("change", () => {
-      gl.uniform1f(U.lcd, lcdToggle.checked ? 1.0 : 0.0);
-    });
-  }
-
-  // Gradient recolour on/off
-  const gradToggle = document.getElementById("gradToggle");
-  if (gradToggle) {
-    gradToggle.addEventListener("change", () => {
-      gl.uniform1f(U.grad, gradToggle.checked ? 1.0 : 0.0);
-    });
-  }
-
-  // Terminal text: pixelated vs. sharp (default sharp)
-  const pixelTextToggle = document.getElementById("pixelTextToggle");
-  if (pixelTextToggle) {
-    pixelTextToggle.addEventListener("change", () => {
-      gl.uniform1f(U.pixelText, pixelTextToggle.checked ? 1.0 : 0.0);
-    });
-  }
-
-  // Matrix charset toggle — rebuilds the glyph atlas with katakana/digits.
-  const matrixToggle = document.getElementById("matrixToggle");
-  if (matrixToggle) {
-    matrixToggle.addEventListener("change", applyAtlas);
-  }
-
-  // Dots vs ASCII render mode — rebuilds the atlas as a halftone dot field.
-  const dotsToggle = document.getElementById("dotsToggle");
-  if (dotsToggle) {
-    dotsToggle.addEventListener("change", applyAtlas);
-  }
-
-  // DOT SZ — live dot-radius control; rebuilds the dot atlas while Dots is on.
-  const dotSizeSlider = document.getElementById("dotSizeSlider");
-  const dotSizeLabel  = document.getElementById("dotSizeLabel");
-  if (dotSizeSlider) {
-    dotSizeSlider.addEventListener("input", () => {
-      if (dotSizeLabel) dotSizeLabel.textContent = (parseInt(dotSizeSlider.value, 10) / 100).toFixed(2);
-      if (dotsToggle && dotsToggle.checked) applyAtlas();
-    });
-  }
-
-  // DOT INT — dot brightness boost (only while Dots is on); lets small dots
-  // read bright/punchy without growing them.
-  const dotIntSlider = document.getElementById("dotIntSlider");
-  const dotIntLabel  = document.getElementById("dotIntLabel");
-  if (dotIntSlider) {
-    dotIntSlider.addEventListener("input", () => {
-      const v = parseInt(dotIntSlider.value, 10) / 100;
-      if (dotIntLabel) dotIntLabel.textContent = v.toFixed(2);
-      if (dotsToggle && dotsToggle.checked) gl.uniform1f(U.dotGain, v);
-    });
-  }
-
-  // Apply the initial render mode from the (default-checked) Dots toggle,
-  // so the dot atlas + u_dots/u_dotGain are set correctly on load.
-  applyAtlas();
 
   // Debug panel minimize toggle
   const dbgBar = document.getElementById("debugBar");
@@ -4971,9 +2936,9 @@
     liveT0 = performance.now() - 1.0e6;
     setChrome(false);                       // reveal header (inline starts hidden)
     gl.uniform1f(U.boot, 0.0);
-    gl.uniform1f(U.tod, todFrac(0));        // static (reduced motion)
+    setU1f("tod", U.tod, todFrac(0));       // static (reduced motion)
     gl.uniform1f(U.aurHue, auroraHue);
-    gl.uniform1f(U.aurSpeed, auroraSpeed);
+    setU1f("aurSpeed", U.aurSpeed, auroraSpeed);
     paintText(performance.now());
     uploadText();
     // Static end state: headline at its slid offset on wide/non-touch, hidden on
@@ -5045,7 +3010,7 @@
       looping = false;
       let url = null;
       try {
-        gl.uniform1f(U.tod, 0.28);              // ~06:45 — warm low sun, just risen
+        setU1f("tod", U.tod, 0.28);             // ~06:45 — warm low sun, just risen
         if (AA_LADDER.indexOf(4) >= 0) { AA.taps = 4; gl.uniform1f(U.aaN, 4); } // crisp still
         draw(cam.clock || 8.0);                 // render the frame…
         // Same synchronous task as the draw → the drawing buffer hasn't been
@@ -5243,14 +3208,6 @@
       bootCur += ((state === "live" ? 0.0 : 1.0) - bootCur) * 0.05;
       gl.uniform1f(U.boot, bootCur);
 
-      // Intro write-in begins only after Enter (from liveT0)
-      if (state === "boot") {
-        gl.uniform1f(U.intro, 0.0);
-      } else {
-        const p = Math.min(1, (now - liveT0) / INTRO_MS);
-        gl.uniform1f(U.intro, 1.0 - (1.0 - p) * (1.0 - p));
-      }
-
       // Intro reveal — two paths. Desktop (slide): the valley condenses in
       // immediately, then the headline types + slides left. Phones/narrow (fade):
       // the text types in first over the bare sky, then fades out and the valley
@@ -5262,7 +3219,7 @@
           // slides left to its resting offset.
           const elapsed = now - liveT0 - TEXT_DELAY_MS - TYPEIN_MS - REVEAL_HOLD_MS;
           const rp = Math.max(0, Math.min(1, (now - liveT0) / REVEAL_MS));
-          gl.uniform1f(U.reveal, rp * rp * (3.0 - 2.0 * rp));
+          setU1f("reveal", U.reveal, rp * rp * (3.0 - 2.0 * rp));   // 镜像: 天空 pass 靠它门控
           // The hero text waits for the valley to condense in, then fades in
           // (CSS 0.6s) as it begins to type.
           if (heroTextLive && !heroRevealDone && (now - liveT0) >= TEXT_DELAY_MS) {
@@ -5282,7 +3239,7 @@
           // so it has time to load and condenses in behind the departing text.
           const elapsed = now - liveT0 - TYPEIN_MS - REVEAL_HOLD_MS;
           const rp = Math.max(0, Math.min(1, (elapsed - MOBILE_REVEAL_START_MS) / MOBILE_REVEAL_MS));
-          gl.uniform1f(U.reveal, rp * rp * (3.0 - 2.0 * rp));
+          setU1f("reveal", U.reveal, rp * rp * (3.0 - 2.0 * rp));   // 镜像: 天空 pass 靠它门控
           if (!heroRevealDone) {
             // keep the centred text up (cursor blinking ~2x) for a beat, then fade
             // it out as the valley condenses in behind it.
@@ -5299,9 +3256,9 @@
         }
       }
 
-      gl.uniform1f(U.tod, todFrac(now));     // rAF clock (advances here)
+      setU1f("tod", U.tod, todFrac(now));    // rAF clock (advances here) — 天空昼夜同步
       gl.uniform1f(U.aurHue, auroraHue);
-      gl.uniform1f(U.aurSpeed, auroraSpeed);
+      setU1f("aurSpeed", U.aurSpeed, auroraSpeed);  // 镜像: 极光漂移速度同步到天空 pass
 
       // Pointer parallax: exponential follow + influence ramp. 幅度上限
       // ~2.6°(0.05 ≈ 半视场的 4.6%),有存在感不喧宾夺主;滚离场景区

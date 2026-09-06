@@ -2,7 +2,7 @@
    Axtrivc's Blog — Dynamic Avatar Loader v3
    适配 Butterfly 主题的懒加载机制（data-lazy-src + onerror）
    v3 修复：
-   - observer 无限循环（用 dataset 标记 + 规范化 URL 比较）
+   - observer 无限循环（用 WeakSet 标记 + 规范化 URL 比较）
    - 多 selector 命中同一元素（用 WeakSet 去重）
    - 定时器泄漏（成功后立即清理）
    ============================================================ */
@@ -31,7 +31,6 @@
     // 直接设置 src
     img.src = avatarUrl;
     applied.add(img);
-    img.dataset.axAvatar = 'applied';
   }
 
   function applyAvatar() {
@@ -90,7 +89,10 @@
         }
       });
     });
-    observer.observe(document.body, {
+    // 头像只在侧栏 #aside-content 内, 观察它即可; 取不到再回退 body
+    // (原来挂 body 全 subtree, 全站任何 DOM/属性变化都会进回调)
+    var observeRoot = document.getElementById('aside-content') || document.body;
+    observer.observe(observeRoot, {
       attributes: true,
       attributeFilter: ['src', 'data-lazy-src'],
       subtree: true,

@@ -58,6 +58,13 @@
     [/bundesliga/i, '德甲'],
     [/ligue 1/i, '法甲'],
     [/major league soccer/i, '美职联'],
+    /* 国内杯赛 (ESPN league.name: Spanish Copa del Rey / English FA Cup /
+       German DFB-Pokal / French Coupe de France / Italian Coppa Italia) */
+    [/copa del rey/i, '国王杯'],
+    [/fa cup/i, '足总杯'],
+    [/dfb[ -]?pokal/i, '德国杯'],
+    [/coupe de france/i, '法国杯'],
+    [/coppa italia/i, '意大利杯'],
     [/friendly/i, '友谊赛']
   ];
   function compCn(name, fallback) {
@@ -169,7 +176,7 @@
         : lOpp.name + ' vs ' + cfg.teamZh;
       var lHs = live.home.score == null ? '-' : live.home.score;
       var lAs = live.away.score == null ? '-' : live.away.score;
-      box.innerHTML =
+      if (box) box.innerHTML =
         '<div class="next-match">' +
           '<img class="nx-logo" src="' + TEAM_LOGO + esc(lOpp.id) + '.png" alt="" loading="eager" onerror="this.remove()">' +
           '<div class="nx-info">' +
@@ -179,7 +186,7 @@
           '<div class="nx-when">🔴 直播中 ' + lHs + ' - ' + lAs + '</div>' +
         '</div>';
       if (loading) loading.style.display = 'none';
-      box.style.display = '';
+      if (box) box.style.display = '';
       return;
     }
 
@@ -198,7 +205,7 @@
     var title = venue === '主'
       ? cfg.teamZh + ' vs ' + opp.name
       : opp.name + ' vs ' + cfg.teamZh;
-    box.innerHTML =
+    if (box) box.innerHTML =
       '<div class="next-match">' +
         '<img class="nx-logo" src="' + TEAM_LOGO + esc(opp.id) + '.png" alt="" loading="eager" onerror="this.remove()">' +
         '<div class="nx-info">' +
@@ -208,7 +215,7 @@
         '<div class="nx-when">' + esc(fmtWhen(next.date)) + '</div>' +
       '</div>';
     if (loading) loading.style.display = 'none';
-    box.style.display = '';
+    if (box) box.style.display = '';
   }
 
   function renderRecent(cfg, evs) {
@@ -243,11 +250,11 @@
         '<span class="rm-result ' + cls + '">' + txt + '</span>' +
       '</div>';
     }).join('');
-    box.innerHTML = html;
+    if (box) box.innerHTML = html;
     if (loading) loading.style.display = 'none';
-    box.style.display = '';
+    if (box) box.style.display = '';
     var rd = $('recentDate');
-    if (rd) rd.textContent = '(截至 ' + new Date().toLocaleDateString('zh-CN') + ')';
+    if (rd) rd.textContent = '(截至 ' + new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }) + ')';
   }
 
   /* ---------- 积分榜 + 数据总览 ---------- */
@@ -275,7 +282,7 @@
           return {
             id: String((en.team || {}).id || ''),
             name: (en.team || {}).shortDisplayName || (en.team || {}).displayName || '?',
-            logo: TEAM_LOGO + ((en.team || {}).id || '') + '.png',
+            logo: TEAM_LOGO + esc((en.team || {}).id || '') + '.png',
             stats: stats
           };
         });
@@ -305,9 +312,11 @@
     var statsBox = $('statsContent');
     if (mine && statsBox) {
       var rk = num(mine.stats.rank);
+      // rank 缺失时 num() 得 0, 显示 '-' 而不是 "0th"
+      var rkText = rk > 0 ? rk + suffix(rk) : '-';
       $('statsContent').innerHTML =
         '<div class="team-stats">' +
-          '<div><div class="team-stat-num">' + rk + suffix(rk) + '</div><div class="team-stat-label">联赛排名</div></div>' +
+          '<div><div class="team-stat-num">' + rkText + '</div><div class="team-stat-label">联赛排名</div></div>' +
           '<div><div class="team-stat-num">' + esc(mine.stats.points || '0') + '</div><div class="team-stat-label">积分</div></div>' +
           '<div><div class="team-stat-num">' + esc(mine.stats.gamesPlayed || '0') + '</div><div class="team-stat-label">场次</div></div>' +
         '</div>' +
@@ -332,7 +341,7 @@
         var hl = r.id === String(cfg.teamId);
         return '<tr class="' + (hl ? 'highlight' : '') + '">' +
           '<td class="rank">' + esc(r.stats.rank || '-') + '</td>' +
-          '<td><img src="' + r.logo + '" alt="" loading="lazy" onerror="this.remove()" ' +
+          '<td><img src="' + esc(r.logo) + '" alt="" loading="lazy" onerror="this.remove()" ' +
                'style="width:16px;height:16px;object-fit:contain;vertical-align:-3px;margin-right:6px;">' +
                esc(r.name) + '</td>' +
           '<td>' + esc(r.stats.gamesPlayed || '0') + '</td>' +
@@ -349,7 +358,7 @@
       var sc = $('standingsContent');
       if (sc) sc.style.display = '';
       var sd = $('standingsDate');
-      if (sd) sd.textContent = '(截至 ' + new Date().toLocaleDateString('zh-CN') + ')';
+      if (sd) sd.textContent = '(截至 ' + new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }) + ')';
     }
   }
 
