@@ -262,4 +262,9 @@
     var hint = stage.querySelector('.axtrivc-river-hint');
     if (hint) hint.style.opacity = '0';
   });
+
+  window.addEventListener('pagehide', function () {
+    stageVisible = false;
+    running = false;
+  });
 })();

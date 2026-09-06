@@ -142,22 +142,6 @@
     });
   }
 
-  /* ── 跨页 View Transitions:卡片标题 ↔ 文章标题共享元素 ──
-     名按文章路径生成,列表页与文章页两侧算法一致才能配对;
-     中文 slug 的 % 编码字符不是合法 CSS ident,剥掉 % 后
-     (E8%A5%BF → E8A5BF)既合法又不撞名。只命名主列表卡片,
-     侧栏"最新文章"不命名——同页两个同名会让整个过渡被跳过。 */
-  function vtSlug(pathname) {
-    return pathname.replace(/^\/+|\/+$/g, '').replace(/\//g, '-').replace(/%/g, '');
-  }
-  function initViewTransitions() {
-    if (!('viewTransitionName' in document.documentElement.style)) return;
-    document.querySelectorAll('#recent-posts .article-title[href]').forEach(function (a) {
-      try { a.style.viewTransitionName = 'post-' + vtSlug(new URL(a.href).pathname); } catch (e) {}
-    });
-    var pt = document.querySelector('#post-info .post-title');
-    if (pt) pt.style.viewTransitionName = 'post-' + vtSlug(location.pathname);
-  }
 
   /* ── 文章页头视差:标题随滚动缓出(220px 页头内渐隐下移) ── */
   function initPostHeaderParallax() {
@@ -239,7 +223,6 @@
     protectDates();
     initReveal();
     initAvatarFade();
-    initViewTransitions();
     initPostHeaderParallax();
     initTocPulse();
     initThemeGlide();

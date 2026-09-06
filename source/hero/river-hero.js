@@ -3293,10 +3293,9 @@
       cam.clock += cdt;
 
       gpuTimedDraw(cam.clock);
-      // 预热兜底图撤岗: live 场景从黑淡起(bootCur 1→0)过半后再交叉淡出静态
-      // 图(0.6s transition 覆盖剩余淡起), 用户看到的是 日出图→动画 的无缝接力,
-      // 而不是 黑屏→淡起。
-      if (heroWarmupStill && bootCur < 0.4) {
+      // 预热兜底图撤岗: live 场景首次绘制完成后立即启动静态图交叉淡出，
+      // CSS 0.6s transition 自然顺滑覆盖淡起全过程，大幅消除用户感官上的卡死等待。
+      if (heroWarmupStill && (bootCur < 0.85 || state === "live")) {
         heroWarmupStill = false;
         if (heroStill) heroStill.classList.remove("is-shown");
       }
@@ -3321,6 +3320,16 @@
         if (heroVisible && heroCanRenderLive) startLoop();
       }, { rootMargin: "200px 0px 200px 0px", threshold: 0 }).observe(hero);
     }
+
+    // 离开页面时立即停机，彻底释放 GPU 与主线程，杜绝切页掉帧、死锁与资源竞争
+    window.addEventListener("pagehide", function () {
+      looping = false;
+      heroCanRenderLive = false;
+    });
+    window.addEventListener("beforeunload", function () {
+      looping = false;
+      heroCanRenderLive = false;
+    });
 
     heroCanRenderLive = true;
     startLoop();
