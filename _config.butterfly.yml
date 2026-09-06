@@ -280,3 +280,11 @@ inject:
     - <script src="/js/publish-button.js?v={{cache_bust}}"></script>
     - <script src="/js/dynamic-avatar.js?v={{cache_bust}}"></script>
     - <script src="/js/ui-polish.js?v={{cache_bust}}"></script>
+
+# -------------------------------------------------------
+# Busuanzi (禁用不稳定、常年超时挂死页面的第三方不蒜子统计)
+# -------------------------------------------------------
+busuanzi:
+  site_uv: false
+  site_pv: false
+  page_pv: false
