@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月7日 星期五
+title: 足球晚报 · 2026年8月7日 星期五
 date: 2026-08-07 20:00:00
 excerpt: "The Vinicius Junior dream is over · Arsenal latest: Have your say · Argentina, Mexico…"
 description: "The Vinicius Junior dream is over · Arsenal latest: Have your say · Argentina, Mexico…"

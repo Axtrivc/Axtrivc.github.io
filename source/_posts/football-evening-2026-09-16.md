@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月16日 星期三
+title: 足球晚报 · 2026年9月16日 星期三
 date: 2026-09-16 20:00:00
 excerpt: "Donnarumma: Man City are not in transition, it's going to be a great season · Man City…"
 description: "Donnarumma: Man City are not in transition, it's going to be a great season · Man City…"

@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月1日 星期二
+title: 足球早报 · 2026年9月1日 星期二
 date: 2026-09-01 08:00:00
 excerpt: "Saka goal leads Arsenal to victory at Villa Park · Saka earns hard-fought win for Arsenal…"
 description: "Saka goal leads Arsenal to victory at Villa Park · Saka earns hard-fought win for Arsenal…"

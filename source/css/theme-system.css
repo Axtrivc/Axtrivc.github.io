@@ -51,7 +51,10 @@ body:not(.hero-page-active) #page-header.post-bg {
   text-shadow: none !important;
 }
 #page-header.post-bg #post-info #post-meta a {
-  color: var(--theme-accent-current, #07C160) !important;
+  /* 2026-10-10 对比度修复: accent 亮色直接作文字色(如 lemon-indigo #F5C518)
+     在浅色页头上仅 1.63:1 (WCAG AA 需 4.5:1), 换 --theme-accent-text 档;
+     其余主题未定义该变量 → fallback 链回 accent 原值, 默认态零变化 */
+  color: var(--theme-accent-text, var(--theme-accent-current, #07C160)) !important;
 }
 
 /* Hide Butterfly dark mode toggle */
@@ -375,12 +378,21 @@ footer {
   color: var(--theme-text-current, #222222) !important;
 }
 
-/* Sidebar Follow Me button — actual DOM id: #card-info-btn */
+/* Sidebar Follow Me button — actual DOM id: #card-info-btn
+   2026-10-10 对比度修复: 写死白字压 lemon-indigo 柠檬黄 accent 底仅 1.63:1,
+   改用 --theme-accent-contrast 档(默认 #FFFFFF 行为不变, lemon-indigo 下为深靛 6.35:1)。
+   theme-system.js:181-182 的 inline 着色与本规则同值同源, author !important
+   声明优先级高于 inline 普通声明, 无需 JS 联动即可生效 */
 #card-info-btn,
 a[id="card-info-btn"] {
   background-color: var(--theme-accent-current, #07C160) !important;
-  color: #FFFFFF !important;
+  color: var(--theme-accent-contrast, #FFFFFF) !important;
   transition: background-color 0.45s ease !important;
+}
+/* lemon-indigo 下 hover 底色切为主题深靛(下方 :hover 规则用 --theme-heading),
+   文字需同步回白, 否则深靛字隐入深靛底 */
+body[data-theme-custom="lemon-indigo"] #aside-content #card-info-btn:hover {
+  color: #FFFFFF !important;
 }
 
 /* ============================================================
@@ -451,6 +463,18 @@ a[id="card-info-btn"] {
 :root {
   --btn-hover-color: var(--theme-heading, #07C160);
   --text-bg-hover: var(--theme-accent-current, rgba(7,193,96,0.7));
+}
+
+/* ══ 2026-10-10 对比度修复: accent 文字级档位（lemon-indigo 专属定义）══
+   lemon-indigo 的 accent #F5C518(亮柠檬黄)在白/浅底上作文字色仅 1.63:1,
+   作底色时配白字同为 1.63:1, 均不满足 WCAG AA 正文 4.5:1。
+   两个档位仅服务本文件两处修复(Follow Me 按钮 / post-meta 分类链接),
+   其余主题不定义 → 消费点 fallback 链回原值, 默认态零变化;
+   lemon-indigo 以 body[data-theme-custom] 作用域(theme-system.js applyTheme 设置)
+   统一定义为主题深靛 --theme-heading(#1E3A8A): 黄底上 6.35:1 / 白底上 10.36:1 */
+body[data-theme-custom="lemon-indigo"] {
+  --theme-accent-text: var(--theme-heading, #1E3A8A);     /* accent 当文字色用时的替代色(post-meta 链接) */
+  --theme-accent-contrast: var(--theme-heading, #1E3A8A); /* accent 作底色时的前景色(Follow Me 按钮) */
 }
 
 /* ============================================================

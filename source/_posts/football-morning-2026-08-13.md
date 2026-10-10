@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月13日 星期四
+title: 足球早报 · 2026年8月13日 星期四
 date: 2026-08-13 08:00:00
 excerpt: "What should Man City do after Chelsea's Fernandez deadline? Vote! · Tottenham latest: Are…"
 description: "What should Man City do after Chelsea's Fernandez deadline? Vote! · Tottenham latest: Are…"

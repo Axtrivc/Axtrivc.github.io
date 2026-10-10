@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年10月1日 星期四
+title: 足球早报 · 2026年10月1日 星期四
 date: 2026-10-01 08:00:00
 excerpt: "Man City sponsor Etihad Airways considering legal action against PL · Ronaldo walks out…"
 description: "Man City sponsor Etihad Airways considering legal action against PL · Ronaldo walks out…"

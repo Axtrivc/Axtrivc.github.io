@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月10日 星期四
+title: 足球晚报 · 2026年9月10日 星期四
 date: 2026-09-10 20:00:00
 excerpt: "Tottenham latest: Michael Bridge answers YOUR questions in a live Spurs Q&A! · Arteta…"
 description: "Tottenham latest: Michael Bridge answers YOUR questions in a live Spurs Q&A! · Arteta…"

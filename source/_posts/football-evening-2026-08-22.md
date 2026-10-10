@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月22日 星期六
+title: 足球晚报 · 2026年8月22日 星期六
 date: 2026-08-22 20:00:00
 excerpt: "Man Utd latest: Rashford's squad number confirmed · 'A massive 10 days' - Neville tells…"
 description: "Man Utd latest: Rashford's squad number confirmed · 'A massive 10 days' - Neville tells…"

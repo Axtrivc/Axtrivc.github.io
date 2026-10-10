@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月8日 星期二
+title: 足球晚报 · 2026年9月8日 星期二
 date: 2026-09-08 20:00:00
 excerpt: "Ballon d'Or nominees revealed LIVE! Have your say... · Liverpool latest: New £300m main…"
 description: "Ballon d'Or nominees revealed LIVE! Have your say... · Liverpool latest: New £300m main…"

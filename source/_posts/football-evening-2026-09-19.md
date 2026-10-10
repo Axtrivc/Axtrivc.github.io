@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月19日 星期六
+title: 足球晚报 · 2026年9月19日 星期六
 date: 2026-09-19 20:00:00
 excerpt: "Shambles at Spurs? They finally score but Villa leave with the points LIVE! · West Ham…"
 description: "Shambles at Spurs? They finally score but Villa leave with the points LIVE! · West Ham…"

@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年10月3日 星期六
+title: 足球早报 · 2026年10月3日 星期六
 date: 2026-10-03 08:00:00
 excerpt: "Man City lodge appeal against guilty verdict · Neville: Man City owners cannot 'retain…"
 description: "Man City lodge appeal against guilty verdict · Neville: Man City owners cannot 'retain…"

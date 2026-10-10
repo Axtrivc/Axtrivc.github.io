@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月11日 星期二
+title: 足球晚报 · 2026年8月11日 星期二
 date: 2026-08-11 20:00:00
 excerpt: "Rashford set for reintegration at Man Utd · Trump warns of 'terrible mistake' if FIFA…"
 description: "Rashford set for reintegration at Man Utd · Trump warns of 'terrible mistake' if FIFA…"

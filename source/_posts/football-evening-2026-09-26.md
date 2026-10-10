@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月26日 星期六
+title: 足球晚报 · 2026年9月26日 星期六
 date: 2026-09-26 20:00:00
 excerpt: "WSL: Greenwood free kick gives Man City lead at Charlton LIVE! · Ure hits the post in…"
 description: "WSL: Greenwood free kick gives Man City lead at Charlton LIVE! · Ure hits the post in…"

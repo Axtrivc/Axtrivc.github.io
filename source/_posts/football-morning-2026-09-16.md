@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月16日 星期三
+title: 足球早报 · 2026年9月16日 星期三
 date: 2026-09-16 08:00:00
 excerpt: "Spurs do score but Szoboszlai stunner seals cup tie for Liverpool · Szoboszlai scores…"
 description: "Spurs do score but Szoboszlai stunner seals cup tie for Liverpool · Szoboszlai scores…"

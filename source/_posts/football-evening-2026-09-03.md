@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月3日 星期四
+title: 足球晚报 · 2026年9月3日 星期四
 date: 2026-09-03 20:00:00
 excerpt: "Liverpool spent big but this squad is still imbalanced and it could be a problem ·…"
 description: "Liverpool spent big but this squad is still imbalanced and it could be a problem ·…"

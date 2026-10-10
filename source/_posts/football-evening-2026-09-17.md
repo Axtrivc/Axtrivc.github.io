@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月17日 星期四
+title: 足球晚报 · 2026年9月17日 星期四
 date: 2026-09-17 20:00:00
 excerpt: "Carrick, INEOS, defence... what is behind Man Utd's latest problems? · Man Utd wonderkid…"
 description: "Carrick, INEOS, defence... what is behind Man Utd's latest problems? · Man Utd wonderkid…"

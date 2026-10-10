@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月22日 星期二
+title: 足球早报 · 2026年9月22日 星期二
 date: 2026-09-22 08:00:00
 excerpt: "Palmer, Rice among England withdrawals as Gibbs-White returns · Out-run? Walking too…"
 description: "Palmer, Rice among England withdrawals as Gibbs-White returns · Out-run? Walking too…"

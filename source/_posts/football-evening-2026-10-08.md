@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年10月8日 星期四
+title: 足球晚报 · 2026年10月8日 星期四
 date: 2026-10-08 20:00:00
 excerpt: "Eckert to remain Saints boss after getting suspended ban for Spygate · 'Ruthless' Arteta…"
 description: "Eckert to remain Saints boss after getting suspended ban for Spygate · 'Ruthless' Arteta…"

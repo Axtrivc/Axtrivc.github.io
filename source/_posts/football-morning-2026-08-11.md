@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月11日 星期二
+title: 足球早报 · 2026年8月11日 星期二
 date: 2026-08-11 08:00:00
 excerpt: "Chelsea get Luton as Spurs to host Charlton in Carabao Cup · Liverpool latest: Reds…"
 description: "Chelsea get Luton as Spurs to host Charlton in Carabao Cup · Liverpool latest: Reds…"

@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月15日 星期二
+title: 足球晚报 · 2026年9月15日 星期二
 date: 2026-09-15 20:00:00
 excerpt: "Will Iraola's pressing game work at Liverpool? · Merson: I'm worried for Liverpool - how…"
 description: "Will Iraola's pressing game work at Liverpool? · Merson: I'm worried for Liverpool - how…"

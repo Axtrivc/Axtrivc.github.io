@@ -1109,7 +1109,7 @@ def generate_report(edition):
     # ---- 4. 组装 ----
     html_parts = []
     html_parts.append(f"""---
-title: 足球{edition_cn} · {today_cn}
+title: 足球{edition_cn}\u00a0·\u00a0{today_cn}
 date: {today_str} {'08:00:00' if edition == 'morning' else '20:00:00'}
 excerpt: "{subtitle}"
 description: "{subtitle}"

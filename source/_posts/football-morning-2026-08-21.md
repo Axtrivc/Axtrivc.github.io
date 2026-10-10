@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月21日 星期五
+title: 足球早报 · 2026年8月21日 星期五
 date: 2026-08-21 08:00:00
 excerpt: "One to watch? Hot take?! Sky Sports writers give their PL predictions! · Merson's Premier…"
 description: "One to watch? Hot take?! Sky Sports writers give their PL predictions! · Merson's Premier…"

@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月9日 星期三
+title: 足球晚报 · 2026年9月9日 星期三
 date: 2026-09-09 20:00:00
 excerpt: "Messi set to buy LaLiga 2 team · Carra: Haaland will be greatest goalscorer of all time ·…"
 description: "Messi set to buy LaLiga 2 team · Carra: Haaland will be greatest goalscorer of all time ·…"

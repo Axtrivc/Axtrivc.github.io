@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年10月9日 星期五
+title: 足球早报 · 2026年10月9日 星期五
 date: 2026-10-09 08:00:00
 excerpt: "'Stick together, enjoy the ride and smile' - Haaland's message to Man City fans · Man…"
 description: "'Stick together, enjoy the ride and smile' - Haaland's message to Man City fans · Man…"

@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月29日 星期六
+title: 足球早报 · 2026年8月29日 星期六
 date: 2026-08-29 08:00:00
 excerpt: "Redknapp: Cherki is a genius · Cherki magic inspires vintage Man City victory at Palace ·…"
 description: "Redknapp: Cherki is a genius · Cherki magic inspires vintage Man City victory at Palace ·…"

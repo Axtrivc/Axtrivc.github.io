@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月30日 星期三
+title: 足球晚报 · 2026年9月30日 星期三
 date: 2026-09-30 20:00:00
 excerpt: "Read full Premier League statement after Man City verdict delivered · Reaction as verdict…"
 description: "Read full Premier League statement after Man City verdict delivered · Reaction as verdict…"

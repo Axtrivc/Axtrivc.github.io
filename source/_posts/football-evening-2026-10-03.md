@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年10月3日 星期六
+title: 足球晚报 · 2026年10月3日 星期六
 date: 2026-10-03 20:00:00
 excerpt: "Croatia vs England team news LIVE! · Man Utd hold on to early opener to beat Man Utd LIVE!"
 description: "Croatia vs England team news LIVE! · Man Utd hold on to early opener to beat Man Utd LIVE!"

@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月1日 星期二
+title: 足球晚报 · 2026年9月1日 星期二
 date: 2026-09-01 20:00:00
 excerpt: "Kone? Camara? Chelsea working hard to bring in Fernandez replacement · Chelsea latest:…"
 description: "Kone? Camara? Chelsea working hard to bring in Fernandez replacement · Chelsea latest:…"

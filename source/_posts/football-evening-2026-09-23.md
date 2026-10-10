@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月23日 星期三
+title: 足球晚报 · 2026年9月23日 星期三
 date: 2026-09-23 20:00:00
 excerpt: "Spurs latest: 'Give De Zerbi time' - Michael Bridge answers YOUR questions... · Man Utd…"
 description: "Spurs latest: 'Give De Zerbi time' - Michael Bridge answers YOUR questions... · Man Utd…"

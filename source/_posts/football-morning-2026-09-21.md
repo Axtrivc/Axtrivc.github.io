@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月21日 星期一
+title: 足球早报 · 2026年9月21日 星期一
 date: 2026-09-21 08:00:00
 excerpt: "Neville: Carrick must stop defending Man Utd players after Fulham 'disgrace' · Man Utd…"
 description: "Neville: Carrick must stop defending Man Utd players after Fulham 'disgrace' · Man Utd…"

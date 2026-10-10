@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年10月7日 星期三
+title: 足球早报 · 2026年10月7日 星期三
 date: 2026-10-07 08:00:00
 excerpt: "King Kane marks milestone match with star display as England beat Czech Republic · Kane…"
 description: "King Kane marks milestone match with star display as England beat Czech Republic · Kane…"

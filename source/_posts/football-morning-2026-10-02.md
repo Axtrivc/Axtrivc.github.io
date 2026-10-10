@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年10月2日 星期五
+title: 足球早报 · 2026年10月2日 星期五
 date: 2026-10-02 08:00:00
 excerpt: "'A risk not worth taking' - PL execs not expecting clubs to vote for Man City expulsion ·…"
 description: "'A risk not worth taking' - PL execs not expecting clubs to vote for Man City expulsion ·…"

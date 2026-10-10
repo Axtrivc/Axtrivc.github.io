@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月17日 星期四
+title: 足球早报 · 2026年9月17日 星期四
 date: 2026-09-17 08:00:00
 excerpt: "New season, same Man Utd story - Carrick is now firmly feeling the pressure · Brighton…"
 description: "New season, same Man Utd story - Carrick is now firmly feeling the pressure · Brighton…"

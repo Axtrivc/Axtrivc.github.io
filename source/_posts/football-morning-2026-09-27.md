@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月27日 星期日
+title: 足球早报 · 2026年9月27日 星期日
 date: 2026-09-27 08:00:00
 excerpt: "Spain show their class as errors cost England in Nations League loss · Keane disagrees…"
 description: "Spain show their class as errors cost England in Nations League loss · Keane disagrees…"

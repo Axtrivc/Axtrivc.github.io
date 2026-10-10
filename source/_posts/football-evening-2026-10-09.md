@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年10月9日 星期五
+title: 足球晚报 · 2026年10月9日 星期五
 date: 2026-10-09 20:00:00
 excerpt: "PL returns! Man City in spotlight, big Old Trafford showdown and Gyokeres' chance ·…"
 description: "PL returns! Man City in spotlight, big Old Trafford showdown and Gyokeres' chance ·…"

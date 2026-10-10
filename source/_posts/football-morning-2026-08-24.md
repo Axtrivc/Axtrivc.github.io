@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月24日 星期一
+title: 足球早报 · 2026年8月24日 星期一
 date: 2026-08-24 08:00:00
 excerpt: "Late Liverpool pen sees Szoboszlai silence Newcastle in draw · Szoboszlai snatches…"
 description: "Late Liverpool pen sees Szoboszlai silence Newcastle in draw · Szoboszlai snatches…"

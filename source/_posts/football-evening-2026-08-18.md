@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月18日 星期二
+title: 足球晚报 · 2026年8月18日 星期二
 date: 2026-08-18 20:00:00
 excerpt: "How are Man Utd shaping up ahead of the new season? · Papers: Potential power shift at…"
 description: "How are Man Utd shaping up ahead of the new season? · Papers: Potential power shift at…"

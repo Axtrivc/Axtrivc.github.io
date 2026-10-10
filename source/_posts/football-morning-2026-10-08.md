@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年10月8日 星期四
+title: 足球早报 · 2026年10月8日 星期四
 date: 2026-10-08 08:00:00
 excerpt: "'Ruthless' Arteta enters step five of Arsenal project · Eckert to remain Saints boss…"
 description: "'Ruthless' Arteta enters step five of Arsenal project · Eckert to remain Saints boss…"

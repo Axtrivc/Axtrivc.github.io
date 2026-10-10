@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月11日 星期五
+title: 足球晚报 · 2026年9月11日 星期五
 date: 2026-09-11 20:00:00
 excerpt: "Merson: Spurs, Man City and Man Utd have defining games this weekend · PL Predictions:…"
 description: "Merson: Spurs, Man City and Man Utd have defining games this weekend · PL Predictions:…"

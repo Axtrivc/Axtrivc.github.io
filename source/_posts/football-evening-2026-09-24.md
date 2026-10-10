@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月24日 星期四
+title: 足球晚报 · 2026年9月24日 星期四
 date: 2026-09-24 20:00:00
 excerpt: "Man Utd defender Yoro receives first France call-up · Man City latest: Academy star…"
 description: "Man Utd defender Yoro receives first France call-up · Man City latest: Academy star…"

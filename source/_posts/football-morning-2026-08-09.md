@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月9日 星期日
+title: 足球早报 · 2026年8月9日 星期日
 date: 2026-08-09 08:00:00
 excerpt: "Wissa double gives Newcastle boss Jaissle winning start at 10-man Valencia · Newcastle…"
 description: "Wissa double gives Newcastle boss Jaissle winning start at 10-man Valencia · Newcastle…"

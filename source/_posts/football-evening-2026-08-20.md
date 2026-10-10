@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月20日 星期四
+title: 足球晚报 · 2026年8月20日 星期四
 date: 2026-08-20 20:00:00
 excerpt: "How does Arteta deliver step five of his Arsenal plan? · No Europe, more points? Why…"
 description: "How does Arteta deliver step five of his Arsenal plan? · No Europe, more points? Why…"

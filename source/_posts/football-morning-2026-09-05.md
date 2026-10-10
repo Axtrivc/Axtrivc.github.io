@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月5日 星期六
+title: 足球早报 · 2026年9月5日 星期六
 date: 2026-09-05 08:00:00
 excerpt: "Isak’s quickfire double earns Iraola first PL win as Liverpool boss · Iraola up and…"
 description: "Isak’s quickfire double earns Iraola first PL win as Liverpool boss · Iraola up and…"

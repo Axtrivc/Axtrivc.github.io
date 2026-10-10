@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月22日 星期二
+title: 足球晚报 · 2026年9月22日 星期二
 date: 2026-09-22 20:00:00
 excerpt: "Spurs bottom of PL but more than £300m spent · Merson: There's no way Man City win the…"
 description: "Spurs bottom of PL but more than £300m spent · Merson: There's no way Man City win the…"

@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月11日 星期五
+title: 足球早报 · 2026年9月11日 星期五
 date: 2026-09-11 08:00:00
 excerpt: "PL Predictions: Hull's run can't continue at Chelsea, can it? Oh, it can · Man Utd put…"
 description: "PL Predictions: Hull's run can't continue at Chelsea, can it? Oh, it can · Man Utd put…"

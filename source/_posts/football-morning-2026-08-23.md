@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月23日 星期日
+title: 足球早报 · 2026年8月23日 星期日
 date: 2026-08-23 08:00:00
 excerpt: "De Zerbi admits 'we're not a team yet' as Redknapp labels Spurs 'strangers' · Spurs…"
 description: "De Zerbi admits 'we're not a team yet' as Redknapp labels Spurs 'strangers' · Spurs…"

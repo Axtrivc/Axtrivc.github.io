@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月17日 星期一
+title: 足球晚报 · 2026年8月17日 星期一
 date: 2026-08-17 20:00:00
 excerpt: "Man City remain interested in Enzo despite missing Chelsea deadline · Arsenal 2026/27…"
 description: "Man City remain interested in Enzo despite missing Chelsea deadline · Arsenal 2026/27…"

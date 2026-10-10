@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月10日 星期一
+title: 足球晚报 · 2026年8月10日 星期一
 date: 2026-08-10 20:00:00
 excerpt: "Palace latest: '£35m but zero goals - Johnson to leave after underwhelming Eagles spell'…"
 description: "Palace latest: '£35m but zero goals - Johnson to leave after underwhelming Eagles spell'…"

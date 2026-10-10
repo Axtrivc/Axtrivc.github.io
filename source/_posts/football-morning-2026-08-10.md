@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月10日 星期一
+title: 足球早报 · 2026年8月10日 星期一
 date: 2026-08-10 08:00:00
 excerpt: "Hibs win at Rangers as McInnes remains winless · Liverpool throw away another 2-0 lead as…"
 description: "Hibs win at Rangers as McInnes remains winless · Liverpool throw away another 2-0 lead as…"

@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月7日 星期一
+title: 足球早报 · 2026年9月7日 星期一
 date: 2026-09-07 08:00:00
 excerpt: "Arsenal come from behind to beat Chelsea in thrilling derby · Arsenal edge out Chelsea in…"
 description: "Arsenal come from behind to beat Chelsea in thrilling derby · Arsenal edge out Chelsea in…"

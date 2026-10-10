@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月15日 星期六
+title: 足球早报 · 2026年8月15日 星期六
 date: 2026-08-15 08:00:00
 excerpt: "Jimenez salvages dramatic point for Wolves on Molineux return · Jimenez the hero as…"
 description: "Jimenez salvages dramatic point for Wolves on Molineux return · Jimenez the hero as…"

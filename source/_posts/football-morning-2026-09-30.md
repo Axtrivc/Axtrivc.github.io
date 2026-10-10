@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月30日 星期三
+title: 足球早报 · 2026年9月30日 星期三
 date: 2026-09-30 08:00:00
 excerpt: "Leaked video: Man City CEO Soriano sends message to staff and players · Man City guilty…"
 description: "Leaked video: Man City CEO Soriano sends message to staff and players · Man City guilty…"

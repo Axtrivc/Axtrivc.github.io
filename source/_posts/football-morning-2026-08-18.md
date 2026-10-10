@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月18日 星期二
+title: 足球早报 · 2026年8月18日 星期二
 date: 2026-08-18 08:00:00
 excerpt: "Boehly and Walter hold talks over selling Chelsea shares to majority owners · Papers:…"
 description: "Boehly and Walter hold talks over selling Chelsea shares to majority owners · Papers:…"

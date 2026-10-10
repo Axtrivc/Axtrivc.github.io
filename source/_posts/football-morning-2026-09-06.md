@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月6日 星期日
+title: 足球早报 · 2026年9月6日 星期日
 date: 2026-09-06 08:00:00
 excerpt: "Hits and misses: Gakpo steals Barcola's thunder as Anderson passes like Rodri · Haaland…"
 description: "Hits and misses: Gakpo steals Barcola's thunder as Anderson passes like Rodri · Haaland…"

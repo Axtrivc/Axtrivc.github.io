@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月25日 星期五
+title: 足球早报 · 2026年9月25日 星期五
 date: 2026-09-25 08:00:00
 excerpt: "Wales beaten by Portugal on frustrating night for Ronaldo · Arsenal latest: Havertz off…"
 description: "Wales beaten by Portugal on frustrating night for Ronaldo · Arsenal latest: Havertz off…"

@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月17日 星期一
+title: 足球早报 · 2026年8月17日 星期一
 date: 2026-08-17 08:00:00
 excerpt: "Man City and Barcelona agree fee for Rodri · Arsenal latest: Arteta calls for rule change…"
 description: "Man City and Barcelona agree fee for Rodri · Arsenal latest: Arteta calls for rule change…"

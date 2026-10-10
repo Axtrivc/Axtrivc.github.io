@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年10月4日 星期日
+title: 足球晚报 · 2026年10月4日 星期日
 date: 2026-10-04 20:00:00
 excerpt: "Chelsea, London City lead; Man City vs Arsenal team news LIVE! · 'Complete' England…"
 description: "Chelsea, London City lead; Man City vs Arsenal team news LIVE! · 'Complete' England…"

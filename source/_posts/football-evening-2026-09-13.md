@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月13日 星期日
+title: 足球晚报 · 2026年9月13日 星期日
 date: 2026-09-13 20:00:00
 excerpt: "Kostoulas strikes to put Brighton ahead at Coventry LIVE! · Breakthrough for Brighton!…"
 description: "Kostoulas strikes to put Brighton ahead at Coventry LIVE! · Breakthrough for Brighton!…"

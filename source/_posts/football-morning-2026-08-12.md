@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月12日 星期三
+title: 足球早报 · 2026年8月12日 星期三
 date: 2026-08-12 08:00:00
 excerpt: "Arsenal to retain title? Liverpool above Man Utd? Sky Sports predicted table revealed ·…"
 description: "Arsenal to retain title? Liverpool above Man Utd? Sky Sports predicted table revealed ·…"

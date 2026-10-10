@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月23日 星期日
+title: 足球晚报 · 2026年8月23日 星期日
 date: 2026-08-23 20:00:00
 excerpt: "Man City latest: Where's it all gone?! Haaland reveals new shaven haircut · Hits and…"
 description: "Man City latest: Where's it all gone?! Haaland reveals new shaven haircut · Hits and…"

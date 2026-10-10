@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年10月7日 星期三
+title: 足球晚报 · 2026年10月7日 星期三
 date: 2026-10-07 20:00:00
 excerpt: "How Gordon made himself undroppable for England · England latest: Your questions answered…"
 description: "How Gordon made himself undroppable for England · England latest: Your questions answered…"

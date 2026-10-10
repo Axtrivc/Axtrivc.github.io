@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月27日 星期四
+title: 足球早报 · 2026年8月27日 星期四
 date: 2026-08-27 08:00:00
 excerpt: "Redknapp hails Savio debut but De Zerbi demands more · Savio scores on debut as Spurs…"
 description: "Redknapp hails Savio debut but De Zerbi demands more · Savio scores on debut as Spurs…"

@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月30日 星期日
+title: 足球晚报 · 2026年8月30日 星期日
 date: 2026-08-30 20:00:00
 excerpt: "Arsenal agree club-record £55.7m Martinelli sale as Jesus heads to Barcelona · Spurs and…"
 description: "Arsenal agree club-record £55.7m Martinelli sale as Jesus heads to Barcelona · Spurs and…"

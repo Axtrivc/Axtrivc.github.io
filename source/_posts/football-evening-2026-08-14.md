@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月14日 星期五
+title: 足球晚报 · 2026年8月14日 星期五
 date: 2026-08-14 20:00:00
 excerpt: "Arsenal in talks with Leverkusen over Quansah · Arsenal latest: Why Quansah would be a…"
 description: "Arsenal in talks with Leverkusen over Quansah · Arsenal latest: Why Quansah would be a…"

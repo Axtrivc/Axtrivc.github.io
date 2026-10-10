@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月4日 星期五
+title: 足球早报 · 2026年9月4日 星期五
 date: 2026-09-04 08:00:00
 excerpt: "PL Predictions: More Iraola issues? Liverpool to slip at Ipswich · Spurs latest:…"
 description: "PL Predictions: More Iraola issues? Liverpool to slip at Ipswich · Spurs latest:…"

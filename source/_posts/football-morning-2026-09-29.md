@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月29日 星期二
+title: 足球早报 · 2026年9月29日 星期二
 date: 2026-09-29 08:00:00
 excerpt: "Man City CEO says fight against Premier League could take years to conclude · Man City…"
 description: "Man City CEO says fight against Premier League could take years to conclude · Man City…"

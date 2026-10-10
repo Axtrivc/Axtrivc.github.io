@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月18日 星期五
+title: 足球早报 · 2026年9月18日 星期五
 date: 2026-09-18 08:00:00
 excerpt: "Chris Samba's son Floyd shines on debut as Man City ease past Norwich · Samba show! Chris…"
 description: "Chris Samba's son Floyd shines on debut as Man City ease past Norwich · Samba show! Chris…"

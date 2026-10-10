@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月16日 星期日
+title: 足球晚报 · 2026年8月16日 星期日
 date: 2026-08-16 20:00:00
 excerpt: "Maresca in no mood to be 'friendly' as Arteta makes bold claim · Enzo Fernandez's mixed…"
 description: "Maresca in no mood to be 'friendly' as Arteta makes bold claim · Enzo Fernandez's mixed…"

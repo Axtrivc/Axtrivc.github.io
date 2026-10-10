@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月18日 星期五
+title: 足球晚报 · 2026年9月18日 星期五
 date: 2026-09-18 20:00:00
 excerpt: "Tuchel: 99.9 per cent of fans I meet don't ask me about Argentina subs · Palmer and…"
 description: "Tuchel: 99.9 per cent of fans I meet don't ask me about Argentina subs · Palmer and…"

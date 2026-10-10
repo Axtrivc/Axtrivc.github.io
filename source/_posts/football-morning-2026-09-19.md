@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月19日 星期六
+title: 足球早报 · 2026年9月19日 星期六
 date: 2026-09-19 08:00:00
 excerpt: "Brentford score three in dominant win over Chelsea to continue unbeaten start · 'Bullied'…"
 description: "Brentford score three in dominant win over Chelsea to continue unbeaten start · 'Bullied'…"

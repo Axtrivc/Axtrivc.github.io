@@ -300,6 +300,14 @@ layout: false
         document.body.classList.add('hero-static');
         var i = 0;
         function type() {
+          // 所有权交接：弱机冷缓存下 live 判定可能晚于 800ms 超时——此时
+          // fallback 已开跑，__riverLive 迟到变 true。每个写入周期先复查，
+          // 已被 live 接管就立即停打并撤销 hero-static（live 路径永不加它，
+          // 启动时会清空重写这两个元素），把 DOM 完全让给 rAF 文字循环。
+          if (window.__riverLive === true) {
+            document.body.classList.remove('hero-static');
+            return;
+          }
           if (i <= headline.length) {
             head.textContent = headline.slice(0, i);
             i++;

@@ -2127,19 +2127,14 @@
   }
   window.addEventListener('themechange', readPageBg);   // theme-system.js 派发自 window
 
-  let headX = 0;                       // headline left, aligned to the nav logo
   let textScale   = 0.75;              // fixed boot text scale
 
   function sizeText() {
     // Match the render resolution so the text is sharp (not upscaled)
     txCanvas.width  = Math.max(2, canvas.width  || 1280);
     txCanvas.height = Math.max(2, sceneHDev || canvas.height || 720);   // v9: 文字层只覆盖场景区
-    // Align the headline with the nav logo's left edge (--pad-x)
-    const lk = document.querySelector(".nav .wordmark");
-    const vw = Math.max(1, window.innerWidth || 1280);
-    let leftCss = lk ? lk.getBoundingClientRect().left : vw * 0.085;
-    if (!(leftCss > 0)) leftCss = vw * 0.085;
-    headX = Math.round(leftCss * (txCanvas.width / vw));
+    // 排版只依赖画布尺寸(paintText 以 8.5% 定位)。旧的横向对齐量(对齐 nav wordmark)
+    // 只写不读已删——顺带免去每次 resize 里 getBoundingClientRect 的强制 reflow。
   }
 
   function paintText(now) {
@@ -2413,6 +2408,11 @@
   // errors every frame. `contextLost` gates the loop (no GL calls while lost);
   // rebuildGLResources() re-runs the SAME init primitives used at startup.
   let contextLost = false;
+  // 冻结成功置位(静态图已接管 + 手动 loseContext 释放 GPU,见 freezeStaticHero)。
+  // 置位后 webglcontextrestored 不再全量重建:画面由 <img> 承载,重建只会把刚
+  // 释放的 GPU 又吃回来。捕获失败(url=null)不置位——那条路上下文保持完好,
+  // 靠真实 restore 后的重建重绘冻结帧,是恢复路径,必须保留。
+  let heroStaticReleased = false;
 
   async function rebuildGLResources() {
     // Recompile/relink all three programs (shader sources VS/FS/SKY_* survive
@@ -2551,6 +2551,12 @@
     contextLost = true;
   }, false);
   canvas.addEventListener("webglcontextrestored", async function () {
+    // heroStaticReleased(冻结成功+已手动释放)时不再重建:hero 是静态图,全量
+    // 重编译/重分配毫无意义。注意 90s 停机路径的手动 loseContext() 本身不会
+    // 触发本事件(WEBGL_lose_context 需显式 restoreContext(),全文件无调用),
+    // 此守卫挡的是真实 GPU reset(驱动重置/休眠唤醒)撞上冻结态的情形。
+    // contextLost 保持 true:GL 资源已死且永不重画,循环与 startLoop 双门禁不放行。
+    if (heroStaticReleased) return;
     try {
       await rebuildGLResources();
     } catch (err) {
@@ -2615,6 +2621,16 @@
   // only (the narrow/touch path keeps the centred text hidden anyway).
   function heroScrollFade() {
     if (!heroRevealDone || !heroTextLive || !heroTextSlides()) return;
+    // v13.1: body.hero-leaving 时 .hero-text 的 0.5s 渐隐交给 CSS — inline
+    // opacity 会压过 body.hero-leaving .hero-text{opacity:0},inline
+    // transition:"none" 又压掉 .hero-text{transition:opacity .5s ease},所以
+    // 只跳过写入不够,必须清掉 inline 让位,否则残留 inline 永久压住 CSS 规则。
+    // 回顶(≤60)离开 leaving 态后,后续 scroll 事件重新写入 inline,恢复逐帧跟踪。
+    if (document.body.classList.contains("hero-leaving")) {
+      heroTextLive.style.transition = "";
+      heroTextLive.style.opacity = "";
+      return;
+    }
     heroTextLive.style.transition = "none";          // track scroll crisply (the intro fade-in is done)
     const sf = Math.max(0, Math.min(1, 1 - window.scrollY / (window.innerHeight * 0.4)));
     heroTextLive.style.opacity = String(sf);
@@ -3030,7 +3046,10 @@
           heroStill.classList.add("is-shown");  // fade still in (to 0.8, matching the canvas)
           canvas.style.opacity = "0";           // …and fade the live canvas out
           const lose = gl.getExtension("WEBGL_lose_context");
-          if (lose) lose.loseContext();         // reclaim the GPU now the <img> is up
+          if (lose) {
+            lose.loseContext();         // reclaim the GPU now the <img> is up
+            heroStaticReleased = true;  // 冻结+释放完成: 之后真实 restore 不再重建
+          }
         };
         heroStill.src = url;
       }

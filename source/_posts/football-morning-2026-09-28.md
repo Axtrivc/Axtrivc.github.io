@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月28日 星期一
+title: 足球早报 · 2026年9月28日 星期一
 date: 2026-09-28 08:00:00
 excerpt: "Republic of Ireland beat Israel in controversial Nations League meeting · Thompson strike…"
 description: "Republic of Ireland beat Israel in controversial Nations League meeting · Thompson strike…"

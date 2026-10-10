@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月3日 星期四
+title: 足球早报 · 2026年9月3日 星期四
 date: 2026-09-03 08:00:00
 excerpt: "Wrexham, QPR win as Burnley hold Boro · Shankland at the double as Rangers win at Falkirk…"
 description: "Wrexham, QPR win as Burnley hold Boro · Shankland at the double as Rangers win at Falkirk…"

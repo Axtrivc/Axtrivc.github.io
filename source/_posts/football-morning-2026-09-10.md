@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月10日 星期四
+title: 足球早报 · 2026年9月10日 星期四
 date: 2026-09-10 08:00:00
 excerpt: "Arteta explains new role for transformed Odegaard · Odegaard gives dominant Arsenal win…"
 description: "Arteta explains new role for transformed Odegaard · Odegaard gives dominant Arsenal win…"

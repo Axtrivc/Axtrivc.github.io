@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月5日 星期六
+title: 足球晚报 · 2026年9月5日 星期六
 date: 2026-09-05 20:00:00
 excerpt: "Stoke thrashing Charlton; Preston, Saints lead · Crossbar saves Villa with Chelsea…"
 description: "Stoke thrashing Charlton; Preston, Saints lead · Crossbar saves Villa with Chelsea…"

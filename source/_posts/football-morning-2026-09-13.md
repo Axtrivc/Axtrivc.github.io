@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月13日 星期日
+title: 足球早报 · 2026年9月13日 星期日
 date: 2026-09-13 08:00:00
 excerpt: "Furious Arteta rages over 'unacceptable' Sunderland penalty call · Guimaraes haunts…"
 description: "Furious Arteta rages over 'unacceptable' Sunderland penalty call · Guimaraes haunts…"

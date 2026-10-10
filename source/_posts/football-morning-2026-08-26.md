@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月26日 星期三
+title: 足球早报 · 2026年8月26日 星期三
 date: 2026-08-26 08:00:00
 excerpt: "Tell us your views after Celtic stunned by LASK to crash out of CL LIVE! · Carabao Cup…"
 description: "Tell us your views after Celtic stunned by LASK to crash out of CL LIVE! · Carabao Cup…"

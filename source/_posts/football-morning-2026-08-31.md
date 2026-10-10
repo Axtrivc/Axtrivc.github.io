@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月31日 星期一
+title: 足球早报 · 2026年8月31日 星期一
 date: 2026-08-31 08:00:00
 excerpt: "Goals galore! Man Utd come from behind to win with Bruno hat-trick · Fernandes hat-trick…"
 description: "Goals galore! Man Utd come from behind to win with Bruno hat-trick · Fernandes hat-trick…"

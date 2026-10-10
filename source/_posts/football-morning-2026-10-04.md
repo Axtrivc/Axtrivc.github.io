@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年10月4日 星期日
+title: 足球早报 · 2026年10月4日 星期日
 date: 2026-10-04 08:00:00
 excerpt: "Keane: Bellingham can become one of greatest players ever · 'Rampant in Rijeka'! England…"
 description: "Keane: Bellingham can become one of greatest players ever · 'Rampant in Rijeka'! England…"

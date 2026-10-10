@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月25日 星期二
+title: 足球晚报 · 2026年8月25日 星期二
 date: 2026-08-25 20:00:00
 excerpt: "Champions? Relegated? One to watch? Carra and Neville's season predictions! · Have your…"
 description: "Champions? Relegated? One to watch? Carra and Neville's season predictions! · Have your…"

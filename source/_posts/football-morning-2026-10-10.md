@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年10月10日 星期六
+title: 足球早报 · 2026年10月10日 星期六
 date: 2026-10-10 08:00:00
 excerpt: "Maresca on Man City guilty verdict: 'We're going to win appeal' · Carrick demands Man…"
 description: "Maresca on Man City guilty verdict: 'We're going to win appeal' · Carrick demands Man…"

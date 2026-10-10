@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月22日 星期六
+title: 足球早报 · 2026年8月22日 星期六
 date: 2026-08-22 08:00:00
 excerpt: "Arsenal kick off title defence with thumping win over Coventry · Arsenal cruise to…"
 description: "Arsenal kick off title defence with thumping win over Coventry · Arsenal cruise to…"

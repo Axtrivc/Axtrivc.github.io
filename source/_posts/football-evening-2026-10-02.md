@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年10月2日 星期五
+title: 足球晚报 · 2026年10月2日 星期五
 date: 2026-10-02 20:00:00
 excerpt: "Man City reaction LIVE! Why appeal process may drag on as Kaveh answers your questions ·…"
 description: "Man City reaction LIVE! Why appeal process may drag on as Kaveh answers your questions ·…"

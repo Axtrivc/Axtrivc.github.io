@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月2日 星期三
+title: 足球晚报 · 2026年9月2日 星期三
 date: 2026-09-02 20:00:00
 excerpt: "How does every Premier League club's summer window rank? · Everton latest: 'Balogun saga…"
 description: "How does every Premier League club's summer window rank? · Everton latest: 'Balogun saga…"

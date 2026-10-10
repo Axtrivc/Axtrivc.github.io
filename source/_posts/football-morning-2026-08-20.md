@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月20日 星期四
+title: 足球早报 · 2026年8月20日 星期四
 date: 2026-08-20 08:00:00
 excerpt: "Merson's Premier League season preview: Who wins the title and who stays up? · Spurs in…"
 description: "Merson's Premier League season preview: Who wins the title and who stays up? · Spurs in…"

@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月2日 星期三
+title: 足球早报 · 2026年9月2日 星期三
 date: 2026-09-02 08:00:00
 excerpt: "Alvarez stays at Atletico - so are Arsenal too short in attack? · Arsenal latest: Nwaneri…"
 description: "Alvarez stays at Atletico - so are Arsenal too short in attack? · Arsenal latest: Nwaneri…"

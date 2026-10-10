@@ -654,13 +654,9 @@ body.hero-leaving .hero-scroll-hint {
     if (!released && sy >= vh) {
       released = true;
       body.classList.add('hero-released');
-      // 通知 hero shader 冻结
-      window.dispatchEvent(new Event('hero-frozen'));
     } else if (released && sy < 50) {
       released = false;
       body.classList.remove('hero-released');
-      // 通知 hero shader 恢复
-      window.dispatchEvent(new Event('hero-unfrozen'));
     }
   }
 

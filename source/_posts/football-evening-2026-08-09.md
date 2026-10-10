@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月9日 星期日
+title: 足球晚报 · 2026年8月9日 星期日
 date: 2026-08-09 20:00:00
 excerpt: "Man City vs Atletico Madrid team news LIVE! · West Ham, Burnley & Southampton progress! ·…"
 description: "Man City vs Atletico Madrid team news LIVE! · West Ham, Burnley & Southampton progress! ·…"

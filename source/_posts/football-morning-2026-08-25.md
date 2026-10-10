@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月25日 星期二
+title: 足球早报 · 2026年8月25日 星期二
 date: 2026-08-25 08:00:00
 excerpt: "Chelsea's electric front three edge out Fulham in pulsating MNF opener · Five-goal…"
 description: "Chelsea's electric front three edge out Fulham in pulsating MNF opener · Five-goal…"

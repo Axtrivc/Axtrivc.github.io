@@ -55,7 +55,7 @@
       name: 'Lemon Indigo',
       colors: ['#FFFFFF', '#1E3A8A', '#F5C518', '#FAFAFA', '#1E3A8A', '#4A5568'],
       bg: '#FAFAFA', body: '#FAFAFA', nav: 'rgba(255,255,255,0.97)', card: '#FFFFFF',
-      text: '#1E3A8A', heading: '#1E3A8A', secondary: '#4A5568', accent: '#F5C518',
+      text: '#1E3A8A', heading: '#1E3A8A', secondary: '#4A5568', accent: '#F5C518', accentText: '#1E3A8A',
       border: '#C7D2FE', pageHeader: '#FFFFFF', navText: '#1E3A8A', navTextHover: '#B45309',
       footerBg: '#F6F8FE',
       footerRiverTop: '#EEF0F8', footerRiverMid: '#D2D8EE', footerRiverBottom: '#A8B4D8'
@@ -145,9 +145,9 @@
       s.style.color = t.secondary;
     });
 
-    // Accent links
+    // Accent links（accentText 档：白底可读的深色 accent 供文字链接；未定义该档的主题回退 accent 维持原状）
     document.querySelectorAll('.recent-post-info a.article-title, .aside-list-item .content .title a, #pagination a').forEach(function(l) {
-      l.style.color = t.accent;
+      l.style.color = t.accentText || t.accent;
     });
 
     // ---- Elements that were previously missed ----

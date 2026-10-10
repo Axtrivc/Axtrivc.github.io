@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月14日 星期一
+title: 足球早报 · 2026年9月14日 星期一
 date: 2026-09-14 08:00:00
 excerpt: "Awarding Man City's winner at Man Utd an error, admits refereeing body · Deja vu for Pro…"
 description: "Awarding Man City's winner at Man Utd an error, admits refereeing body · Deja vu for Pro…"

@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月29日 星期二
+title: 足球晚报 · 2026年9月29日 星期二
 date: 2026-09-29 20:00:00
 excerpt: "England latest: Tuchel speaks ahead of facing the Czech Republic LIVE! · Man City…"
 description: "England latest: Tuchel speaks ahead of facing the Czech Republic LIVE! · Man City…"

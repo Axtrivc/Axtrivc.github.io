@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月29日 星期六
+title: 足球晚报 · 2026年8月29日 星期六
 date: 2026-08-29 20:00:00
 excerpt: "Munoz rescues point for Liverpool as Iraola's wait for a win goes on · Sublime Scott…"
 description: "Munoz rescues point for Liverpool as Iraola's wait for a win goes on · Sublime Scott…"

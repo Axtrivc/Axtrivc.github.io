@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月23日 星期三
+title: 足球早报 · 2026年9月23日 星期三
 date: 2026-09-23 08:00:00
 excerpt: "Arsenal penalty clinches late win in WCL; Man City rescue draw at Bayern · Celtic CEO…"
 description: "Arsenal penalty clinches late win in WCL; Man City rescue draw at Bayern · Celtic CEO…"

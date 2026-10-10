@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月19日 星期三
+title: 足球晚报 · 2026年8月19日 星期三
 date: 2026-08-19 20:00:00
 excerpt: "The Premier League is back! All 20 clubs assessed · Man Utd close to full agreement with…"
 description: "The Premier League is back! All 20 clubs assessed · Man Utd close to full agreement with…"

@@ -35,6 +35,18 @@
     });
   }
 
+  // 瞬断立即重试: ESPN 在部分访客网络下间歇性 ECONNRESET(2026-10-10 实测: 同页
+  // 积分榜能通、新闻/赛程同秒被断, 换 league 复现), auto-refresh 5 分钟才兜底太慢。
+  // 失败后 2.5s 立即补一次, 再失败才落失败态交给既有降级 UI。
+  function fetchJSONRetry(url, tries) {
+    return fetchJSON(url).catch(function (e) {
+      if (tries <= 1) throw e;
+      return new Promise(function (res) { setTimeout(res, 2500); }).then(function () {
+        return fetchJSONRetry(url, tries - 1);
+      });
+    });
+  }
+
   // ISO 时间 → "3 小时前"
   function timeAgo(iso) {
     if (!iso) return '';
@@ -99,7 +111,7 @@
 
     var url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/' + league + '/news';
 
-    fetchJSON(url)
+    fetchJSONRetry(url, 2)
       .then(function (data) {
         var articles = data.articles || [];
 
@@ -259,7 +271,7 @@
 
     var url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/' + league + '/teams/' + teamId + '/roster?season=' + season;
 
-    fetchJSON(url)
+    fetchJSONRetry(url, 2)
       .then(function (data) {
         var athletes = data.athletes || [];
         if (!athletes.length) throw new Error('空名单');

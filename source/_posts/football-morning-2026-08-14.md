@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月14日 星期五
+title: 足球早报 · 2026年8月14日 星期五
 date: 2026-08-14 08:00:00
 excerpt: "Carrick: We want and need more signings at Man Utd · Spurs latest: PODCAST - A big summer…"
 description: "Carrick: We want and need more signings at Man Utd · Spurs latest: PODCAST - A big summer…"

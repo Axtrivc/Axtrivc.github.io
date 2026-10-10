@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月30日 星期日
+title: 足球早报 · 2026年8月30日 星期日
 date: 2026-08-30 08:00:00
 excerpt: "De Zerbi highlights biggest problem at Spurs as Carra slams 'worst start' · Another…"
 description: "De Zerbi highlights biggest problem at Spurs as Carra slams 'worst start' · Another…"

@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年10月5日 星期一
+title: 足球早报 · 2026年10月5日 星期一
 date: 2026-10-05 08:00:00
 excerpt: "Man City fight back to plunge Arsenal and Slegers further into the mire · Man City fight…"
 description: "Man City fight back to plunge Arsenal and Slegers further into the mire · Man City fight…"

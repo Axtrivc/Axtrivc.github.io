@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月21日 星期五
+title: 足球晚报 · 2026年8月21日 星期五
 date: 2026-08-21 20:00:00
 excerpt: "PL is back TONIGHT! Your thoughts and predictions ahead of new season... · One to watch?…"
 description: "PL is back TONIGHT! Your thoughts and predictions ahead of new season... · One to watch?…"

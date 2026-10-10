@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月20日 星期日
+title: 足球早报 · 2026年9月20日 星期日
 date: 2026-09-20 08:00:00
 excerpt: "Arteta: We didn't respect the game against Brighton · Hits and misses: Spurs hit…"
 description: "Arteta: We didn't respect the game against Brighton · Hits and misses: Spurs hit…"

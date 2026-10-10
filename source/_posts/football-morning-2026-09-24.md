@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月24日 星期四
+title: 足球早报 · 2026年9月24日 星期四
 date: 2026-09-24 08:00:00
 excerpt: "Man Utd post record revenues as stadium plans advance · Man Utd latest: Amorim joining AC…"
 description: "Man Utd post record revenues as stadium plans advance · Man Utd latest: Amorim joining AC…"

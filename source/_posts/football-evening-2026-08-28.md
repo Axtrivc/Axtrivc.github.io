@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月28日 星期五
+title: 足球晚报 · 2026年8月28日 星期五
 date: 2026-08-28 20:00:00
 excerpt: "Welbeck gives Chelsea lead vs Luton, Fulham 2-0 up on Wimbledon LIVE! · Brighton deliver…"
 description: "Welbeck gives Chelsea lead vs Luton, Fulham 2-0 up on Wimbledon LIVE! · Brighton deliver…"

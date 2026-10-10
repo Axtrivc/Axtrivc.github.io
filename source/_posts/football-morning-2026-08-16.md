@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月16日 星期日
+title: 足球早报 · 2026年8月16日 星期日
 date: 2026-08-16 08:00:00
 excerpt: "Key moments and what we learned as Man Utd lose final pre-season friendly ·…"
 description: "Key moments and what we learned as Man Utd lose final pre-season friendly ·…"

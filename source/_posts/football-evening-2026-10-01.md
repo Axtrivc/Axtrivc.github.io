@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年10月1日 星期四
+title: 足球晚报 · 2026年10月1日 星期四
 date: 2026-10-01 20:00:00
 excerpt: "Guardiola sends message to Man City amid calls for titles to be taken away · Man City…"
 description: "Guardiola sends message to Man City amid calls for titles to be taken away · Man City…"

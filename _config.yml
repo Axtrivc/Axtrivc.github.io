@@ -105,7 +105,8 @@ theme: butterfly
 search:
   path: search.xml
   field: post
-  content: true
+  # 正文不入索引,search.xml 实测约 2.7MB→约 0.14MB(正文占 94.8%),移动端首开搜索免整包下载;代价:Butterfly 前端仅按标题匹配,正文关键词搜不到
+  content: false
   format: striptags
 
 # RSS / Atom (hexo-generator-feed)

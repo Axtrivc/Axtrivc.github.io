@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月13日 星期四
+title: 足球晚报 · 2026年8月13日 星期四
 date: 2026-08-13 20:00:00
 excerpt: "Chelsea latest: VOTE! Can Blues afford to let Fernandez leave this summer? · Papers:…"
 description: "Chelsea latest: VOTE! Can Blues afford to let Fernandez leave this summer? · Papers:…"

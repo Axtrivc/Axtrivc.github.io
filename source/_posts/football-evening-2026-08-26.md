@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月26日 星期三
+title: 足球晚报 · 2026年8月26日 星期三
 date: 2026-08-26 20:00:00
 excerpt: "'We apologise to the fans' - Celtic throw away four-goal lead to crash out of CL ·…"
 description: "'We apologise to the fans' - Celtic throw away four-goal lead to crash out of CL ·…"

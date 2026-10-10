@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月19日 星期三
+title: 足球早报 · 2026年8月19日 星期三
 date: 2026-08-19 08:00:00
 excerpt: "Arteta: We want to be the best club in the world · The Premier League is back! All 20…"
 description: "Arteta: We want to be the best club in the world · The Premier League is back! All 20…"

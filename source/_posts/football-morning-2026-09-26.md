@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月26日 星期六
+title: 足球早报 · 2026年9月26日 星期六
 date: 2026-09-26 08:00:00
 excerpt: "Man City inquiry moves to appeal stage amid reports majority of PL charges 'proven' · Man…"
 description: "Man City inquiry moves to appeal stage amid reports majority of PL charges 'proven' · Man…"

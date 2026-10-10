@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月25日 星期五
+title: 足球晚报 · 2026年9月25日 星期五
 date: 2026-09-25 20:00:00
 excerpt: "'He misses too many opportunities' - Tuchel frustrated by another Palmer absence ·…"
 description: "'He misses too many opportunities' - Tuchel frustrated by another Palmer absence ·…"

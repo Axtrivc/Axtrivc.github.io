@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月9日 星期三
+title: 足球早报 · 2026年9月9日 星期三
 date: 2026-09-09 08:00:00
 excerpt: "Haaland scores twice in win over Porto but Man City struggle to impress · Man City…"
 description: "Haaland scores twice in win over Porto but Man City struggle to impress · Man City…"

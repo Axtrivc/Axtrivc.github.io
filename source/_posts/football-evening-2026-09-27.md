@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月27日 星期日
+title: 足球晚报 · 2026年9月27日 星期日
 date: 2026-09-27 20:00:00
 excerpt: "WSL: Liverpool beat rivals Everton as Man Utd and Spurs earn wins LIVE! · Man Utd beat…"
 description: "WSL: Liverpool beat rivals Everton as Man Utd and Spurs earn wins LIVE! · Man Utd beat…"

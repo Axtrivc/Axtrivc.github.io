@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月24日 星期一
+title: 足球晚报 · 2026年8月24日 星期一
 date: 2026-08-24 20:00:00
 excerpt: "Ref Watch LIVE! Were Liverpool right to be awarded penalty at Newcastle? · Alvarez booed…"
 description: "Ref Watch LIVE! Were Liverpool right to be awarded penalty at Newcastle? · Alvarez booed…"

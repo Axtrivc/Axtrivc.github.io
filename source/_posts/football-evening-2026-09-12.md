@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月12日 星期六
+title: 足球晚报 · 2026年9月12日 星期六
 date: 2026-09-12 20:00:00
 excerpt: "Birmingham lead at Derby; West Brom peg back QPR · Liverpool vs Fulham team news as…"
 description: "Birmingham lead at Derby; West Brom peg back QPR · Liverpool vs Fulham team news as…"

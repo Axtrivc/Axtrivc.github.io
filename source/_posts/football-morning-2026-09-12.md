@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月12日 星期六
+title: 足球早报 · 2026年9月12日 星期六
 date: 2026-09-12 08:00:00
 excerpt: "'Beautifully worked, perfectly finished!' | Bowen strike opens the scoring · Kings of…"
 description: "'Beautifully worked, perfectly finished!' | Bowen strike opens the scoring · Kings of…"

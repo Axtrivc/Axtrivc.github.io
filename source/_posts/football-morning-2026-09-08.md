@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月8日 星期二
+title: 足球早报 · 2026年9月8日 星期二
 date: 2026-09-08 08:00:00
 excerpt: "Ref Watch: Williams disallowed goal and Gabriel's Martinez head-kick analysed · Putellas…"
 description: "Ref Watch: Williams disallowed goal and Gabriel's Martinez head-kick analysed · Putellas…"

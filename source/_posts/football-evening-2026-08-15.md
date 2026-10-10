@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年8月15日 星期六
+title: 足球晚报 · 2026年8月15日 星期六
 date: 2026-08-15 20:00:00
 excerpt: "Championship play-off changes, new managers & star players · Tottenham latest: VOTE! Will…"
 description: "Championship play-off changes, new managers & star players · Tottenham latest: VOTE! Will…"

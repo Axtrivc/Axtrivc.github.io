@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年10月6日 星期二
+title: 足球晚报 · 2026年10月6日 星期二
 date: 2026-10-06 20:00:00
 excerpt: "Man City's rivals do not expect them to be in Premier League next season · Explained:…"
 description: "Man City's rivals do not expect them to be in Premier League next season · Explained:…"

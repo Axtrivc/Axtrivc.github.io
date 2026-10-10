@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月6日 星期日
+title: 足球晚报 · 2026年9月6日 星期日
 date: 2026-09-06 20:00:00
 excerpt: "Off the crossbar! Bruno comes close early on for Man Utd · WSL LIVE on Sky! Man City…"
 description: "Off the crossbar! Bruno comes close early on for Man Utd · WSL LIVE on Sky! Man City…"

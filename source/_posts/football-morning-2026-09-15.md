@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年9月15日 星期二
+title: 足球早报 · 2026年9月15日 星期二
 date: 2026-09-15 08:00:00
 excerpt: "Calvert-Lewin and Leeds bully Newcastle in dominant victory · Leeds latest: Can Farke's…"
 description: "Calvert-Lewin and Leeds bully Newcastle in dominant victory · Leeds latest: Can Farke's…"

@@ -1,5 +1,5 @@
 ---
-title: 足球晚报 · 2026年9月20日 星期日
+title: 足球晚报 · 2026年9月20日 星期日
 date: 2026-09-20 20:00:00
 excerpt: "FIVE goals in one bonkers half! Semenyo restores Man City's lead LIVE! · Liverpool…"
 description: "FIVE goals in one bonkers half! Semenyo restores Man City's lead LIVE! · Liverpool…"

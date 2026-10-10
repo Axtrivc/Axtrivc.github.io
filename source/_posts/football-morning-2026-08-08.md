@@ -1,5 +1,5 @@
 ---
-title: 足球早报 · 2026年8月8日 星期六
+title: 足球早报 · 2026年8月8日 星期六
 date: 2026-08-08 08:00:00
 excerpt: "UEFA aware of allegation it paid off Infantino's 'mistress' while he worked for them ·…"
 description: "UEFA aware of allegation it paid off Infantino's 'mistress' while he worked for them ·…"
