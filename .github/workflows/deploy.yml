@@ -18,6 +18,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # 同 github-daily/football-daily 共用 pages 并发组(cancel-in-progress: false), 挂死会占组挡住后续所有运行; 30min 远超正常耗时(npm ci + hexo generate ~5-10min)
+    timeout-minutes: 30
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}

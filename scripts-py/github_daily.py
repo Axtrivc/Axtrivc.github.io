@@ -18,10 +18,14 @@ GitHub 日报生成器
 import json
 import os
 import re
+import socket
 import sys
+import tempfile
+import time
 import urllib.request
 import urllib.error
 from datetime import datetime, timedelta, timezone, date
+from pathlib import Path
 
 POSTS_DIR = os.environ.get("POSTS_DIR", os.path.join(os.path.dirname(__file__), "..", "source", "_posts"))
 GITHUB_USER = os.environ.get("GITHUB_USER", "Axtrivc")
@@ -45,6 +49,32 @@ TYPE_ORDER = ["feat", "fix", "perf", "refactor", "style", "docs", "test", "build
 WEEKDAYS = "一二三四五六日"
 
 
+def github_api_get(url: str, headers: dict) -> dict:
+    """GitHub API GET,带 ≤3 次重试 + 短退避:瞬时故障(DNS 失败/连接拒绝/超时/5xx)
+    视为可重试,4xx 不重试;最终失败仍走原有退出语义(stderr + exit 1),
+    防 CI 单次网络抖动直接丢当天日报。"""
+    for attempt in range(1, 4):
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", "replace")[:300]
+            if e.code >= 500 and attempt < 3:
+                print(f"GitHub API HTTP {e.code},第 {attempt} 次失败,重试中…", file=sys.stderr)
+                time.sleep(2 * attempt)
+                continue
+            print(f"GitHub API 请求失败(已尝试 {attempt} 次): HTTP {e.code} {body}", file=sys.stderr)
+            sys.exit(1)
+        except (urllib.error.URLError, socket.timeout) as e:
+            if attempt < 3:
+                print(f"GitHub API 网络错误({e}),第 {attempt} 次失败,重试中…", file=sys.stderr)
+                time.sleep(2 * attempt)
+                continue
+            print(f"GitHub API 请求失败(已尝试 {attempt} 次): {e}", file=sys.stderr)
+            sys.exit(1)
+
+
 def search_commits(user: str, target: date) -> list:
     """搜索 target 北京日期的提交。北京一天 = UTC 前一天 16:00 ~ 当天 16:00,
     搜索区间用精确 UTC 时间戳(纯日期边界会被 GitHub 当作 UTC 午夜,丢掉当天
@@ -53,7 +83,6 @@ def search_commits(user: str, target: date) -> list:
     end_utc = datetime.combine(target, datetime.min.time(), tzinfo=timezone.utc).replace(hour=16)
     q = (f"author:{user}+committer-date:"
          f"{start_utc:%Y-%m-%dT%H:%M:%SZ}..{end_utc:%Y-%m-%dT%H:%M:%SZ}")
-    url = f"https://api.github.com/search/commits?q={q}&sort=committer-date&order=asc&per_page=100"
     headers = {
         "Accept": "application/vnd.github+json",
         "User-Agent": "github-daily-bot",
@@ -62,38 +91,41 @@ def search_commits(user: str, target: date) -> list:
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
-    req = urllib.request.Request(url, headers=headers)
-    try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8", "replace")[:300]
-        print(f"GitHub API 请求失败: HTTP {e.code} {body}", file=sys.stderr)
-        sys.exit(1)
-
     commits = []
     seen = set()
-    for it in data.get("items", []):
-        c = it["commit"]
-        # 解析带时区的 ISO 时间,转北京时间
-        dt = datetime.fromisoformat(c["committer"]["date"].replace("Z", "+00:00")).astimezone(BEIJING)
-        if dt.date() != target:
-            continue
-        key = (it["repository"]["full_name"], it["sha"])
-        if key in seen:
-            continue
-        seen.add(key)
-        msg = c["message"].splitlines()[0].strip()
-        commits.append({
-            "repo": it["repository"]["full_name"],
-            "repo_short": it["repository"]["name"],
-            "repo_url": it["repository"]["html_url"],
-            "sha": it["sha"][:7],
-            "url": it["html_url"],
-            "time": dt,
-            "message": msg,
-            "type": parse_type(msg),
-        })
+    total_count = 0
+    for page in range(1, 4):  # 翻页取全;3 页(300 条)上限防失控
+        url = f"https://api.github.com/search/commits?q={q}&sort=committer-date&order=asc&per_page=100&page={page}"
+        data = github_api_get(url, headers)
+        total_count = max(total_count, data.get("total_count", 0))
+        items = data.get("items") or []
+        if not items:
+            break
+        for it in items:
+            c = it["commit"]
+            # 解析带时区的 ISO 时间,转北京时间
+            dt = datetime.fromisoformat(c["committer"]["date"].replace("Z", "+00:00")).astimezone(BEIJING)
+            if dt.date() != target:
+                continue
+            key = (it["repository"]["full_name"], it["sha"])
+            if key in seen:
+                continue
+            seen.add(key)
+            msg = c["message"].splitlines()[0].strip()
+            commits.append({
+                "repo": it["repository"]["full_name"],
+                "repo_short": it["repository"]["name"],
+                "repo_url": it["repository"]["html_url"],
+                "sha": it["sha"][:7],
+                "url": it["html_url"],
+                "time": dt,
+                "message": msg,
+                "type": parse_type(msg),
+            })
+        if len(items) < 100:
+            break
+    if total_count > 300:
+        print(f"⚠️ 当日命中 {total_count} 条提交,超出 3 页翻页上限,结果可能被截断", file=sys.stderr)
     commits.sort(key=lambda x: x["time"])
     return commits
 
@@ -186,6 +218,25 @@ def render(target: date, commits: list) -> str:
     return "\n".join(lines)
 
 
+def atomic_write_text(path, content):
+    """原子写: 先写同目录临时文件再 os.replace (Windows/POSIX 均原子),
+    防止生成中途崩溃 (CI cancel/OOM) 留下截断/空文件被自动 commit 上线。
+    照搬 football_daily_v2.py 的同名实现。"""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent), suffix='.tmp')
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8', newline='') as f:
+            f.write(content)
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1].strip():
         target = date.fromisoformat(sys.argv[1].strip())
@@ -202,9 +253,7 @@ def main():
 
     md = render(target, commits)
     out = os.path.join(POSTS_DIR, f"github-daily-{target.isoformat()}.md")
-    os.makedirs(POSTS_DIR, exist_ok=True)
-    with open(out, "w", encoding="utf-8") as f:
-        f.write(md)
+    atomic_write_text(out, md)
     print(f"已写入 {out}")
 
 

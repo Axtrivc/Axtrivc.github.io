@@ -31,6 +31,39 @@ const HERO_JS_VER = (function () {
   }
 })();
 
+// 剥离预览壳的 .tod-debug 调参面板(id="debugBar"): 面板是 source/hero/index.html
+// 预览壳专用的渲染调参工具, 不能随 hero section 原样注入线上首页 —— hero-released
+// 后无 display:none 兜底, 会以 fixed 定位露出且可点, 访客拉满参数可卡死会话。
+// 只动注入产物(预览壳本体不动); 面板内部嵌套 div, 用 <div>/</div> 配对计数定位
+// 结束标签, 勿改成非贪婪正则一刀切(会截断在首个 </div> 上误伤相邻节点)。
+function stripTodDebugPanel(sectionHtml) {
+  const openMatch = sectionHtml.match(/<div\b[^>]*\btod-debug\b[^>]*>/);
+  if (!openMatch) return sectionHtml;
+  const divTag = /<\/?div\b[^>]*>/g; // [^>]*> 让 m[0] 吃完整标签(含右尖括号), 勿只配 </div 剩个 '>'
+  divTag.lastIndex = openMatch.index + openMatch[0].length;
+  let depth = 1;
+  let closeEnd = -1;
+  let m;
+  while ((m = divTag.exec(sectionHtml)) !== null) {
+    depth += m[0].charCodeAt(1) === 47 ? -1 : 1; // 47 = '/', 即 </div
+    if (depth === 0) {
+      closeEnd = m.index + m[0].length;
+      break;
+    }
+  }
+  if (closeEnd < 0) {
+    hexo.log.warn('[hero-inject] .tod-debug 未找到配对结束标签, 本次注入保留原样, 需人工检查');
+    return sectionHtml;
+  }
+  // 连同行首缩进与行尾换行一并剥掉, 避免注入产物里留空行
+  let start = openMatch.index;
+  while (start > 0 && (sectionHtml.charCodeAt(start - 1) === 32 || sectionHtml.charCodeAt(start - 1) === 9)) start--;
+  let end = closeEnd;
+  if (sectionHtml.charCodeAt(end) === 13 && sectionHtml.charCodeAt(end + 1) === 10) end += 2;
+  else if (sectionHtml.charCodeAt(end) === 10) end += 1;
+  return sectionHtml.slice(0, start) + sectionHtml.slice(end);
+}
+
 hexo.extend.filter.register('after_render:html', function (data) {
   if (!data || typeof data !== 'string') return data;
 
@@ -64,7 +97,7 @@ hexo.extend.filter.register('after_render:html', function (data) {
 
   const sectionMatch = heroSrc.match(/<section class="hero"[\s\S]*?<\/section>/);
   if (!sectionMatch) return data;
-  const heroSection = sectionMatch[0]
+  const heroSection = stripTodDebugPanel(sectionMatch[0])
     .replace('src="hero-static.jpg"', 'src="/hero/hero-static.jpg"');
 
   const styleMatch = heroSrc.match(/<style>([\s\S]*?)<\/style>/);
@@ -257,9 +290,7 @@ body.hero-page-active:not(.hero-released) #axtrivc-fab,
 body.hero-page-active:not(.hero-released) .fab-publish,
 body.hero-page-active:not(.hero-released) #announcement-bg,
 body.hero-page-active:not(.hero-released) .announcement,
-body.hero-page-active:not(.hero-released) .card-announcement,
-body.hero-page-active:not(.hero-released) #dbgToggle,
-body.hero-page-active:not(.hero-released) #debugBar {
+body.hero-page-active:not(.hero-released) .card-announcement {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -653,7 +684,16 @@ body.hero-leaving .hero-scroll-hint {
     ? heroSrc.indexOf(scriptMatch[0]) + scriptMatch[0].length
     : 0;
   const inlineScriptMatch = heroSrc.slice(afterScriptIdx).match(/<script>[\s\S]*?<\/script>/);
-  const heroInitScript = inlineScriptMatch ? inlineScriptMatch[0] : '';
+  // .tod-debug 面板已从注入产物剥离, 预览壳内联脚本对 #dbgToggle 的绑定没有空值
+  // 守卫, 直接注入会在首页抛 TypeError 并杀死其后的静态打字机兜底 —— 注入前补上。
+  // (bindSlider 自带 if (!el || !lab) return; 点击回调里的 dbgGrid 随按钮一起消失,
+  // 不会被触达; 只改注入产物, 预览壳脚本不动)
+  const heroInitScript = inlineScriptMatch
+    ? inlineScriptMatch[0].replace(
+        "document.getElementById('dbgToggle').addEventListener",
+        "var __dbgToggle = document.getElementById('dbgToggle'); if (__dbgToggle) __dbgToggle.addEventListener"
+      )
+    : '';
 
   const heroScripts = heroScriptTag + '\n' + heroInitScript + heroJs;
   content = content.replace('</body>', heroScripts + '\n</body>');

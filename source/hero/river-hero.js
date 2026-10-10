@@ -2225,7 +2225,13 @@
   // full texImage2D on first use and after any resize.
   let textSubMode = false;
   let txTexW = 0, txTexH = 0;
+  // settled(live 文字打完)后 txCanvas 恒全透明: 首个透明帧上传完成后置 true,
+  // loop 据此跳过后续整屏 texSubImage2D(~8.3MB/250ms 纯搬运直到 90s 停机)。
+  // uploadText() 入口清 false → resize/retrigger/context-rebuild 等任何
+  // 重置文字画布的路径都天然恢复上传。
+  let liveTxDone = false;
   function uploadText() {
+    liveTxDone = false;   // 本次真实上传即重置 settled 跳过状态
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, txTex);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
@@ -2996,6 +3002,7 @@
       if (aaModeSelect) aaModeSelect.value = String(AA.taps);
     }
     let heroVisible = true, looping = false, heroCanRenderLive = false, heroCycleStopped = false;
+    let loopRaf = 0;   // 挂起的 rAF id: pagehide 撤销, 防 bfcache 恢复后旧回调与 pageshow 新链双跑
 
     // ── True-shitbox bail-out ─────────────────────────────────────
     // If the device can't hold ~20fps even with AA already at the floor, a live
@@ -3101,7 +3108,7 @@
       // target beats down to every-other-frame = 30fps. This was the Safari
       // "stuck at 30" — Safari shows real rAF fps where Chrome hides it behind
       // the GPU-timer readout.
-      if (now - lastFrame < frameMin - 4) { requestAnimationFrame(loop); return; }
+      if (now - lastFrame < frameMin - 4) { loopRaf = requestAnimationFrame(loop); return; }
       const frameDelta = lastFrame > 0 ? now - lastFrame : frameMin;
       lastFrame = now;
 
@@ -3281,7 +3288,13 @@
       const txGap    = settled ? 250 : 70;
       if (now - lastTx > txGap) {
         paintText(now);
-        uploadText();
+        // settled 后 live 文字全在 DOM 覆盖层, txCanvas 恒全透明(shader 贡献
+        // 零像素)——首个透明帧上传完成后停掉整屏重传, 只保留 paintText 的
+        // DOM 更新(光标闪烁/textContent); 画布重置路径经 uploadText() 恢复。
+        if (!(settled && liveTxDone)) {
+          uploadText();
+          if (settled) liveTxDone = true;
+        }
         lastTx = now;
       }
 
@@ -3303,7 +3316,7 @@
         stopLiveHeroAfterCycle();
         return;
       }
-      requestAnimationFrame(loop);
+      loopRaf = requestAnimationFrame(loop);
     }
 
     function startLoop() {
@@ -3325,10 +3338,24 @@
     window.addEventListener("pagehide", function () {
       looping = false;
       heroCanRenderLive = false;
+      // 撤销挂起的 rAF: bfcache 冻结前已入队的回调若在恢复后仍被投递, 会与
+      // pageshow 恢复路径新排的请求并存成两个永久自续循环(双倍绘制)。
+      if (loopRaf) cancelAnimationFrame(loopRaf);
+      loopRaf = 0;
     });
     window.addEventListener("beforeunload", function () {
       looping = false;
       heroCanRenderLive = false;
+    });
+    // bfcache 返回兜底(仿 axtrivc-river.js): pagehide 停机后 hero 若仍在视口,
+    // IntersectionObserver 无交叉态变化不再回调, 动画永久冻结 — persisted
+    // 恢复时恢复 heroCanRenderLive 并手动拉起; heroFrozen/heroCycleStopped/
+    // contextLost 仍由 startLoop 内部守卫挡住, 语义与首启路径一致(超 90s 时
+    // 恢复首帧即走 stopLiveHeroAfterCycle 的日出静态图路径, 与常驻页一致)。
+    window.addEventListener("pageshow", function (ev) {
+      if (!ev || !ev.persisted) return;
+      heroCanRenderLive = true;
+      startLoop();
     });
 
     heroCanRenderLive = true;

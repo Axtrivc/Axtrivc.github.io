@@ -33,7 +33,6 @@ skip_render:
   - espanol/**
   - football/**
   - admin/**
-  - admin/config.yml
   - river-test.html
 
 
