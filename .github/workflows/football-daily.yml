@@ -30,6 +30,7 @@ concurrency:
 jobs:
   morning:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -72,7 +73,7 @@ jobs:
           EDITION: morning
         run: |
           echo "=== 拉取数据中... ==="
-          python -m sports_skills football get_competitions | head -5
+          python -m sports_skills football get_competitions | head -5 || true
           echo "=== 生成 v2 早报 ==="
           python scripts-py/football_daily_v2.py morning
 
@@ -88,9 +89,20 @@ jobs:
           else
             git commit -m "⚽ 足球早报 v2 自动更新 - $(date +%Y-%m-%d)"
             # rebase 防非快进: 若 master 在 checkout 后被推进(手动 push / 日报时窗重叠),
-            # 裸 push 会被拒; 拉取最新 rebase 后重试
-            git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master
-            git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
+            # 裸 push 会被拒; push 失败则 pull --rebase 重试, 3 轮全败 exit 1 让当天日报缺失可感知
+            push_ok=0
+            for i in 1 2 3; do
+              if git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master && git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master; then
+                push_ok=1
+                break
+              fi
+              echo "=== push 第 ${i} 轮失败, rebase 后重试 ==="
+              sleep 5
+            done
+            if [ "$push_ok" != "1" ]; then
+              echo "!!! push 3 轮均失败, 早报未入库, 请手动 workflow_dispatch 补跑"
+              exit 1
+            fi
           fi
 
       - name: Build Hexo
@@ -107,6 +119,7 @@ jobs:
 
   evening:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -147,7 +160,7 @@ jobs:
           EDITION: evening
         run: |
           echo "=== 拉取数据中... ==="
-          python -m sports_skills football get_competitions | head -5
+          python -m sports_skills football get_competitions | head -5 || true
           echo "=== 生成 v2 晚报 ==="
           python scripts-py/football_daily_v2.py evening
 
@@ -162,8 +175,20 @@ jobs:
             echo "No changes for evening edition"
           else
             git commit -m "🌙 足球晚报 v2 自动更新 - $(date +%Y-%m-%d)"
-            git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master
-            git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
+            # 同早报: push 失败则 pull --rebase 重试, 3 轮全败 exit 1 让当天日报缺失可感知
+            push_ok=0
+            for i in 1 2 3; do
+              if git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master && git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master; then
+                push_ok=1
+                break
+              fi
+              echo "=== push 第 ${i} 轮失败, rebase 后重试 ==="
+              sleep 5
+            done
+            if [ "$push_ok" != "1" ]; then
+              echo "!!! push 3 轮均失败, 晚报未入库, 请手动 workflow_dispatch 补跑"
+              exit 1
+            fi
           fi
 
       - name: Build Hexo

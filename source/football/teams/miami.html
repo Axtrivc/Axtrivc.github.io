@@ -177,14 +177,80 @@ function $(id) { return document.getElementById(id); }
 function fixUrl(u) { return u.replace('http://', 'https://'); }
 function zhName(name) { return TEAM_ZH[name] || TEAM_ZH[name.replace(/ FC$/,'')] || TEAM_ZH[name.replace(/ SC$/,'')] || name; }
 
+/* 带超时 fetch: 8s 后 reject → 走 catch 渲染"加载失败", 否则 ESPN 挂起时骨架屏永久转圈 (对齐 team-page.js/team-dynamic.js 的 fetchJSON, 旧浏览器无此 API 时回退裸 fetch) */
+function fetchTO(url) {
+  var opts = {};
+  if (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) {
+    opts.signal = AbortSignal.timeout(8000);
+  }
+  return fetch(url, opts);
+}
+
+/* HTML 转义: 优先用 team-dynamic.js 已导出的 escapeHtml, 该脚本加载失败时本地同实现兜底 */
+function esc(t) {
+  if (window.TeamDynamic && TeamDynamic.escapeHtml) return TeamDynamic.escapeHtml(t);
+  var div = document.createElement('div');
+  div.textContent = (t == null) ? '' : String(t);
+  return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/* ISO → 'MM/DD', 显式北京时间 (MLS 场次多在北京凌晨, 与 team-page.js fmtMD 一致, 避免与其他队页差一天) */
+function fmtMD(iso) {
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  var parts = new Intl.DateTimeFormat('zh-CN', {
+    timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit'
+  }).formatToParts(d);
+  var p = {};
+  parts.forEach(function (x) { p[x.type] = x.value; });
+  return p.month + '/' + p.day;
+}
+
 /* ===========================
    加载积分榜（ESPN API，支持CORS）
    =========================== */
+/* 积分榜结果缓存: localStorage 4 分钟 (对齐 team-dynamic.js 的缓存策略, TTL 短于 5 分钟自动刷新以确保拿到新数据),
+   4 分钟内重复访问/刷新不再逐队重打 17+ 请求 */
+var STANDINGS_CACHE_KEY = 'axtrivc_team_cache_miami_standings';
+var STANDINGS_CACHE_TTL = 4 * 60 * 1000;
+function readStandingsCache() {
+  try {
+    var raw = localStorage.getItem(STANDINGS_CACHE_KEY);
+    if (!raw) return null;
+    var obj = JSON.parse(raw);
+    if (Date.now() - obj.ts > STANDINGS_CACHE_TTL) return null;
+    return (obj.teams && obj.teams.length) ? obj.teams : null;
+  } catch (e) { return null; }
+}
+function writeStandingsCache(teams) {
+  try {
+    localStorage.setItem(STANDINGS_CACHE_KEY, JSON.stringify({ ts: Date.now(), teams: teams }));
+  } catch (e) { /* 配额超限或隐私模式，静默 */ }
+}
+
+/* 第3步渲染: 找迈阿密 + 出两张卡 (网络与缓存两条路径共用) */
+function finishStandings(teams) {
+  const miami = teams.find(function(t) {
+    return t.abbr === ESPN.miamiAbbr || t.name.includes('Inter Miami');
+  });
+
+  renderStats(miami);
+  renderStandings(teams, miami);
+
+  $('standingsDate').textContent = '（截至 ' + new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }) + '）';
+}
+
 async function loadStandings() {
   try {
+    const cached = readStandingsCache();
+    if (cached) {
+      finishStandings(cached);
+      return;
+    }
+
     // 第1步：获取积分榜球队列表（1次请求）
     // standings entry 自带 records[0].stats（含完整战绩），无需逐队请求 record
-    const stResp = await fetch(ESPN.standings + '?lang=en');
+    const stResp = await fetchTO(ESPN.standings + '?lang=en');
     if (!stResp.ok) throw new Error('HTTP ' + stResp.status);
     const stData = await stResp.json();
 
@@ -203,7 +269,7 @@ async function loadStandings() {
           const stats = (entry.records && entry.records[0] && entry.records[0].stats) || [];
           const rankStat = stats.find(function(s) { return s.name === 'rank'; });
           try {
-            const teamResp = await fetch(fixUrl(teamRef));
+            const teamResp = await fetchTO(fixUrl(teamRef));
             const teamData = await teamResp.json();
 
             // form 是字符串如 "WWLDW"，需拆成数组
@@ -232,15 +298,8 @@ async function loadStandings() {
     const teams = results.filter(Boolean);
     if (teams.length === 0) throw new Error('所有球队数据获取失败');
 
-    // 第3步：找到迈阿密国际
-    const miami = teams.find(function(t) {
-      return t.abbr === ESPN.miamiAbbr || t.name.includes('Inter Miami');
-    });
-
-    renderStats(miami);
-    renderStandings(teams, miami);
-
-    $('standingsDate').textContent = '（截至 ' + new Date().toLocaleDateString('zh-CN') + '）';
+    writeStandingsCache(teams);
+    finishStandings(teams);
 
   } catch (e) {
     console.error('积分榜加载失败:', e);
@@ -280,7 +339,7 @@ function renderStats(miami) {
     '<div class="team-stats" style="border-bottom:none;padding-top:0;">' +
       '<div><div class="team-stat-num">' + wins + '-' + ties + '-' + losses + '</div><div class="team-stat-label">胜-平-负</div></div>' +
       '<div><div class="team-stat-num">' + goalsFor + ':' + goalsAgainst + '</div><div class="team-stat-label">进球:失球</div></div>' +
-      '<div><div class="team-stat-num">' + gd + '</div><div class="team-stat-label">净胜球</div></div>' +
+      '<div><div class="team-stat-num">' + esc(gd) + '</div><div class="team-stat-label">净胜球</div></div>' +
     '</div>';
 
   $('statsLoading').style.display = 'none';
@@ -324,13 +383,13 @@ function renderStandings(teams, miami) {
 
     html += '<tr class="' + (hl ? 'highlight' : '') + ' ' + cls + '">' +
       '<td class="rank">' + t.rank + '</td>' +
-      '<td>' + prefix + zhName(t.name) + '<span class="form-dots">' + formDots + '</span></td>' +
+      '<td>' + prefix + esc(zhName(t.name)) + '<span class="form-dots">' + formDots + '</span></td>' +
       '<td>' + played + '</td>' +
       '<td>' + wins + '</td>' +
       '<td>' + draws + '</td>' +
       '<td>' + losses + '</td>' +
       '<td>' + goalsFor + ':' + goalsAgainst + '</td>' +
-      '<td>' + gd + '</td>' +
+      '<td>' + esc(gd) + '</td>' +
       '<td class="pts">' + points + '</td>' +
     '</tr>';
   });
@@ -390,7 +449,7 @@ function setupAutoRefresh() {
    =========================== */
 function loadRecentMatches() {
   // 方案1：site.api.espn.com（单请求，但可能被网络拦截）
-  fetch(ESPN.schedule + '?lang=en')
+  fetchTO(ESPN.schedule + '?lang=en')
     .then(function(r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
@@ -407,7 +466,7 @@ function loadRecentMatches() {
 /* Fallback：通过 sports.core.api.espn.com 获取赛程 */
 function loadRecentMatchesFallback() {
   var teamEventsUrl = 'https://sports.core.api.espn.com/v2/sports/soccer/leagues/usa.1/seasons/2026/teams/20232/events';
-  fetch(teamEventsUrl + '?lang=en')
+  fetchTO(teamEventsUrl + '?lang=en')
     .then(function(r) { return r.json(); })
     .then(function(list) {
       return collectFinishedMatches(teamEventsUrl, list.pageCount || 1);
@@ -417,7 +476,7 @@ function loadRecentMatchesFallback() {
     })
     .catch(function(e) {
       console.error('最近比赛(core)加载失败:', e);
-      $('recentLoading').innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">加载失败: ' + (e.message || '未知错误') + '</div>';
+      $('recentLoading').innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">加载失败: ' + esc(e.message || '未知错误') + '</div>';
     });
 }
 
@@ -431,14 +490,14 @@ function collectFinishedMatches(baseUrl, totalPages) {
       return Promise.resolve(finished);
     }
     var pageUrl = baseUrl + '?lang=en&page=' + currentPage;
-    return fetch(pageUrl)
+    return fetchTO(pageUrl)
       .then(function(r) { return r.json(); })
       .then(function(list) {
         var items = list.items || [];
         return Promise.all(items.map(function(ref) {
           var url = ref.$ref;
           if (url.indexOf('http://') === 0) url = 'https://' + url.substring(7);
-          return fetch(url).then(function(r) { return r.json(); });
+          return fetchTO(url).then(function(r) { return r.json(); });
         })).then(function(events) {
           return Promise.all(events.map(function(ev) {
             var comp = ev.competitions && ev.competitions[0];
@@ -450,7 +509,7 @@ function collectFinishedMatches(baseUrl, totalPages) {
             if (statusRef) {
               var sUrl = statusRef;
               if (sUrl.indexOf('http://') === 0) sUrl = 'https://' + sUrl.substring(7);
-              promises.push(fetch(sUrl).then(function(r) { return r.json(); }));
+              promises.push(fetchTO(sUrl).then(function(r) { return r.json(); }));
             } else if (comp.status && comp.status.type) {
               promises.push(Promise.resolve(comp.status));
             } else {
@@ -462,8 +521,8 @@ function collectFinishedMatches(baseUrl, totalPages) {
               var sUrl2 = c.score && c.score.$ref;
               if (tUrl) { if (tUrl.indexOf('http://') === 0) tUrl = 'https://' + tUrl.substring(7); }
               if (sUrl2) { if (sUrl2.indexOf('http://') === 0) sUrl2 = 'https://' + sUrl2.substring(7); }
-              var tPromise = tUrl ? fetch(tUrl).then(function(r) { return r.json(); }) : Promise.resolve({displayName: 'Unknown'});
-              var sPromise = sUrl2 ? fetch(sUrl2).then(function(r) { return r.json(); }) : Promise.resolve({value: '0'});
+              var tPromise = tUrl ? fetchTO(tUrl).then(function(r) { return r.json(); }) : Promise.resolve({displayName: 'Unknown'});
+              var sPromise = sUrl2 ? fetchTO(sUrl2).then(function(r) { return r.json(); }) : Promise.resolve({value: '0'});
               promises.push(tPromise, sPromise);
               compData.push({ homeAway: c.homeAway });
             });
@@ -538,14 +597,12 @@ function renderRecentMatches(events) {
     else if (miamiScore === oppScore) { resultText = '平'; resultClass = 'rm-draw'; }
     else { resultText = '负'; resultClass = 'rm-loss'; }
 
-    var d = new Date(ev.date);
-    var mm = String(d.getMonth() + 1).padStart(2, '0');
-    var dd = String(d.getDate()).padStart(2, '0');
+    var md = fmtMD(ev.date);
 
-    var oppZh = zhName(oppTeam.team.displayName);
+    var oppZh = esc(zhName(oppTeam.team.displayName));
 
     html += '<div class="recent-match">' +
-      '<span class="rm-date">' + mm + '/' + dd + '</span>' +
+      '<span class="rm-date">' + md + '</span>' +
       '<span class="rm-venue">' + venue + '</span>' +
       '<span class="rm-vs">' +
         (isMiamiHome ? '<span>迈阿密</span>' : '<span class="rm-opp">' + oppZh + '</span>') +
@@ -563,7 +620,7 @@ function renderRecentMatches(events) {
   $('recentContent').innerHTML = html;
   $('recentLoading').style.display = 'none';
   $('recentContent').style.display = '';
-  $('recentDate').textContent = '（截至 ' + new Date().toLocaleDateString('zh-CN') + '）';
+  $('recentDate').textContent = '（截至 ' + new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }) + '）';
 }
 
 /* 渲染最近比赛（core API 数据格式） */
@@ -594,19 +651,17 @@ function renderRecentMatchesCore(matches) {
     var oppScore = isMiamiHome ? awayScore : homeScore;
     var venue = isMiamiHome ? '主' : '客';
     var oppName = isMiamiHome ? awayName : homeName;
-    var oppZh = zhName(oppName);
+    var oppZh = esc(zhName(oppName));
 
     var resultText, resultClass;
     if (miamiScore > oppScore) { resultText = '胜'; resultClass = 'rm-win'; }
     else if (miamiScore === oppScore) { resultText = '平'; resultClass = 'rm-draw'; }
     else { resultText = '负'; resultClass = 'rm-loss'; }
 
-    var d = new Date(m.date);
-    var mm = String(d.getMonth() + 1).padStart(2, '0');
-    var dd = String(d.getDate()).padStart(2, '0');
+    var md = fmtMD(m.date);
 
     html += '<div class="recent-match">' +
-      '<span class="rm-date">' + mm + '/' + dd + '</span>' +
+      '<span class="rm-date">' + md + '</span>' +
       '<span class="rm-venue">' + venue + '</span>' +
       '<span class="rm-vs">' +
         (isMiamiHome ? '<span>迈阿密</span>' : '<span class="rm-opp">' + oppZh + '</span>') +
@@ -624,7 +679,7 @@ function renderRecentMatchesCore(matches) {
   $('recentContent').innerHTML = html;
   $('recentLoading').style.display = 'none';
   $('recentContent').style.display = '';
-  $('recentDate').textContent = '（截至 ' + new Date().toLocaleDateString('zh-CN') + '）';
+  $('recentDate').textContent = '（截至 ' + new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }) + '）';
 }
   </script>
 

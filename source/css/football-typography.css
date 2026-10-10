@@ -4,14 +4,7 @@
    检测：post path 包含 /football- 或文章标题包含"足球早报/晚报"
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
-
 /* 用属性选择器匹配 football 文章的 canonical link */
-html:has(link[rel="canonical"][href*="/football-morning"]),
-html:has(link[rel="canonical"][href*="/football-evening"]) {
-  --football-post: 1;
-}
-
 html:has(link[rel="canonical"][href*="/football-morning"]) body,
 html:has(link[rel="canonical"][href*="/football-evening"]) body {
   font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;

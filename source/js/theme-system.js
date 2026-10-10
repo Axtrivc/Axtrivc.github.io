@@ -66,12 +66,14 @@
   var currentTheme = 'wechat-classic';
   try {
     currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'wechat-classic';
+    if (!THEME_STYLES[currentTheme]) currentTheme = 'wechat-classic'; // 已下线主题 id 回退默认
   } catch (e) { /* Safari 隐私模式或禁用存储时降级到默认 */ }
 
   // ================================================================
   // APPLY THEME — called immediately on load AND on user selection
   // ================================================================
   function applyTheme(themeId) {
+    if (!THEME_STYLES[themeId]) themeId = 'wechat-classic'; // 未知 id 回退默认（对齐 standalone-theme.js 的兜底）
     var t = THEME_STYLES[themeId];
     if (!t) return;
 

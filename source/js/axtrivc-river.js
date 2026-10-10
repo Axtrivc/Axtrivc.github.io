@@ -24,8 +24,11 @@
 
   function resize() {
     // DPR 随窗口拖动跨显示器可能变化, 每次 resize 重取
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var newDPR = Math.min(window.devicePixelRatio || 1, 2);
     var rect = stage.getBoundingClientRect();
+    // 移动端地址栏收展类 resize 只改视口高, stage 宽高/DPR 往往全未变 — 全同跳过整幅 realloc
+    if (W === rect.width && H === rect.height && DPR === newDPR) return;
+    DPR = newDPR;
     W = rect.width;
     H = rect.height;
     canvas.width = W * DPR;
@@ -199,8 +202,8 @@
     return gradCache;
   }
 
-  var stageVisible = false, running = false;
-  var lastFrameTs = 0;
+  var stageVisible = false, running = false, lastInViewport = false;
+  var lastFrameTs = 0, rafId = 0;
   function frame(nowTs) {
     if (!stageVisible) { running = false; lastFrameTs = 0; return; }
     // 按真实帧间隔推进 (60fps 为基准 1 步, 上限 4 步防长时间挂起后跳变):
@@ -225,23 +228,25 @@
       if (r.age > 220) ripples.splice(j, 1);
     }
 
-    requestAnimationFrame(frame);
+    rafId = requestAnimationFrame(frame);
   }
 
   function start() {
     if (running) return;
     running = true;
-    requestAnimationFrame(frame);
+    rafId = requestAnimationFrame(frame);
   }
 
   // 只在 footer 进入视口时动画(性能优化,抄 river.ai)
+  // lastInViewport 独立记录 IO 最后一次交叉态: pagehide 会把 stageVisible 清掉,
+  // bfcache 恢复要靠它判断"footer 是否仍在视口"
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (ents) {
-      stageVisible = ents[0].isIntersecting;
+      stageVisible = lastInViewport = ents[0].isIntersecting;
       if (stageVisible) start();
     }, { rootMargin: '200px 0px 200px 0px', threshold: 0 }).observe(stage);
   } else {
-    stageVisible = true;
+    stageVisible = lastInViewport = true;
     start();
   }
 
@@ -266,5 +271,16 @@
   window.addEventListener('pagehide', function () {
     stageVisible = false;
     running = false;
+    // 撤销挂起的 rAF: bfcache 冻结前已入队的回调若在恢复后仍被投递,
+    // 会与 pageshow 恢复路径新排的请求并存成两个永久自续循环(双倍绘制)
+    if (rafId) cancelAnimationFrame(rafId);
+  });
+  // bfcache 返回兜底(仿 hero-inject.js): pagehide 停机后 footer 若前后都在视口内,
+  // IO 无交叉状态变化不再回调, 动画会永久冻结 — persisted 恢复且仍在视口时手动拉起
+  window.addEventListener('pageshow', function (ev) {
+    if (ev && ev.persisted && lastInViewport) {
+      stageVisible = true;
+      start();
+    }
   });
 })();

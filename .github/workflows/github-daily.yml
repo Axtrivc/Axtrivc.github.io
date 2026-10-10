@@ -24,6 +24,8 @@ concurrency:
 jobs:
   daily:
     runs-on: ubuntu-latest
+    # 与 deploy/football-daily 同 concurrency 组串行, 挂死会堵住部署管线; 30min 远超正常耗时(npm ci + hexo generate ~5-10min)
+    timeout-minutes: 30
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -69,7 +71,12 @@ jobs:
           else
             git commit -m "📝 GitHub 日报自动更新 - $(date +%Y-%m-%d)"
             git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master
-            git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
+            # push 单次无重试: 竞态/瞬时网络失败会让当天日报静默丢失; 失败后再 pull --rebase 重试一次, 仍失败则让步骤显式报错
+            if ! git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master; then
+              echo "::warning::push 失败, pull --rebase 后重试一次"
+              git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master
+              git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
+            fi
           fi
 
       - name: Build Hexo

@@ -150,6 +150,10 @@ aside:
   button: true
   mobile: true
   position: right
+  # 标签云(5.x 由 aside.card_tags 控制,旧顶层 tagcloud: 键无效)
+  card_tags:
+    enable: true
+    limit: 20
 
 # -------------------------------------------------------
 # Butterfly theme color scheme - warm literary style
@@ -177,38 +181,8 @@ search:
       enable: true
       hitsPerPage: 8
 
-# -------------------------------------------------------
-# Footer special effects
-# -------------------------------------------------------
-footer_bg: false
-
-# -------------------------------------------------------
-# Tag & Category settings
-# -------------------------------------------------------
-tagcloud:
-  enable: true
-  max_result: 20
-
-# -------------------------------------------------------
-# Article meta display
-# -------------------------------------------------------
-auto_excerpt:
-  enable: false
-  length: 150
-
 # Read mode
 readmode: true
-
-# -------------------------------------------------------
-# CDN settings
-# -------------------------------------------------------
-CDN:
-  css:
-  js:
-  images:
-  image:
-  cdnjs:
-  combine: false
 
 # -------------------------------------------------------
 # Lazyload
@@ -219,15 +193,6 @@ lazyload:
   blur: false
   opacity: false
   placeholder:
-
-# -------------------------------------------------------
-# Pagination
-# -------------------------------------------------------
-pagination:
-  style: normal
-  show_info: true
-  subject: ''
-  separator: '|'
 
 # -------------------------------------------------------
 # Inject custom CSS/HTML for literary style

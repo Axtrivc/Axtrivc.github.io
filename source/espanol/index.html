@@ -771,6 +771,7 @@ function renderLevelTabs() {
 function switchLevel(lv) {
   currentLevel = lv;
   activeUnitIdx = null;
+  for (const k in quizStates) delete quizStates[k];  // 切等级清空测验状态，防同索引单元串档
   renderAll();
   // 滚动回顶部
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -787,7 +788,7 @@ function renderUnitsFlow() {
     const isActive = (activeUnitIdx === i);
     const isDone = u.done;
     html += '<div class="unit-card' + (isActive?' active':'') + (isDone?' done':'') + '">';
-    html += '<div class="unit-head" onclick="toggleUnit(' + i + ')">';
+    html += '<div class="unit-head" role="button" tabindex="0" onclick="toggleUnit(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();toggleUnit(' + i + ')}">';
     html += '<div class="unit-emoji">' + u.icon + '</div>';
     html += '<div class="unit-info">';
     html += '<div class="unit-name">' + u.name + '</div>';
@@ -827,7 +828,7 @@ function renderUnitBody(u, unitIdx) {
       html += '<div class="phoneme-row">';
       L.phonetics.forEach(p => {
         const ex = (p.example || p.letter).split(' ')[0].replace(/'/g, "\\'");
-        html += '<div class="phoneme-tile" onclick="speak(\'' + ex + '\')">';
+        html += '<div class="phoneme-tile" role="button" tabindex="0" onclick="speak(\'' + ex + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();speak(\'' + ex + '\')}">';
         html += '<div class="phoneme-letter">' + p.letter + '</div>';
         html += '<div class="phoneme-ipa">/' + p.ipa + '/</div>';
         if (p.example) html += '<div class="phoneme-ex">' + p.example + '</div>';
@@ -880,7 +881,7 @@ function renderUnitBody(u, unitIdx) {
       html += '<div class="blk-label">📖 词汇 · Vocabulary <span style="font-weight:500;opacity:0.7;text-transform:none;letter-spacing:0;font-size:11px">点击卡片看例句</span></div>';
       html += '<div class="vocab-row">';
       L.vocab.forEach(v => {
-        html += '<div class="vocab-tile" onclick="this.classList.toggle(\'flipped\')">';
+        html += '<div class="vocab-tile" role="button" tabindex="0" onclick="this.classList.toggle(\'flipped\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.classList.toggle(\'flipped\')}">';
         html += '<div class="vocab-es">' + v.es + ' ' + speakBtn(v.es) + '</div>';
         html += '<div class="vocab-zh">' + v.zh + '</div>';
         if (v.ex) html += '<div class="vocab-ex">' + v.ex + '</div>';
@@ -916,15 +917,15 @@ function renderQuizSection(u, unitIdx) {
     html += '<div class="quiz-opts">';
     const letters = ['A','B','C','D'];
     q.options.forEach((opt, i) => {
-      html += '<button class="quiz-opt" id="qopt-' + unitIdx + '-' + i + '" onclick="checkChoice(' + unitIdx + ',' + i + ',' + q.answer + ',\'' + (q.explain||'').replace(/'/g,"\\'") + '\')">';
+      html += '<button class="quiz-opt" id="qopt-' + unitIdx + '-' + i + '" onclick="checkChoice(' + unitIdx + ',' + i + ',' + q.answer + ',\'' + (q.explain||'').replace(/'/g,"\\'").replace(/"/g,'&quot;') + '\')">';
       html += '<span class="opt-letter">' + letters[i] + '</span> ' + opt;
       html += '</button>';
     });
     html += '</div>';
   } else if (q.type === 'fill') {
     html += '<div class="quiz-q">' + q.q + '</div>';
-    html += '<input class="quiz-input" id="qfill-' + unitIdx + '" type="text" placeholder="输入答案..." onkeydown="if(event.key===\'Enter\')checkFill(' + unitIdx + ',\'' + q.answer.replace(/'/g,"\\'") + '\',\'' + (q.explain||'').replace(/'/g,"\\'") + '\')">';
-    html += '<button class="btn-primary" onclick="checkFill(' + unitIdx + ',\'' + q.answer.replace(/'/g,"\\'") + '\',\'' + (q.explain||'').replace(/'/g,"\\'") + '\')">提交</button>';
+    html += '<input class="quiz-input" id="qfill-' + unitIdx + '" type="text" placeholder="输入答案..." onkeydown="if(event.key===\'Enter\')checkFill(' + unitIdx + ',\'' + q.answer.replace(/'/g,"\\'") + '\',\'' + (q.explain||'').replace(/'/g,"\\'").replace(/"/g,'&quot;') + '\')">';
+    html += '<button class="btn-primary" onclick="checkFill(' + unitIdx + ',\'' + q.answer.replace(/'/g,"\\'") + '\',\'' + (q.explain||'').replace(/'/g,"\\'").replace(/"/g,'&quot;') + '\')">提交</button>';
   }
 
   html += '<div class="quiz-feedback" id="qfb-' + unitIdx + '"></div>';
