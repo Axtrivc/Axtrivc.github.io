@@ -533,3 +533,19 @@ html.theme-gliding #recent-posts .recent-post-item {
     width: 100%;
   }
 }
+
+/* ── T. 移动端 meta 行:分类条目原子化(2026-10-10) ────────────
+   主题在 ≤768px 把 meta-firstline 置为 display:inline,整行自由
+   断行;FontAwesome 图标是 PUA 字符,与后续 CJK 字之间允许软换行,
+   375px 下分类图标(fas fa-inbox)被孤立在第一行行尾、与第二行的
+   分类文字分离。把条目 span 升级为 inline-flex 原子单元,换行时
+   整体落行。行首会带上 span 内部的「|」分隔符,纯 CSS 无法在
+   "已换行"条件下隐藏,保留。.post-meta-date 实测自然宽 295.7px,
+   原子化后 320px 小屏会侵入右侧内边距 ~5.7px,故不动。 */
+@media (max-width: 768px) {
+  #post-info #post-meta .post-meta-categories {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+}

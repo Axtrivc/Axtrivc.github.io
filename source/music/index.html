@@ -33,35 +33,6 @@ aside: false
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ─── 顶部导航 ─── */
-    .top-nav {
-      background: var(--theme-card);
-      border-bottom: 1px solid var(--theme-border);
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(8px);
-      transition: background 0.45s ease, border-color 0.45s ease;
-    }
-    .top-nav a {
-      color: var(--theme-secondary);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-    .top-nav a:hover { color: var(--theme-accent); }
-    .top-nav .nav-sep { color: var(--theme-border); }
-    .top-nav .nav-current {
-      color: var(--theme-heading);
-      font-size: 15px;
-      font-weight: 700;
-    }
-
     /* ─── 容器 ─── */
     .music-page {
       max-width: var(--max-w);
@@ -313,12 +284,6 @@ aside: false
       .music-hero h2 { font-size: 30px; }
     }
   </style>
-
-  <div class="top-nav">
-    <a href="/">首页</a>
-    <span class="nav-sep">|</span>
-    <span class="nav-current">🎵 歌单分享</span>
-  </div>
 
   <div class="music-page">
 

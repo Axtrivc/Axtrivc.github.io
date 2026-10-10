@@ -111,6 +111,10 @@
     margin-bottom: 16px;
     display: block;
   }
+  .hero .hero-emoji svg {
+    display: block;
+    border-radius: 3px;
+  }
   .hero h1 {
     font-size: 38px;
     font-weight: 800;
@@ -658,6 +662,16 @@
     .unit-head { padding: 16px 18px; }
     .unit-body { padding: 0 18px 18px; }
     .top-nav { padding: 10px 14px; }
+    .top-nav .nav-right { gap: 12px; }
+    .tts-pill { position: relative; }
+    .tts-pill::before {
+      content: "";
+      position: absolute;
+      top: -8px;
+      right: -5px;
+      bottom: -8px;
+      left: -5px;
+    }
   }
 </style>
 </head>
@@ -677,7 +691,7 @@
 <div class="container">
 
   <div class="hero">
-    <span class="hero-emoji">🇪🇸</span>
+    <span class="hero-emoji"><svg role="img" aria-label="西班牙国旗" width="42" height="28" viewBox="0 0 42 28" focusable="false"><rect width="42" height="28" fill="#AA151B"/><rect y="7" width="42" height="14" fill="#F1BF00"/></svg></span>
     <h1>西班牙语学习中心</h1>
     <p class="hero-sub">从零基础到 C1 · 发音 · 语法 · 词汇 · 对话 · 习题</p>
     <div class="progress-line">

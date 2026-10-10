@@ -40,6 +40,14 @@
       if (!ticking) { ticking = true; requestAnimationFrame(update); }
     }, { passive: true });
     window.addEventListener('resize', update);
+    /* lazyload 图片/入场动画会让 scrollHeight 在初始 update 之后变大,
+       只靠 scroll/resize 不会重算 max,进度线会停在误 clamp 的 100%。
+       内容尺寸一变就重算(bar 是 fixed 定位,不会反向触发自身)。 */
+    if ('ResizeObserver' in window) {
+      var ro = new ResizeObserver(function () { update(); });
+      ro.observe(document.documentElement);
+      ro.observe(document.body);
+    }
     update();
   }
 

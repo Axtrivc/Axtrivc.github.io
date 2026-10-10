@@ -212,7 +212,7 @@ inject:
         <div class="bar-left">
           <div class="bar-cover" id="vinyl-icon">🎵</div>
           <div class="bar-info">
-            <div class="bar-title" id="bar-title">My Playlist</div>
+            <div class="bar-title" id="bar-title">背景音乐 BGM</div>
             <div class="bar-sub">点击右侧按钮播放 ♪</div>
           </div>
         </div>

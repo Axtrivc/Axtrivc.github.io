@@ -207,7 +207,9 @@ body { padding-bottom: 56px !important; }
   #music-bar .bar-title { max-width: 140px; font-size: 12px; }
   .bar-btn { width: 32px; height: 32px; font-size: 14px; }
   #music-bar .bar-btn-toggle { width: 30px; height: 30px; font-size: 11px; }
-  #music-bar .bar-btn-close { width: 26px; height: 26px; font-size: 12px; }
+  #music-bar .bar-btn-close { width: 26px; height: 26px; font-size: 12px; position: relative; margin-left: 6px; }
+  /* 触达热区：视觉维持 26px 小钮，::after 负 inset 把点击区扩到 40×40px（移动端 ≥40px 建议），拉开与展开钮间距防误触 */
+  #music-bar .bar-btn-close::after { content: ''; position: absolute; inset: -7px; }
   #music-panel { right: 12px; bottom: 54px; width: calc(100vw - 24px); }
   #music-launcher { bottom: 12px; right: 12px; }
   #music-launcher #btn-launcher { width: 42px; height: 42px; }
