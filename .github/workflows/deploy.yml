@@ -3,7 +3,7 @@ name: Deploy Blog
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 permissions:
@@ -25,10 +25,10 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
-      - name: Checkout source (master branch)
+      - name: Checkout source (main branch)
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: main
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

@@ -31,10 +31,10 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
-      - name: Checkout source (master branch)
+      - name: Checkout source (main branch)
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: main
 
       - name: Setup Python 3.12
         uses: actions/setup-python@v5
@@ -70,12 +70,12 @@ jobs:
             echo "No changes for github daily"
           else
             git commit -m "📝 GitHub 日报自动更新 - $(date +%Y-%m-%d)"
-            git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master
+            git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} main
             # push 单次无重试: 竞态/瞬时网络失败会让当天日报静默丢失; 失败后再 pull --rebase 重试一次, 仍失败则让步骤显式报错
-            if ! git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master; then
+            if ! git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/main; then
               echo "::warning::push 失败, pull --rebase 后重试一次"
-              git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master
-              git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master
+              git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} main
+              git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/main
             fi
           fi
 

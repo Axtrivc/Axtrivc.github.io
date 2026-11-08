@@ -12,7 +12,7 @@ Hexo 7 + Butterfly 主题的个人博客,部署到 GitHub Pages(Axtrivc.github.i
 ## 构建与部署
 
 - `npx hexo generate` 构建到 `public/`;`npx hexo server` 本地预览
-- push 到 `master` 触发 GitHub Actions(`.github/workflows/deploy.yml`)构建并部署到 `main` 分支
+- 源码统一位于 `main`（2026-11-08 用户要求）；push 到 `main` 触发 GitHub Actions 构建并通过 Pages artifact 部署，日报也读写 `main`。旧 `master` 及旧生成页历史保留。
 - `public/`、`db.json`、`node_modules/` 不进仓库(编译产物,CI 重建)
 
 ## 自定义结构

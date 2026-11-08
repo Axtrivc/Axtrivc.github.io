@@ -41,10 +41,10 @@ jobs:
       (github.event_name == 'workflow_dispatch' && github.event.inputs.edition == '')
 
     steps:
-      - name: Checkout source (master branch)
+      - name: Checkout source (main branch)
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: main
 
       - name: Setup Python 3.12
         uses: actions/setup-python@v5
@@ -88,11 +88,11 @@ jobs:
             echo "No changes for morning edition"
           else
             git commit -m "⚽ 足球早报 v2 自动更新 - $(date +%Y-%m-%d)"
-            # rebase 防非快进: 若 master 在 checkout 后被推进(手动 push / 日报时窗重叠),
+            # rebase 防非快进: 若 main 在 checkout 后被推进(手动 push / 日报时窗重叠),
             # 裸 push 会被拒; push 失败则 pull --rebase 重试, 3 轮全败 exit 1 让当天日报缺失可感知
             push_ok=0
             for i in 1 2 3; do
-              if git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master && git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master; then
+              if git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} main && git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/main; then
                 push_ok=1
                 break
               fi
@@ -128,10 +128,10 @@ jobs:
       (github.event_name == 'workflow_dispatch' && github.event.inputs.edition == 'evening')
 
     steps:
-      - name: Checkout source (master branch)
+      - name: Checkout source (main branch)
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: main
 
       - name: Setup Python 3.12
         uses: actions/setup-python@v5
@@ -178,7 +178,7 @@ jobs:
             # 同早报: push 失败则 pull --rebase 重试, 3 轮全败 exit 1 让当天日报缺失可感知
             push_ok=0
             for i in 1 2 3; do
-              if git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} master && git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/master; then
+              if git pull --rebase https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} main && git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} HEAD:refs/heads/main; then
                 push_ok=1
                 break
               fi
